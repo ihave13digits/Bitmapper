@@ -7,9 +7,10 @@ public:
     int duration = 1;
     int tick_delay = 1;
     int tick = 0;
+    float hue = -0.5;
     float time = 1.0;
     float move = 1.0;
-    float delta = 0.0001;
+    float delta = 0.001;
 
     int width = 0;
     int height = 0;
@@ -142,7 +143,7 @@ public:
 
     void UpdateBodies()
     {
-        float PI = 3.14159;
+        float PI = 3.14159265358;
 
         if (move < 0.0) move = duration;
 
@@ -162,6 +163,7 @@ public:
             if (tick > tick_delay)
             {
                 tick = 0;
+                hue -= delta;
                 time += delta;
                 move -= delta/2;
                 UpdateWind();
@@ -170,6 +172,10 @@ public:
                     inverted = true;
                     time = duration;
                 }
+                if (hue < -0.5)
+                {
+                    hue = -0.5;
+                }
             }
         }
         else if (inverted)
@@ -177,6 +183,7 @@ public:
             if (tick > tick_delay)
             {
                 tick = 0;
+                hue += delta;
                 time -= delta;
                 move -= delta/2;
                 UpdateWind();
@@ -184,6 +191,10 @@ public:
                 {
                     inverted = false;
                     time = 0.0;
+                }
+                if (hue > 0.5)
+                {
+                    hue = 0.5;
                 }
             }
         }
@@ -195,14 +206,16 @@ public:
         UpdateTime();
         UpdateBodies();
 
-        float H = (humidity-2)/cloudcount;
+        float H = 1.0 - hue;
+        if (hue < 0.0)
+            H = 1.0 + hue;
 
         R = int(time*0.5*255);
         G = int(time*0.5*255);
         B = time*255;
 
         r = int(H*255);
-        g = int(H*255);
+        g = int(((H+time)/2)*255);
         b = int(H*255);
     }
 
