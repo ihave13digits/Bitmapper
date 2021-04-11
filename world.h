@@ -11,7 +11,7 @@ public:
 
     // Terrain Tiles
 
-    int total_tiles = 30;
+    int total_tiles = 35;
 
     enum TYPES
     {
@@ -29,11 +29,13 @@ public:
         SMOKE,
         //
         WATER,
+        BLOOD,
         LAVA,
         //
         ICE,
         MUD,
         DIRT,
+        SOIL,
         CLAY,
         OBSIDIAN,
         STONE,
@@ -48,10 +50,12 @@ public:
         GRASS,
         MOSS,
         //
+        PLATINUM,
         GOLD,
         SILVER,
         COPPER,
         LEAD,
+        TIN,
         //
         RUBY,
         TOPAZ,
@@ -59,9 +63,57 @@ public:
         EMERALD,
         AMETHYST,
         SAPPHIRE,
+        //
+        MANTLE
     };
 
-    int tileset[30][2][4] = {
+    std::string tiles[35] = {
+        //
+        "Air",
+        "Steam",
+        "Smoke",
+        //
+        "Water",
+        "Blood",
+        "Lava",
+        //
+        "Ice",
+        "Mud",
+        "Dirt",
+        "Soil",
+        "Clay",
+        "Obsidian",
+        "Stone",
+        "Granite",
+        "Limestone",
+        "Sandstone",
+        //
+        "Sand",
+        "Snow",
+        "Gravel",
+        //
+        "Wood",
+        "Grass",
+        "Moss",
+        //
+        "Platinum",
+        "Gold",
+        "Silver",
+        "Copper",
+        "Lead",
+        "Tin",
+        //
+        "Ruby",
+        "Topaz",
+        "Diamond",
+        "Emerald",
+        "Amethyst",
+        "Sapphire",
+        //
+        "Mantle"
+    };
+
+    int tileset[35][2][4] = {
         // |Base Color        |     |Variation       |
         // Gases
         {  {200, 200, 230, 5  },    {1,   1,   25,  0}  },// Air
@@ -69,19 +121,21 @@ public:
         {  {128, 128, 128, 50 },    {5,   5,   5,   0}  },// Smoke
         // Fluids
         {  {0,   0,   128, 128},    {1,   1,   25,  0}  },// Water
-        {  {255, 225, 0,   255},    {1,  -55,  1,  0}  },// Lava
+        {  {128, 0,   0,   255},    {25,  1,   1,   0}  },// Blood
+        {  {255, 225, 0,   255},    {1,  -55,  1,   0}  },// Lava
         // Solid Materials
-        {  {128, 128, 255, 128},    {1,   1,   12,  0}  },// Ice
-        {  {40,  32,  16,  255},    {12,  10,  5,   0}  },// Mud
+        {  {180, 180, 200, 128},    {1,   1,   55,  0}  },// Ice
+        {  {40,  32,  16,  255},    {8,   4,   2,   0}  },// Mud
         {  {80,  64,  32,  255},    {8,   4,   2,   0}  },// Dirt
+        {  {32,  24,  16,  255},    {8,   4,   2,   0}  },// Soil
         {  {160, 80,  20,  255},    {8,   4,   1,   0}  },// Clay
-        {  {48,  32,  16,  255},    {25,  5,   5,   0}  },// Obsidian
+        {  {32,  16,  8,   255},    {15,  1,   1,   0}  },// Obsidian
         {  {64,  64,  64,  255},    {5,   5,   10,  0}  },// Stone
         {  {80,  80,  80,  255},    {5,   5,   15,  0}  },// Granite
         {  {128, 128, 128, 255},    {5,   5,   10,  0}  },// Limestone
         {  {200, 200, 100, 255},    {5,   5,   10,  0}  },// Sandstone
         // Granular Materials
-        {  {230, 230, 128, 255},    {25,  25,  5,   0}  },// Sand
+        {  {230, 230, 128, 255},    {15,  15,  5,   0}  },// Sand
         {  {230, 230, 230, 255},    {1,   1,   25,  0}  },// Snow
         {  {130, 125, 120, 255},    {10,  10,  10,  0}  },// Gravel
         // Plant Materials
@@ -89,10 +143,12 @@ public:
         {  {0,   128, 0,   255},    {5,   20,  1,   0}  },// Grass
         {  {20,   80, 0,   255},    {5,   20,  1,   0}  },// Moss
         // Metals
-        {  {255, 230, 0,   255},    {-10, 5,   1,   0}  },// Gold
+        {  {190, 190, 230, 255},    {10,  10,  25,  0}  },// Platinum
+        {  {245, 230, 0,   255},    {10,  5,   1,   0}  },// Gold
         {  {180, 180, 220, 255},    {10,  10,  15,  0}  },// Silver
         {  {128, 60,  0,   255},    {10,  5,   1,   0}  },// Copper
         {  {16,  32,  48,  255},    {2,   4,   8,   0}  },// Lead
+        {  {180, 200, 100, 255},    {15,  15,  10,  0}  },// Tin
         // Gemstones
         {  {230, 0,   0,   200},    {25,  1,   1,   0}  },// Ruby
         {  {230, 230, 0,   200},    {25,  25,  1,   0}  },// Topaz
@@ -100,6 +156,8 @@ public:
         {  {0,   230, 0,   200},    {1,   25,  1,   0}  },// Emerald
         {  {230, 0,   230, 200},    {25,  1,   25,  0}  },// Amethyst
         {  {0,   0,   230, 200},    {1,   1,   25,  0}  },// Sapphire
+        // Unbreakable
+        {  {0,  0,  0,  255},    {25,  1,   1,   0}  },// Mantle
     };
 
     std::vector<short> matrix;
@@ -127,33 +185,35 @@ public:
 
         int H = int(height/100);
 
-        AddLayer(STONE, 2,  H*25,  height);
+        AddLayer(STONE, 2,  H*25,  H*90);
+        AddLayer(LAVA, 50,  H*95,  height);
+        for (int i = 0; i < 8; i++) Expand(STONE, H*10, H*90, 10, 1, 25, 25);
+        for (int i = 0; i < 8; i++) Expand(STONE, H*25, H*90, 10, 1, 25, 25);
+        for (int i = 0; i < 8; i++) Expand(STONE, H*50, H*90, 10, 1, 50, 50);
+        for (int i = 0; i < 8; i++) Expand(STONE, H*75, H*90, 10, 1, 75, 75);
 
-        for (int i = 0; i < 8; i++) Expand(STONE, H*10, height, 10, 1, 25, 25);
-        for (int i = 0; i < 8; i++) Expand(STONE, H*25, height, 10, 1, 25, 25);
-        for (int i = 0; i < 8; i++) Expand(STONE, H*50, height, 10, 1, 50, 50);
-        for (int i = 0; i < 8; i++) Expand(STONE, H*75, height, 10, 1, 75, 75);
-
-        for (int i = 0; i < 4; i++) Expand(CLAY, H*15, H*50, 25, 100, 75, 75);
-        for (int i = 0; i < 4; i++) Expand(CLAY, H*24, H*40, 25, 50, 75, 75);
-        for (int i = 0; i < 4; i++) Expand(CLAY, H*35, height, 25, 25, 25, 25);
-        for (int i = 0; i < 4; i++) Expand(CLAY, H*70, height, 25, 5, 25, 25);
+        for (int i = 0; i < 4; i++) Expand(SOIL, H*15, H*50, 25, 100, 75, 75);
+        for (int i = 0; i < 4; i++) Expand(SOIL, H*24, H*40, 25, 50, 75, 75);
+        for (int i = 0; i < 4; i++) Expand(DIRT, H*35, H*90, 25, 25, 25, 25);
+        for (int i = 0; i < 4; i++) Expand(DIRT, H*70, H*90, 25, 5, 25, 25);
 
         for (int i = 0; i < 12; i++) Expand(DIRT, H*8, H*50, 25, 100, 75, 75);
         for (int i = 0; i < 12; i++) Expand(DIRT, H*16, H*40, 25, 50, 75, 75);
-        for (int i = 0; i < 12; i++) Expand(DIRT, H*32, height, 25, 25, 25, 25);
-        for (int i = 0; i < 12; i++) Expand(DIRT, H*64, height, 25, 5, 25, 25);
+        for (int i = 0; i < 12; i++) Expand(MUD, H*32, H*90, 25, 25, 25, 25);
+        for (int i = 0; i < 12; i++) Expand(MUD, H*64, H*90, 25, 5, 25, 25);
 
-        for (int i = 0; i < 8; i++) Expand(GRAVEL, H*33, height, 10, 1, 50, 50);
-        for (int i = 0; i < 8; i++) Expand(GRAVEL, H*66, height, 10, 1, 50, 50);
-        for (int i = 0; i < 8; i++) Expand(GRAVEL, H*99, height, 10, 1, 50, 50);
+        for (int i = 0; i < 8; i++) Expand(GRAVEL, H*33, H*90, 10, 1, 50, 50);
+        for (int i = 0; i < 8; i++) Expand(GRAVEL, H*66, H*90, 10, 1, 50, 50);
+        for (int i = 0; i < 8; i++) Expand(GRAVEL, H*80, H*90, 10, 1, 50, 50);
 
         Expand(GRASS, 0, H*32, 100, 0, 25, 25);
 
-        SeedLayer(GOLD, 1, H*75, height);
+        SeedLayer(PLATINUM, 1, H*70, H*90);
+        SeedLayer(GOLD, 1, H*60, H*80);
         SeedLayer(SILVER, 1, H*50, H*75);
         SeedLayer(COPPER, 1, H*25, H*50);
         SeedLayer(LEAD, 1, H*50, H*75);
+        SeedLayer(TIN, 1, H*33, H*66);
 
         SeedLayer(RUBY, 1, H*40, H*50);
         SeedLayer(TOPAZ, 1, H*40, H*50);
@@ -162,10 +222,21 @@ public:
         SeedLayer(AMETHYST, 1, H*50, H*60);
         SeedLayer(SAPPHIRE, 1, H*50, H*60);
 
-        for (int i = 0; i < 8; i++) Deposit(GOLD, H*75, height, 25, 25, 25, 25);
+        for (int i = 0; i < 8; i++) Deposit(PLATINUM, H*80, height, 25, 25, 25, 25);
+        for (int i = 0; i < 8; i++) Deposit(GOLD, H*75, H*90, 25, 25, 25, 25);
         for (int i = 0; i < 16; i++) Deposit(SILVER, H*40, H*60, 25, 25, 25, 25);
         for (int i = 0; i < 24; i++) Deposit(COPPER, H*25, H*50, 25, 25, 25, 25);
         for (int i = 0; i < 12; i++) Deposit(LEAD, H*50, H*80, 25, 25, 25, 25);
+        for (int i = 0; i < 8; i++) Deposit(TIN, H*33, H*66, 25, 25, 25, 25);
+ 
+        for (int i = 0; i < 2; i++) Deposit(LAVA, H*95, height, 1, 100, 100, 100);
+
+        SeedLayer(MANTLE, 100, H*92, height);
+        for (int i = 0; i < 8; i++) Deposit(MANTLE, H*85, height, 1, 5, 75, 75);
+        for (int i = 0; i < 8; i++) Deposit(MANTLE, H*90, height, 5, 15, 50, 50);
+        for (int i = 0; i < 8; i++) Deposit(MANTLE, H*95, height, 10, 25, 25, 25);
+        for (int i = 0; i < 8; i++) Deposit(MANTLE, H*97, height, 10, 50, 50, 50);
+        for (int i = 0; i < 8; i++) Deposit(MANTLE, H*99, height, 10, 75, 100, 100);
     }
 
     void AddLayer(int t, int density, int ymin, int ymax)
@@ -289,6 +360,7 @@ public:
                     switch (matrix[index])
                     {
                         case LAVA : cell_type = FLUID; break;
+                        case BLOOD : cell_type = FLUID; break;
                         case WATER : cell_type = FLUID; break;
                         
                         case SAND : cell_type = GRAIN; break;
@@ -321,13 +393,13 @@ public:
                                     replace[rplc] = matrix[index];
                                     replace[index] = AIR;
                                 }
-                                else if (!Collision(x+X-1, y+Y))
+                                else if (!Collision(x+X-1, y+Y) && Collision(x+X-1, y+Y+1))
                                 {
                                     int rplc = (y+Y)*width+(x+X-1);
                                     replace[rplc] = matrix[index];
                                     replace[index] = AIR;
                                 }
-                                else if (!Collision(x+X+1, y+Y))
+                                else if (!Collision(x+X+1, y+Y) && Collision(x+X+1, y+Y+1))
                                 {
                                     int rplc = (y+Y)*width+(x+X+1);
                                     replace[rplc] = matrix[index];
@@ -411,9 +483,7 @@ public:
 
     bool Collision(int x, int y)
     {
-        int value = matrix[y*width+x];
-        if (value > AIR) return true;
-        return false;
+        return bool(matrix[y*width+x]);
     }
 
 };
