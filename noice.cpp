@@ -6,12 +6,12 @@
 #include "player.h"
 #include "particle.h"
 
-class Noice : public olc::PixelGameEngine
+class Noicppe : public olc::PixelGameEngine
 {
 public:
-	Noice()
+	Noicppe()
 	{
-		sAppName = "Noice";
+		sAppName = "Noicppe";
 	}
 
 public:
@@ -351,7 +351,7 @@ public:
 
 int main()
 {
-	Noice demo;
+	Noicppe demo;
 	if (demo.Construct(256, 144, 4, 4, false, false, false))
 		demo.Start();
 
