@@ -200,21 +200,19 @@ public:
         std::string lookingat = "Air";
         std::string selectedtile = world.tiles[selected_tile];
 
-        if ( ( (lookindex < world.width*world.height) && lookindex > 0) &&
-            (world.matrix[lookindex] < world.total_tiles) )
+        if ( ( (lookindex < world.width*world.height) && lookindex > 0) && (world.matrix[lookindex] < world.total_tiles) )
             lookingat = world.tiles[world.matrix[lookindex]];
-        else 
 
-        DrawStringDecal({ 4,4  }, "Particles: " + std::to_string(particles.size()), olc::WHITE, { font, font });
-        DrawStringDecal({ 4,8  }, "Jump: " + std::to_string(player.jp), olc::WHITE, { font, font });
-        DrawStringDecal({ 4,12 }, "State: " + std::to_string(player.state), olc::WHITE, { font, font });
-        DrawStringDecal({ 4,16 }, "Position: (" + std::to_string(player.x) + ", " + std::to_string(player.y) + ")", olc::WHITE, { font, font });
-        DrawStringDecal({ 4,20 }, "Standing On: " + standingon, olc::WHITE, { font, font });
-        DrawStringDecal({ 4,24 }, "Looking At: " + lookingat, olc::WHITE, { font, font });
-        DrawStringDecal({ 4,28 }, "Selected Tile: " + selectedtile, olc::WHITE, { font, font });
-        DrawStringDecal({ 4,32 }, "Light: " + std::to_string(sky.time), olc::WHITE, { font, font });
-        DrawStringDecal({ 4,36 }, "Hue: " + std::to_string(sky.hue), olc::WHITE, { font, font });
-        DrawStringDecal({ 4,40 }, "Clouds: " + std::to_string(sky.humidity), olc::WHITE, { font, font });
+        //DrawStringDecal({ 4,4  }, "Particles: " + std::to_string(particles.size()), olc::WHITE, { font, font });
+        //DrawStringDecal({ 4,8  }, "Jump: " + std::to_string(player.jp), olc::WHITE, { font, font });
+        //DrawStringDecal({ 4,12 }, "State: " + std::to_string(player.state), olc::WHITE, { font, font });
+        //DrawStringDecal({ 4,16 }, "Position: (" + std::to_string(player.x) + ", " + std::to_string(player.y) + ")", olc::WHITE, { font, font });
+        //DrawStringDecal({ 4,20 }, "Standing On: " + standingon, olc::WHITE, { font, font });
+        DrawStringDecal({ 4,4 }, "Looking At: " + lookingat, olc::WHITE, { font, font });
+        DrawStringDecal({ 4,8 }, "Selected Tile: " + selectedtile, olc::WHITE, { font, font });
+        //DrawStringDecal({ 4,32 }, "Light: " + std::to_string(sky.time), olc::WHITE, { font, font });
+        //DrawStringDecal({ 4,36 }, "Hue: " + std::to_string(sky.hue), olc::WHITE, { font, font });
+        //DrawStringDecal({ 4,40 }, "Clouds: " + std::to_string(sky.humidity), olc::WHITE, { font, font });
 
     }
 
@@ -315,7 +313,6 @@ public:
             game_tick = 0;
             world.SettleTiles(player.x-(width/2), player.y-(height*2), width, height*3);
             DrawTerrain();
-            DrawParticles(fElapsedTime);
         }
 
         if (player.tick == player.tick_delay)
@@ -325,6 +322,7 @@ public:
             if (!world.Collision(player.x+player.vx, player.y+player.vy)) player.Move(player.vx, player.vy);
             DrawPlayer();
         }
+        DrawParticles(fElapsedTime);
         DrawHUD();
 
         // End Frame
