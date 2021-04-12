@@ -11,7 +11,7 @@ public:
 
     // Terrain Tiles
 
-    int total_tiles = 35;
+    int total_tiles = 40;
 
     enum TYPES
     {
@@ -56,6 +56,11 @@ public:
         COPPER,
         LEAD,
         TIN,
+        IRON,
+        COBALT,
+        NICKEL,
+        TITANIUM,
+        TUNGSTEN,
         //
         RUBY,
         TOPAZ,
@@ -67,7 +72,7 @@ public:
         MANTLE
     };
 
-    std::string tiles[35] = {
+    std::string tiles[40] = {
         //
         "Air",
         "Steam",
@@ -102,6 +107,11 @@ public:
         "Copper",
         "Lead",
         "Tin",
+        "Iron",
+        "Cobalt",
+        "Nickel",
+        "Titanium",
+        "Tungsten",
         //
         "Ruby",
         "Topaz",
@@ -113,7 +123,7 @@ public:
         "Mantle"
     };
 
-    int tileset[35][2][4] = {
+    int tileset[40][2][4] = {
         // |Base Color        |     |Variation       |
         // Gases
         {  {200, 200, 230, 5  },    {1,   1,   25,  0}  },// Air
@@ -149,6 +159,11 @@ public:
         {  {128, 60,  0,   255},    {10,  5,   1,   0}  },// Copper
         {  {16,  32,  48,  255},    {2,   4,   8,   0}  },// Lead
         {  {180, 200, 100, 255},    {15,  15,  10,  0}  },// Tin
+        {  {140, 100, 100, 255},    {15,  10,  10,  0}  },// Iron
+        {  {80,  100, 140, 255},    {4,   8,   10,  0}  },// Cobalt
+        {  {100,  100, 100, 255},    {4,   8,   10,  0}  },// Nickel
+        {  {100, 110, 120, 255},    {6,   8,   12,  0}  },// Titanium
+        {  {50, 55, 60, 255},    {6,   8,   12,  0}  },// Tungsten
         // Gemstones
         {  {230, 0,   0,   200},    {25,  1,   1,   0}  },// Ruby
         {  {230, 230, 0,   200},    {25,  25,  1,   0}  },// Topaz
@@ -186,7 +201,7 @@ public:
         int H = int(height/100);
 
         AddLayer(STONE, 2,  H*25,  H*90);
-        AddLayer(LAVA, 50,  H*95,  height);
+        AddLayer(LAVA, 100,  H*95,  height);
         for (int i = 0; i < 8; i++) Expand(STONE, H*10, H*90, 10, 1, 25, 25);
         for (int i = 0; i < 8; i++) Expand(STONE, H*25, H*90, 10, 1, 25, 25);
         for (int i = 0; i < 8; i++) Expand(STONE, H*50, H*90, 10, 1, 50, 50);
@@ -214,6 +229,11 @@ public:
         SeedLayer(COPPER, 1, H*25, H*50);
         SeedLayer(LEAD, 1, H*50, H*75);
         SeedLayer(TIN, 1, H*33, H*66);
+        SeedLayer(IRON, 1, H*20, H*60);
+        SeedLayer(COBALT, 1, H*30, H*60);
+        SeedLayer(NICKEL, 1, H*40, H*70);
+        SeedLayer(TITANIUM, 1, H*50, H*70);
+        SeedLayer(TUNGSTEN, 1, H*60, H*80);
 
         SeedLayer(RUBY, 1, H*40, H*50);
         SeedLayer(TOPAZ, 1, H*40, H*50);
@@ -222,13 +242,18 @@ public:
         SeedLayer(AMETHYST, 1, H*50, H*60);
         SeedLayer(SAPPHIRE, 1, H*50, H*60);
 
-        for (int i = 0; i < 8; i++) Deposit(PLATINUM, H*80, height, 25, 25, 25, 25);
-        for (int i = 0; i < 8; i++) Deposit(GOLD, H*75, H*90, 25, 25, 25, 25);
-        for (int i = 0; i < 16; i++) Deposit(SILVER, H*40, H*60, 25, 25, 25, 25);
-        for (int i = 0; i < 24; i++) Deposit(COPPER, H*25, H*50, 25, 25, 25, 25);
+        for (int i = 0; i < 4; i++) Deposit(PLATINUM, H*80, height, 25, 25, 25, 25);
+        for (int i = 0; i < 6; i++) Deposit(GOLD, H*75, H*90, 25, 25, 25, 25);
+        for (int i = 0; i < 8; i++) Deposit(SILVER, H*40, H*60, 25, 25, 25, 25);
+        for (int i = 0; i < 14; i++) Deposit(COPPER, H*25, H*50, 25, 25, 25, 25);
         for (int i = 0; i < 12; i++) Deposit(LEAD, H*50, H*80, 25, 25, 25, 25);
-        for (int i = 0; i < 8; i++) Deposit(TIN, H*33, H*66, 25, 25, 25, 25);
- 
+        for (int i = 0; i < 10; i++) Deposit(TIN, H*33, H*66, 25, 25, 25, 25);
+        for (int i = 0; i < 16; i++) Deposit(IRON, H*20, H*60, 25, 25, 25, 25);
+        for (int i = 0; i < 12; i++) Deposit(COBALT, H*30, H*60, 25, 25, 25, 25);
+        for (int i = 0; i < 12; i++) Deposit(NICKEL, H*40, H*70, 25, 25, 25, 25);
+        for (int i = 0; i < 10; i++) Deposit(TITANIUM, H*50, H*70, 25, 25, 25, 25);
+        for (int i = 0; i < 8; i++) Deposit(TUNGSTEN, H*60, H*80, 25, 25, 25, 25);
+
         for (int i = 0; i < 2; i++) Deposit(LAVA, H*95, height, 1, 100, 100, 100);
 
         SeedLayer(MANTLE, 100, H*92, height);
@@ -393,18 +418,20 @@ public:
                                     replace[rplc] = matrix[index];
                                     replace[index] = AIR;
                                 }
-                                else if (!Collision(x+X-1, y+Y) && Collision(x+X-1, y+Y+1))
+                                /*
+                                else if (!Collision(x+X-1, y+Y))
                                 {
                                     int rplc = (y+Y)*width+(x+X-1);
                                     replace[rplc] = matrix[index];
                                     replace[index] = AIR;
                                 }
-                                else if (!Collision(x+X+1, y+Y) && Collision(x+X+1, y+Y+1))
+                                else if (!Collision(x+X+1, y+Y))
                                 {
                                     int rplc = (y+Y)*width+(x+X+1);
                                     replace[rplc] = matrix[index];
                                     replace[index] = AIR;
                                 }
+                                */
                             };
                             break;
                         case GRAIN :
@@ -449,6 +476,7 @@ public:
                                     replace[rplc] = matrix[index];
                                     replace[index] = AIR;
                                 }
+                                /*
                                 else if (!Collision(x+X-1, y+Y))
                                 {
                                     int rplc = (y+Y)*width+(x+X-1);
@@ -461,6 +489,7 @@ public:
                                     replace[rplc] = matrix[index];
                                     replace[index] = AIR;
                                 }
+                                */
                             };
                             break;
                     }
