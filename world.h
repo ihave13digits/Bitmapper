@@ -161,9 +161,9 @@ public:
         {  {180, 200, 100, 255},    {15,  15,  10,  0}  },// Tin
         {  {140, 100, 100, 255},    {15,  10,  10,  0}  },// Iron
         {  {80,  100, 140, 255},    {4,   8,   10,  0}  },// Cobalt
-        {  {100,  100, 100, 255},    {4,   8,   10,  0}  },// Nickel
+        {  {100, 100, 100, 255},    {4,   8,   10,  0}  },// Nickel
         {  {100, 110, 120, 255},    {6,   8,   12,  0}  },// Titanium
-        {  {50, 55, 60, 255},    {6,   8,   12,  0}  },// Tungsten
+        {  {50,  55,  60,  255},    {6,   8,   12,  0}  },// Tungsten
         // Gemstones
         {  {230, 0,   0,   200},    {25,  1,   1,   0}  },// Ruby
         {  {230, 230, 0,   200},    {25,  25,  1,   0}  },// Topaz
@@ -172,7 +172,7 @@ public:
         {  {230, 0,   230, 200},    {25,  1,   25,  0}  },// Amethyst
         {  {0,   0,   230, 200},    {1,   1,   25,  0}  },// Sapphire
         // Unbreakable
-        {  {0,  0,  0,  255},    {25,  1,   1,   0}  },// Mantle
+        {  {0,   0,   0,   255},    {25,  1,   1,   0}  },// Mantle
     };
 
     std::vector<short> matrix;
@@ -399,99 +399,95 @@ public:
                     switch (cell_type)
                     {
                         case FLUID :
+                        {
+                            if (!Collision(x+X, y+Y+1))
                             {
-                                if (!Collision(x+X, y+Y+1))
-                                {
-                                    int rplc = (y+Y+1)*width+(x+X);
-                                    replace[rplc] = matrix[index];
-                                    replace[index] = AIR;
-                                }
-                                else if (!Collision(x+X-1, y+Y+1))
-                                {
-                                    int rplc = (y+Y+1)*width+(x+X-1);
-                                    replace[rplc] = matrix[index];
-                                    replace[index] = AIR;
-                                }
-                                else if (!Collision(x+X+1, y+Y+1))
-                                {
-                                    int rplc = (y+Y+1)*width+(x+X+1);
-                                    replace[rplc] = matrix[index];
-                                    replace[index] = AIR;
-                                }
-                                /*
-                                else if (!Collision(x+X-1, y+Y))
-                                {
-                                    int rplc = (y+Y)*width+(x+X-1);
-                                    replace[rplc] = matrix[index];
-                                    replace[index] = AIR;
-                                }
-                                else if (!Collision(x+X+1, y+Y))
-                                {
-                                    int rplc = (y+Y)*width+(x+X+1);
-                                    replace[rplc] = matrix[index];
-                                    replace[index] = AIR;
-                                }
-                                */
-                            };
-                            break;
-                        case GRAIN :
+                                int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░██░░
+                            }
+                            else if (!Collision(x+X-1, y+Y+1))
                             {
-                                if (!Collision(x+X, y+Y+1))
-                                {
-                                    int rplc = (y+Y+1)*width+(x+X);
-                                    replace[rplc] = matrix[index];
-                                    replace[index] = AIR;
-                                }
-                                else if (!Collision(x+X-1, y+Y+1))
-                                {
-                                    int rplc = (y+Y+1)*width+(x+X-1);
-                                    replace[rplc] = matrix[index];
-                                    replace[index] = AIR;
-                                }
-                                else if (!Collision(x+X+1, y+Y+1))
-                                {
-                                    int rplc = (y+Y+1)*width+(x+X+1);
-                                    replace[rplc] = matrix[index];
-                                    replace[index] = AIR;
-                                }
-                            };
-                            break;
-                        case GAS :
+                                int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ██░░░░
+                            }
+                            else if (!Collision(x+X+1, y+Y+1))
                             {
-                                if (!Collision(x+X, y+Y-1))
-                                {
-                                    int rplc = (y+Y-1)*width+(x+X);
-                                    replace[rplc] = matrix[index];
-                                    replace[index] = AIR;
-                                }
-                                else if (!Collision(x+X-1, y+Y-1))
-                                {
-                                    int rplc = (y+Y-1)*width+(x+X-1);
-                                    replace[rplc] = matrix[index];
-                                    replace[index] = AIR;
-                                }
-                                else if (!Collision(x+X+1, y+Y-1))
-                                {
-                                    int rplc = (y+Y-1)*width+(x+X+1);
-                                    replace[rplc] = matrix[index];
-                                    replace[index] = AIR;
-                                }
-                                /*
-                                else if (!Collision(x+X-1, y+Y))
-                                {
-                                    int rplc = (y+Y)*width+(x+X-1);
-                                    replace[rplc] = matrix[index];
-                                    replace[index] = AIR;
-                                }
-                                else if (!Collision(x+X+1, y+Y))
-                                {
-                                    int rplc = (y+Y)*width+(x+X+1);
-                                    replace[rplc] = matrix[index];
-                                    replace[index] = AIR;
-                                }
-                                */
-                            };
-                            break;
+                                int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░░░██
+                            }
+                            else if (!Collision(x+X-1, y+Y))
+                            {
+                                int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ██▓▓░░
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                            else if (!Collision(x+X+1, y+Y))
+                            {
+                                int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓██
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                        };
+                        break;
+                    case GRAIN :
+                        {
+                            if (!Collision(x+X, y+Y+1))
+                            {
+                                int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░██░░
+                            }
+                            else if (!Collision(x+X-1, y+Y+1))
+                            {
+                                int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ██░░░░
+                            }
+                            else if (!Collision(x+X+1, y+Y+1))
+                            {
+                                int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░░░██
+                            }
+                        };
+                        break;
+                    case GAS :
+                        {
+                            if (!Collision(x+X, y+Y-1))
+                            {
+                                int rplc = (y+Y-1)*width+(x+X);   // ░░██░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                            else if (!Collision(x+X-1, y+Y-1))
+                            {
+                                int rplc = (y+Y-1)*width+(x+X-1); // ██░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                            else if (!Collision(x+X+1, y+Y-1))
+                            {
+                                int rplc = (y+Y-1)*width+(x+X+1); // ░░░░██
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                            else if (!Collision(x+X-1, y+Y))
+                            {
+                                int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ██▓▓░░
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                            else if (!Collision(x+X+1, y+Y))
+                            {
+                                int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓██
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                        };
+                        break;
                     }
                 }
             }
