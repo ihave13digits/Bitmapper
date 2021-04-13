@@ -87,13 +87,9 @@ public:
             int x = sky.clouds[i][0];
             int y = sky.clouds[i][1];
             FillCircle(x, y, sky.clouds[i][2], olc::Pixel(sky.r, sky.g, sky.b, 8));
-            if ((i > 3) &&
-                (sky.humidity > sky.cloudcount/2) &&
-                ((sky.clouds[i][0] == sky.clouds[int(i/3)][0]) || (sky.clouds[i][0] == sky.clouds[int(i/2)][0])) &&
-                (rand()%100 < 25))
+            if ((sky.humidity > sky.cloudcount/2) && (rand()%100 < 2))
             {
-                world.matrix[y*world.width+(x+player.x)] = world.WATER;
-                sky.clouds[i][0] += sky.wind;
+                world.matrix[y*world.width+(x+player.x-(width/2))] = world.WATER;
             }
         }
         SetPixelMode(olc::Pixel::NORMAL);
@@ -210,6 +206,7 @@ public:
         //DrawStringDecal({ 4,20 }, "Standing On: " + standingon, olc::WHITE, { font, font });
         DrawStringDecal({ 4,4 }, "Looking At: " + lookingat, olc::WHITE, { font, font });
         DrawStringDecal({ 4,8 }, "Selected Tile: " + selectedtile, olc::WHITE, { font, font });
+        DrawStringDecal({ 4,12 }, "Collision: " + std::to_string(world.Collision((player.x-(width/2)+GetMouseX()), (player.y-(height/2)+GetMouseY()))), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,32 }, "Light: " + std::to_string(sky.time), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,36 }, "Hue: " + std::to_string(sky.hue), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,40 }, "Clouds: " + std::to_string(sky.humidity), olc::WHITE, { font, font });
@@ -229,6 +226,7 @@ public:
             world.GenerateWorld(world_width, world_height, game_seed);
             player.x = int(world.width/2);
             player.y = 0;
+            while (!world.Collision(player.x, player.y+1)) player.Move(0, 1);
             loading = false;
             game_state = PLAYING;
         }
@@ -251,8 +249,7 @@ public:
         // Vertical Movement
         if (GetKey(olc::Key::W).bHeld && !world.Collision(player.x, player.y-1) && player.y > 0)
         {
-            if ((player.jp > 0) &&
-                (player.y > width/2) )
+            if ((player.jp > 0) && (player.y > 0) )
             {
                 player.jp--;
                 player.vy = -1;
@@ -270,27 +267,43 @@ public:
             player.state = player.IDLE;
         }
 
-        if (!world.Collision(player.x, player.y+1))
+        if (!world.Collision(player.x, player.y+1) && player.state != player.JUMP)
         {
-            if (player.state != player.JUMP)
-            {
-                player.vy = 1;
-                player.state = player.FALL;
-            }
+            player.vy = 1;
+            player.state = player.FALL;
         }
     
         // Horizontal Movement
-        if (GetKey(olc::Key::A).bHeld && !world.Collision(player.x-1, player.y) && player.x > width/2)
+        if (GetKey(olc::Key::A).bHeld && player.x > width/2)
         {
             if (player.state != player.FALL && player.state != player.JUMP) player.vy = 0;
-            player.vx = -1;
-            player.state = player.WALK;
+            if (!world.Collision(player.x-1, player.y))
+            {
+                player.state = player.WALK;
+                player.vx = -1;
+            }
+            else if (world.Collision(player.x-1, player.y) && !world.Collision(player.x-1, player.y-1))
+            {
+                player.state = player.WALK;
+                player.vx = -1;
+                player.Move(0, -1);
+            }
         }
-        if (GetKey(olc::Key::D).bHeld && !world.Collision(player.x+1, player.y) && player.x < world.width-(width/2))
+        if (GetKey(olc::Key::D).bHeld && player.x < world.width-(width/2))
         {
             if (player.state != player.FALL && player.state != player.JUMP) player.vy = 0;
-            player.vx = 1;
-            player.state = player.WALK;
+            if (!world.Collision(player.x+1, player.y))
+            {
+                player.state = player.WALK;
+                player.vx = 1;
+
+            }
+            else if (world.Collision(player.x+1, player.y) && !world.Collision(player.x+1, player.y-1))
+            {
+                player.state = player.WALK;
+                player.vx = 1;
+                player.Move(0, -1);
+            }
         }
 
         if (GetKey(olc::Key::A).bReleased)
@@ -307,6 +320,7 @@ public:
         // For Fun
         if (GetKey(olc::Key::T).bHeld) player.state = player.TRIP;
 
+        // Update World
         if (game_tick == tick_delay)
         {
             DrawSky();
@@ -315,6 +329,7 @@ public:
             DrawTerrain();
         }
 
+        // Update Player
         if (player.tick == player.tick_delay)
         {
             player.tick = 0;
