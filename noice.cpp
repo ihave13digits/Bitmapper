@@ -65,7 +65,7 @@ public:
     void DrawSky()
     {
         sky.Update();
-        if (player.state != player.TRIP) Clear(olc::Pixel(sky.R, sky.G, sky.B));
+        if (player.status != player.TRIP) Clear(olc::Pixel(sky.R, sky.G, sky.B));
         
         if (sky.starlight > 0)
         {
@@ -192,6 +192,7 @@ public:
 
         int lookindex = (player.y-(height/2)+GetMouseY())*world.width+(player.x-(width/2)+GetMouseX());
 
+        std::string health = std::to_string(player.hp)+"/"+std::to_string(player.HP);
         std::string standingon = world.tiles[world.matrix[(player.y+1)*world.width+player.x]];
         std::string lookingat = "Air";
         std::string selectedtile = world.tiles[selected_tile];
@@ -204,9 +205,10 @@ public:
         //DrawStringDecal({ 4,12 }, "State: " + std::to_string(player.state), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,16 }, "Position: (" + std::to_string(player.x) + ", " + std::to_string(player.y) + ")", olc::WHITE, { font, font });
         //DrawStringDecal({ 4,20 }, "Standing On: " + standingon, olc::WHITE, { font, font });
-        DrawStringDecal({ 4,4 }, "Looking At: " + lookingat, olc::WHITE, { font, font });
-        DrawStringDecal({ 4,8 }, "Selected Tile: " + selectedtile, olc::WHITE, { font, font });
-        DrawStringDecal({ 4,12 }, "Collision: " + std::to_string(world.Collision((player.x-(width/2)+GetMouseX()), (player.y-(height/2)+GetMouseY()))), olc::WHITE, { font, font });
+        DrawStringDecal({ 4,4  }, "HP: " + health, olc::WHITE, { font, font });
+        DrawStringDecal({ 4,8  }, "Looking At: " + lookingat, olc::WHITE, { font, font });
+        DrawStringDecal({ 4,12 }, "Selected Tile: " + selectedtile, olc::WHITE, { font, font });
+        DrawStringDecal({ 4,16 }, "Collision: " + std::to_string(world.Collision((player.x-(width/2)+GetMouseX()), (player.y-(height/2)+GetMouseY()))), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,32 }, "Light: " + std::to_string(sky.time), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,36 }, "Hue: " + std::to_string(sky.hue), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,40 }, "Clouds: " + std::to_string(sky.humidity), olc::WHITE, { font, font });
@@ -318,7 +320,7 @@ public:
         }
 
         // For Fun
-        if (GetKey(olc::Key::T).bHeld) player.state = player.TRIP;
+        if (GetKey(olc::Key::T).bHeld) player.status = player.TRIP;
 
         // Update World
         if (game_tick == tick_delay)
@@ -333,7 +335,34 @@ public:
         if (player.tick == player.tick_delay)
         {
             player.tick = 0;
+            // Check Death
+            if (player.hp < 1) player.hp = player.HP;
+            // Tile Effects
+            switch (world.matrix[(player.y+1)*world.width+player.x])
+            {
+                case world.LAVA:
+                {
+                    player.status = player.BURN;
+                }
+            }
+            // Update Counters
             if (player.jp < player.JP && player.state != player.JUMP) player.jp++;
+            // Update Tick Damage
+            if (player.status != player.FINE) player.damage_tick++;
+            if (player.damage_tick > player.damage_delay)
+            {
+                player.damage_tick = 0;
+                if (player.status == player.BURN)
+                {
+                    player.TakeDamage(1);
+                    player.burn_tick++;
+                    if (player.burn_tick > 25)
+                    {
+                        player.burn_tick = 0;
+                        player.status = player.FINE;
+                    }
+                }
+            }
             if (!world.Collision(player.x+player.vx, player.y+player.vy)) player.Move(player.vx, player.vy);
             DrawPlayer();
         }
