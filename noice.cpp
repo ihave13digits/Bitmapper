@@ -220,7 +220,8 @@ public:
         //DrawStringDecal({ 4,12 }, "State: " + std::to_string(player.state), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,16 }, "Position: (" + std::to_string(player.x) + ", " + std::to_string(player.y) + ")", olc::WHITE, { font, font });
         //DrawStringDecal({ 4,20 }, "Standing On: " + standingon, olc::WHITE, { font, font });
-        DrawStringDecal({ 4,4  }, "HP: " + health, olc::WHITE, { font, font });
+        ProgressBar(4, 2, player.hp, player.HP, 32);
+        ProgressBar(4, 4, player.jp, player.JP, 32);
         DrawStringDecal({ 4,8  }, "Looking At: " + lookingat, olc::WHITE, { font, font });
         DrawStringDecal({ 4,12 }, "Selected Tile: " + selectedtile, olc::WHITE, { font, font });
         DrawStringDecal({ 4,16 }, "Collision: " + std::to_string(world.Collision((player.x-(width/2)+GetMouseX()), (player.y-(height/2)+GetMouseY()))), olc::WHITE, { font, font });
@@ -228,6 +229,14 @@ public:
         //DrawStringDecal({ 4,36 }, "Hue: " + std::to_string(sky.hue), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,40 }, "Clouds: " + std::to_string(sky.humidity), olc::WHITE, { font, font });
 
+    }
+
+    void ProgressBar(int x, int y, int minv, int maxv, int W)
+    {
+        float completed = float(minv)/float(maxv);
+        int x2 = W*completed;
+        DrawLine(x, y, x+W, y, olc::VERY_DARK_GREY);
+        DrawLine(x, y, x+x2, y, olc::WHITE);
     }
 
     void DrawLoading()
@@ -241,11 +250,11 @@ public:
         DrawStringDecal({ msg_x, msg_y }, message, olc::WHITE, { 0.5, 0.5 });
         
         // Progress Bar
-        float completed = float(world.generation_step)/float(world.generation_steps);
-        int prog_x1 = (width/2)-(width/4);
-        int prog_x2 = (width/2)*completed;
+        //float completed = float(world.generation_step)/float(world.generation_steps);
+        int prog_x = (width/2)-(width/4);
         int prog_y = (height/2)+4;
-        DrawLine(prog_x1, prog_y, prog_x1+prog_x2, prog_y, olc::WHITE);
+        //DrawLine(prog_x1, prog_y, prog_x1+prog_x2, prog_y, olc::WHITE);
+        ProgressBar(prog_x, prog_y, world.generation_step, world.generation_steps, width/2);
 
         if (loading)
         {
