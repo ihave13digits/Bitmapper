@@ -11,7 +11,7 @@ public:
 
     // Terrain Tiles
 
-    int total_tiles = 40;
+    int total_tiles = 41;
 
     enum TYPES
     {
@@ -37,6 +37,7 @@ public:
         DIRT,
         SOIL,
         CLAY,
+        ASBESTOS,
         OBSIDIAN,
         STONE,
         GRANITE,
@@ -72,7 +73,7 @@ public:
         MANTLE
     };
 
-    std::string tiles[40] = {
+    std::string tiles[41] = {
         //
         "Air",
         "Steam",
@@ -87,6 +88,7 @@ public:
         "Dirt",
         "Soil",
         "Clay",
+        "Asbestos",
         "Obsidian",
         "Stone",
         "Granite",
@@ -123,7 +125,7 @@ public:
         "Mantle"
     };
 
-    int tileset[40][2][4] = {
+    int tileset[41][2][4] = {
         // |Base Color        |     |Variation       |
         // Gases
         {  {200, 200, 230, 5  },    {1,   1,   25,  0}  },// Air
@@ -139,6 +141,7 @@ public:
         {  {80,  64,  32,  255},    {8,   4,   2,   0}  },// Dirt
         {  {32,  24,  16,  255},    {8,   4,   2,   0}  },// Soil
         {  {160, 80,  20,  255},    {8,   4,   1,   0}  },// Clay
+        {  {128, 128, 128, 255},    {1,   10,  15,  0}  },// Asbestos
         {  {32,  16,  8,   255},    {15,  1,   1,   0}  },// Obsidian
         {  {64,  64,  64,  255},    {5,   5,   10,  0}  },// Stone
         {  {80,  80,  80,  255},    {5,   5,   15,  0}  },// Granite
@@ -172,7 +175,7 @@ public:
         {  {230, 0,   230, 200},    {25,  1,   25,  0}  },// Amethyst
         {  {0,   0,   230, 200},    {1,   1,   25,  0}  },// Sapphire
         // Unbreakable
-        {  {0,   0,   0,   255},    {25,  1,   1,   0}  },// Mantle
+        {  {25,   20,   20,   255},    {25,  1,   1,   0}  },// Mantle
     };
 
     std::vector<short> matrix;
@@ -332,10 +335,10 @@ public:
                     int e = y*width+(x+1);
                     int w = y*width+(x-1);
 
-                    if (matrix[n] == AIR && rand()%100 < dn) replace[n] = t;
-                    if (matrix[s] == AIR && rand()%100 < ds) replace[s] = t;
-                    if (matrix[e] == AIR && rand()%100 < de) replace[e] = t;
-                    if (matrix[w] == AIR && rand()%100 < dw) replace[w] = t;
+                    if (rand()%100 < dn) replace[n] = t;
+                    if (rand()%100 < ds) replace[s] = t;
+                    if (rand()%100 < de) replace[e] = t;
+                    if (rand()%100 < dw) replace[w] = t;
                 }
             }
         }
@@ -378,10 +381,33 @@ public:
         {
             for (int x = 0; x < W; x++)
             {
+                // Spread Grass
+                int index = (y+Y)*width+(x+X);
+                if (matrix[index] == GRASS)
+                {
+                    if (rand()%1000 < 5)
+                    {
+                        int dNE = int( (y+Y-1)*width+(x+X+1) );
+                        int dNW = int( (y+Y-1)*width+(x+X-1) );
+                        int dE = int( (y+Y)*width+(x+X+1) );
+                        int dW = int( (y+Y)*width+(x+X-1) );
+                        int dSE = int( (y+Y+1)*width+(x+X+1) );
+                        int dSW = int( (y+Y+1)*width+(x+X-1) );
+                        
+                        if (matrix[dE] == DIRT && !Collision(x+X+1, y+Y-1)) replace[dE] = GRASS;
+                        else if (matrix[dW] == DIRT && !Collision(x+X-1, y+Y-1)) replace[dW] = GRASS;
+
+                        else if (matrix[dNE] == DIRT && !Collision(x+X+1, y+Y-2)) replace[dNE] = GRASS;
+                        else if (matrix[dNW] == DIRT && !Collision(x+X-1, y+Y-2)) replace[dNW] = GRASS;
+                        
+                        else if (matrix[dSE] == DIRT && !Collision(x+X+1, y+Y)) replace[dSE] = GRASS;
+                        else if (matrix[dSW] == DIRT && !Collision(x+X-1, y+Y)) replace[dSW] = GRASS;
+                    }
+                }
+                // Update Moving Tiles
                 int cell_type = SOLID;
                 if ( (y+Y > 0 && y+Y < height-1) && Collision(x+X, y+Y) )
                 {
-                    int index = (y+Y)*width+(x+X);
                     switch (matrix[index])
                     {
                         case LAVA : cell_type = FLUID; break;
