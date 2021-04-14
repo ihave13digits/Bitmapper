@@ -7,6 +7,7 @@ public:
         FINE,
         HURT,
         BURN,
+        COLD,
         STUN,
         TRIP,
         POISON,
@@ -38,6 +39,8 @@ public:
 
     int vx = 0;
     int vy = 0;
+
+    int height = 1;
 
     int HP = 100;
     int hp = 100;

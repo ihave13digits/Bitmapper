@@ -72,7 +72,7 @@ public:
             SetPixelMode(olc::Pixel::ALPHA);
             for (int i = 0; i < sky.starcount; i++)
             {
-                int value = rand()%200+55;
+                int value = rand()%220+35;
                 Draw(sky.stars[i][0], sky.stars[i][1], olc::Pixel(value, value, value, 255-sky.starlight));
             }
             SetPixelMode(olc::Pixel::NORMAL);
@@ -159,7 +159,22 @@ public:
 
     void DrawPlayer()
     {
-        Draw(int(width/2), int(height/2), olc::Pixel(255, 255, 255, 255));
+        int r = 0;
+        int g = 0;
+        int b = 0;
+        switch (player.status)
+        {
+            case player.FINE :     {r=255; g=255; b=255;} break;
+            case player.HURT :     {r=255; g=128; b=0  ;} break;
+            case player.BURN :     {r=255; g=0  ; b=0  ;} break;
+            case player.COLD :     {r=128; g=128; b=255;} break;
+            case player.STUN :     {r=255; g=255; b=0  ;} break;
+            case player.TRIP :     {r=0;   g=255; b=255;} break;
+            case player.POISON :   {r=0;   g=255; b=0;  } break;
+            case player.CONFUSED : {r=128; g=128; b=128;} break;
+
+        }
+        DrawLine(int(width/2), int(height/2), int(width/2), int(height/2)-player.height, olc::Pixel(r, g, b));
     }
 
     void DrawParticles(float delta)
@@ -249,9 +264,11 @@ public:
         if (GetKey(olc::Key::E).bPressed && selected_tile > 0) selected_tile--;
 
         // Vertical Movement
-        if (GetKey(olc::Key::W).bHeld && !world.Collision(player.x, player.y-1) && player.y > 0)
+        if (GetKey(olc::Key::W).bHeld)
         {
-            if ((player.jp > 0) && (player.y > 0) )
+            if ((!world.Collision(player.x, player.y-player.height)) &&
+                (player.jp > 0) &&
+                (player.y > 0) )
             {
                 player.jp--;
                 player.vy = -1;
