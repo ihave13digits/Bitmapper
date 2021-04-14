@@ -232,20 +232,34 @@ public:
 
     void DrawLoading()
     {
-        float x = width/2-(15*4);
-        float y = (height/2)-4;
         Clear(olc::BLACK);
-        DrawStringDecal({ x,y  }, "Generating World, Please Wait.", olc::WHITE, { 0.5, 0.5 });
+        
+        // Show Message
+        float msg_x = width/2-(15*4);
+        float msg_y = (height/2)-4;
+        std::string message = "Generating World, Please Wait.";
+        DrawStringDecal({ msg_x, msg_y }, message, olc::WHITE, { 0.5, 0.5 });
+        
+        // Progress Bar
+        float completed = float(world.generation_step)/float(world.generation_steps);
+        int prog_x1 = (width/2)-(width/4);
+        int prog_x2 = (width/2)*completed;
+        int prog_y = (height/2)+4;
+        DrawLine(prog_x1, prog_y, prog_x1+prog_x2, prog_y, olc::WHITE);
 
         if (loading)
         {
-            sky.GenerateSky(width, height, game_seed, tick_delay);
             world.GenerateWorld(world_width, world_height, game_seed);
-            player.x = int(world.width/2);
-            player.y = 0;
-            while (!world.Collision(player.x, player.y+1)) player.Move(0, 1);
-            loading = false;
-            game_state = PLAYING;
+            
+            if (world.generation_step > world.generation_steps)
+            {
+                sky.GenerateSky(width, height, game_seed, tick_delay);
+                player.x = int(world.width/2);
+                player.y = 0;
+                while (!world.Collision(player.x, player.y+1)) player.Move(0, 1);
+                loading = false;
+                game_state = PLAYING;
+            }
         }
         if (!loading) loading = true;
     }

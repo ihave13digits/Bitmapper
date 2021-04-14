@@ -11,7 +11,10 @@ public:
 
     // Terrain Tiles
 
-    int total_tiles = 42;
+    int total_tiles = 44;
+
+    int generation_step = 1;
+    int generation_steps = 12;
 
     enum TYPES
     {
@@ -38,6 +41,8 @@ public:
         SOIL,
         CLAY,
         BONE,
+        FOSSIL,
+        SLATE,
         ASBESTOS,
         OBSIDIAN,
         STONE,
@@ -74,7 +79,7 @@ public:
         MANTLE
     };
 
-    std::string tiles[42] = {
+    std::string tiles[44] = {
         //
         "Air",
         "Steam",
@@ -90,6 +95,8 @@ public:
         "Soil",
         "Clay",
         "Bone",
+        "Fossil",
+        "Slate",
         "Asbestos",
         "Obsidian",
         "Stone",
@@ -127,7 +134,7 @@ public:
         "Mantle"
     };
 
-    int tileset[42][2][4] = {
+    int tileset[44][2][4] = {
         // |Base Color        |     |Variation       |
         // Gases
         {  {200, 200, 230, 5  },    {1,   1,   25,  0}  },// Air
@@ -144,7 +151,9 @@ public:
         {  {32,  24,  16,  255},    {8,   4,   2,   0}  },// Soil
         {  {160, 80,  20,  255},    {8,   4,   1,   0}  },// Clay
         {  {240, 240, 200, 255},    {15,  15,  1,   0}  },// Bone
-        {  {64, 132, 148, 255},    {1,   15,  25,  0}  },// Asbestos
+        {  {20,  15,  10,  255},    {10,  5,   1,   0}  },// Fossil
+        {  {120, 100, 80,  255},    {25,  20,  10,  0}  },// Slate
+        {  {64,  132, 148, 255},    {1,   15,  25,  0}  },// Asbestos
         {  {32,  16,  8,   255},    {15,  1,   1,   0}  },// Obsidian
         {  {64,  64,  64,  255},    {5,   5,   10,  0}  },// Stone
         {  {80,  80,  80,  255},    {5,   5,   15,  0}  },// Granite
@@ -186,8 +195,7 @@ public:
 
 
 
-    // Class Methods //
-
+    // Generation Method
     void GenerateWorld(int w, int h, int seed)
     {
         srand(seed);
@@ -195,81 +203,116 @@ public:
         width = w;
         height = h;
 
-        for (int x = 0; x < width; x++)
+        if (generation_step == 1)
         {
-            for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
             {
-                matrix.push_back(AIR);
-                replace.push_back(AIR);
+                for (int y = 0; y < height; y++)
+                {
+                    matrix.push_back(AIR);
+                    replace.push_back(AIR);
+                }
             }
         }
 
         int H = int(height/100);
 
-        AddLayer(STONE, 2,  H*25,  H*90);
-        AddLayer(LAVA, 100,  H*95,  height);
-        for (int i = 0; i < 8; i++) Expand(STONE, H*10, H*90, 10, 1, 25, 25);
-        for (int i = 0; i < 8; i++) Expand(STONE, H*25, H*90, 10, 1, 25, 25);
-        for (int i = 0; i < 8; i++) Expand(STONE, H*50, H*90, 10, 1, 50, 50);
-        for (int i = 0; i < 8; i++) Expand(STONE, H*75, H*90, 10, 1, 75, 75);
+        if (generation_step == 2)
+        {
+            AddLayer(STONE, 2,  H*25,  H*90);
+            AddLayer(LAVA, 100,  H*95,  height);
+        }
+        if (generation_step == 3)
+        {
+            for (int i = 0; i < 8; i++) Expand(STONE, H*10, H*90, 10, 1, 25, 25);
+            for (int i = 0; i < 8; i++) Expand(STONE, H*25, H*90, 10, 1, 25, 25);
+            for (int i = 0; i < 8; i++) Expand(STONE, H*50, H*90, 10, 1, 50, 50);
+            for (int i = 0; i < 8; i++) Expand(STONE, H*75, H*90, 10, 1, 75, 75);
+        }
 
-        for (int i = 0; i < 4; i++) Expand(SOIL, H*15, H*50, 25, 100, 75, 75);
-        for (int i = 0; i < 4; i++) Expand(SOIL, H*24, H*40, 25, 50, 75, 75);
-        for (int i = 0; i < 4; i++) Expand(DIRT, H*35, H*90, 25, 25, 25, 25);
-        for (int i = 0; i < 4; i++) Expand(DIRT, H*70, H*90, 25, 5, 25, 25);
+        if (generation_step == 4)
+        {
+            for (int i = 0; i < 4; i++) Expand(SOIL, H*15, H*50, 25, 100, 75, 75);
+            for (int i = 0; i < 4; i++) Expand(SOIL, H*24, H*40, 25, 50, 75, 75);
+            for (int i = 0; i < 4; i++) Expand(DIRT, H*35, H*90, 25, 25, 25, 25);
+            for (int i = 0; i < 4; i++) Expand(DIRT, H*70, H*90, 25, 5, 25, 25);
+        }
 
-        for (int i = 0; i < 12; i++) Expand(DIRT, H*8, H*50, 25, 100, 75, 75);
-        for (int i = 0; i < 12; i++) Expand(DIRT, H*16, H*40, 25, 50, 75, 75);
-        for (int i = 0; i < 12; i++) Expand(MUD, H*32, H*90, 25, 25, 25, 25);
-        for (int i = 0; i < 12; i++) Expand(MUD, H*64, H*90, 25, 5, 25, 25);
+        if (generation_step == 5)
+        {
+            for (int i = 0; i < 12; i++) Expand(DIRT, H*8, H*50, 25, 100, 75, 75);
+            for (int i = 0; i < 12; i++) Expand(DIRT, H*16, H*40, 25, 50, 75, 75);
+            for (int i = 0; i < 12; i++) Expand(MUD, H*32, H*90, 25, 25, 25, 25);
+            for (int i = 0; i < 12; i++) Expand(MUD, H*64, H*90, 25, 5, 25, 25);
+        }
+            if (generation_step == 6)
+        {
+            for (int i = 0; i < 8; i++) Expand(GRAVEL, H*33, H*90, 10, 1, 50, 50);
+            for (int i = 0; i < 8; i++) Expand(GRAVEL, H*66, H*90, 10, 1, 50, 50);
+            for (int i = 0; i < 8; i++) Expand(GRAVEL, H*80, H*90, 10, 1, 50, 50);
+        }
 
-        for (int i = 0; i < 8; i++) Expand(GRAVEL, H*33, H*90, 10, 1, 50, 50);
-        for (int i = 0; i < 8; i++) Expand(GRAVEL, H*66, H*90, 10, 1, 50, 50);
-        for (int i = 0; i < 8; i++) Expand(GRAVEL, H*80, H*90, 10, 1, 50, 50);
+        if (generation_step == 7)
+        {
+            Expand(GRASS, 0, H*32, 100, 0, 25, 25);
+        }
 
-        Expand(GRASS, 0, H*32, 100, 0, 25, 25);
+        if (generation_step == 8)
+        {
+            SeedLayer(PLATINUM, 1, H*70, H*90);
+            SeedLayer(GOLD, 1, H*60, H*80);
+            SeedLayer(SILVER, 1, H*50, H*75);
+            SeedLayer(COPPER, 1, H*25, H*50);
+            SeedLayer(LEAD, 1, H*50, H*75);
+            SeedLayer(TIN, 1, H*33, H*66);
+            SeedLayer(IRON, 1, H*20, H*60);
+            SeedLayer(COBALT, 1, H*30, H*60);
+            SeedLayer(NICKEL, 1, H*40, H*70);
+            SeedLayer(TITANIUM, 1, H*50, H*70);
+            SeedLayer(TUNGSTEN, 1, H*60, H*80);
+        }
 
-        SeedLayer(PLATINUM, 1, H*70, H*90);
-        SeedLayer(GOLD, 1, H*60, H*80);
-        SeedLayer(SILVER, 1, H*50, H*75);
-        SeedLayer(COPPER, 1, H*25, H*50);
-        SeedLayer(LEAD, 1, H*50, H*75);
-        SeedLayer(TIN, 1, H*33, H*66);
-        SeedLayer(IRON, 1, H*20, H*60);
-        SeedLayer(COBALT, 1, H*30, H*60);
-        SeedLayer(NICKEL, 1, H*40, H*70);
-        SeedLayer(TITANIUM, 1, H*50, H*70);
-        SeedLayer(TUNGSTEN, 1, H*60, H*80);
+        if (generation_step == 9)
+        {
+            SeedLayer(RUBY, 1, H*40, H*50);
+            SeedLayer(TOPAZ, 1, H*40, H*50);
+            SeedLayer(DIAMOND, 1, H*45, H*55);
+            SeedLayer(EMERALD, 1, H*45, H*55);
+            SeedLayer(AMETHYST, 1, H*50, H*60);
+            SeedLayer(SAPPHIRE, 1, H*50, H*60);
+        }
 
-        SeedLayer(RUBY, 1, H*40, H*50);
-        SeedLayer(TOPAZ, 1, H*40, H*50);
-        SeedLayer(DIAMOND, 1, H*45, H*55);
-        SeedLayer(EMERALD, 1, H*45, H*55);
-        SeedLayer(AMETHYST, 1, H*50, H*60);
-        SeedLayer(SAPPHIRE, 1, H*50, H*60);
-
-        for (int i = 0; i < 4; i++) Deposit(PLATINUM, H*80, height, 25, 25, 25, 25);
-        for (int i = 0; i < 6; i++) Deposit(GOLD, H*75, H*90, 25, 25, 25, 25);
-        for (int i = 0; i < 8; i++) Deposit(SILVER, H*40, H*60, 25, 25, 25, 25);
-        for (int i = 0; i < 14; i++) Deposit(COPPER, H*25, H*50, 25, 25, 25, 25);
-        for (int i = 0; i < 12; i++) Deposit(LEAD, H*50, H*80, 25, 25, 25, 25);
-        for (int i = 0; i < 10; i++) Deposit(TIN, H*33, H*66, 25, 25, 25, 25);
-        for (int i = 0; i < 16; i++) Deposit(IRON, H*20, H*60, 25, 25, 25, 25);
-        for (int i = 0; i < 12; i++) Deposit(COBALT, H*30, H*60, 25, 25, 25, 25);
-        for (int i = 0; i < 12; i++) Deposit(NICKEL, H*40, H*70, 25, 25, 25, 25);
-        for (int i = 0; i < 10; i++) Deposit(TITANIUM, H*50, H*70, 25, 25, 25, 25);
-        for (int i = 0; i < 8; i++) Deposit(TUNGSTEN, H*60, H*80, 25, 25, 25, 25);
-
-        for (int i = 0; i < 2; i++) Deposit(LAVA, H*95, height, 1, 100, 100, 100);
-
-        SeedLayer(MANTLE, 100, H*92, height);
-        for (int i = 0; i < 8; i++) Deposit(MANTLE, H*85, height, 1, 5, 75, 75);
-        for (int i = 0; i < 8; i++) Deposit(MANTLE, H*90, height, 5, 15, 50, 50);
-        for (int i = 0; i < 8; i++) Deposit(MANTLE, H*95, height, 10, 25, 25, 25);
-        for (int i = 0; i < 8; i++) Deposit(MANTLE, H*97, height, 10, 50, 50, 50);
-        for (int i = 0; i < 8; i++) Deposit(MANTLE, H*99, height, 10, 75, 100, 100);
+        if (generation_step == 10)
+        {
+            for (int i = 0; i < 4; i++) Deposit(PLATINUM, H*80, height, 25, 25, 25, 25);
+            for (int i = 0; i < 6; i++) Deposit(GOLD, H*75, H*90, 25, 25, 25, 25);
+            for (int i = 0; i < 8; i++) Deposit(SILVER, H*40, H*60, 25, 25, 25, 25);
+            for (int i = 0; i < 14; i++) Deposit(COPPER, H*25, H*50, 25, 25, 25, 25);
+            for (int i = 0; i < 12; i++) Deposit(LEAD, H*50, H*80, 25, 25, 25, 25);
+            for (int i = 0; i < 10; i++) Deposit(TIN, H*33, H*66, 25, 25, 25, 25);
+            for (int i = 0; i < 16; i++) Deposit(IRON, H*20, H*60, 25, 25, 25, 25);
+            for (int i = 0; i < 12; i++) Deposit(COBALT, H*30, H*60, 25, 25, 25, 25);
+            for (int i = 0; i < 12; i++) Deposit(NICKEL, H*40, H*70, 25, 25, 25, 25);
+            for (int i = 0; i < 10; i++) Deposit(TITANIUM, H*50, H*70, 25, 25, 25, 25);
+            for (int i = 0; i < 8; i++) Deposit(TUNGSTEN, H*60, H*80, 25, 25, 25, 25);
+        }
+        if (generation_step == 11)
+        {
+            for (int i = 0; i < 2; i++) Deposit(LAVA, H*95, height, 1, 100, 100, 100);
+        }
+        if (generation_step == 12)
+        {
+            SeedLayer(MANTLE, 100, H*92, height);
+            for (int i = 0; i < 8; i++) Deposit(MANTLE, H*85, height, 1, 5, 75, 75);
+            for (int i = 0; i < 8; i++) Deposit(MANTLE, H*90, height, 5, 15, 50, 50);
+            for (int i = 0; i < 8; i++) Deposit(MANTLE, H*95, height, 10, 25, 25, 25);
+            for (int i = 0; i < 8; i++) Deposit(MANTLE, H*97, height, 10, 50, 50, 50);
+            for (int i = 0; i < 8; i++) Deposit(MANTLE, H*99, height, 10, 75, 100, 100);
+        }
+        generation_step++;
     }
 
+    // Seed Methods
     void AddLayer(int t, int density, int ymin, int ymax)
     {
         for (int y = ymin; y < ymax; y++)
@@ -293,6 +336,7 @@ public:
         }
     }
 
+    // Deposition Methods
     void Expand(int t, int miny, int maxy, int dn=5, int ds=5, int de=25, int dw=25)
     {
         replace = matrix;
@@ -376,6 +420,7 @@ public:
         matrix = replace;
     }
 
+    // Update Method
     void SettleTiles(int X, int Y, int W, int H)
     {
         replace = matrix;
@@ -524,6 +569,7 @@ public:
         matrix = replace;
     }
 
+    // Return Methods
     int Neighbors(int x, int y)
     {
         int value = 0;
