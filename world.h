@@ -11,7 +11,7 @@ public:
 
     // Terrain Tiles
 
-    int total_tiles = 41;
+    int total_tiles = 42;
 
     enum TYPES
     {
@@ -37,6 +37,7 @@ public:
         DIRT,
         SOIL,
         CLAY,
+        BONE,
         ASBESTOS,
         OBSIDIAN,
         STONE,
@@ -73,7 +74,7 @@ public:
         MANTLE
     };
 
-    std::string tiles[41] = {
+    std::string tiles[42] = {
         //
         "Air",
         "Steam",
@@ -88,6 +89,7 @@ public:
         "Dirt",
         "Soil",
         "Clay",
+        "Bone",
         "Asbestos",
         "Obsidian",
         "Stone",
@@ -125,7 +127,7 @@ public:
         "Mantle"
     };
 
-    int tileset[41][2][4] = {
+    int tileset[42][2][4] = {
         // |Base Color        |     |Variation       |
         // Gases
         {  {200, 200, 230, 5  },    {1,   1,   25,  0}  },// Air
@@ -141,7 +143,8 @@ public:
         {  {80,  64,  32,  255},    {8,   4,   2,   0}  },// Dirt
         {  {32,  24,  16,  255},    {8,   4,   2,   0}  },// Soil
         {  {160, 80,  20,  255},    {8,   4,   1,   0}  },// Clay
-        {  {128, 128, 128, 255},    {1,   10,  15,  0}  },// Asbestos
+        {  {240, 240, 200, 255},    {15,  15,  1,   0}  },// Bone
+        {  {64, 132, 148, 255},    {1,   15,  25,  0}  },// Asbestos
         {  {32,  16,  8,   255},    {15,  1,   1,   0}  },// Obsidian
         {  {64,  64,  64,  255},    {5,   5,   10,  0}  },// Stone
         {  {80,  80,  80,  255},    {5,   5,   15,  0}  },// Granite
