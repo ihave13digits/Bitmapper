@@ -10,7 +10,7 @@ public:
     float hue = -0.5;
     float time = 1.0;
     float move = 1.0;
-    float delta = 0.001;
+    float delta = 0.0001;
 
     int width = 0;
     int height = 0;
@@ -18,6 +18,10 @@ public:
     float wind = 0.0;
     float breeze = 0.0;
     float wind_delay = 1.0;
+
+    int day = 0;
+    int year = 0;
+    int year_length = 364;
 
     int R = 0;
     int G = 0;
@@ -35,10 +39,10 @@ public:
     int moony = 16;
 
     int starlight = 255;
-    int starcount = 32;
+    int starcount = 256;
     int cloudcount = 1024;
-    int humidity = 512;
-    int stars[32][2];
+    int humidity = 256;
+    int stars[256][2];
     int clouds[1024][3];
 
     void GenerateSky(int W, int H, int seed=0, int spd=1)
@@ -49,8 +53,8 @@ public:
         srand(seed);
         for (int i = 0; i < starcount; i++)
         {
-            stars[i][0] = rand() % W;
-            stars[i][1] = rand() % H;
+            stars[i][0] = rand() % year_length*2;
+            stars[i][1] = rand() % year_length;
         }
 
         int C = cloudcount/4;
@@ -77,6 +81,18 @@ public:
             clouds[i][0] = rand() % W;
             clouds[i][1] = rand() % 16;
             clouds[i][2] = rand() % 1 + 1;
+        }
+    }
+
+    void MoveStars(int x, int y)
+    {
+        for (int i = 0; i < starcount; i++)
+        {
+            stars[i][0] += x;
+            stars[i][1] += y;
+
+            if (stars[i][0] < 0) stars[i][0] = year_length*2;
+            if (stars[i][1] < 0) stars[i][1] = year_length;
         }
     }
 
@@ -169,6 +185,8 @@ public:
                 UpdateWind();
                 if (time > duration)
                 {
+                    MoveStars(-1, -1);
+                    MoveStars(-1, 0);
                     inverted = true;
                     time = duration;
                 }
@@ -191,6 +209,12 @@ public:
                 {
                     inverted = false;
                     time = 0.0;
+                    day++;
+                    if (day > year_length)
+                    {
+                        day = 0;
+                        year++;
+                    }
                 }
                 if (hue > 0.5)
                 {
@@ -201,11 +225,8 @@ public:
         if (time < 0.5) starlight = 255*(time*2);
     }
 
-    void Update()
+    void UpdateColor()
     {
-        UpdateTime();
-        UpdateBodies();
-
         float H = 1.0 - hue;
         if (hue < 0.0)
             H = 1.0 + hue;
@@ -217,6 +238,13 @@ public:
         r = int(H*255);
         g = int(((H+time)/2)*255);
         b = int(H*255);
+    }
+
+    void Update()
+    {
+        UpdateTime();
+        UpdateBodies();
+        UpdateColor();
     }
 
 };
