@@ -433,9 +433,86 @@ public:
         {
             for (int x = 0; x < W; x++)
             {
-                // Spread Grass
                 int index = (y+Y)*width+(x+X);
-                if (matrix[index] == GRASS)
+                int current_cell = matrix[index];
+                
+                switch (current_cell)
+                    {
+                        case WATER :
+                        {
+                            int dS = int( (y+Y+1)*width+(x+X) );
+                            switch (matrix[dS])
+                            {
+                                case GRASS :
+                                {
+                                    replace[index] = AIR;
+                                    replace[dS] = GRASS;
+                                }
+                                break;
+                                case DIRT :
+                                {
+                                    replace[index] = AIR;
+                                    replace[dS] = MUD;
+                                }
+                                break;
+                                case LAVA :
+                                {
+                                    replace[index] = AIR;
+                                    replace[dS] = OBSIDIAN;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                        case GRASS :
+                        {
+                            if (rand()%100 < 5)
+                            {
+                                int dNE = int( (y+Y-1)*width+(x+X+1) );
+                                int dNW = int( (y+Y-1)*width+(x+X-1) );
+                                int dE = int( (y+Y)*width+(x+X+1) );
+                                int dW = int( (y+Y)*width+(x+X-1) );
+                                int dSE = int( (y+Y+1)*width+(x+X+1) );
+                                int dSW = int( (y+Y+1)*width+(x+X-1) );
+                                if ((matrix[dE] == DIRT || matrix[dE] == SOIL) && !Collision(x+X+1, y+Y-1)) replace[dE] = GRASS;
+                                else if ((matrix[dW] == DIRT || matrix[dW] == SOIL) && !Collision(x+X-1, y+Y-1)) replace[dW] = GRASS;
+                                else if ((matrix[dNE] == DIRT || matrix[dNE] == SOIL) && !Collision(x+X+1, y+Y-2)) replace[dNE] = GRASS;
+                                else if ((matrix[dNW] == DIRT || matrix[dNE] == SOIL) && !Collision(x+X-1, y+Y-2)) replace[dNW] = GRASS;
+                                else if ((matrix[dSE] == DIRT || matrix[dSE] == SOIL) && !Collision(x+X+1, y+Y)) replace[dSE] = GRASS;
+                                else if ((matrix[dSW] == DIRT || matrix[dSE] == SOIL) && !Collision(x+X-1, y+Y)) replace[dSW] = GRASS;
+                            }
+                        }
+                        break;
+                        case MOSS :
+                        {
+                            if (rand()%1000 < 5)
+                            {
+                                int dNE = int( (y+Y-1)*width+(x+X+1) );
+                                int dNW = int( (y+Y-1)*width+(x+X-1) );
+                                int dE = int( (y+Y)*width+(x+X+1) );
+                                int dW = int( (y+Y)*width+(x+X-1) );
+                                int dSE = int( (y+Y+1)*width+(x+X+1) );
+                                int dSW = int( (y+Y+1)*width+(x+X-1) );
+                                if ((matrix[dE] == STONE) && !Collision(x+X+1, y+Y-1)) replace[dE] = MOSS;
+                                else if ((matrix[dW] == STONE) && !Collision(x+X-1, y+Y-1)) replace[dW] = MOSS;
+                                else if ((matrix[dNE] == STONE) && !Collision(x+X+1, y+Y-2)) replace[dNE] = MOSS;
+                                else if ((matrix[dNW] == STONE) && !Collision(x+X-1, y+Y-2)) replace[dNW] = MOSS;
+                                else if ((matrix[dSE] == STONE) && !Collision(x+X+1, y+Y)) replace[dSE] = MOSS;
+                                else if ((matrix[dSW] == STONE) && !Collision(x+X-1, y+Y)) replace[dSW] = MOSS;
+                            }
+                        }
+                        break;
+                    }
+                /*
+                // Evaporate Water
+                if (current_cell == WATER)
+                {
+                    int dS = int( (y+Y+1)*width+(x+X) );
+                    if (matrix[dS] == DIRT) replace[dS] = MUD;
+                    if (matrix[dS] == LAVA) replace[dS] = OBSIDIAN;
+                }
+                // Spread Grass
+                if (current_cell == GRASS)
                 {
                     if (rand()%100 < 5)
                     {
@@ -446,7 +523,7 @@ public:
                         int dSE = int( (y+Y+1)*width+(x+X+1) );
                         int dSW = int( (y+Y+1)*width+(x+X-1) );
                         
-                        if ((matrix[dE] == DIRT || matrix[dE] == SOIL)&& !Collision(x+X+1, y+Y-1)) replace[dE] = GRASS;
+                        if ((matrix[dE] == DIRT || matrix[dE] == SOIL) && !Collision(x+X+1, y+Y-1)) replace[dE] = GRASS;
                         else if ((matrix[dW] == DIRT || matrix[dW] == SOIL) && !Collision(x+X-1, y+Y-1)) replace[dW] = GRASS;
 
                         else if ((matrix[dNE] == DIRT || matrix[dNE] == SOIL) && !Collision(x+X+1, y+Y-2)) replace[dNE] = GRASS;
@@ -456,8 +533,8 @@ public:
                         else if ((matrix[dSW] == DIRT || matrix[dSE] == SOIL) && !Collision(x+X-1, y+Y)) replace[dSW] = GRASS;
                     }
                 }
-
-                if (matrix[index] == MOSS)
+                // Spread Moss
+                if (current_cell == MOSS)
                 {
                     if (rand()%1000 < 5)
                     {
@@ -478,12 +555,13 @@ public:
                         else if ((matrix[dSW] == STONE) && !Collision(x+X-1, y+Y)) replace[dSW] = MOSS;
                     }
                 }
+                */
 
                 // Update Moving Tiles
                 int cell_type = SOLID;
                 if ( (y+Y > 0 && y+Y < height-1) && Collision(x+X, y+Y) )
                 {
-                    switch (matrix[index])
+                    switch (current_cell)
                     {
                         case LAVA : cell_type = FLUID; break;
                         case BLOOD : cell_type = FLUID; break;

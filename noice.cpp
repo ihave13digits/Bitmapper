@@ -91,7 +91,10 @@ public:
             int y = sky.clouds[i][1];
             FillCircle(x, y, sky.clouds[i][2], olc::Pixel(sky.r, sky.g, sky.b, 8));
         }
-        if (rand()%sky.cloudcount < sky.humidity*.1) world.matrix[256*world.width+((rand()%width)+player.x-(width/2))] = world.WATER;
+        if (sky.humidity > sky.cloudcount/4)
+        {
+            if (rand()%sky.cloudcount < sky.humidity) world.matrix[256*world.width+((rand()%width)+player.x-(width/2))] = world.WATER;
+        }
         SetPixelMode(olc::Pixel::NORMAL);
     }
 
@@ -229,7 +232,7 @@ public:
         DrawStringDecal({ 4,24 }, "Year: " + std::to_string(sky.year), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,32 }, "Light: " + std::to_string(sky.time), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,36 }, "Hue: " + std::to_string(sky.hue), olc::WHITE, { font, font });
-        //DrawStringDecal({ 4,40 }, "Clouds: " + std::to_string(sky.humidity), olc::WHITE, { font, font });
+        DrawStringDecal({ 4,40 }, "Clouds: " + std::to_string(sky.humidity), olc::WHITE, { font, font });
 
     }
 
@@ -439,7 +442,8 @@ public:
 int main()
 {
 	Noice demo;
-	if (demo.Construct(256, 144, 4, 4, false, false, false))
+	//if (demo.Construct(256, 144, 4, 4, false, false, false))
+    if (demo.Construct(256, 144, 4, 4, false))
 		demo.Start();
 
 	return 0;

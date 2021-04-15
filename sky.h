@@ -41,7 +41,7 @@ public:
     int starlight = 255;
     int starcount = 256;
     int cloudcount = 1024;
-    int humidity = 256;
+    int humidity = 1024;
     int stars[256][2];
     int clouds[1024][3];
 
