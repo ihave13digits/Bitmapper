@@ -70,10 +70,13 @@ public:
         if (sky.starlight > 0)
         {
             SetPixelMode(olc::Pixel::ALPHA);
-            for (int i = 0; i < sky.starcount; i++)
+            for (int i = 0; i < sky.starcount; i += 4)
             {
                 int value = rand()%220+35;
                 Draw(sky.stars[i][0], sky.stars[i][1], olc::Pixel(value, value, value, 255-sky.starlight));
+                Draw(sky.stars[i+1][0], sky.stars[i][1], olc::Pixel(value, value, value, 255-sky.starlight));
+                Draw(sky.stars[i+2][0], sky.stars[i][1], olc::Pixel(value, value, value, 255-sky.starlight));
+                Draw(sky.stars[i+3][0], sky.stars[i][1], olc::Pixel(value, value, value, 255-sky.starlight));
             }
             SetPixelMode(olc::Pixel::NORMAL);
         }
@@ -87,11 +90,8 @@ public:
             int x = sky.clouds[i][0];
             int y = sky.clouds[i][1];
             FillCircle(x, y, sky.clouds[i][2], olc::Pixel(sky.r, sky.g, sky.b, 8));
-            if ((sky.humidity > sky.cloudcount/2) && (rand()%100 < 2))
-            {
-                world.matrix[y*world.width+(x+player.x-(width/2))] = world.WATER;
-            }
         }
+        if (rand()%sky.cloudcount < sky.humidity*.1) world.matrix[256*world.width+((rand()%width)+player.x-(width/2))] = world.WATER;
         SetPixelMode(olc::Pixel::NORMAL);
     }
 
@@ -225,6 +225,8 @@ public:
         DrawStringDecal({ 4,8  }, "Looking At: " + lookingat, olc::WHITE, { font, font });
         DrawStringDecal({ 4,12 }, "Selected Tile: " + selectedtile, olc::WHITE, { font, font });
         DrawStringDecal({ 4,16 }, "Collision: " + std::to_string(world.Collision((player.x-(width/2)+GetMouseX()), (player.y-(height/2)+GetMouseY()))), olc::WHITE, { font, font });
+        DrawStringDecal({ 4,20 }, "Day: " + std::to_string(sky.day), olc::WHITE, { font, font });
+        DrawStringDecal({ 4,24 }, "Year: " + std::to_string(sky.year), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,32 }, "Light: " + std::to_string(sky.time), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,36 }, "Hue: " + std::to_string(sky.hue), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,40 }, "Clouds: " + std::to_string(sky.humidity), olc::WHITE, { font, font });
@@ -424,8 +426,11 @@ public:
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
-        if (game_state == PLAYING) GameLoop(fElapsedTime);
-        else if (game_state == LOADING) DrawLoading();
+        switch (game_state)
+        {
+            case PLAYING : GameLoop(fElapsedTime); break;
+            case LOADING : DrawLoading(); break;
+        }
         return !GetKey(olc::Key::ESCAPE).bPressed;
 	}
 };

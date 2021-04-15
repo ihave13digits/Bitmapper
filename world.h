@@ -437,7 +437,7 @@ public:
                 int index = (y+Y)*width+(x+X);
                 if (matrix[index] == GRASS)
                 {
-                    if (rand()%1000 < 5)
+                    if (rand()%100 < 5)
                     {
                         int dNE = int( (y+Y-1)*width+(x+X+1) );
                         int dNW = int( (y+Y-1)*width+(x+X-1) );
@@ -456,6 +456,29 @@ public:
                         else if ((matrix[dSW] == DIRT || matrix[dSE] == SOIL) && !Collision(x+X-1, y+Y)) replace[dSW] = GRASS;
                     }
                 }
+
+                if (matrix[index] == MOSS)
+                {
+                    if (rand()%1000 < 5)
+                    {
+                        int dNE = int( (y+Y-1)*width+(x+X+1) );
+                        int dNW = int( (y+Y-1)*width+(x+X-1) );
+                        int dE = int( (y+Y)*width+(x+X+1) );
+                        int dW = int( (y+Y)*width+(x+X-1) );
+                        int dSE = int( (y+Y+1)*width+(x+X+1) );
+                        int dSW = int( (y+Y+1)*width+(x+X-1) );
+
+                        if ((matrix[dE] == STONE) && !Collision(x+X+1, y+Y-1)) replace[dE] = MOSS;
+                        else if ((matrix[dW] == STONE) && !Collision(x+X-1, y+Y-1)) replace[dW] = MOSS;
+
+                        else if ((matrix[dNE] == STONE) && !Collision(x+X+1, y+Y-2)) replace[dNE] = MOSS;
+                        else if ((matrix[dNW] == STONE) && !Collision(x+X-1, y+Y-2)) replace[dNW] = MOSS;
+
+                        else if ((matrix[dSE] == STONE) && !Collision(x+X+1, y+Y)) replace[dSE] = MOSS;
+                        else if ((matrix[dSW] == STONE) && !Collision(x+X-1, y+Y)) replace[dSW] = MOSS;
+                    }
+                }
+
                 // Update Moving Tiles
                 int cell_type = SOLID;
                 if ( (y+Y > 0 && y+Y < height-1) && Collision(x+X, y+Y) )
