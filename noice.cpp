@@ -67,7 +67,7 @@ public:
         sky.Update();
         if (player.status != player.TRIP) Clear(olc::Pixel(sky.R, sky.G, sky.B));
         
-        if (sky.starlight > 0)
+        if (sky.starlight >= 0)
         {
             SetPixelMode(olc::Pixel::ALPHA);
             for (int i = 0; i < sky.starcount; i += 4)
@@ -78,13 +78,29 @@ public:
                 Draw(sky.stars[i+2][0], sky.stars[i][1], olc::Pixel(value, value, value, 255-sky.starlight));
                 Draw(sky.stars[i+3][0], sky.stars[i][1], olc::Pixel(value, value, value, 255-sky.starlight));
             }
-            SetPixelMode(olc::Pixel::NORMAL);
         }
 
-        if (sky.time > 0.5) FillCircle(sky.sunx, sky.suny, sky.sun, olc::WHITE);
-        else if (sky.time < 0.5) FillCircle(sky.moonx, sky.moony, sky.moon, olc::WHITE);
-
-        SetPixelMode(olc::Pixel::ALPHA);
+        if (sky.time > 0.5)
+        {
+            FillCircle(sky.sunx, sky.suny, sky.sun, olc::WHITE);
+            FillCircle(sky.sunx, sky.suny, sky.sun*1.2, olc::Pixel(255, 255, 255, 24));
+            FillCircle(sky.sunx, sky.suny, sky.sun*1.3, olc::Pixel(255, 255, 255, 20));
+            FillCircle(sky.sunx, sky.suny, sky.sun*1.4, olc::Pixel(255, 255, 255, 16));
+            FillCircle(sky.sunx, sky.suny, sky.sun*1.5, olc::Pixel(255, 255, 255, 12));
+        }
+        else if (sky.time < 0.5)
+        {
+            FillCircle(sky.moonx, sky.moony, sky.moon, olc::WHITE);
+            FillCircle(sky.moonx, sky.moony, sky.moon*0.95, olc::Pixel(225, 225, 225));
+            FillCircle(sky.moonx-2, sky.moony+1, sky.moon/2, olc::GREY);
+            FillCircle(sky.moonx+3, sky.moony+3, sky.moon/2, olc::GREY);
+            FillCircle(sky.moonx+2, sky.moony-1, sky.moon/3, olc::DARK_GREY);
+            FillCircle(sky.moonx-3, sky.moony-4, sky.moon/3, olc::DARK_GREY);
+            FillCircle(sky.moonx-2, sky.moony+3, sky.moon/4, olc::DARK_GREY);
+            FillCircle(sky.moonx+3, sky.moony+4, sky.moon/4, olc::DARK_GREY);
+            FillCircle(sky.moonx+3, sky.moony-2, sky.moon/5, olc::VERY_DARK_GREY);
+            FillCircle(sky.moonx-4, sky.moony-3, sky.moon/5, olc::VERY_DARK_GREY);
+        }
         for (int i = 0; i < sky.humidity; i++)
         {
             int x = sky.clouds[i][0];
@@ -93,7 +109,11 @@ public:
         }
         if (sky.humidity > sky.cloudcount/4)
         {
-            if (rand()%sky.cloudcount < sky.humidity) world.matrix[256*world.width+((rand()%width)+player.x-(width/2))] = world.WATER;
+            if (rand()%sky.cloudcount < sky.humidity)
+            {
+                if (sky.day < sky.year_length*0.9) world.matrix[256*world.width+((rand()%width)+player.x-(width/2))] = world.WATER;
+                else if (sky.day >= sky.year_length*0.9) world.matrix[256*world.width+((rand()%width)+player.x-(width/2))] = world.SNOW;
+            }
         }
         SetPixelMode(olc::Pixel::NORMAL);
     }
