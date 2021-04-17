@@ -11,7 +11,7 @@ public:
 
     // Terrain Tiles
 
-    int total_tiles = 48;
+    int total_tiles = 53;
 
     int generation_step = 1;
     int generation_steps = 12;
@@ -32,8 +32,16 @@ public:
         SMOKE,
         //
         WATER,
+        BRINE,
+        HONEY,
         BLOOD,
         LAVA,
+        //
+        SAND,
+        SNOW,
+        SLEET,
+        SILT,
+        GRAVEL,
         //
         ICE,
         MUD,
@@ -51,11 +59,8 @@ public:
         SANDSTONE,
         GLASS,
         //
-        SAND,
-        SNOW,
-        GRAVEL,
-        //
         WOOD,
+        LEAVES,
         GRASS,
         MOSS,
         //
@@ -84,15 +89,23 @@ public:
         MANTLE
     };
 
-    std::string tiles[48] = {
+    std::string tiles[53] = {
         //
         "Air",
         "Steam",
         "Smoke",
         //
         "Water",
+        "Brine",
+        "Honey",
         "Blood",
         "Lava",
+        //
+        "Sand",
+        "Snow",
+        "Sleet",
+        "Silt",
+        "Gravel",
         //
         "Ice",
         "Mud",
@@ -110,11 +123,8 @@ public:
         "Sandstone",
         "Glass",
         //
-        "Sand",
-        "Snow",
-        "Gravel",
-        //
         "Wood",
+        "Leaves",
         "Grass",
         "Moss",
         //
@@ -143,7 +153,7 @@ public:
         "Mantle"
     };
 
-    int tileset[48][2][4] = {
+    int tileset[53][2][4] = {
         // |Base Color        |     |Variation       |
         // Gases
         {  {200, 200, 230, 5  },    {1,   1,   25,  0}  },// Air
@@ -151,13 +161,21 @@ public:
         {  {128, 128, 128, 64 },    {5,   5,   5,   0}  },// Smoke
         // Fluids
         {  {0,   0,   128, 128},    {1,   1,   25,  0}  },// Water
+        {  {16,  16,  128, 128},    {1,   1,   25,  0}  },// Brine
+        {  {230, 200, 0,   212},    {25,  10,  1,   0}  },// Honey
         {  {128, 0,   0,   255},    {25,  1,   1,   0}  },// Blood
-        {  {254, 20,  0,   255},    {1,  180, 1,   0}  },// Lava
+        {  {254, 20,  0,   255},    {1,  180,  1,   0}  },// Lava
+        // Granular Materials
+        {  {230, 230, 128, 255},    {15,  15,  5,   0}  },// Sand
+        {  {230, 230, 230, 255},    {1,   1,   25,  0}  },// Snow
+        {  {200, 200, 200, 212},    {1,   1,   55,  0}  },// Sleet
+        {  {130, 120, 140, 255},    {10,  10,  10,  0}  },// Silt
+        {  {110, 105, 100, 255},    {10,  10,  10,  0}  },// Gravel
         // Solid Materials
         {  {180, 180, 200, 128},    {1,   1,   55,  0}  },// Ice
-        {  {40,  32,  16,  255},    {8,   4,   2,   0}  },// Mud
+        {  {58,  32,  16,  255},    {8,   4,   2,   0}  },// Mud
         {  {80,  64,  32,  255},    {8,   4,   2,   0}  },// Dirt
-        {  {32,  24,  16,  255},    {8,   4,   2,   0}  },// Soil
+        {  {24,  20,  16,  255},    {8,   4,   2,   0}  },// Soil
         {  {160, 80,  20,  255},    {8,   4,   1,   0}  },// Clay
         {  {240, 240, 200, 255},    {15,  15,  1,   0}  },// Bone
         {  {20,  15,  10,  255},    {10,  5,   1,   0}  },// Fossil
@@ -169,12 +187,9 @@ public:
         {  {128, 128, 128, 255},    {5,   5,   10,  0}  },// Limestone
         {  {200, 200, 100, 255},    {5,   5,   10,  0}  },// Sandstone
         {  {220, 220, 245,  64},    {5,   15,  10,  0}  },// Glass
-        // Granular Materials
-        {  {230, 230, 128, 255},    {15,  15,  5,   0}  },// Sand
-        {  {230, 230, 230, 255},    {1,   1,   25,  0}  },// Snow
-        {  {130, 125, 120, 255},    {10,  10,  10,  0}  },// Gravel
         // Plant Materials
         {  {80,  64,  32,  255},    {25,  20,  10,  0}  },// Wood
+        {  {40,   80, 0,   225},    {5,   20,  1,   0}  },// Leaves
         {  {0,   128, 0,   255},    {5,   20,  1,   0}  },// Grass
         {  {20,   80, 0,   255},    {5,   20,  1,   0}  },// Moss
         // Metals
@@ -633,10 +648,14 @@ public:
                     {
                         case LAVA : cell_type = FLUID; break;
                         case BLOOD : cell_type = FLUID; break;
+                        case HONEY : cell_type = FLUID; break;
+                        case BRINE : cell_type = FLUID; break;
                         case WATER : cell_type = FLUID; break;
                         
                         case SAND : cell_type = GRAIN; break;
                         case SNOW : cell_type = GRAIN; break;
+                        case SLEET : cell_type = GRAIN; break;
+                        case SILT : cell_type = GRAIN; break;
                         case GRAVEL : cell_type = GRAIN; break;
                         
                         case STEAM : cell_type = GAS; break;
