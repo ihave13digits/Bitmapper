@@ -91,15 +91,20 @@ public:
         else if (sky.time < 0.5)
         {
             FillCircle(sky.moonx, sky.moony, sky.moon, olc::WHITE);
-            FillCircle(sky.moonx, sky.moony, sky.moon*0.95, olc::Pixel(225, 225, 225));
-            FillCircle(sky.moonx-2, sky.moony+1, sky.moon/2, olc::GREY);
-            FillCircle(sky.moonx+3, sky.moony+3, sky.moon/2, olc::GREY);
-            FillCircle(sky.moonx+2, sky.moony-1, sky.moon/3, olc::DARK_GREY);
-            FillCircle(sky.moonx-3, sky.moony-4, sky.moon/3, olc::DARK_GREY);
-            FillCircle(sky.moonx-2, sky.moony+3, sky.moon/4, olc::DARK_GREY);
-            FillCircle(sky.moonx+3, sky.moony+4, sky.moon/4, olc::DARK_GREY);
-            FillCircle(sky.moonx+3, sky.moony-2, sky.moon/5, olc::VERY_DARK_GREY);
-            FillCircle(sky.moonx-4, sky.moony-3, sky.moon/5, olc::VERY_DARK_GREY);
+            FillCircle(sky.moonx, sky.moony, sky.moon*1.2, olc::Pixel(255, 255, 255, 24));
+            FillCircle(sky.moonx, sky.moony, sky.moon*1.3, olc::Pixel(255, 255, 255, 20));
+            FillCircle(sky.moonx, sky.moony, sky.moon*1.4, olc::Pixel(255, 255, 255, 16));
+            FillCircle(sky.moonx, sky.moony, sky.moon*1.5, olc::Pixel(255, 255, 255, 12));
+
+            FillCircle(sky.moonx, sky.moony, sky.moon*0.95, olc::Pixel(220, 220, 220));
+            FillCircle(sky.moonx-2, sky.moony+1, sky.moon/2, olc::Pixel(195, 195, 195));
+            FillCircle(sky.moonx+3, sky.moony+3, sky.moon/2, olc::Pixel(195, 195, 195));
+            FillCircle(sky.moonx+2, sky.moony-1, sky.moon/3, olc::Pixel(170, 170, 170));
+            FillCircle(sky.moonx-3, sky.moony-4, sky.moon/3, olc::Pixel(170, 170, 170));
+            FillCircle(sky.moonx-2, sky.moony+3, sky.moon/4, olc::Pixel(145, 145, 145));
+            FillCircle(sky.moonx+3, sky.moony+4, sky.moon/4, olc::Pixel(145, 145, 145));
+            FillCircle(sky.moonx+3, sky.moony-2, sky.moon/5, olc::Pixel(120, 120, 120));
+            FillCircle(sky.moonx-4, sky.moony-3, sky.moon/5, olc::Pixel(120, 120, 120));
         }
         for (int i = 0; i < sky.humidity; i++)
         {
@@ -193,7 +198,7 @@ public:
             case player.COLD :     {r=128; g=128; b=255;} break;
             case player.STUN :     {r=255; g=255; b=0  ;} break;
             case player.TRIP :     {r=0;   g=255; b=255;} break;
-            case player.POISON :   {r=0;   g=255; b=0;  } break;
+            case player.POISON :   {r=0;   g=255; b=0  ;} break;
             case player.CONFUSED : {r=128; g=128; b=128;} break;
 
         }
@@ -252,7 +257,7 @@ public:
         DrawStringDecal({ 4,24 }, "Year: " + std::to_string(sky.year), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,32 }, "Light: " + std::to_string(sky.time), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,36 }, "Hue: " + std::to_string(sky.hue), olc::WHITE, { font, font });
-        DrawStringDecal({ 4,40 }, "Clouds: " + std::to_string(sky.humidity), olc::WHITE, { font, font });
+        //DrawStringDecal({ 4,40 }, "Clouds: " + std::to_string(sky.humidity), olc::WHITE, { font, font });
 
     }
 
@@ -268,22 +273,11 @@ public:
     {
         Clear(olc::BLACK);
         
-        // Show Message
-        float msg_x = width/2-(15*4);
-        float msg_y = (height/2)-4;
         std::string message = "Generating World, Please Wait.";
-        DrawStringDecal({ msg_x, msg_y }, message, olc::WHITE, { 0.5, 0.5 });
         
-        // Progress Bar
-        //float completed = float(world.generation_step)/float(world.generation_steps);
-        int prog_x = (width/2)-(width/4);
-        int prog_y = (height/2)+4;
-        //DrawLine(prog_x1, prog_y, prog_x1+prog_x2, prog_y, olc::WHITE);
-        ProgressBar(prog_x, prog_y, world.generation_step, world.generation_steps, width/2);
-
         if (loading)
         {
-            world.GenerateWorld(world_width, world_height, game_seed);
+            message = world.GenerateWorld(world_width, world_height, game_seed);
             
             if (world.generation_step > world.generation_steps)
             {
@@ -296,6 +290,16 @@ public:
             }
         }
         if (!loading) loading = true;
+
+        int prog_x = (width/2)-(width/4);
+        int prog_y = (height/2)+4;
+
+        float msg_x = width/2-((message.size()/2)*4);
+        float msg_y = (height/2)-4;
+
+        DrawStringDecal({ msg_x, msg_y }, message, olc::WHITE, { 0.5, 0.5 });
+        ProgressBar(prog_x, prog_y, world.generation_step, world.generation_steps, width/2);
+
     }
 
     void GameLoop(float fElapsedTime)

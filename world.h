@@ -11,7 +11,7 @@ public:
 
     // Terrain Tiles
 
-    int total_tiles = 45;
+    int total_tiles = 48;
 
     int generation_step = 1;
     int generation_steps = 12;
@@ -71,7 +71,10 @@ public:
         TITANIUM,
         TUNGSTEN,
         //
+        JADE,
         RUBY,
+        AMBER,
+        LAPIS,
         TOPAZ,
         DIAMOND,
         EMERALD,
@@ -81,7 +84,7 @@ public:
         MANTLE
     };
 
-    std::string tiles[45] = {
+    std::string tiles[48] = {
         //
         "Air",
         "Steam",
@@ -127,7 +130,10 @@ public:
         "Titanium",
         "Tungsten",
         //
+        "Jade",
         "Ruby",
+        "Amber",
+        "Lapis",
         "Topaz",
         "Diamond",
         "Emerald",
@@ -137,16 +143,16 @@ public:
         "Mantle"
     };
 
-    int tileset[45][2][4] = {
+    int tileset[48][2][4] = {
         // |Base Color        |     |Variation       |
         // Gases
         {  {200, 200, 230, 5  },    {1,   1,   25,  0}  },// Air
-        {  {220, 220, 230, 25 },    {5,   5,   25,  0}  },// Steam
-        {  {128, 128, 128, 50 },    {5,   5,   5,   0}  },// Smoke
+        {  {220, 220, 230, 32 },    {5,   5,   25,  0}  },// Steam
+        {  {128, 128, 128, 64 },    {5,   5,   5,   0}  },// Smoke
         // Fluids
         {  {0,   0,   128, 128},    {1,   1,   25,  0}  },// Water
         {  {128, 0,   0,   255},    {25,  1,   1,   0}  },// Blood
-        {  {255, 225, 0,   255},    {1,  -55,  1,   0}  },// Lava
+        {  {254, 20,  0,   255},    {1,  180, 1,   0}  },// Lava
         // Solid Materials
         {  {180, 180, 200, 128},    {1,   1,   55,  0}  },// Ice
         {  {40,  32,  16,  255},    {8,   4,   2,   0}  },// Mud
@@ -184,12 +190,15 @@ public:
         {  {100, 110, 120, 255},    {6,   8,   12,  0}  },// Titanium
         {  {50,  55,  60,  255},    {6,   8,   12,  0}  },// Tungsten
         // Gemstones
-        {  {230, 0,   0,   200},    {25,  1,   1,   0}  },// Ruby
-        {  {230, 230, 0,   200},    {25,  25,  1,   0}  },// Topaz
-        {  {250, 250, 250, 200},    {5,   5,   5,   0}  },// Diamond
-        {  {0,   230, 0,   200},    {1,   25,  1,   0}  },// Emerald
-        {  {230, 0,   230, 200},    {25,  1,   25,  0}  },// Amethyst
-        {  {0,   0,   230, 200},    {1,   1,   25,  0}  },// Sapphire
+        {  {0,   210, 20,  212},    {1,   25,  1,   0}  },// Jade
+        {  {180, 0,   0,   160},    {25,  1,   1,   0}  },// Ruby
+        {  {180, 140, 0,   192},    {25,  10,  1,   0}  },// Amber
+        {  {0,   0,   200, 212},    {1,   25,  1,   0}  },// Lapis
+        {  {230, 180, 0,   160},    {25,  10,  1,   0}  },// Topaz
+        {  {250, 250, 250, 160},    {5,   5,   5,   0}  },// Diamond
+        {  {0,   180, 90,  160},    {1,   25,  1,   0}  },// Emerald
+        {  {150, 100, 200, 160},    {25,  1,   25,  0}  },// Amethyst
+        {  {15,  80,  185, 160},    {1,   1,   25,  0}  },// Sapphire
         // Unbreakable
         {  {25,  20,  20,  255},    {25,  1,   1,   0}  },// Mantle
     };
@@ -200,12 +209,14 @@ public:
 
 
     // Generation Method
-    void GenerateWorld(int w, int h, int seed)
+    std::string GenerateWorld(int w, int h, int seed)
     {
         srand(seed);
 
         width = w;
         height = h;
+
+        std::string message = "";
 
         if (generation_step == 1)
         {
@@ -217,6 +228,7 @@ public:
                     replace.push_back(AIR);
                 }
             }
+            message = "Adding Layers";
         }
 
         int H = int(height/100);
@@ -225,6 +237,7 @@ public:
         {
             AddLayer(STONE, 2,  H*25,  H*90);
             AddLayer(LAVA, 100,  H*95,  height);
+            message = "Expanding Stone";
         }
         if (generation_step == 3)
         {
@@ -232,6 +245,7 @@ public:
             for (int i = 0; i < 8; i++) Expand(STONE, H*25, H*90, 10, 1, 25, 25);
             for (int i = 0; i < 8; i++) Expand(STONE, H*50, H*90, 10, 1, 50, 50);
             for (int i = 0; i < 8; i++) Expand(STONE, H*75, H*90, 10, 1, 75, 75);
+            message = "Expanding Dirt";
         }
 
         if (generation_step == 4)
@@ -240,6 +254,7 @@ public:
             for (int i = 0; i < 4; i++) Expand(SOIL, H*24, H*40, 25, 50, 75, 75);
             for (int i = 0; i < 4; i++) Expand(DIRT, H*35, H*90, 25, 25, 25, 25);
             for (int i = 0; i < 4; i++) Expand(DIRT, H*70, H*90, 25, 5, 25, 25);
+            message = "Still Expanding Dirt";
         }
 
         if (generation_step == 5)
@@ -248,17 +263,20 @@ public:
             for (int i = 0; i < 12; i++) Expand(DIRT, H*16, H*40, 25, 50, 75, 75);
             for (int i = 0; i < 12; i++) Expand(MUD, H*32, H*90, 25, 25, 25, 25);
             for (int i = 0; i < 12; i++) Expand(MUD, H*64, H*90, 25, 5, 25, 25);
+            message = "Expanding Gravel";
         }
             if (generation_step == 6)
         {
             for (int i = 0; i < 8; i++) Expand(GRAVEL, H*33, H*90, 10, 1, 50, 50);
             for (int i = 0; i < 8; i++) Expand(GRAVEL, H*66, H*90, 10, 1, 50, 50);
             for (int i = 0; i < 8; i++) Expand(GRAVEL, H*80, H*90, 10, 1, 50, 50);
+            message = "Expanding Grass";
         }
 
         if (generation_step == 7)
         {
             Expand(GRASS, 0, H*32, 100, 0, 25, 25);
+            message = "Seeding Ores";
         }
 
         if (generation_step == 8)
@@ -274,6 +292,7 @@ public:
             SeedLayer(NICKEL, 1, H*40, H*70);
             SeedLayer(TITANIUM, 1, H*50, H*70);
             SeedLayer(TUNGSTEN, 1, H*60, H*80);
+            message = "Seeding Gemstones";
         }
 
         if (generation_step == 9)
@@ -284,6 +303,7 @@ public:
             SeedLayer(EMERALD, 1, H*45, H*55);
             SeedLayer(AMETHYST, 1, H*50, H*60);
             SeedLayer(SAPPHIRE, 1, H*50, H*60);
+            message = "Depositing Ores";
         }
 
         if (generation_step == 10)
@@ -299,10 +319,12 @@ public:
             for (int i = 0; i < 12; i++) Deposit(NICKEL, H*40, H*70, 25, 25, 25, 25);
             for (int i = 0; i < 10; i++) Deposit(TITANIUM, H*50, H*70, 25, 25, 25, 25);
             for (int i = 0; i < 8; i++) Deposit(TUNGSTEN, H*60, H*80, 25, 25, 25, 25);
+            message = "Depositing Lava";
         }
         if (generation_step == 11)
         {
             for (int i = 0; i < 2; i++) Deposit(LAVA, H*95, height, 1, 100, 100, 100);
+            message = "Depositing Mantle";
         }
         if (generation_step == 12)
         {
@@ -312,8 +334,11 @@ public:
             for (int i = 0; i < 8; i++) Deposit(MANTLE, H*95, height, 10, 25, 25, 25);
             for (int i = 0; i < 8; i++) Deposit(MANTLE, H*97, height, 10, 50, 50, 50);
             for (int i = 0; i < 8; i++) Deposit(MANTLE, H*99, height, 10, 75, 100, 100);
+            message = "Generating Sky";
         }
         generation_step++;
+
+        return message;
     }
 
     // Seed Methods
@@ -441,6 +466,9 @@ public:
                         case WATER :
                         {
                             int dS = int( (y+Y+1)*width+(x+X) );
+                            int dW = int( (y+Y)*width+(x+X-1) );
+                            int dE = int( (y+Y)*width+(x+X+1) );
+                            int dN = int( (y+Y-1)*width+(x+X) );
                             switch (matrix[dS])
                             {
                                 case GRASS :
@@ -458,13 +486,66 @@ public:
                                 case LAVA :
                                 {
                                     replace[index] = STEAM;
+                                    matrix[index] = STEAM;
                                     replace[dS] = OBSIDIAN;
+                                    matrix[dS] = OBSIDIAN;
                                 }
                                 break;
                                 case SNOW :
                                 {
                                     replace[index] = AIR;
                                     replace[dS] = ICE;
+                                }
+                                break;
+                            }
+                            switch (matrix[dW])
+                            {
+                                case DIRT :
+                                {
+                                    replace[index] = AIR;
+                                    replace[dW] = MUD;
+                                }
+                                break;
+                                case LAVA :
+                                {
+                                    replace[index] = STEAM;
+                                    matrix[index] = STEAM;
+                                    replace[dW] = OBSIDIAN;
+                                    matrix[dW] = OBSIDIAN;
+                                }
+                                break;
+                            }
+                            switch (matrix[dE])
+                            {
+                                case DIRT :
+                                {
+                                    replace[index] = AIR;
+                                    replace[dE] = MUD;
+                                }
+                                break;
+                                case LAVA :
+                                {
+                                    replace[index] = STEAM;
+                                    matrix[index] = STEAM;
+                                    replace[dE] = OBSIDIAN;
+                                    matrix[dE] = OBSIDIAN;
+                                }
+                                break;
+                            }
+                            switch (matrix[dN])
+                            {
+                                case DIRT :
+                                {
+                                    replace[index] = AIR;
+                                    replace[dN] = MUD;
+                                }
+                                break;
+                                case LAVA :
+                                {
+                                    replace[index] = STEAM;
+                                    matrix[index] = STEAM;
+                                    replace[dN] = OBSIDIAN;
+                                    matrix[dN] = OBSIDIAN;
                                 }
                                 break;
                             }
