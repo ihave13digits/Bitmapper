@@ -10,6 +10,7 @@ public:
         COLD,
         STUN,
         TRIP,
+        DROWN,
         POISON,
         CONFUSED,
     };
@@ -20,6 +21,7 @@ public:
     WALK,
     JUMP,
     FALL,
+    SWIM,
     };
 
     int state = 0;
@@ -51,6 +53,9 @@ public:
     int JP = 100;
     int jp = 100;
 
+    int bp = 100;
+    int BP = 100;
+
     float defense = 0.0;
 
 
@@ -65,6 +70,42 @@ public:
     {
         hp -= int(damage-(damage*defense));
         state = HURT;
+    }
+
+    void Update()
+    {
+        tick = 0;
+        
+        // Update Counters
+        if (jp < JP && state != JUMP) jp++;
+        if (bp < BP && state != DROWN) bp++;
+        // Update Tick Damage
+        if (status != FINE) damage_tick++;
+        
+        if (damage_tick > damage_delay)
+        {
+            damage_tick = 0;
+            switch (status)
+            {
+                case DROWN :
+                {
+                    TakeDamage(1);
+                }
+                break;
+
+                case BURN :
+                {
+                    TakeDamage(1);
+                    burn_tick++;
+                    if (burn_tick > 25)
+                    {
+                        burn_tick = 0;
+                        status = FINE;
+                    }
+                }
+                break;
+            }
+        }
     }
 
 };

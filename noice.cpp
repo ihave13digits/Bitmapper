@@ -250,6 +250,7 @@ public:
         //DrawStringDecal({ 4,20 }, "Standing On: " + standingon, olc::WHITE, { font, font });
         ProgressBar(4, 2, player.hp, player.HP, 32);
         ProgressBar(4, 4, player.jp, player.JP, 32);
+        ProgressBar(4, 6, player.bp, player.BP, 32);
         DrawStringDecal({ 4,8  }, "Looking At: " + lookingat, olc::WHITE, { font, font });
         DrawStringDecal({ 4,12 }, "Selected Tile: " + selectedtile, olc::WHITE, { font, font });
         DrawStringDecal({ 4,16 }, "Collision: " + std::to_string(world.Collision((player.x-(width/2)+GetMouseX()), (player.y-(height/2)+GetMouseY()))), olc::WHITE, { font, font });
@@ -318,7 +319,7 @@ public:
         // Vertical Movement
         if (GetKey(olc::Key::W).bHeld)
         {
-            if ((!world.Collision(player.x, player.y-player.height)) &&
+            if ((!world.IsColliding(player.x, player.y-player.height)) &&
                 (player.jp > 0) &&
                 (player.y > 0) )
             {
@@ -338,7 +339,7 @@ public:
             player.state = player.IDLE;
         }
 
-        if (!world.Collision(player.x, player.y+1) && player.state != player.JUMP)
+        if (!world.IsColliding(player.x, player.y+1) && player.state != player.JUMP)
         {
             player.vy = 1;
             player.state = player.FALL;
@@ -348,12 +349,12 @@ public:
         if (GetKey(olc::Key::A).bHeld && player.x > width/2)
         {
             if (player.state != player.FALL && player.state != player.JUMP) player.vy = 0;
-            if (!world.Collision(player.x-1, player.y))
+            if (!world.IsColliding(player.x-1, player.y))
             {
                 player.state = player.WALK;
                 player.vx = -1;
             }
-            else if (world.Collision(player.x-1, player.y) && !world.Collision(player.x-1, player.y-1))
+            else if (world.IsColliding(player.x-1, player.y) && !world.IsColliding(player.x-1, player.y-1))
             {
                 player.state = player.WALK;
                 player.vx = -1;
@@ -363,13 +364,13 @@ public:
         if (GetKey(olc::Key::D).bHeld && player.x < world.width-(width/2))
         {
             if (player.state != player.FALL && player.state != player.JUMP) player.vy = 0;
-            if (!world.Collision(player.x+1, player.y))
+            if (!world.IsColliding(player.x+1, player.y))
             {
                 player.state = player.WALK;
                 player.vx = 1;
 
             }
-            else if (world.Collision(player.x+1, player.y) && !world.Collision(player.x+1, player.y-1))
+            else if (world.IsColliding(player.x+1, player.y) && !world.IsColliding(player.x+1, player.y-1))
             {
                 player.state = player.WALK;
                 player.vx = 1;
@@ -403,8 +404,7 @@ public:
         // Update Player
         if (player.tick == player.tick_delay)
         {
-            player.tick = 0;
-            // Check Death
+            player.Update();
             if (player.hp < 1) player.hp = player.HP;
             // Tile Effects
             switch (world.matrix[(player.y+1)*world.width+player.x])
@@ -413,26 +413,46 @@ public:
                 {
                     player.status = player.BURN;
                 }
+                break;
             }
-            // Update Counters
-            if (player.jp < player.JP && player.state != player.JUMP) player.jp++;
-            // Update Tick Damage
-            if (player.status != player.FINE) player.damage_tick++;
-            if (player.damage_tick > player.damage_delay)
+            switch (world.matrix[(player.y-player.height)*world.width+player.x])
             {
-                player.damage_tick = 0;
-                if (player.status == player.BURN)
+                case world.AIR:
                 {
-                    player.TakeDamage(1);
-                    player.burn_tick++;
-                    if (player.burn_tick > 25)
-                    {
-                        player.burn_tick = 0;
-                        player.status = player.FINE;
-                    }
+                    if (player.status == player.DROWN) player.status = player.FINE;
                 }
+                break;
+                case world.WATER:
+                {
+                    if (player.bp > 0) player.bp--;
+                    else if (player.bp <= 0) player.status = player.DROWN;
+                }
+                break;
+                case world.BRINE:
+                {
+                    if (player.bp > 0) player.bp--;
+                    else if (player.bp <= 0) player.status = player.DROWN;
+                }
+                break;
+                case world.HONEY:
+                {
+                    if (player.bp > 0) player.bp--;
+                    else if (player.bp <= 0) player.status = player.DROWN;
+                }
+                break;
+                case world.BLOOD:
+                {
+                    if (player.bp > 0) player.bp--;
+                    else if (player.bp <= 0) player.status = player.DROWN;
+                }
+                break;
+                case world.LAVA:
+                {
+                    player.status = player.BURN;
+                }
+                break;
             }
-            if (!world.Collision(player.x+player.vx, player.y+player.vy)) player.Move(player.vx, player.vy);
+            if (!world.IsColliding(player.x+player.vx, player.y+player.vy)) player.Move(player.vx, player.vy);
             DrawPlayer();
         }
         DrawParticles(fElapsedTime);
