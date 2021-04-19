@@ -489,11 +489,12 @@ public:
                 world.InitializeMatrix(world_width, world_height);
                 for (int i = 0; i < preview_world.generation_steps; i++)
                 {
-                    for (int j = 0; j < 14; j++)
+                    for (int j = 0; j < world.total_parameters; j++)
                     {
                         world.generation_param[i][j] = preview_world.generation_param[i][j];
                     }
                 }
+                preview_world.ClearMatrix();
                 game_state = LOADING;
             }
         }
@@ -550,7 +551,7 @@ public:
             {
                 sky.GenerateSky(width, height, game_seed, tick_delay);
                 player.x = int(world.width/2);
-                player.y = 0;
+                player.y = player.height;
                 while (!world.Collision(player.x, player.y+1)) player.Move(0, 1);
                 loading = false;
                 game_state = PLAYING;
@@ -610,7 +611,7 @@ public:
             player.vy = 1;
             player.state = player.FALL;
         }
-    
+
         // Horizontal Movement
         if (GetKey(olc::Key::A).bHeld && player.x > width/2)
         {

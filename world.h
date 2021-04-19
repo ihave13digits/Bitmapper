@@ -12,6 +12,7 @@ public:
     // Terrain Tiles
 
     int total_tiles = 53;
+    int total_parameters = 12;
 
     // Procedural Generation
     int selected_step = 0;
