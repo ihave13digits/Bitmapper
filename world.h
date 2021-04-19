@@ -13,15 +13,52 @@ public:
 
     int total_tiles = 53;
 
+    // Procedural Generation
+    int selected_step = 0;
+    int selected_param = 0;
     int generation_step = 1;
-    int generation_steps = 12;
+    int generation_steps = 16;
+
+    int generation_param[256][12];
+
+    enum MODES
+    {
+        mADD,
+        mSEED,
+        mEXPAND,
+        mDEPOSIT,
+    };
+
+    std::string modes[4] = {
+        "Add Layer",
+        "Seed Layer",
+        "Expand Material",
+        "Deposit Material",
+    };
+
+    enum PARAM
+    {
+        pTILE,
+        pDENSE,
+        pITER,
+        pMINX,
+        pMAXX,
+        pMINY,
+        pMAXY,
+        pPROBN,
+        pPROBS,
+        pPROBE,
+        pPROBW,
+        pMODE
+    };
 
     enum TYPES
     {
-        SOLID,
+        GAS,
         FLUID,
         GRAIN,
-        GAS,
+        GEL,
+        SOLID,
     };
 
     enum TILES
@@ -223,133 +260,95 @@ public:
 
 
 
-    // Generation Method
-    std::string GenerateWorld(int w, int h, int seed)
+    // Matrix
+    void ClearMatrix()
+    {
+        matrix.clear();
+    }
+
+    void InitializeMatrix(int w, int h)
+    {
+        width = w;
+        height = h;
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                matrix.push_back(AIR);
+                replace.push_back(AIR);
+            }
+        }
+    }
+
+    // Generation
+    std::string GenerateWorld(int seed)
     {
         srand(seed);
 
-        width = w;
-        height = h;
-
         std::string message = "";
+        int index = generation_step-1;
 
-        if (generation_step == 1)
+        switch (generation_param[index][pMODE])
         {
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
+            case mADD :
                 {
-                    matrix.push_back(AIR);
-                    replace.push_back(AIR);
+                    message = "Adding " + tiles[generation_param[index][pTILE]] + " Layer";
+                    for (int i = 0; i < generation_param[index][pITER]; i++) AddLayer(
+                            generation_param[index][pTILE],
+                            generation_param[index][pDENSE],
+                            generation_param[index][pMINX],
+                            generation_param[index][pMAXX],
+                            generation_param[index][pMINY],
+                            generation_param[index][pMAXY]
+                            );
                 }
-            }
-            message = "Adding Layers";
-        }
-
-        int H = int(height/100);
-
-        if (generation_step == 2)
-        {
-            AddLayer(STONE, 2,  H*25,  H*90);
-            AddLayer(LAVA, 100,  H*95,  height);
-            message = "Expanding Stone";
-        }
-        if (generation_step == 3)
-        {
-            for (int i = 0; i < 8; i++) Expand(STONE, H*10, H*90, 10, 1, 25, 25);
-            for (int i = 0; i < 8; i++) Expand(STONE, H*25, H*90, 10, 1, 25, 25);
-            for (int i = 0; i < 8; i++) Expand(STONE, H*50, H*90, 10, 1, 50, 50);
-            for (int i = 0; i < 8; i++) Expand(STONE, H*75, H*90, 10, 1, 75, 75);
-            message = "Expanding Dirt";
-        }
-
-        if (generation_step == 4)
-        {
-            for (int i = 0; i < 4; i++) Expand(SOIL, H*15, H*50, 25, 100, 75, 75);
-            for (int i = 0; i < 4; i++) Expand(SOIL, H*24, H*40, 25, 50, 75, 75);
-            for (int i = 0; i < 4; i++) Expand(DIRT, H*35, H*90, 25, 25, 25, 25);
-            for (int i = 0; i < 4; i++) Expand(DIRT, H*70, H*90, 25, 5, 25, 25);
-            message = "Still Expanding Dirt";
-        }
-
-        if (generation_step == 5)
-        {
-            for (int i = 0; i < 12; i++) Expand(DIRT, H*8, H*50, 25, 100, 75, 75);
-            for (int i = 0; i < 12; i++) Expand(DIRT, H*16, H*40, 25, 50, 75, 75);
-            for (int i = 0; i < 12; i++) Expand(MUD, H*32, H*90, 25, 25, 25, 25);
-            for (int i = 0; i < 12; i++) Expand(MUD, H*64, H*90, 25, 5, 25, 25);
-            message = "Expanding Gravel";
-        }
-            if (generation_step == 6)
-        {
-            for (int i = 0; i < 8; i++) Expand(GRAVEL, H*33, H*90, 10, 1, 50, 50);
-            for (int i = 0; i < 8; i++) Expand(GRAVEL, H*66, H*90, 10, 1, 50, 50);
-            for (int i = 0; i < 8; i++) Expand(GRAVEL, H*80, H*90, 10, 1, 50, 50);
-            message = "Expanding Grass";
-        }
-
-        if (generation_step == 7)
-        {
-            Expand(GRASS, 0, H*32, 100, 0, 25, 25);
-            message = "Seeding Ores";
-        }
-
-        if (generation_step == 8)
-        {
-            SeedLayer(PLATINUM, 1, H*70, H*90);
-            SeedLayer(GOLD, 1, H*60, H*80);
-            SeedLayer(SILVER, 1, H*50, H*75);
-            SeedLayer(COPPER, 1, H*25, H*50);
-            SeedLayer(LEAD, 1, H*50, H*75);
-            SeedLayer(TIN, 1, H*33, H*66);
-            SeedLayer(IRON, 1, H*20, H*60);
-            SeedLayer(COBALT, 1, H*30, H*60);
-            SeedLayer(NICKEL, 1, H*40, H*70);
-            SeedLayer(TITANIUM, 1, H*50, H*70);
-            SeedLayer(TUNGSTEN, 1, H*60, H*80);
-            message = "Seeding Gemstones";
-        }
-
-        if (generation_step == 9)
-        {
-            SeedLayer(RUBY, 1, H*40, H*50);
-            SeedLayer(TOPAZ, 1, H*40, H*50);
-            SeedLayer(DIAMOND, 1, H*45, H*55);
-            SeedLayer(EMERALD, 1, H*45, H*55);
-            SeedLayer(AMETHYST, 1, H*50, H*60);
-            SeedLayer(SAPPHIRE, 1, H*50, H*60);
-            message = "Depositing Ores";
-        }
-
-        if (generation_step == 10)
-        {
-            for (int i = 0; i < 4; i++) Deposit(PLATINUM, H*80, height, 25, 25, 25, 25);
-            for (int i = 0; i < 6; i++) Deposit(GOLD, H*75, H*90, 25, 25, 25, 25);
-            for (int i = 0; i < 8; i++) Deposit(SILVER, H*40, H*60, 25, 25, 25, 25);
-            for (int i = 0; i < 14; i++) Deposit(COPPER, H*25, H*50, 25, 25, 25, 25);
-            for (int i = 0; i < 12; i++) Deposit(LEAD, H*50, H*80, 25, 25, 25, 25);
-            for (int i = 0; i < 10; i++) Deposit(TIN, H*33, H*66, 25, 25, 25, 25);
-            for (int i = 0; i < 16; i++) Deposit(IRON, H*20, H*60, 25, 25, 25, 25);
-            for (int i = 0; i < 12; i++) Deposit(COBALT, H*30, H*60, 25, 25, 25, 25);
-            for (int i = 0; i < 12; i++) Deposit(NICKEL, H*40, H*70, 25, 25, 25, 25);
-            for (int i = 0; i < 10; i++) Deposit(TITANIUM, H*50, H*70, 25, 25, 25, 25);
-            for (int i = 0; i < 8; i++) Deposit(TUNGSTEN, H*60, H*80, 25, 25, 25, 25);
-            message = "Depositing Lava";
-        }
-        if (generation_step == 11)
-        {
-            for (int i = 0; i < 2; i++) Deposit(LAVA, H*95, height, 1, 100, 100, 100);
-            message = "Depositing Mantle";
-        }
-        if (generation_step == 12)
-        {
-            SeedLayer(MANTLE, 100, H*92, height);
-            for (int i = 0; i < 8; i++) Deposit(MANTLE, H*85, height, 1, 5, 75, 75);
-            for (int i = 0; i < 8; i++) Deposit(MANTLE, H*90, height, 5, 15, 50, 50);
-            for (int i = 0; i < 8; i++) Deposit(MANTLE, H*95, height, 10, 25, 25, 25);
-            for (int i = 0; i < 8; i++) Deposit(MANTLE, H*97, height, 10, 50, 50, 50);
-            for (int i = 0; i < 8; i++) Deposit(MANTLE, H*99, height, 10, 75, 100, 100);
-            message = "Generating Sky";
+                break;
+            case mSEED :
+                {
+                    message = "Seeding " + tiles[generation_param[index][pTILE]] + " Layer";
+                    for (int i = 0; i < generation_param[index][pITER]; i++) SeedLayer(
+                            generation_param[index][pTILE],
+                            generation_param[index][pDENSE],
+                            generation_param[index][pMINX],
+                            generation_param[index][pMAXX],
+                            generation_param[index][pMINY],
+                            generation_param[index][pMAXY]
+                            );
+                }
+                break;
+            case mEXPAND :
+                {
+                    message = "Expanding " + tiles[generation_param[index][pTILE]] + " Layer";
+                    for (int i = 0; i < generation_param[index][pITER]; i++) Expand(
+                            generation_param[index][pTILE],
+                            generation_param[index][pMINX],
+                            generation_param[index][pMAXX],
+                            generation_param[index][pMINY],
+                            generation_param[index][pMAXY],
+                            generation_param[index][pPROBN],
+                            generation_param[index][pPROBS],
+                            generation_param[index][pPROBE],
+                            generation_param[index][pPROBW]
+                            );
+                }
+                break;
+            case mDEPOSIT :
+                {
+                    message = "Depositing " + tiles[generation_param[index][pTILE]] + " Layer";
+                    for (int i = 0; i < generation_param[index][pITER]; i++) Deposit(
+                            generation_param[index][pTILE],
+                            generation_param[index][pMINX],
+                            generation_param[index][pMAXX],
+                            generation_param[index][pMINY],
+                            generation_param[index][pMAXY],
+                            generation_param[index][pPROBN],
+                            generation_param[index][pPROBS],
+                            generation_param[index][pPROBE],
+                            generation_param[index][pPROBW]
+                            );
+        
+                }
+                break;
         }
         generation_step++;
 
@@ -357,22 +356,22 @@ public:
     }
 
     // Seed Methods
-    void AddLayer(int t, int density, int ymin, int ymax)
+    void AddLayer(int t, int density, int xmin, int xmax, int ymin, int ymax)
     {
         for (int y = ymin; y < ymax; y++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = xmin; x < xmax; x++)
             {
                 if (rand()%1000 < density) matrix[y*width+x] = t;
             }
         }
     }
 
-    void SeedLayer(int t, int density, int ymin, int ymax)
+    void SeedLayer(int t, int density, int xmin, int xmax, int ymin, int ymax)
     {
         for (int y = ymin; y < ymax; y++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = xmin; x < xmax; x++)
             {
                 int index = y*width+x;
                 if (matrix[index] != AIR && rand()%10000 < density) matrix[index] = t;
@@ -381,13 +380,13 @@ public:
     }
 
     // Deposition Methods
-    void Expand(int t, int miny, int maxy, int dn=5, int ds=5, int de=25, int dw=25)
+    void Expand(int t, int xmin, int xmax, int miny, int maxy, int dn=5, int ds=5, int de=25, int dw=25)
     {
         replace = matrix;
 
         for (int y = miny; y < maxy; y++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = xmin; x < xmax; x++)
             {
                 if (matrix[y*width+x] != AIR &&
                         ( (x > 0) && (x < width-1) ) &&
@@ -408,41 +407,13 @@ public:
         matrix = replace;
     }
 
-    void Spread(int t, int dn=5, int ds=5, int de=25, int dw=25)
-    {
-        replace = matrix;
-
-        for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                if (matrix[y*width+x] == t &&
-                        ( (x > 0) && (x < width-1) ) &&
-                        ( (y > 0) && (y < height-1) )
-                        )
-                {
-                    int n = (y-1)*width+x;
-                    int s = (y+1)*width+x;
-                    int e = y*width+(x+1);
-                    int w = y*width+(x-1);
-
-                    if (rand()%100 < dn) replace[n] = t;
-                    if (rand()%100 < ds) replace[s] = t;
-                    if (rand()%100 < de) replace[e] = t;
-                    if (rand()%100 < dw) replace[w] = t;
-                }
-            }
-        }
-        matrix = replace;
-    }
-
-    void Deposit(int t, int miny, int maxy, int dn=5, int ds=5, int de=25, int dw=25)
+    void Deposit(int t, int xmin, int xmax, int miny, int maxy, int dn=5, int ds=5, int de=25, int dw=25)
     {
         replace = matrix;
 
         for (int y = miny; y < maxy; y++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = xmin; x < xmax; x++)
             {
                 if (matrix[y*width+x] == t &&
                         ( (x > 0) && (x < width-1) ) &&
@@ -475,15 +446,16 @@ public:
             {
                 int index = (y+Y)*width+(x+X);
                 int current_cell = matrix[index];
+
                 // Tile Interactions
                 switch (current_cell)
                     {
                         case WATER :
                         {
-                            int dS = int( (y+Y+1)*width+(x+X) );
-                            int dW = int( (y+Y)*width+(x+X-1) );
-                            int dE = int( (y+Y)*width+(x+X+1) );
-                            int dN = int( (y+Y-1)*width+(x+X) );
+                            int dN  = int( (y+Y-1) * width + (x+X  ) );
+                            int dE  = int( (y+Y  ) * width + (x+X+1) );
+                            int dS  = int( (y+Y+1) * width + (x+X  ) );
+                            int dW  = int( (y+Y  ) * width + (x+X-1) );
                             switch (matrix[dS])
                             {
                                 case GRASS :
@@ -498,18 +470,23 @@ public:
                                     replace[dS] = MUD;
                                 }
                                 break;
+                                case SNOW :
+                                {
+                                    replace[index] = AIR;
+                                    replace[dS] = ICE;
+                                }
+                                break;
+                                case MANTLE :
+                                {
+                                    replace[index] = STEAM;
+                                }
+                                break;
                                 case LAVA :
                                 {
                                     replace[index] = STEAM;
                                     matrix[index] = STEAM;
                                     replace[dS] = OBSIDIAN;
                                     matrix[dS] = OBSIDIAN;
-                                }
-                                break;
-                                case SNOW :
-                                {
-                                    replace[index] = AIR;
-                                    replace[dS] = ICE;
                                 }
                                 break;
                             }
@@ -568,7 +545,7 @@ public:
                         break;
                         case SNOW :
                         {
-                            int dS = int( (y+Y+1)*width+(x+X) );
+                            int dS  = int( (y+Y+1) * width + (x+X  ) );
                             switch (matrix[dS])
                             {
                                 case GRASS :
@@ -586,10 +563,10 @@ public:
                         break;
                         case ICE :
                         {
-                            int dN = int( (y+Y-1)*width+(x+X) );
-                            int dS = int( (y+Y+1)*width+(x+X) );
-                            int dE = int( (y+Y)*width+(x+X+1) );
-                            int dW = int( (y+Y)*width+(x+X-1) );
+                            int dN  = int( (y+Y-1) * width + (x+X  ) );
+                            int dE  = int( (y+Y  ) * width + (x+X+1) );
+                            int dS  = int( (y+Y+1) * width + (x+X  ) );
+                            int dW  = int( (y+Y  ) * width + (x+X-1) );
                             if ((matrix[dN] == LAVA) ||
                                 (matrix[dS] == LAVA) ||
                                 (matrix[dE] == LAVA) ||
@@ -603,14 +580,14 @@ public:
                         break;
                         case GRASS :
                         {
+                            int dNW = int( (y+Y-1) * width + (x+X-1) );
+                            int dNE = int( (y+Y-1) * width + (x+X+1) );
+                            int dE  = int( (y+Y  ) * width + (x+X+1) );
+                            int dSE = int( (y+Y+1) * width + (x+X+1) );
+                            int dSW = int( (y+Y+1) * width + (x+X-1) );
+                            int dW  = int( (y+Y  ) * width + (x+X-1) );
                             if (rand()%100 < 5)
                             {
-                                int dNE = int( (y+Y-1)*width+(x+X+1) );
-                                int dNW = int( (y+Y-1)*width+(x+X-1) );
-                                int dE = int( (y+Y)*width+(x+X+1) );
-                                int dW = int( (y+Y)*width+(x+X-1) );
-                                int dSE = int( (y+Y+1)*width+(x+X+1) );
-                                int dSW = int( (y+Y+1)*width+(x+X-1) );
                                 if ((matrix[dE] == DIRT || matrix[dE] == SOIL) && !Collision(x+X+1, y+Y-1)) replace[dE] = GRASS;
                                 else if ((matrix[dW] == DIRT || matrix[dW] == SOIL) && !Collision(x+X-1, y+Y-1)) replace[dW] = GRASS;
                                 else if ((matrix[dNE] == DIRT || matrix[dNE] == SOIL) && !Collision(x+X+1, y+Y-2)) replace[dNE] = GRASS;
@@ -622,14 +599,14 @@ public:
                         break;
                         case MOSS :
                         {
+                            int dNW = int( (y+Y-1) * width + (x+X-1) );
+                            int dNE = int( (y+Y-1) * width + (x+X+1) );
+                            int dE  = int( (y+Y  ) * width + (x+X+1) );
+                            int dSE = int( (y+Y+1) * width + (x+X+1) );
+                            int dSW = int( (y+Y+1) * width + (x+X-1) );
+                            int dW  = int( (y+Y  ) * width + (x+X-1) );
                             if (rand()%1000 < 5)
                             {
-                                int dNE = int( (y+Y-1)*width+(x+X+1) );
-                                int dNW = int( (y+Y-1)*width+(x+X-1) );
-                                int dE = int( (y+Y)*width+(x+X+1) );
-                                int dW = int( (y+Y)*width+(x+X-1) );
-                                int dSE = int( (y+Y+1)*width+(x+X+1) );
-                                int dSW = int( (y+Y+1)*width+(x+X-1) );
                                 if ((matrix[dE] == STONE) && !Collision(x+X+1, y+Y-1)) replace[dE] = MOSS;
                                 else if ((matrix[dW] == STONE) && !Collision(x+X-1, y+Y-1)) replace[dW] = MOSS;
                                 else if ((matrix[dNE] == STONE) && !Collision(x+X+1, y+Y-2)) replace[dNE] = MOSS;
@@ -640,18 +617,20 @@ public:
                         }
                         break;
                     }
+                
                 // Update Moving Tiles
                 int cell_type = SOLID;
                 if ( (y+Y > 0 && y+Y < height-1) && Collision(x+X, y+Y) )
                 {
                     switch (current_cell)
                     {
-                        case LAVA : cell_type = FLUID; break;
-                        case BLOOD : cell_type = FLUID; break;
-                        case HONEY : cell_type = FLUID; break;
-                        case BRINE : cell_type = FLUID; break;
                         case WATER : cell_type = FLUID; break;
+                        case BRINE : cell_type = FLUID; break;
+                        case BLOOD : cell_type = FLUID; break;
                         
+                        case HONEY : cell_type = GEL; break;
+                        case LAVA : cell_type = GEL; break;
+
                         case SAND : cell_type = GRAIN; break;
                         case SNOW : cell_type = GRAIN; break;
                         case SLEET : cell_type = GRAIN; break;
@@ -665,6 +644,59 @@ public:
                     switch (cell_type)
                     {
                         case FLUID :
+                        {
+                            if (!FluidCollision(x+X, y+Y+2) && !FluidCollision(x+X, y+Y+1))
+                            {
+                                int rplc = (y+Y+2)*width+(x+X);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░░░░░
+                                                                  // ░░██░░
+                            }
+                            else if (!FluidCollision(x+X, y+Y+1))
+                            {
+                                int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░██░░
+                            }
+                            else if (!FluidCollision(x+X-1, y+Y+1))
+                            {
+                                int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ██░░░░
+                            }
+                            else if (!FluidCollision(x+X+1, y+Y+1))
+                            {
+                                int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░░░██
+                            }
+                            else if (!FluidCollision(x+X-2, y+Y) && !FluidCollision(x+X-1, y+Y))
+                            {
+                                int rplc = (y+Y)*width+(x+X-2);   // ░░░░░░░░
+                                replace[rplc] = matrix[index];    // ██░░▓▓░░
+                                replace[index] = AIR;             // ░░░░░░░░
+                            }
+                            else if (!FluidCollision(x+X+2, y+Y) && !FluidCollision(x+X+1, y+Y))
+                            {
+                                int rplc = (y+Y)*width+(x+X+2);   // ░░░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░██
+                                replace[index] = AIR;             // ░░░░░░░░
+                            }
+                            else if (!FluidCollision(x+X-1, y+Y) && FluidCollision(x+X+1, y+Y))
+                            {
+                                int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ██▓▓░░
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                            else if (!FluidCollision(x+X+1, y+Y) && FluidCollision(x+X-1, y+Y))
+                            {
+                                int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓██
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                        };
+                        break;
+                        case GEL :
                         {
                             if (!FluidCollision(x+X, y+Y+1))
                             {
@@ -786,6 +818,11 @@ public:
     bool Collision(int x, int y)
     {
         return bool(matrix[y*width+x]);
+    }
+
+    bool IsColliding(int x, int y)
+    {
+        return (matrix[y*width+x] > LAVA);
     }
 
 };
