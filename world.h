@@ -445,11 +445,13 @@ public:
         {
             for (int x = 0; x < W; x++)
             {
-                int index = (y+Y)*width+(x+X);
-                int current_cell = matrix[index];
+                if ( (y+Y > 2 && y+Y < height-2) && Collision(x+X, y+Y) )
+                {
+                    int index = (y+Y)*width+(x+X);
+                    int current_cell = matrix[index];
 
-                // Tile Interactions
-                switch (current_cell)
+                    // Tile Interactions
+                    switch (current_cell)
                     {
                         case WATER :
                         {
@@ -572,7 +574,6 @@ public:
                                 (matrix[dS] == LAVA) ||
                                 (matrix[dE] == LAVA) ||
                                 (matrix[dW] == LAVA)) replace[index] = WATER;
-                            
                             if (matrix[dS] == GRASS)
                             {
                                 replace[index] = WATER;
@@ -618,13 +619,10 @@ public:
                         }
                         break;
                     }
-                
-                // Update Moving Tiles
-                int cell_type = SOLID;
-                if ( (y+Y > 0 && y+Y < height-1) && Collision(x+X, y+Y) )
-                {
+                    // Update Moving Tiles
+                    int cell_type = SOLID;
                     switch (current_cell)
-                    {
+                        {
                         case WATER : cell_type = FLUID; break;
                         case BRINE : cell_type = FLUID; break;
                         case BLOOD : cell_type = FLUID; break;
@@ -731,7 +729,7 @@ public:
                             }
                         };
                         break;
-                    case GRAIN :
+                        case GRAIN :
                         {
                             if (!DualCollision(x+X, y+Y+1))
                             {
@@ -753,7 +751,7 @@ public:
                             }
                         };
                         break;
-                    case GAS :
+                        case GAS :
                         {
                             if (!DualCollision(x+X, y+Y-1))
                             {
