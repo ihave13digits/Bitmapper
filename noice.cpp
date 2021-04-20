@@ -298,7 +298,7 @@ public:
         // Update Parameters
         if (GetKey(olc::Key::S).bPressed)
         {
-            if (preview_world.selected_step < 255) preview_world.selected_step++;
+            if (preview_world.selected_step < preview_world.generation_steps-1) preview_world.selected_step++;
         }
         if (GetKey(olc::Key::W).bPressed)
         {
@@ -314,9 +314,26 @@ public:
         }
         if (GetKey(olc::Key::D).bPressed)
         {
-            if (preview_world.generation_param[preview_world.selected_step][preview_world.selected_param] < preview_world.total_tiles-1)
+            if (preview_world.selected_param == preview_world.pTILE)
             {
-                preview_world.generation_param[preview_world.selected_step][preview_world.selected_param]++;
+                if (preview_world.generation_param[preview_world.selected_step][preview_world.selected_param] < preview_world.total_tiles-1)
+                {
+                    preview_world.generation_param[preview_world.selected_step][preview_world.selected_param]++;
+                }
+            }
+            else if (preview_world.selected_param == preview_world.pMODE)
+            {
+                if (preview_world.generation_param[preview_world.selected_step][preview_world.selected_param] < preview_world.total_modes-1)
+                {
+                    preview_world.generation_param[preview_world.selected_step][preview_world.selected_param]++;
+                }
+            }
+            else
+            {
+                if (preview_world.generation_param[preview_world.selected_step][preview_world.selected_param] < 100)
+                {
+                    preview_world.generation_param[preview_world.selected_step][preview_world.selected_param]++;
+                }
             }
         }
 
@@ -388,30 +405,58 @@ public:
         DrawRect(bprobw.x, bprobw.y, bprobw.width, bprobw.height, olc::DARK_GREY);  // Probability West
         DrawStringDecal({ bprobw.TextX(),bprobw.TextY() }, bprobw.text, olc::WHITE, { bprobw.font, bprobw.font });
 
+        // Generation Steps
         for (int i = 0; i < preview_world.generation_steps; i++)
         {
-            if (preview_world.selected_param == preview_world.pTILE)
+            if (i == preview_world.selected_step)
             {
-                DrawStringDecal(
-                    { float(144),float((i*8)+8) },
-                    preview_world.tiles[preview_world.generation_param[i][preview_world.selected_param]],
-                    olc::WHITE, { 0.5, 0.5 });
-            }
-
-            else if (preview_world.selected_param == preview_world.pMODE)
-            {
-                DrawStringDecal(
-                    { float(144),float((i*8)+8) },
-                    preview_world.modes[preview_world.generation_param[i][preview_world.selected_param]],
-                    olc::WHITE, { 0.5, 0.5 });
+                if (preview_world.selected_param == preview_world.pTILE)
+                {
+                    DrawStringDecal(
+                        { float(144),float((i*8)+8) },
+                        preview_world.tiles[preview_world.generation_param[i][preview_world.selected_param]],
+                        olc::WHITE, { 0.5, 0.5 });
+                }
+                else if (preview_world.selected_param == preview_world.pMODE)
+                {
+                    DrawStringDecal(
+                        { float(144),float((i*8)+8) },
+                        preview_world.modes[preview_world.generation_param[i][preview_world.selected_param]],
+                        olc::WHITE, { 0.5, 0.5 });
+                }
+                else
+                {
+                    DrawStringDecal(
+                        { float(144),float((i*8)+8) },
+                        std::to_string(preview_world.generation_param[i][preview_world.selected_param]),
+                        olc::WHITE, { 0.5, 0.5 });
+                }
             }
             else
             {
-                DrawStringDecal(
-                    { float(144),float((i*8)+8) },
-                    std::to_string(preview_world.generation_param[i][preview_world.selected_param]),
-                    olc::WHITE, { 0.5, 0.5 });
+                if (preview_world.selected_param == preview_world.pTILE)
+                {
+                    DrawStringDecal(
+                        { float(144),float((i*8)+8) },
+                        preview_world.tiles[preview_world.generation_param[i][preview_world.selected_param]],
+                        olc::DARK_GREY, { 0.5, 0.5 });
+                }
+                else if (preview_world.selected_param == preview_world.pMODE)
+                {
+                    DrawStringDecal(
+                        { float(144),float((i*8)+8) },
+                        preview_world.modes[preview_world.generation_param[i][preview_world.selected_param]],
+                        olc::DARK_GREY, { 0.5, 0.5 });
+                }
+                else
+                {
+                    DrawStringDecal(
+                        { float(144),float((i*8)+8) },
+                        std::to_string(preview_world.generation_param[i][preview_world.selected_param]),
+                        olc::DARK_GREY, { 0.5, 0.5 });
+                }
             }
+
         }
         // Tile Value
         if (btile.IsColliding(GetMouseX(), GetMouseY()))
@@ -515,6 +560,7 @@ public:
             }
         }
 
+        // Draw Preview
         if (can_draw)
         {
             FillRect(8, 8, 128, 72, olc::BLACK);
@@ -552,7 +598,7 @@ public:
                 sky.GenerateSky(width, height, game_seed, tick_delay);
                 player.x = int(world.width/2);
                 player.y = player.height+1;
-                //while (!world.Collision(player.x, player.y+1)) player.Move(0, 1);
+                while (!world.Collision(player.x, player.y+1)) player.Move(0, 1);
                 loading = false;
                 game_state = PLAYING;
             }

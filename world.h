@@ -13,12 +13,13 @@ public:
 
     int total_tiles = 53;
     int total_parameters = 12;
+    int total_modes = 4;
 
     // Procedural Generation
     int selected_step = 0;
     int selected_param = 0;
     int generation_step = 1;
-    int generation_steps = 16;
+    int generation_steps = 8;
 
     int generation_param[256][12];
 
@@ -289,6 +290,9 @@ public:
         std::string message = "";
         int index = generation_step-1;
 
+        int W = float(float(width)/100.0);
+        int H = float(float(height)/100.0);
+
         switch (generation_param[index][pMODE])
         {
             case mADD :
@@ -297,10 +301,10 @@ public:
                     for (int i = 0; i < generation_param[index][pITER]; i++) AddLayer(
                             generation_param[index][pTILE],
                             generation_param[index][pDENSE],
-                            generation_param[index][pMINX],
-                            generation_param[index][pMAXX],
-                            generation_param[index][pMINY],
-                            generation_param[index][pMAXY]
+                            int(generation_param[index][pMINX]*W),
+                            int(generation_param[index][pMAXX]*W),
+                            int(generation_param[index][pMINY]*H),
+                            int(generation_param[index][pMAXY]*H)
                             );
                 }
                 break;
@@ -310,10 +314,10 @@ public:
                     for (int i = 0; i < generation_param[index][pITER]; i++) SeedLayer(
                             generation_param[index][pTILE],
                             generation_param[index][pDENSE],
-                            generation_param[index][pMINX],
-                            generation_param[index][pMAXX],
-                            generation_param[index][pMINY],
-                            generation_param[index][pMAXY]
+                            int(generation_param[index][pMINX]*W),
+                            int(generation_param[index][pMAXX]*W),
+                            int(generation_param[index][pMINY]*H),
+                            int(generation_param[index][pMAXY]*H)
                             );
                 }
                 break;
@@ -322,10 +326,10 @@ public:
                     message = "Expanding " + tiles[generation_param[index][pTILE]] + " Layer";
                     for (int i = 0; i < generation_param[index][pITER]; i++) Expand(
                             generation_param[index][pTILE],
-                            generation_param[index][pMINX],
-                            generation_param[index][pMAXX],
-                            generation_param[index][pMINY],
-                            generation_param[index][pMAXY],
+                            int(generation_param[index][pMINX]*W),
+                            int(generation_param[index][pMAXX]*W),
+                            int(generation_param[index][pMINY]*H),
+                            int(generation_param[index][pMAXY]*H),
                             generation_param[index][pPROBN],
                             generation_param[index][pPROBS],
                             generation_param[index][pPROBE],
@@ -338,10 +342,10 @@ public:
                     message = "Depositing " + tiles[generation_param[index][pTILE]] + " Layer";
                     for (int i = 0; i < generation_param[index][pITER]; i++) Deposit(
                             generation_param[index][pTILE],
-                            generation_param[index][pMINX],
-                            generation_param[index][pMAXX],
-                            generation_param[index][pMINY],
-                            generation_param[index][pMAXY],
+                            int(generation_param[index][pMINX]*W),
+                            int(generation_param[index][pMAXX]*W),
+                            int(generation_param[index][pMINY]*H),
+                            int(generation_param[index][pMAXY]*H),
                             generation_param[index][pPROBN],
                             generation_param[index][pPROBS],
                             generation_param[index][pPROBE],
