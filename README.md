@@ -13,3 +13,16 @@ A Noita inspired game written in C++ with OLC PixelGameEngine
 
     Left Mouse - Spawn Particles
     Right Mouse - Place Tile
+
+## Features
+
+    Particles
+    World Collision Detection
+    Custom Procedural World Generation
+
+## Material Simulations
+
+    Gas
+    Fluid
+    Gel
+    Granual
