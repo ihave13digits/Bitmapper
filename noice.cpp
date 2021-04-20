@@ -489,7 +489,7 @@ public:
                 world.InitializeMatrix(world_width, world_height);
                 for (int i = 0; i < preview_world.generation_steps; i++)
                 {
-                    for (int j = 0; j < world.total_parameters; j++)
+                    for (int j = 0; j < world.total_parameters-1; j++)
                     {
                         world.generation_param[i][j] = preview_world.generation_param[i][j];
                     }
@@ -551,8 +551,8 @@ public:
             {
                 sky.GenerateSky(width, height, game_seed, tick_delay);
                 player.x = int(world.width/2);
-                player.y = player.height;
-                while (!world.Collision(player.x, player.y+1)) player.Move(0, 1);
+                player.y = player.height+1;
+                //while (!world.Collision(player.x, player.y+1)) player.Move(0, 1);
                 loading = false;
                 game_state = PLAYING;
             }
@@ -664,7 +664,7 @@ public:
         {
             DrawSky();
             game_tick = 0;
-            world.SettleTiles(player.x-(width/2), player.y-(height*2), width, height*3);
+            world.SettleTiles(player.x-(width/2), player.y-(height/2), width, height);
             DrawTerrain();
         }
 
