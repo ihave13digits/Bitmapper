@@ -35,6 +35,7 @@ public:
     int game_state = 0;
 
     int selected_tile = 0;
+    int input_value = 0;
 
     int width = 256;
     int height = 144;
@@ -337,7 +338,67 @@ public:
             }
         }
 
+        // Numeric Input
+        if (GetKey(olc::Key::K0).bPressed)
+        {
+            std::string new_value = std::to_string(input_value)+"0";
+            input_value = std::stoi(new_value);
+        }
+        if (GetKey(olc::Key::K1).bPressed)
+        {
+            std::string new_value = std::to_string(input_value)+"1";
+            input_value = std::stoi(new_value);
+        }
+        if (GetKey(olc::Key::K2).bPressed)
+        {
+            std::string new_value = std::to_string(input_value)+"2";
+            input_value = std::stoi(new_value);
+        }
+        if (GetKey(olc::Key::K3).bPressed)
+        {
+            std::string new_value = std::to_string(input_value)+"3";
+            input_value = std::stoi(new_value);
+        }
+        if (GetKey(olc::Key::K4).bPressed)
+        {
+            std::string new_value = std::to_string(input_value)+"4";
+            input_value = std::stoi(new_value);
+        }
+        if (GetKey(olc::Key::K5).bPressed)
+        {
+            std::string new_value = std::to_string(input_value)+"5";
+            input_value = std::stoi(new_value);
+        }
+        if (GetKey(olc::Key::K6).bPressed)
+        {
+            std::string new_value = std::to_string(input_value)+"6";
+            input_value = std::stoi(new_value);
+        }
+        if (GetKey(olc::Key::K7).bPressed)
+        {
+            std::string new_value = std::to_string(input_value)+"7";
+            input_value = std::stoi(new_value);
+        }
+        if (GetKey(olc::Key::K8).bPressed)
+        {
+            std::string new_value = std::to_string(input_value)+"8";
+            input_value = std::stoi(new_value);
+        }
+        if (GetKey(olc::Key::K9).bPressed)
+        {
+            std::string new_value = std::to_string(input_value)+"9";
+            input_value = std::stoi(new_value);
+        }
+
+        if (GetKey(olc::Key::ENTER).bPressed)
+        {
+            preview_world.generation_param[preview_world.selected_step][preview_world.selected_param] = input_value;
+            input_value = 0;
+        }
+
         // Buttons
+        Button bconfig = Button();
+        bconfig.Setup(8, 84, 32, 16, 0.25, "Preset");
         Button bpreview = Button();
         bpreview.Setup(8, 104, 32, 16, 0.25, "Preview");
         Button bgenerate = Button();
@@ -371,8 +432,10 @@ public:
         bprobw.Setup(112, 96, 8, 8, 0.25, "W");
 
         DrawRect(7, 7, 130, 74, olc::GREY);  // Preview Box
-        DrawRect(142, 0, 113, 143, olc::GREY);  // Generation Steps
+        DrawRect(142, 0, 113, 143, olc::GREY);  // Generation Steps Box
 
+        DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, olc::DARK_GREY);
+        DrawStringDecal({ bconfig.TextX(),bconfig.TextY() }, bconfig.text, olc::WHITE, { bconfig.font, bconfig.font });
         DrawRect(bpreview.x, bpreview.y, bpreview.width, bpreview.height, olc::DARK_GREY);
         DrawStringDecal({ bpreview.TextX(),bpreview.TextY() }, bpreview.text, olc::WHITE, { bpreview.font, bpreview.font });
         DrawRect(bgenerate.x, bgenerate.y, bgenerate.width, bgenerate.height, olc::DARK_GREY);
@@ -396,13 +459,13 @@ public:
         DrawRect(bmaxy.x, bmaxy.y, bmaxy.width, bmaxy.height, olc::DARK_GREY);
         DrawStringDecal({ bmaxy.TextX(),bmaxy.TextY() }, bmaxy.text, olc::WHITE, { bmaxy.font, bmaxy.font });
 
-        DrawRect(bprobn.x, bprobn.y, bprobn.width, bprobn.height, olc::DARK_GREY);  // Probability North
+        DrawRect(bprobn.x, bprobn.y, bprobn.width, bprobn.height, olc::DARK_GREY);
         DrawStringDecal({ bprobn.TextX(),bprobn.TextY() }, bprobn.text, olc::WHITE, { bprobn.font, bprobn.font });
-        DrawRect(bprobs.x, bprobs.y, bprobs.width, bprobs.height, olc::DARK_GREY);  // Probability South
+        DrawRect(bprobs.x, bprobs.y, bprobs.width, bprobs.height, olc::DARK_GREY);
         DrawStringDecal({ bprobs.TextX(),bprobs.TextY() }, bprobs.text, olc::WHITE, { bprobs.font, bprobs.font });
-        DrawRect(bprobe.x, bprobe.y, bprobe.width, bprobe.height, olc::DARK_GREY);  // Probability East
+        DrawRect(bprobe.x, bprobe.y, bprobe.width, bprobe.height, olc::DARK_GREY);
         DrawStringDecal({ bprobe.TextX(),bprobe.TextY() }, bprobe.text, olc::WHITE, { bprobe.font, bprobe.font });
-        DrawRect(bprobw.x, bprobw.y, bprobw.width, bprobw.height, olc::DARK_GREY);  // Probability West
+        DrawRect(bprobw.x, bprobw.y, bprobw.width, bprobw.height, olc::DARK_GREY);
         DrawStringDecal({ bprobw.TextX(),bprobw.TextY() }, bprobw.text, olc::WHITE, { bprobw.font, bprobw.font });
 
         // Generation Steps
@@ -525,25 +588,90 @@ public:
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pMODE;
         }
 
+        // Auto Configure
+        if (bconfig.IsColliding(GetMouseX(), GetMouseY()))
+        {
+            DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, olc::WHITE);
+            if (GetMouse(0).bReleased)
+            {
+                preview_world.generation_param[0][world.pTILE] = world.STONE;
+                preview_world.generation_param[1][world.pTILE] = world.STONE;
+                preview_world.generation_param[2][world.pTILE] = world.MUD;
+                preview_world.generation_param[3][world.pTILE] = world.GRASS;
+                
+                preview_world.generation_param[0][world.pDENSE] = 4;
+
+                preview_world.generation_param[0][world.pITER] = 1;
+                preview_world.generation_param[1][world.pITER] = 8;
+                preview_world.generation_param[2][world.pITER] = 4;
+                preview_world.generation_param[3][world.pITER] = 1;
+
+                preview_world.generation_param[0][world.pMODE] = world.mADD;
+                preview_world.generation_param[1][world.pMODE] = world.mEXPAND;
+                preview_world.generation_param[2][world.pMODE] = world.mEXPAND;
+                preview_world.generation_param[3][world.pMODE] = world.mEXPAND;
+
+                preview_world.generation_param[0][world.pMINX] = 0;
+                preview_world.generation_param[1][world.pMINX] = 0;
+                preview_world.generation_param[2][world.pMINX] = 0;
+                preview_world.generation_param[3][world.pMINX] = 0;
+
+                preview_world.generation_param[0][world.pMAXX] = 100;
+                preview_world.generation_param[1][world.pMAXX] = 100;
+                preview_world.generation_param[2][world.pMAXX] = 100;
+                preview_world.generation_param[3][world.pMAXX] = 100;
+
+                preview_world.generation_param[0][world.pMINY] = 10;
+                preview_world.generation_param[1][world.pMINY] = 10;
+                preview_world.generation_param[2][world.pMINY] = 10;
+                preview_world.generation_param[3][world.pMINY] = 10;
+
+                preview_world.generation_param[0][world.pMAXY] = 80;
+                preview_world.generation_param[1][world.pMAXY] = 80;
+                preview_world.generation_param[2][world.pMAXY] = 80;
+                preview_world.generation_param[3][world.pMAXY] = 20;
+
+                preview_world.generation_param[0][world.pPROBN] = 0;
+                preview_world.generation_param[1][world.pPROBN] = 25;
+                preview_world.generation_param[2][world.pPROBN] = 50;
+                preview_world.generation_param[3][world.pPROBN] = 100;
+
+                preview_world.generation_param[0][world.pPROBS] = 0;
+                preview_world.generation_param[1][world.pPROBS] = 50;
+                preview_world.generation_param[2][world.pPROBS] = 25;
+                preview_world.generation_param[3][world.pPROBS] = 0;
+
+                preview_world.generation_param[0][world.pPROBE] = 0;
+                preview_world.generation_param[1][world.pPROBE] = 75;
+                preview_world.generation_param[2][world.pPROBE] = 75;
+                preview_world.generation_param[3][world.pPROBE] = 0;
+
+                preview_world.generation_param[0][world.pPROBW] = 0;
+                preview_world.generation_param[1][world.pPROBW] = 75;
+                preview_world.generation_param[2][world.pPROBW] = 75;
+                preview_world.generation_param[3][world.pPROBW] = 0;
+            }
+        }
+
         // Generate World
         if (bgenerate.IsColliding(GetMouseX(), GetMouseY()))
         {
-            DrawRect(bgenerate.x, bgenerate.y, bgenerate.width, bgenerate.height, olc::WHITE); // Generate World
+            DrawRect(bgenerate.x, bgenerate.y, bgenerate.width, bgenerate.height, olc::WHITE);
             if (GetMouse(0).bReleased)
             {
                 world.InitializeMatrix(world_width, world_height);
                 for (int i = 0; i < preview_world.generation_steps; i++)
                 {
-                    for (int j = 0; j < world.total_parameters-1; j++)
+                    for (int j = 0; j < preview_world.total_parameters-1; j++)
                     {
                         world.generation_param[i][j] = preview_world.generation_param[i][j];
                     }
                 }
-                for (int i = 0; i < world.generation_steps; i++)
-                {
-                    world.GenerateWorld(game_seed);
-                }
-                preview_world.ClearMatrix();
+                //for (int i = 0; i < world.generation_steps; i++)
+                //{
+                //    world.GenerateWorld(game_seed);
+                //}
+                //preview_world.ClearMatrix();
                 game_state = LOADING;
             }
         }
@@ -601,8 +729,8 @@ public:
             {
                 sky.GenerateSky(width, height, game_seed, tick_delay);
                 player.x = int(world.width/2);
-                player.y = player.height+1;
-                while (!world.Collision(player.x, player.y+1)) player.Move(0, 1);
+                player.y = player.height+2;
+                while (!world.IsColliding(player.x, player.y+1)) player.Move(0, 1);
                 loading = false;
                 game_state = PLAYING;
             }
