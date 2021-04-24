@@ -356,8 +356,9 @@ public:
                 }
                 break;
         }
-        
         */
+        
+        
         switch (generation_param[index][pMODE])
         {
             case mADD :
@@ -420,6 +421,7 @@ public:
                 }
                 break;
         }
+        
 
         generation_step++;
 
@@ -881,7 +883,7 @@ public:
 
     bool DualCollision(int x, int y)
     {
-        return (matrix[y*width+x]) || bool(replace[y*width+x]);
+        return bool(matrix[y*width+x]) || bool(replace[y*width+x]);
     }
 
     bool Collision(int x, int y)
@@ -891,7 +893,7 @@ public:
 
     bool IsColliding(int x, int y)
     {
-        return (matrix[y*width+x] > LAVA);
+        return matrix[y*width+x] > LAVA;
     }
 
 };
