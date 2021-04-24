@@ -431,7 +431,7 @@ public:
         Button bprobw = Button();
         bprobw.Setup(112, 96, 8, 8, 0.25, "W");
 
-        DrawRect(7, 7, 130, 74, olc::GREY);  // Preview Box
+        DrawRect(7, 7, 129, 73, olc::GREY);  // Preview Box
         DrawRect(142, 0, 113, 143, olc::GREY);  // Generation Steps Box
 
         DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, olc::DARK_GREY);
@@ -594,62 +594,7 @@ public:
             DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, olc::WHITE);
             if (GetMouse(0).bReleased)
             {
-                preview_world.generation_param[0][world.pTILE] = world.STONE;
-                preview_world.generation_param[1][world.pTILE] = world.STONE;
-                preview_world.generation_param[2][world.pTILE] = world.MUD;
-                preview_world.generation_param[3][world.pTILE] = world.GRASS;
-                
-                preview_world.generation_param[0][world.pDENSE] = 4;
-
-                preview_world.generation_param[0][world.pITER] = 1;
-                preview_world.generation_param[1][world.pITER] = 8;
-                preview_world.generation_param[2][world.pITER] = 4;
-                preview_world.generation_param[3][world.pITER] = 1;
-
-                preview_world.generation_param[0][world.pMODE] = world.mADD;
-                preview_world.generation_param[1][world.pMODE] = world.mEXPAND;
-                preview_world.generation_param[2][world.pMODE] = world.mEXPAND;
-                preview_world.generation_param[3][world.pMODE] = world.mEXPAND;
-
-                preview_world.generation_param[0][world.pMINX] = 0;
-                preview_world.generation_param[1][world.pMINX] = 0;
-                preview_world.generation_param[2][world.pMINX] = 0;
-                preview_world.generation_param[3][world.pMINX] = 0;
-
-                preview_world.generation_param[0][world.pMAXX] = 100;
-                preview_world.generation_param[1][world.pMAXX] = 100;
-                preview_world.generation_param[2][world.pMAXX] = 100;
-                preview_world.generation_param[3][world.pMAXX] = 100;
-
-                preview_world.generation_param[0][world.pMINY] = 10;
-                preview_world.generation_param[1][world.pMINY] = 10;
-                preview_world.generation_param[2][world.pMINY] = 10;
-                preview_world.generation_param[3][world.pMINY] = 10;
-
-                preview_world.generation_param[0][world.pMAXY] = 80;
-                preview_world.generation_param[1][world.pMAXY] = 80;
-                preview_world.generation_param[2][world.pMAXY] = 80;
-                preview_world.generation_param[3][world.pMAXY] = 20;
-
-                preview_world.generation_param[0][world.pPROBN] = 0;
-                preview_world.generation_param[1][world.pPROBN] = 25;
-                preview_world.generation_param[2][world.pPROBN] = 50;
-                preview_world.generation_param[3][world.pPROBN] = 100;
-
-                preview_world.generation_param[0][world.pPROBS] = 0;
-                preview_world.generation_param[1][world.pPROBS] = 50;
-                preview_world.generation_param[2][world.pPROBS] = 25;
-                preview_world.generation_param[3][world.pPROBS] = 0;
-
-                preview_world.generation_param[0][world.pPROBE] = 0;
-                preview_world.generation_param[1][world.pPROBE] = 75;
-                preview_world.generation_param[2][world.pPROBE] = 75;
-                preview_world.generation_param[3][world.pPROBE] = 0;
-
-                preview_world.generation_param[0][world.pPROBW] = 0;
-                preview_world.generation_param[1][world.pPROBW] = 75;
-                preview_world.generation_param[2][world.pPROBW] = 75;
-                preview_world.generation_param[3][world.pPROBW] = 0;
+                preview_world.PresetData();
             }
         }
 
@@ -662,16 +607,13 @@ public:
                 world.InitializeMatrix(world_width, world_height);
                 for (int i = 0; i < preview_world.generation_steps; i++)
                 {
-                    for (int j = 0; j < preview_world.total_parameters-1; j++)
+                    for (int j = 0; j < preview_world.total_parameters; j++)
                     {
                         world.generation_param[i][j] = preview_world.generation_param[i][j];
                     }
                 }
-                //for (int i = 0; i < world.generation_steps; i++)
-                //{
-                //    world.GenerateWorld(game_seed);
-                //}
-                //preview_world.ClearMatrix();
+                // Fix this to delete preview_world, instead
+                preview_world.ClearMatrix();
                 game_state = LOADING;
             }
         }
