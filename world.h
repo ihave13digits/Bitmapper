@@ -21,7 +21,7 @@ public:
     int generation_step = 1;
     int generation_steps = 8;
 
-    int generation_param[256][12];
+    int generation_param[64][12];
 
     enum MODES
     {
@@ -293,6 +293,7 @@ public:
         int W = float(float(width)/100.0);
         int H = float(float(height)/100.0);
 
+        /*
         switch (generation_param[index][pMODE])
         {
             case mADD :
@@ -301,10 +302,10 @@ public:
                     for (int i = 0; i < generation_param[index][pITER]; i++) AddLayer(
                             generation_param[index][pTILE],
                             generation_param[index][pDENSE],
-                            int(generation_param[index][pMINX]*W),
-                            int(generation_param[index][pMAXX]*W),
-                            int(generation_param[index][pMINY]*H),
-                            int(generation_param[index][pMAXY]*H)
+                            generation_param[index][pMINX],
+                            generation_param[index][pMAXX],
+                            generation_param[index][pMINY],
+                            generation_param[index][pMAXY]
                             );
                 }
                 break;
@@ -314,10 +315,10 @@ public:
                     for (int i = 0; i < generation_param[index][pITER]; i++) SeedLayer(
                             generation_param[index][pTILE],
                             generation_param[index][pDENSE],
-                            int(generation_param[index][pMINX]*W),
-                            int(generation_param[index][pMAXX]*W),
-                            int(generation_param[index][pMINY]*H),
-                            int(generation_param[index][pMAXY]*H)
+                            generation_param[index][pMINX],
+                            generation_param[index][pMAXX],
+                            generation_param[index][pMINY],
+                            generation_param[index][pMAXY]
                             );
                 }
                 break;
@@ -326,10 +327,10 @@ public:
                     message = "Expanding " + tiles[generation_param[index][pTILE]] + " Layer";
                     for (int i = 0; i < generation_param[index][pITER]; i++) Expand(
                             generation_param[index][pTILE],
-                            int(generation_param[index][pMINX]*W),
-                            int(generation_param[index][pMAXX]*W),
-                            int(generation_param[index][pMINY]*H),
-                            int(generation_param[index][pMAXY]*H),
+                            generation_param[index][pMINX],
+                            generation_param[index][pMAXX],
+                            generation_param[index][pMINY],
+                            generation_param[index][pMAXY],
                             generation_param[index][pPROBN],
                             generation_param[index][pPROBS],
                             generation_param[index][pPROBE],
@@ -342,10 +343,74 @@ public:
                     message = "Depositing " + tiles[generation_param[index][pTILE]] + " Layer";
                     for (int i = 0; i < generation_param[index][pITER]; i++) Deposit(
                             generation_param[index][pTILE],
-                            int(generation_param[index][pMINX]*W),
-                            int(generation_param[index][pMAXX]*W),
-                            int(generation_param[index][pMINY]*H),
-                            int(generation_param[index][pMAXY]*H),
+                            generation_param[index][pMINX],
+                            generation_param[index][pMAXX],
+                            generation_param[index][pMINY],
+                            generation_param[index][pMAXY],
+                            generation_param[index][pPROBN],
+                            generation_param[index][pPROBS],
+                            generation_param[index][pPROBE],
+                            generation_param[index][pPROBW]
+                            );
+
+                }
+                break;
+        }
+        
+        */
+        switch (generation_param[index][pMODE])
+        {
+            case mADD :
+                {
+                    message = "Adding " + tiles[generation_param[index][pTILE]] + " Layer";
+                    for (int i = 0; i < generation_param[index][pITER]; i++) AddLayer(
+                            generation_param[index][pTILE],
+                            generation_param[index][pDENSE],
+                            int(float(generation_param[index][pMINX])*W),
+                            int(float(generation_param[index][pMAXX])*W),
+                            int(float(generation_param[index][pMINY])*H),
+                            int(float(generation_param[index][pMAXY])*H)
+                            );
+                }
+                break;
+            case mSEED :
+                {
+                    message = "Seeding " + tiles[generation_param[index][pTILE]] + " Layer";
+                    for (int i = 0; i < generation_param[index][pITER]; i++) SeedLayer(
+                            generation_param[index][pTILE],
+                            generation_param[index][pDENSE],
+                            int(float(generation_param[index][pMINX])*W),
+                            int(float(generation_param[index][pMAXX])*W),
+                            int(float(generation_param[index][pMINY])*H),
+                            int(float(generation_param[index][pMAXY])*H)
+                            );
+                }
+                break;
+            case mEXPAND :
+                {
+                    message = "Expanding " + tiles[generation_param[index][pTILE]] + " Layer";
+                    for (int i = 0; i < generation_param[index][pITER]; i++) Expand(
+                            generation_param[index][pTILE],
+                            int(float(generation_param[index][pMINX])*W),
+                            int(float(generation_param[index][pMAXX])*W),
+                            int(float(generation_param[index][pMINY])*H),
+                            int(float(generation_param[index][pMAXY])*H),
+                            generation_param[index][pPROBN],
+                            generation_param[index][pPROBS],
+                            generation_param[index][pPROBE],
+                            generation_param[index][pPROBW]
+                            );
+                }
+                break;
+            case mDEPOSIT :
+                {
+                    message = "Depositing " + tiles[generation_param[index][pTILE]] + " Layer";
+                    for (int i = 0; i < generation_param[index][pITER]; i++) Deposit(
+                            generation_param[index][pTILE],
+                            int(float(generation_param[index][pMINX])*W),
+                            int(float(generation_param[index][pMAXX])*W),
+                            int(float(generation_param[index][pMINY])*H),
+                            int(float(generation_param[index][pMAXY])*H),
                             generation_param[index][pPROBN],
                             generation_param[index][pPROBS],
                             generation_param[index][pPROBE],
@@ -355,6 +420,7 @@ public:
                 }
                 break;
         }
+
         generation_step++;
 
         return message;

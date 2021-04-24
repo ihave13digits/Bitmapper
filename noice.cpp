@@ -539,6 +539,10 @@ public:
                         world.generation_param[i][j] = preview_world.generation_param[i][j];
                     }
                 }
+                for (int i = 0; i < world.generation_steps; i++)
+                {
+                    world.GenerateWorld(game_seed);
+                }
                 preview_world.ClearMatrix();
                 game_state = LOADING;
             }
@@ -546,12 +550,12 @@ public:
         // Generate Preview
         if (bpreview.IsColliding(GetMouseX(), GetMouseY()))
         {
-            DrawRect(bpreview.x, bpreview.y, bpreview.width, bpreview.height, olc::WHITE); // Generate Preview
+            DrawRect(bpreview.x, bpreview.y, bpreview.width, bpreview.height, olc::WHITE);
             if (GetMouse(0).bReleased)
             {
                 preview_world.ClearMatrix();
                 preview_world.InitializeMatrix(128, 72);
-                for (int i = 1; i < preview_world.generation_steps; i++)
+                for (int i = 0; i < preview_world.generation_steps; i++)
                 {
                     preview_world.GenerateWorld(game_seed);
                 }
@@ -571,9 +575,9 @@ public:
                 {
                     int v = preview_world.matrix[y*preview_world.width+x];
                     Draw(x+8, y+8, olc::Pixel(
-                        int(preview_world.tileset[v][0][0]),
-                        int(preview_world.tileset[v][0][1]),
-                        int(preview_world.tileset[v][0][2]),
+                        preview_world.tileset[v][0][0],
+                        preview_world.tileset[v][0][1],
+                        preview_world.tileset[v][0][2],
                         preview_world.tileset[v][0][3])
                         );
                 }
@@ -781,6 +785,11 @@ public:
 
 	bool OnUserCreate() override
 	{
+        for (int i = 0; i < world.generation_steps; i++)
+        {
+            world.generation_param[i][world.pITER] = 1;
+            preview_world.generation_param[i][preview_world.pITER] = 1;
+        }
 		return true;
 	}
 
