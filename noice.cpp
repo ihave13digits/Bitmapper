@@ -627,7 +627,7 @@ public:
                 preview_world.InitializeMatrix(128, 72);
                 for (int i = 0; i < preview_world.generation_steps; i++)
                 {
-                    preview_world.GenerateWorld(game_seed);
+                    preview_world.GeneratePreview(game_seed);
                 }
                 preview_world.generation_step = 1;
                 can_draw = true;
@@ -644,6 +644,7 @@ public:
                 for (int x = 0; x < 128; x++)
                 {
                     int v = preview_world.matrix[y*preview_world.width+x];
+                    //std::cout << v;
                     Draw(x+8, y+8, olc::Pixel(
                         preview_world.tileset[v][0][0],
                         preview_world.tileset[v][0][1],
