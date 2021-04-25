@@ -19,7 +19,7 @@ public:
     int selected_step = 0;
     int selected_param = 0;
     int generation_step = 1;
-    int generation_steps = 4;
+    int generation_steps = 6;
 
     int generation_param[64][12];
 
@@ -288,59 +288,154 @@ public:
         generation_param[1][pTILE] = STONE;
         generation_param[2][pTILE] = MUD;
         generation_param[3][pTILE] = GRASS;
+        generation_param[4][pTILE] = MANTLE;
+        generation_param[5][pTILE] = MANTLE;
 
         generation_param[0][pDENSE] = 4;
+        generation_param[4][pDENSE] = 8;
 
         generation_param[0][pITER] = 1;
         generation_param[1][pITER] = 4;
         generation_param[2][pITER] = 8;
         generation_param[3][pITER] = 1;
+        generation_param[4][pITER] = 1;
+        generation_param[5][pITER] = 16;
 
         generation_param[0][pMODE] = mADD;
         generation_param[1][pMODE] = mEXPAND;
         generation_param[2][pMODE] = mEXPAND;
         generation_param[3][pMODE] = mEXPAND;
+        generation_param[4][pMODE] = mADD;
+        generation_param[5][pMODE] = mEXPAND;
 
         generation_param[0][pMINX] = 0;
         generation_param[1][pMINX] = 0;
         generation_param[2][pMINX] = 0;
         generation_param[3][pMINX] = 0;
+        generation_param[4][pMINX] = 0;
+        generation_param[5][pMINX] = 0;
 
         generation_param[0][pMAXX] = 100;
         generation_param[1][pMAXX] = 100;
         generation_param[2][pMAXX] = 100;
         generation_param[3][pMAXX] = 100;
+        generation_param[4][pMAXX] = 100;
+        generation_param[5][pMAXX] = 100;
 
-        generation_param[0][pMINY] = 10;
-        generation_param[1][pMINY] = 10;
+        generation_param[0][pMINY] = 20;
+        generation_param[1][pMINY] = 15;
         generation_param[2][pMINY] = 10;
-        generation_param[3][pMINY] = 10;
+        generation_param[3][pMINY] = 8;
+        generation_param[4][pMINY] = 90;
+        generation_param[5][pMINY] = 85;
 
         generation_param[0][pMAXY] = 80;
         generation_param[1][pMAXY] = 80;
         generation_param[2][pMAXY] = 80;
-        generation_param[3][pMAXY] = 20;
+        generation_param[3][pMAXY] = 25;
+        generation_param[4][pMAXY] = 100;
+        generation_param[5][pMAXY] = 100;
 
         generation_param[0][pPROBN] = 0;
         generation_param[1][pPROBN] = 25;
         generation_param[2][pPROBN] = 50;
         generation_param[3][pPROBN] = 100;
+        generation_param[4][pPROBN] = 10;
+        generation_param[5][pPROBN] = 10;
 
         generation_param[0][pPROBS] = 0;
         generation_param[1][pPROBS] = 50;
         generation_param[2][pPROBS] = 25;
         generation_param[3][pPROBS] = 0;
+        generation_param[4][pPROBS] = 10;
+        generation_param[5][pPROBS] = 10;
 
         generation_param[0][pPROBE] = 0;
         generation_param[1][pPROBE] = 75;
         generation_param[2][pPROBE] = 75;
         generation_param[3][pPROBE] = 0;
+        generation_param[4][pPROBE] = 100;
+        generation_param[5][pPROBE] = 100;
 
         generation_param[0][pPROBW] = 0;
         generation_param[1][pPROBW] = 75;
         generation_param[2][pPROBW] = 75;
         generation_param[3][pPROBW] = 0;
+        generation_param[4][pPROBW] = 100;
+        generation_param[5][pPROBW] = 100;
 
+    }
+
+    void GeneratePreview(int seed)
+    {
+        srand(seed);
+
+        std::string message = "";
+        int index = generation_step-1;
+
+        switch (generation_param[index][pMODE])
+        {
+            case mADD :
+                {
+                    message = "Adding " + tiles[generation_param[index][pTILE]] + " Layer";
+                    for (int i = 0; i < generation_param[index][pITER]; i++) AddLayer(
+                            generation_param[index][pTILE],
+                            generation_param[index][pDENSE],
+                            generation_param[index][pMINX],
+                            generation_param[index][pMAXX],
+                            generation_param[index][pMINY],
+                            generation_param[index][pMAXY]
+                            );
+                }
+                break;
+            case mSEED :
+                {
+                    message = "Seeding " + tiles[generation_param[index][pTILE]] + " Layer";
+                    for (int i = 0; i < generation_param[index][pITER]; i++) SeedLayer(
+                            generation_param[index][pTILE],
+                            generation_param[index][pDENSE],
+                            generation_param[index][pMINX],
+                            generation_param[index][pMAXX],
+                            generation_param[index][pMINY],
+                            generation_param[index][pMAXY]
+                            );
+                }
+                break;
+            case mEXPAND :
+                {
+                    message = "Expanding " + tiles[generation_param[index][pTILE]] + " Layer";
+                    for (int i = 0; i < generation_param[index][pITER]; i++) Expand(
+                            generation_param[index][pTILE],
+                            generation_param[index][pMINX],
+                            generation_param[index][pMAXX],
+                            generation_param[index][pMINY],
+                            generation_param[index][pMAXY],
+                            generation_param[index][pPROBN],
+                            generation_param[index][pPROBS],
+                            generation_param[index][pPROBE],
+                            generation_param[index][pPROBW]
+                            );
+                }
+                break;
+            case mDEPOSIT :
+                {
+                    message = "Depositing " + tiles[generation_param[index][pTILE]] + " Layer";
+                    for (int i = 0; i < generation_param[index][pITER]; i++) Deposit(
+                            generation_param[index][pTILE],
+                            generation_param[index][pMINX],
+                            generation_param[index][pMAXX],
+                            generation_param[index][pMINY],
+                            generation_param[index][pMAXY],
+                            generation_param[index][pPROBN],
+                            generation_param[index][pPROBS],
+                            generation_param[index][pPROBE],
+                            generation_param[index][pPROBW]
+                            );
+                }
+                break;
+        }
+
+        generation_step++;
     }
 
     // Generation
@@ -354,7 +449,6 @@ public:
         int W = float(float(width)/100.0);
         int H = float(float(height)/100.0);
 
-        /*
         switch (generation_param[index][pMODE])
         {
             case mADD :
@@ -363,10 +457,10 @@ public:
                     for (int i = 0; i < generation_param[index][pITER]; i++) AddLayer(
                             generation_param[index][pTILE],
                             generation_param[index][pDENSE],
-                            generation_param[index][pMINX],
-                            generation_param[index][pMAXX],
-                            generation_param[index][pMINY],
-                            generation_param[index][pMAXY]
+                            std::round(float(generation_param[index][pMINX])*W),
+                            std::round(float(generation_param[index][pMAXX])*W),
+                            std::round(float(generation_param[index][pMINY])*H),
+                            std::round(float(generation_param[index][pMAXY])*H)
                             );
                 }
                 break;
@@ -376,10 +470,10 @@ public:
                     for (int i = 0; i < generation_param[index][pITER]; i++) SeedLayer(
                             generation_param[index][pTILE],
                             generation_param[index][pDENSE],
-                            generation_param[index][pMINX],
-                            generation_param[index][pMAXX],
-                            generation_param[index][pMINY],
-                            generation_param[index][pMAXY]
+                            std::round(float(generation_param[index][pMINX])*W),
+                            std::round(float(generation_param[index][pMAXX])*W),
+                            std::round(float(generation_param[index][pMINY])*H),
+                            std::round(float(generation_param[index][pMAXY])*H)
                             );
                 }
                 break;
@@ -388,10 +482,10 @@ public:
                     message = "Expanding " + tiles[generation_param[index][pTILE]] + " Layer";
                     for (int i = 0; i < generation_param[index][pITER]; i++) Expand(
                             generation_param[index][pTILE],
-                            generation_param[index][pMINX],
-                            generation_param[index][pMAXX],
-                            generation_param[index][pMINY],
-                            generation_param[index][pMAXY],
+                            std::round(float(generation_param[index][pMINX])*W),
+                            std::round(float(generation_param[index][pMAXX])*W),
+                            std::round(float(generation_param[index][pMINY])*H),
+                            std::round(float(generation_param[index][pMAXY])*H),
                             generation_param[index][pPROBN],
                             generation_param[index][pPROBS],
                             generation_param[index][pPROBE],
@@ -404,75 +498,10 @@ public:
                     message = "Depositing " + tiles[generation_param[index][pTILE]] + " Layer";
                     for (int i = 0; i < generation_param[index][pITER]; i++) Deposit(
                             generation_param[index][pTILE],
-                            generation_param[index][pMINX],
-                            generation_param[index][pMAXX],
-                            generation_param[index][pMINY],
-                            generation_param[index][pMAXY],
-                            generation_param[index][pPROBN],
-                            generation_param[index][pPROBS],
-                            generation_param[index][pPROBE],
-                            generation_param[index][pPROBW]
-                            );
-
-                }
-                break;
-        }
-        */
-        
-        
-        switch (generation_param[index][pMODE])
-        {
-            case mADD :
-                {
-                    message = "Adding " + tiles[generation_param[index][pTILE]] + " Layer";
-                    for (int i = 0; i < generation_param[index][pITER]; i++) AddLayer(
-                            generation_param[index][pTILE],
-                            generation_param[index][pDENSE],
-                            int(float(generation_param[index][pMINX])*W),
-                            int(float(generation_param[index][pMAXX])*W),
-                            int(float(generation_param[index][pMINY])*H),
-                            int(float(generation_param[index][pMAXY])*H)
-                            );
-                }
-                break;
-            case mSEED :
-                {
-                    message = "Seeding " + tiles[generation_param[index][pTILE]] + " Layer";
-                    for (int i = 0; i < generation_param[index][pITER]; i++) SeedLayer(
-                            generation_param[index][pTILE],
-                            generation_param[index][pDENSE],
-                            int(float(generation_param[index][pMINX])*W),
-                            int(float(generation_param[index][pMAXX])*W),
-                            int(float(generation_param[index][pMINY])*H),
-                            int(float(generation_param[index][pMAXY])*H)
-                            );
-                }
-                break;
-            case mEXPAND :
-                {
-                    message = "Expanding " + tiles[generation_param[index][pTILE]] + " Layer";
-                    for (int i = 0; i < generation_param[index][pITER]; i++) Expand(
-                            generation_param[index][pTILE],
-                            int(float(generation_param[index][pMINX])*W),
-                            int(float(generation_param[index][pMAXX])*W),
-                            int(float(generation_param[index][pMINY])*H),
-                            int(float(generation_param[index][pMAXY])*H),
-                            generation_param[index][pPROBN],
-                            generation_param[index][pPROBS],
-                            generation_param[index][pPROBE],
-                            generation_param[index][pPROBW]
-                            );
-                }
-                break;
-            case mDEPOSIT :
-                {
-                    message = "Depositing " + tiles[generation_param[index][pTILE]] + " Layer";
-                    for (int i = 0; i < generation_param[index][pITER]; i++) Deposit(
-                            generation_param[index][pTILE],
-                            int(float(generation_param[index][pMINX])*W),
-                            int(float(generation_param[index][pMAXX])*W),
-                            int(float(generation_param[index][pMINY])*H),
-                            int(float(generation_param[index][pMAXY])*H),
+                            std::round(float(generation_param[index][pMINX])*W),
+                            std::round(float(generation_param[index][pMAXX])*W),
+                            std::round(float(generation_param[index][pMINY])*H),
+                            std::round(float(generation_param[index][pMAXY])*H),
                             generation_param[index][pPROBN],
                             generation_param[index][pPROBS],
                             generation_param[index][pPROBE],
