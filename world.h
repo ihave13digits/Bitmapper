@@ -446,8 +446,8 @@ public:
         std::string message = "";
         int index = generation_step-1;
 
-        int W = float(float(width)/100.0);
-        int H = float(float(height)/100.0);
+        float W = float(float(width)/100.0);
+        float H = float(float(height)/100.0);
 
         switch (generation_param[index][pMODE])
         {
