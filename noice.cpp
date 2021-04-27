@@ -296,7 +296,7 @@ public:
         //Clear(olc::BLACK);
 
         bool can_draw = false;
-        std::string info_text = "";
+        std::string info_text = "Hover Over A Button To See Details";
 
         // Update Parameters
         if (GetKey(olc::Key::S).bPressed)
@@ -394,6 +394,12 @@ public:
 
         if (GetKey(olc::Key::ENTER).bPressed)
         {
+            switch (preview_world.selected_param)
+            {
+                case preview_world.pTILE : if (input_value > preview_world.total_tiles-1) input_value = preview_world.total_tiles-1; break;
+                case preview_world.pMODE : if (input_value > 3) input_value = 3; break;
+                //case preview_world.p : if (input_value > ) input_value = ; break;
+            }
             preview_world.generation_param[preview_world.selected_step][preview_world.selected_param] = input_value;
             input_value = 0;
         }
@@ -473,7 +479,7 @@ public:
         DrawStringDecal({ bprobw.TextX(),bprobw.TextY() }, bprobw.text, olc::WHITE, { bprobw.font, bprobw.font });
 
         // Generation Steps
-        for (int i = 0; i < preview_world.generation_steps; i++)
+        for (int i = 0; i < 10; i++)//preview_world.generation_steps; i++)
         {
             std::string mode_text = preview_world.modes[preview_world.generation_param[i][preview_world.selected_param]];
             std::string tile_text = preview_world.tiles[preview_world.generation_param[i][preview_world.selected_param]];
@@ -483,30 +489,30 @@ public:
                 tile_text = ">" + tile_text;
                 if (preview_world.selected_param == preview_world.pTILE)
                 {
-                    DrawStringDecal({ float(185),float((i*8)+5) }, tile_text, olc::WHITE, { 0.5, 0.5 });
+                    DrawStringDecal({ float(186),float((i*10)+6) }, tile_text, olc::WHITE, { 0.5, 0.5 });
                 }
                 else if (preview_world.selected_param == preview_world.pMODE)
                 {
-                    DrawStringDecal({ float(185),float((i*8)+5) }, mode_text, olc::WHITE, { 0.5, 0.5 });
+                    DrawStringDecal({ float(186),float((i*10)+6) }, mode_text, olc::WHITE, { 0.5, 0.5 });
                 }
                 else
                 {
-                    DrawStringDecal({ float(185),float((i*8)+5) }, vlue_text, olc::WHITE, { 0.5, 0.5 });
+                    DrawStringDecal({ float(186),float((i*10)+6) }, vlue_text, olc::WHITE, { 0.5, 0.5 });
                 }
             }
             else
             {
                 if (preview_world.selected_param == preview_world.pTILE)
                 {
-                    DrawStringDecal({ float(185),float((i*8)+5) }, tile_text, olc::DARK_GREY, { 0.5, 0.5 });
+                    DrawStringDecal({ float(186),float((i*10)+6) }, tile_text, olc::DARK_GREY, { 0.5, 0.5 });
                 }
                 else if (preview_world.selected_param == preview_world.pMODE)
                 {
-                    DrawStringDecal({ float(185),float((i*8)+5) }, mode_text, olc::DARK_GREY, { 0.5, 0.5 });
+                    DrawStringDecal({ float(186),float((i*10)+6) }, mode_text, olc::DARK_GREY, { 0.5, 0.5 });
                 }
                 else
                 {
-                    DrawStringDecal({ float(185),float((i*8)+5) }, vlue_text, olc::DARK_GREY, { 0.5, 0.5 });
+                    DrawStringDecal({ float(186),float((i*10)+6) }, vlue_text, olc::DARK_GREY, { 0.5, 0.5 });
                 }
             }
 
@@ -642,7 +648,7 @@ public:
         // Draw Preview
         if (can_draw)
         {
-            FillRect(3, 3, 99, 99, olc::BLACK);
+            FillRect(3, 3, 99, 99, olc::Pixel(128, 128, 255));
             SetPixelMode(olc::Pixel::ALPHA);
             for (int y = 0; y < 100; y++)
             {
