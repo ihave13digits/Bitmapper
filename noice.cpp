@@ -430,6 +430,8 @@ public:
 
         // Buttons
 
+        Button bclear = Button();
+        bclear.Setup(106, 70, 32, 8, 0.25, "Clear");
         Button bconfig = Button();
         bconfig.Setup(106, 78, 32, 8, 0.25, "Preset");
         Button bpreview = Button();
@@ -468,6 +470,8 @@ public:
         DrawRect(183, 2, 70, 100, olc::GREY);  // Generation Steps Box
         DrawRect(2, 105, 251, 36, olc::GREY);  // Information Box
 
+        DrawRect(bclear.x, bclear.y, bclear.width, bclear.height, olc::DARK_GREY);
+        DrawStringDecal({ bclear.TextX(),bclear.TextY() }, bclear.text, olc::WHITE, { bclear.font, bclear.font });
         DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, olc::DARK_GREY);
         DrawStringDecal({ bconfig.TextX(),bconfig.TextY() }, bconfig.text, olc::WHITE, { bconfig.font, bconfig.font });
         DrawRect(bpreview.x, bpreview.y, bpreview.width, bpreview.height, olc::DARK_GREY);
@@ -649,6 +653,15 @@ public:
                 // Fix this to delete preview_world, instead
                 preview_world.ClearMatrix();
                 game_state = LOADING;
+            }
+        }
+        if (bclear.IsColliding(GetMouseX(), GetMouseY()))
+        {
+            info_text = "Clears All Generation Data";
+            DrawRect(bclear.x, bclear.y, bclear.width, bclear.height, olc::WHITE);
+            if (GetMouse(0).bReleased)
+            {
+                preview_world.ClearData();
             }
         }
         // Generate Preview

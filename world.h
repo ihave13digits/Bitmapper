@@ -19,7 +19,7 @@ public:
     int selected_step = 0;
     int selected_param = 0;
     int generation_step = 1;
-    int generation_steps = 6;
+    int generation_steps = 9;
 
     int generation_param[64][12];
 
@@ -282,31 +282,58 @@ public:
         }
     }
 
+    void ClearData()
+    {
+        for (int i = 0; i < 64; i++)
+        {
+            for (int p = 0; p < total_parameters; p++)
+            {
+                generation_param[i][p] = 0;
+            }
+        }
+    }
+
     void PresetData()
     {
         generation_param[0][pTILE] = STONE;
         generation_param[1][pTILE] = STONE;
         generation_param[2][pTILE] = MUD;
-        generation_param[3][pTILE] = GRASS;
-        generation_param[4][pTILE] = MANTLE;
-        generation_param[5][pTILE] = MANTLE;
+        generation_param[3][pTILE] = DIRT;
+        generation_param[4][pTILE] = STONE;
+        generation_param[5][pTILE] = GRAVEL;
+        generation_param[6][pTILE] = GRASS;
+        generation_param[7][pTILE] = MANTLE;
+        generation_param[8][pTILE] = MANTLE;
 
         generation_param[0][pDENSE] = 4;
-        generation_param[4][pDENSE] = 8;
+        generation_param[1][pDENSE] = 0;
+        generation_param[2][pDENSE] = 0;
+        generation_param[3][pDENSE] = 0;
+        generation_param[4][pDENSE] = 0;
+        generation_param[5][pDENSE] = 0;
+        generation_param[6][pDENSE] = 0;
+        generation_param[7][pDENSE] = 8;
+        generation_param[8][pDENSE] = 0;
 
         generation_param[0][pITER] = 1;
         generation_param[1][pITER] = 4;
         generation_param[2][pITER] = 8;
-        generation_param[3][pITER] = 1;
-        generation_param[4][pITER] = 1;
-        generation_param[5][pITER] = 16;
+        generation_param[3][pITER] = 8;
+        generation_param[4][pITER] = 4;
+        generation_param[5][pITER] = 4;
+        generation_param[6][pITER] = 1;
+        generation_param[7][pITER] = 1;
+        generation_param[8][pITER] = 16;
 
         generation_param[0][pMODE] = mADD;
         generation_param[1][pMODE] = mEXPAND;
         generation_param[2][pMODE] = mEXPAND;
         generation_param[3][pMODE] = mEXPAND;
-        generation_param[4][pMODE] = mADD;
+        generation_param[4][pMODE] = mEXPAND;
         generation_param[5][pMODE] = mEXPAND;
+        generation_param[6][pMODE] = mEXPAND;
+        generation_param[7][pMODE] = mADD;
+        generation_param[8][pMODE] = mEXPAND;
 
         generation_param[0][pMINX] = 0;
         generation_param[1][pMINX] = 0;
@@ -314,6 +341,9 @@ public:
         generation_param[3][pMINX] = 0;
         generation_param[4][pMINX] = 0;
         generation_param[5][pMINX] = 0;
+        generation_param[6][pMINX] = 0;
+        generation_param[7][pMINX] = 0;
+        generation_param[8][pMINX] = 0;
 
         generation_param[0][pMAXX] = 100;
         generation_param[1][pMAXX] = 100;
@@ -321,48 +351,69 @@ public:
         generation_param[3][pMAXX] = 100;
         generation_param[4][pMAXX] = 100;
         generation_param[5][pMAXX] = 100;
+        generation_param[6][pMAXX] = 100;
+        generation_param[7][pMAXX] = 100;
+        generation_param[8][pMAXX] = 100;
 
         generation_param[0][pMINY] = 20;
         generation_param[1][pMINY] = 15;
-        generation_param[2][pMINY] = 10;
-        generation_param[3][pMINY] = 8;
-        generation_param[4][pMINY] = 90;
-        generation_param[5][pMINY] = 85;
+        generation_param[2][pMINY] = 15;
+        generation_param[3][pMINY] = 10;
+        generation_param[4][pMINY] = 60;
+        generation_param[5][pMINY] = 30;
+        generation_param[6][pMINY] = 8;
+        generation_param[7][pMINY] = 90;
+        generation_param[8][pMINY] = 85;
 
         generation_param[0][pMAXY] = 80;
         generation_param[1][pMAXY] = 80;
-        generation_param[2][pMAXY] = 80;
-        generation_param[3][pMAXY] = 25;
-        generation_param[4][pMAXY] = 100;
-        generation_param[5][pMAXY] = 100;
+        generation_param[2][pMAXY] = 40;
+        generation_param[3][pMAXY] = 60;
+        generation_param[4][pMAXY] = 60;
+        generation_param[5][pMAXY] = 80;
+        generation_param[6][pMAXY] = 25;
+        generation_param[7][pMAXY] = 100;
+        generation_param[8][pMAXY] = 100;
 
         generation_param[0][pPROBN] = 0;
         generation_param[1][pPROBN] = 25;
         generation_param[2][pPROBN] = 50;
-        generation_param[3][pPROBN] = 100;
-        generation_param[4][pPROBN] = 10;
-        generation_param[5][pPROBN] = 10;
+        generation_param[3][pPROBN] = 50;
+        generation_param[4][pPROBN] = 50;
+        generation_param[5][pPROBN] = 50;
+        generation_param[6][pPROBN] = 100;
+        generation_param[7][pPROBN] = 10;
+        generation_param[8][pPROBN] = 10;
 
         generation_param[0][pPROBS] = 0;
         generation_param[1][pPROBS] = 50;
         generation_param[2][pPROBS] = 25;
-        generation_param[3][pPROBS] = 0;
-        generation_param[4][pPROBS] = 10;
-        generation_param[5][pPROBS] = 10;
+        generation_param[3][pPROBS] = 25;
+        generation_param[4][pPROBS] = 25;
+        generation_param[5][pPROBS] = 0;
+        generation_param[6][pPROBS] = 0;
+        generation_param[7][pPROBS] = 10;
+        generation_param[8][pPROBS] = 10;
 
         generation_param[0][pPROBE] = 0;
-        generation_param[1][pPROBE] = 75;
+        generation_param[1][pPROBE] = 100;
         generation_param[2][pPROBE] = 75;
-        generation_param[3][pPROBE] = 0;
+        generation_param[3][pPROBE] = 90;
         generation_param[4][pPROBE] = 100;
-        generation_param[5][pPROBE] = 100;
+        generation_param[5][pPROBE] = 0;
+        generation_param[6][pPROBE] = 0;
+        generation_param[7][pPROBE] = 100;
+        generation_param[8][pPROBE] = 100;
 
         generation_param[0][pPROBW] = 0;
-        generation_param[1][pPROBW] = 75;
+        generation_param[1][pPROBW] = 100;
         generation_param[2][pPROBW] = 75;
-        generation_param[3][pPROBW] = 0;
+        generation_param[3][pPROBW] = 90;
         generation_param[4][pPROBW] = 100;
-        generation_param[5][pPROBW] = 100;
+        generation_param[5][pPROBW] = 0;
+        generation_param[6][pPROBW] = 0;
+        generation_param[7][pPROBW] = 100;
+        generation_param[8][pPROBW] = 100;
 
     }
 
