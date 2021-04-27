@@ -25,4 +25,8 @@ A Noita inspired game written in C++ with OLC PixelGameEngine
     Gas
     Fluid
     Gel
-    Granular
+    Grain
+
+## Binaries
+
+    Linux
