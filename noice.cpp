@@ -279,16 +279,40 @@ public:
         float Tx = (width/2)-((sAppName.size()*16)/2);
         float Ty = (height*0.25);
 
-        float Nx = (width/2)-36;
+        float Nx = (width/2)-50;
         float Lx = (width/2)+4;
         float By = (height*0.75);
 
         DrawStringDecal({ Tx,Ty }, sAppName, olc::WHITE, { 2.0, 2.0 });
         
-        DrawStringDecal({ Nx,By }, "New", olc::WHITE, { 1.0, 1.0 });
-        DrawStringDecal({ Lx,By }, "Load", olc::WHITE, { 1.0, 1.0 });
+        Button bNew = Button();
+        bNew.Setup(Nx, By, 48, 16, 1.0, "New");
+        Button bLoad = Button();
+        bLoad.Setup(Lx, By, 48, 16, 1.0, "Load");
 
-        if (GetMouse(0).bReleased) game_state = CUSTOM;
+        DrawStringDecal({ bNew.TextX(),bNew.TextY() }, bNew.text, olc::WHITE, { 1.0, 1.0 });
+        DrawRect(bNew.x, bNew.y, bNew.width, bNew.height, olc::DARK_GREY);
+        DrawStringDecal({ bLoad.TextX(),bLoad.TextY() }, bLoad.text, olc::WHITE, { 1.0, 1.0 });
+        DrawRect(bLoad.x, bLoad.y, bLoad.width, bLoad.height, olc::DARK_GREY);
+
+        if (bNew.IsColliding(GetMouseX(), GetMouseY()))
+        {
+            DrawRect(bNew.x, bNew.y, bNew.width, bNew.height, olc::WHITE);
+            if (GetMouse(0).bReleased)
+            {
+                Clear(olc::BLACK);
+                game_state = CUSTOM;
+            }
+        }
+        if (bLoad.IsColliding(GetMouseX(), GetMouseY()))
+        {
+            DrawRect(bLoad.x, bLoad.y, bLoad.width, bLoad.height, olc::WHITE);
+            if (GetMouse(0).bReleased)
+            {
+                Clear(olc::BLACK);
+                game_state = CUSTOM;
+            }
+        }
     }
 
     void DrawCustom()
