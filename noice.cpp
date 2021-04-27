@@ -249,6 +249,7 @@ public:
         //std::string standingon = world.tiles[world.matrix[(player.y+1)*world.width+player.x]];
         std::string lookingat = "Air";
         std::string selectedtile = world.tiles[selected_tile];
+        std::string collision_at = std::to_string(world.Collision((player.x-(width/2)+GetMouseX()), (player.y-(height/2)+GetMouseY())));
 
         if ( ( (lookindex < world.width*world.height) && lookindex > 0) && (world.matrix[lookindex] < world.total_tiles) )
             lookingat = world.tiles[world.matrix[lookindex]];
@@ -265,7 +266,7 @@ public:
         ProgressBar(4, 6, player.bp, player.BP, 32, 0, 0, 255, 0, 0, 64);
         DrawStringDecal({ 4,8  }, "Looking At: " + lookingat, olc::WHITE, { font, font });
         DrawStringDecal({ 4,12 }, "Selected Tile: " + selectedtile, olc::WHITE, { font, font });
-        DrawStringDecal({ 4,16 }, "Collision: " + std::to_string(world.Collision((player.x-(width/2)+GetMouseX()), (player.y-(height/2)+GetMouseY()))), olc::WHITE, { font, font });
+        DrawStringDecal({ 4,16 }, "Collision: " + collision_at, olc::WHITE, { font, font });
         DrawStringDecal({ 4,20 }, "Day: " + std::to_string(sky.day), olc::WHITE, { font, font });
         DrawStringDecal({ 4,24 }, "Year: " + std::to_string(sky.year), olc::WHITE, { font, font });
 
@@ -295,6 +296,7 @@ public:
         //Clear(olc::BLACK);
 
         bool can_draw = false;
+        std::string info_text = "";
 
         // Update Parameters
         if (GetKey(olc::Key::S).bPressed)
@@ -397,42 +399,44 @@ public:
         }
 
         // Buttons
+
         Button bconfig = Button();
-        bconfig.Setup(8, 84, 32, 16, 0.25, "Preset");
+        bconfig.Setup(106, 78, 32, 8, 0.25, "Preset");
         Button bpreview = Button();
-        bpreview.Setup(8, 104, 32, 16, 0.25, "Preview");
+        bpreview.Setup(106, 86, 32, 8, 0.25, "Preview");
         Button bgenerate = Button();
-        bgenerate.Setup(8, 124, 32, 16, 0.25, "Generate");
-        
+        bgenerate.Setup(106, 94, 32, 8, 0.25, "Generate");
+
         Button btile = Button();
-        btile.Setup(56, 88, 16, 8, 0.25, "Tile");
+        btile.Setup(104, 32, 16, 8, 0.25, "Tile");
         Button bmode = Button();
-        bmode.Setup(56, 96, 16, 8, 0.25, "Mode");
+        bmode.Setup(104, 40, 16, 8, 0.25, "Mode");
         Button bdense = Button();
-        bdense.Setup(56, 104, 16, 8, 0.25, "Density");
+        bdense.Setup(104, 48, 16, 8, 0.25, "Density");
         Button biter = Button();
-        biter.Setup(56, 112, 16, 8, 0.25, "Repeat");
+        biter.Setup(104, 56, 16, 8, 0.25, "Repeat");
 
         Button bminx = Button();
-        bminx.Setup(78, 88, 16, 8, 0.25, "Min X");
+        bminx.Setup(124, 32, 16, 8, 0.25, "Min X");
         Button bmaxx = Button();
-        bmaxx.Setup(78, 96, 16, 8, 0.25, "Max X");
+        bmaxx.Setup(124, 40, 16, 8, 0.25, "Max X");
         Button bminy = Button();
-        bminy.Setup(78, 104, 16, 8, 0.25, "Min Y");
+        bminy.Setup(124, 48, 16, 8, 0.25, "Min Y");
         Button bmaxy = Button();
-        bmaxy.Setup(78, 112, 16, 8, 0.25, "Max Y");
+        bmaxy.Setup(124, 56, 16, 8, 0.25, "Max Y");
 
         Button bprobn = Button();
-        bprobn.Setup(120, 88, 8, 8, 0.25, "N");
+        bprobn.Setup(118, 2, 8, 8, 0.25, "N");
         Button bprobs = Button();
-        bprobs.Setup(120, 104, 8, 8, 0.25, "S");
+        bprobs.Setup(118, 18, 8, 8, 0.25, "S");
         Button bprobe = Button();
-        bprobe.Setup(128, 96, 8, 8, 0.25, "E");
+        bprobe.Setup(126, 10, 8, 8, 0.25, "E");
         Button bprobw = Button();
-        bprobw.Setup(112, 96, 8, 8, 0.25, "W");
+        bprobw.Setup(110, 10, 8, 8, 0.25, "W");
 
-        DrawRect(7, 7, 129, 73, olc::GREY);  // Preview Box
-        DrawRect(142, 0, 113, 143, olc::GREY);  // Generation Steps Box
+        DrawRect(2, 2, 100, 100, olc::GREY);  // Preview Box
+        DrawRect(183, 2, 70, 100, olc::GREY);  // Generation Steps Box
+        DrawRect(2, 105, 251, 36, olc::GREY);  // Information Box
 
         DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, olc::DARK_GREY);
         DrawStringDecal({ bconfig.TextX(),bconfig.TextY() }, bconfig.text, olc::WHITE, { bconfig.font, bconfig.font });
@@ -471,52 +475,38 @@ public:
         // Generation Steps
         for (int i = 0; i < preview_world.generation_steps; i++)
         {
+            std::string mode_text = preview_world.modes[preview_world.generation_param[i][preview_world.selected_param]];
+            std::string tile_text = preview_world.tiles[preview_world.generation_param[i][preview_world.selected_param]];
+            std::string vlue_text = std::to_string(preview_world.generation_param[i][preview_world.selected_param]);
             if (i == preview_world.selected_step)
             {
+                tile_text = ">" + tile_text;
                 if (preview_world.selected_param == preview_world.pTILE)
                 {
-                    DrawStringDecal(
-                        { float(144),float((i*8)+8) },
-                        preview_world.tiles[preview_world.generation_param[i][preview_world.selected_param]],
-                        olc::WHITE, { 0.5, 0.5 });
+                    DrawStringDecal({ float(185),float((i*8)+5) }, tile_text, olc::WHITE, { 0.5, 0.5 });
                 }
                 else if (preview_world.selected_param == preview_world.pMODE)
                 {
-                    DrawStringDecal(
-                        { float(144),float((i*8)+8) },
-                        preview_world.modes[preview_world.generation_param[i][preview_world.selected_param]],
-                        olc::WHITE, { 0.5, 0.5 });
+                    DrawStringDecal({ float(185),float((i*8)+5) }, mode_text, olc::WHITE, { 0.5, 0.5 });
                 }
                 else
                 {
-                    DrawStringDecal(
-                        { float(144),float((i*8)+8) },
-                        std::to_string(preview_world.generation_param[i][preview_world.selected_param]),
-                        olc::WHITE, { 0.5, 0.5 });
+                    DrawStringDecal({ float(185),float((i*8)+5) }, vlue_text, olc::WHITE, { 0.5, 0.5 });
                 }
             }
             else
             {
                 if (preview_world.selected_param == preview_world.pTILE)
                 {
-                    DrawStringDecal(
-                        { float(144),float((i*8)+8) },
-                        preview_world.tiles[preview_world.generation_param[i][preview_world.selected_param]],
-                        olc::DARK_GREY, { 0.5, 0.5 });
+                    DrawStringDecal({ float(185),float((i*8)+5) }, tile_text, olc::DARK_GREY, { 0.5, 0.5 });
                 }
                 else if (preview_world.selected_param == preview_world.pMODE)
                 {
-                    DrawStringDecal(
-                        { float(144),float((i*8)+8) },
-                        preview_world.modes[preview_world.generation_param[i][preview_world.selected_param]],
-                        olc::DARK_GREY, { 0.5, 0.5 });
+                    DrawStringDecal({ float(185),float((i*8)+5) }, mode_text, olc::DARK_GREY, { 0.5, 0.5 });
                 }
                 else
                 {
-                    DrawStringDecal(
-                        { float(144),float((i*8)+8) },
-                        std::to_string(preview_world.generation_param[i][preview_world.selected_param]),
-                        olc::DARK_GREY, { 0.5, 0.5 });
+                    DrawStringDecal({ float(185),float((i*8)+5) }, vlue_text, olc::DARK_GREY, { 0.5, 0.5 });
                 }
             }
 
@@ -524,66 +514,78 @@ public:
         // Tile Value
         if (btile.IsColliding(GetMouseX(), GetMouseY()))
         {
+            info_text = "Material To add To World";
             DrawRect(btile.x, btile.y, btile.width, btile.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pTILE;
         }
         // Density Value
         if (bdense.IsColliding(GetMouseX(), GetMouseY()))
         {
+            info_text = "Density Of Seeding (Add Layer, Seed Material)";
             DrawRect(bdense.x, bdense.y, bdense.width, bdense.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pDENSE;
         }
         if (biter.IsColliding(GetMouseX(), GetMouseY()))
         {
+            info_text = "How Many Times to Repeat Current Step";
             DrawRect(biter.x, biter.y, biter.width, biter.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pITER;
         }
         // X Values
         if (bminx.IsColliding(GetMouseX(), GetMouseY()))
         {
+            info_text = "Minimum Width Range Of Effect";
             DrawRect(bminx.x, bminx.y, bminx.width, bminx.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pMINX;
         }
         if (bmaxx.IsColliding(GetMouseX(), GetMouseY()))
         {
+            info_text = "Maximum Width Range Of Effect";
             DrawRect(bmaxx.x, bmaxx.y, bmaxx.width, bmaxx.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pMAXX;
         }
         // Y values
         if (bminy.IsColliding(GetMouseX(), GetMouseY()))
         {
+            info_text = "Minimum Height Range Of Effect";
             DrawRect(bminy.x, bminy.y, bminy.width, bminy.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pMINY;
         }
         if (bmaxy.IsColliding(GetMouseX(), GetMouseY()))
         {
+            info_text = "Maximum Height Range Of Effect";
             DrawRect(bmaxy.x, bmaxy.y, bmaxy.width, bmaxy.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pMAXY;
         }
         // Neighbor Values
         if (bprobn.IsColliding(GetMouseX(), GetMouseY()))
         {
+            info_text = "Probability That A Northern Neighbor Will Spawn";
             DrawRect(bprobn.x, bprobn.y, bprobn.width, bprobn.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pPROBN;
         }
         if (bprobs.IsColliding(GetMouseX(), GetMouseY()))
         {
+            info_text = "Probability That A Southern Neighbor Will Spawn";
             DrawRect(bprobs.x, bprobs.y, bprobs.width, bprobs.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pPROBS;
         }
         if (bprobe.IsColliding(GetMouseX(), GetMouseY()))
         {
+            info_text = "Probability That An Eastern Neighbor Will Spawn";
             DrawRect(bprobe.x, bprobe.y, bprobe.width, bprobe.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pPROBE;
         }
         if (bprobw.IsColliding(GetMouseX(), GetMouseY()))
         {
+            info_text = "Probability That A Western Neighbor Will Spawn";
             DrawRect(bprobw.x, bprobw.y, bprobw.width, bprobw.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pPROBW;
         }
         // Mode Value
         if (bmode.IsColliding(GetMouseX(), GetMouseY()))
         {
+            info_text = "Changes Generation Mode";
             DrawRect(bmode.x, bmode.y, bmode.width, bmode.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pMODE;
         }
@@ -591,6 +593,7 @@ public:
         // Auto Configure
         if (bconfig.IsColliding(GetMouseX(), GetMouseY()))
         {
+            info_text = "Standard World Generation";
             DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, olc::WHITE);
             if (GetMouse(0).bReleased)
             {
@@ -601,6 +604,7 @@ public:
         // Generate World
         if (bgenerate.IsColliding(GetMouseX(), GetMouseY()))
         {
+            info_text = "Generates World And Starts Game";
             DrawRect(bgenerate.x, bgenerate.y, bgenerate.width, bgenerate.height, olc::WHITE);
             if (GetMouse(0).bReleased)
             {
@@ -620,11 +624,12 @@ public:
         // Generate Preview
         if (bpreview.IsColliding(GetMouseX(), GetMouseY()))
         {
+            info_text = "Updates The Preview Box";
             DrawRect(bpreview.x, bpreview.y, bpreview.width, bpreview.height, olc::WHITE);
             if (GetMouse(0).bReleased)
             {
                 preview_world.ClearMatrix();
-                preview_world.InitializeMatrix(128, 72);
+                preview_world.InitializeMatrix(100, 100);
                 for (int i = 0; i < preview_world.generation_steps; i++)
                 {
                     preview_world.GeneratePreview(game_seed);
@@ -637,15 +642,15 @@ public:
         // Draw Preview
         if (can_draw)
         {
-            FillRect(8, 8, 128, 72, olc::BLACK);
+            FillRect(3, 3, 99, 99, olc::BLACK);
             SetPixelMode(olc::Pixel::ALPHA);
-            for (int y = 0; y < 72; y++)
+            for (int y = 0; y < 100; y++)
             {
-                for (int x = 0; x < 128; x++)
+                for (int x = 0; x < 100; x++)
                 {
                     int v = preview_world.matrix[y*preview_world.width+x];
                     //std::cout << v;
-                    Draw(x+8, y+8, olc::Pixel(
+                    Draw(x+3, y+3, olc::Pixel(
                         preview_world.tileset[v][0][0],
                         preview_world.tileset[v][0][1],
                         preview_world.tileset[v][0][2],
@@ -655,6 +660,9 @@ public:
             }
             SetPixelMode(olc::Pixel::NORMAL);
         }
+
+        // Draw Info
+        DrawStringDecal({ 5,109 }, info_text, olc::WHITE, { 0.5, 0.5 });
 
     }
 
