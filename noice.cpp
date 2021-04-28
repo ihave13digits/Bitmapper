@@ -54,6 +54,41 @@ public:
 
 
 
+    void SaveGameData()
+    {
+    }
+
+    void LoadGameData()
+    {
+    }
+
+    void SaveGenerationData()
+    {
+        std::string params[12] = {"Tile", "Mode", "Dense", "Iter", "MinX", "MaxX", "MinY", "MaxY", "ProbN", "ProbS", "ProbE", "ProbW"};
+        for (int i = 0; i < preview_world.generation_steps; i++)
+        {
+            for (int j = 0; j < preview_world.total_parameters; j++)
+            {
+                int data = preview_world.generation_param[i][j];
+                std::cout << "Saving Param (" << i << ") " << params[j] << " " << data << std::endl;
+            }
+        }
+    }
+
+    void LoadGenerationData()
+    {
+        std::string params[12] = {"Tile", "Mode", "Dense", "Iter", "MinX", "MaxX", "MinY", "MaxY", "ProbN", "ProbS", "ProbE", "ProbW"};
+        for (int i = 0; i < preview_world.generation_steps; i++)
+        {
+            for (int j = 0; j < preview_world.total_parameters; j++)
+            {
+                int data = 0;
+                preview_world.generation_param[i][j] = data;
+                std::cout << "Loading Param (" << i << ") " << params[j] << " " << data << std::endl;
+            }
+        }
+    }
+
     void SpawnParticle(int X, int Y)
     {
         int W = width/2;
@@ -710,7 +745,7 @@ public:
             DrawRect(bsave.x, bsave.y, bsave.width, bsave.height, olc::WHITE);
             if (GetMouse(0).bReleased)
             {
-                std::cout << "Data" << " " << "Saved" << std::endl;
+                SaveGenerationData();
             }
         }
         if (bload.IsColliding(GetMouseX(), GetMouseY()))
@@ -719,7 +754,7 @@ public:
             DrawRect(bload.x, bload.y, bload.width, bload.height, olc::WHITE);
             if (GetMouse(0).bReleased)
             {
-                std::cout << "Data" << " " << "Loaded" << std::endl;
+                LoadGenerationData();
             }
         }
         // Generate World
