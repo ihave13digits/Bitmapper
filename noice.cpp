@@ -321,6 +321,7 @@ public:
 
         bool can_draw = false;
         std::string info_text = "Hover Over A Button To See Details";
+        std::string dtls_text = "";
 
         // Update Parameters
         if (GetKey(olc::Key::S).bPressed)
@@ -549,19 +550,22 @@ public:
         if (btile.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Material To add To World";
+            //dtls_text = "()";
             DrawRect(btile.x, btile.y, btile.width, btile.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pTILE;
         }
         // Density Value
         if (bdense.IsColliding(GetMouseX(), GetMouseY()))
         {
-            info_text = "Density Of Seeding (Add Layer, Seed Material)";
+            info_text = "Probability A Material Will Spawn Per Cell";
+            dtls_text = "(Add Layer, Seed Material)";
             DrawRect(bdense.x, bdense.y, bdense.width, bdense.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pDENSE;
         }
         if (biter.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "How Many Times to Repeat Current Step";
+            //dtls_text = "()";
             DrawRect(biter.x, biter.y, biter.width, biter.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pITER;
         }
@@ -569,12 +573,14 @@ public:
         if (bminx.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Minimum Width Range Of Effect";
+            dtls_text = "(0-100 %)";
             DrawRect(bminx.x, bminx.y, bminx.width, bminx.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pMINX;
         }
         if (bmaxx.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Maximum Width Range Of Effect";
+            dtls_text = "(0-100 %)";
             DrawRect(bmaxx.x, bmaxx.y, bmaxx.width, bmaxx.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pMAXX;
         }
@@ -582,12 +588,14 @@ public:
         if (bminy.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Minimum Height Range Of Effect";
+            dtls_text = "(0-100 %)";
             DrawRect(bminy.x, bminy.y, bminy.width, bminy.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pMINY;
         }
         if (bmaxy.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Maximum Height Range Of Effect";
+            dtls_text = "(0-100 %)";
             DrawRect(bmaxy.x, bmaxy.y, bmaxy.width, bmaxy.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pMAXY;
         }
@@ -595,24 +603,28 @@ public:
         if (bprobn.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Probability That A Northern Neighbor Will Spawn";
+            //dtls_text = "()";
             DrawRect(bprobn.x, bprobn.y, bprobn.width, bprobn.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pPROBN;
         }
         if (bprobs.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Probability That A Southern Neighbor Will Spawn";
+            //dtls_text = "()";
             DrawRect(bprobs.x, bprobs.y, bprobs.width, bprobs.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pPROBS;
         }
         if (bprobe.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Probability That An Eastern Neighbor Will Spawn";
+            //dtls_text = "()";
             DrawRect(bprobe.x, bprobe.y, bprobe.width, bprobe.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pPROBE;
         }
         if (bprobw.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Probability That A Western Neighbor Will Spawn";
+            //dtls_text = "()";
             DrawRect(bprobw.x, bprobw.y, bprobw.width, bprobw.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pPROBW;
         }
@@ -620,6 +632,7 @@ public:
         if (bmode.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Changes Generation Mode";
+            //dtls_text = "()";
             DrawRect(bmode.x, bmode.y, bmode.width, bmode.height, olc::WHITE);
             if (GetMouse(0).bReleased) preview_world.selected_param = preview_world.pMODE;
         }
@@ -628,6 +641,7 @@ public:
         if (bconfig.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Standard World Generation";
+            //dtls_text = "()";
             DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, olc::WHITE);
             if (GetMouse(0).bReleased)
             {
@@ -706,6 +720,7 @@ public:
 
         // Draw Info
         DrawStringDecal({ 5,109 }, info_text, olc::WHITE, { 0.5, 0.5 });
+        DrawStringDecal({ 5,115 }, dtls_text, olc::WHITE, { 0.5, 0.5 });
 
     }
 
