@@ -323,47 +323,93 @@ public:
         std::string info_text = "Hover Over A Button To See Details";
         std::string dtls_text = "";
 
-        // Update Parameters
-        if (GetKey(olc::Key::S).bPressed)
-        {
-            if (preview_world.selected_step < preview_world.generation_steps-1) preview_world.selected_step++;
-        }
-        if (GetKey(olc::Key::W).bPressed)
-        {
-            if (preview_world.selected_step > 0) preview_world.selected_step--;
-        }
+        // Buttons
 
-        if (GetKey(olc::Key::A).bPressed)
-        {
-            if (preview_world.generation_param[preview_world.selected_step][preview_world.selected_param] > 0)
-            {
-                preview_world.generation_param[preview_world.selected_step][preview_world.selected_param]--;
-            }
-        }
-        if (GetKey(olc::Key::D).bPressed)
-        {
-            if (preview_world.selected_param == preview_world.pTILE)
-            {
-                if (preview_world.generation_param[preview_world.selected_step][preview_world.selected_param] < preview_world.total_tiles-1)
-                {
-                    preview_world.generation_param[preview_world.selected_step][preview_world.selected_param]++;
-                }
-            }
-            else if (preview_world.selected_param == preview_world.pMODE)
-            {
-                if (preview_world.generation_param[preview_world.selected_step][preview_world.selected_param] < preview_world.total_modes-1)
-                {
-                    preview_world.generation_param[preview_world.selected_step][preview_world.selected_param]++;
-                }
-            }
-            else
-            {
-                if (preview_world.generation_param[preview_world.selected_step][preview_world.selected_param] < 100)
-                {
-                    preview_world.generation_param[preview_world.selected_step][preview_world.selected_param]++;
-                }
-            }
-        }
+        Button bclear = Button();
+        bclear.Setup(106, 70, 32, 8, 0.25, "Clear");
+        Button bconfig = Button();
+        bconfig.Setup(106, 78, 32, 8, 0.25, "Preset");
+        Button bpreview = Button();
+        bpreview.Setup(106, 86, 32, 8, 0.25, "Preview");
+        Button bgenerate = Button();
+        bgenerate.Setup(106, 94, 32, 8, 0.25, "Generate");
+
+        Button btile = Button();
+        btile.Setup(104, 32, 16, 8, 0.25, "Tile");
+        Button bmode = Button();
+        bmode.Setup(104, 40, 16, 8, 0.25, "Mode");
+        Button bdense = Button();
+        bdense.Setup(104, 48, 16, 8, 0.25, "Density");
+        Button biter = Button();
+        biter.Setup(104, 56, 16, 8, 0.25, "Repeat");
+
+        Button bminusgs = Button();
+        bminusgs.Setup(183, 2, 70, 4, 0.25, "-");
+        Button bplusgs = Button();
+        bplusgs.Setup(183, 98, 70, 4, 0.25, "+");
+
+        Button bminx = Button();
+        bminx.Setup(124, 32, 16, 8, 0.25, "Min X");
+        Button bmaxx = Button();
+        bmaxx.Setup(124, 40, 16, 8, 0.25, "Max X");
+        Button bminy = Button();
+        bminy.Setup(124, 48, 16, 8, 0.25, "Min Y");
+        Button bmaxy = Button();
+        bmaxy.Setup(124, 56, 16, 8, 0.25, "Max Y");
+
+        Button bprobn = Button();
+        bprobn.Setup(118, 2, 8, 8, 0.25, "N");
+        Button bprobs = Button();
+        bprobs.Setup(118, 18, 8, 8, 0.25, "S");
+        Button bprobe = Button();
+        bprobe.Setup(126, 10, 8, 8, 0.25, "E");
+        Button bprobw = Button();
+        bprobw.Setup(110, 10, 8, 8, 0.25, "W");
+
+        DrawRect(2, 2, 100, 100, olc::GREY);  // Preview Box
+        DrawRect(183, 2, 70, 100, olc::GREY);  // Generation Steps Box
+        DrawRect(2, 105, 251, 36, olc::GREY);  // Information Box
+
+        DrawRect(bclear.x, bclear.y, bclear.width, bclear.height, olc::DARK_GREY);
+        DrawStringDecal({ bclear.TextX(),bclear.TextY() }, bclear.text, olc::WHITE, { bclear.font, bclear.font });
+        DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, olc::DARK_GREY);
+        DrawStringDecal({ bconfig.TextX(),bconfig.TextY() }, bconfig.text, olc::WHITE, { bconfig.font, bconfig.font });
+        DrawRect(bpreview.x, bpreview.y, bpreview.width, bpreview.height, olc::DARK_GREY);
+        DrawStringDecal({ bpreview.TextX(),bpreview.TextY() }, bpreview.text, olc::WHITE, { bpreview.font, bpreview.font });
+        DrawRect(bgenerate.x, bgenerate.y, bgenerate.width, bgenerate.height, olc::DARK_GREY);
+        DrawStringDecal({ bgenerate.TextX(),bgenerate.TextY() }, bgenerate.text, olc::WHITE, { bgenerate.font, bgenerate.font });
+
+        DrawRect(bminusgs.x, bminusgs.y, bminusgs.width, bminusgs.height, olc::DARK_GREY);
+        DrawStringDecal({ bminusgs.TextX(),bminusgs.TextY() }, bminusgs.text, olc::WHITE, { btile.font, bminusgs.font });
+        DrawRect(bplusgs.x, bplusgs.y, bplusgs.width, bplusgs.height, olc::DARK_GREY);
+        DrawStringDecal({ bplusgs.TextX(),bplusgs.TextY() }, bplusgs.text, olc::WHITE, { bplusgs.font, bplusgs.font });
+
+        DrawRect(btile.x, btile.y, btile.width, btile.height, olc::DARK_GREY);
+        DrawStringDecal({ btile.TextX(),btile.TextY() }, btile.text, olc::WHITE, { btile.font, btile.font });
+        DrawRect(bmode.x, bmode.y, bmode.width, bmode.height, olc::DARK_GREY);
+        DrawStringDecal({ bmode.TextX(),bmode.TextY() }, bmode.text, olc::WHITE, { bmode.font, bmode.font });
+        DrawRect(bdense.x, bdense.y, bdense.width, bdense.height, olc::DARK_GREY);
+        DrawStringDecal({ bdense.TextX(),bdense.TextY() }, bdense.text, olc::WHITE, { bdense.font, bdense.font });
+        DrawRect(biter.x, biter.y, biter.width, biter.height, olc::DARK_GREY);
+        DrawStringDecal({ biter.TextX(),biter.TextY() }, biter.text, olc::WHITE, { biter.font, biter.font });
+
+        DrawRect(bminx.x, bminx.y, bminx.width, bminx.height, olc::DARK_GREY);
+        DrawStringDecal({ bminx.TextX(),bminx.TextY() }, bminx.text, olc::WHITE, { bminx.font, bminx.font });
+        DrawRect(bmaxx.x, bmaxx.y, bmaxx.width, bmaxx.height, olc::DARK_GREY);
+        DrawStringDecal({ bmaxx.TextX(),bmaxx.TextY() }, bmaxx.text, olc::WHITE, { bmaxx.font, bmaxx.font });
+        DrawRect(bminy.x, bminy.y, bminy.width, bminy.height, olc::DARK_GREY);
+        DrawStringDecal({ bminy.TextX(),bminy.TextY() }, bminy.text, olc::WHITE, { bminy.font, bminy.font });
+        DrawRect(bmaxy.x, bmaxy.y, bmaxy.width, bmaxy.height, olc::DARK_GREY);
+        DrawStringDecal({ bmaxy.TextX(),bmaxy.TextY() }, bmaxy.text, olc::WHITE, { bmaxy.font, bmaxy.font });
+
+        DrawRect(bprobn.x, bprobn.y, bprobn.width, bprobn.height, olc::DARK_GREY);
+        DrawStringDecal({ bprobn.TextX(),bprobn.TextY() }, bprobn.text, olc::WHITE, { bprobn.font, bprobn.font });
+        DrawRect(bprobs.x, bprobs.y, bprobs.width, bprobs.height, olc::DARK_GREY);
+        DrawStringDecal({ bprobs.TextX(),bprobs.TextY() }, bprobs.text, olc::WHITE, { bprobs.font, bprobs.font });
+        DrawRect(bprobe.x, bprobe.y, bprobe.width, bprobe.height, olc::DARK_GREY);
+        DrawStringDecal({ bprobe.TextX(),bprobe.TextY() }, bprobe.text, olc::WHITE, { bprobe.font, bprobe.font });
+        DrawRect(bprobw.x, bprobw.y, bprobw.width, bprobw.height, olc::DARK_GREY);
+        DrawStringDecal({ bprobw.TextX(),bprobw.TextY() }, bprobw.text, olc::WHITE, { bprobw.font, bprobw.font });
 
         // Numeric Input
         if (GetKey(olc::Key::K0).bPressed)
@@ -423,92 +469,64 @@ public:
             {
                 case preview_world.pTILE : if (input_value > preview_world.total_tiles-1) input_value = preview_world.total_tiles-1; break;
                 case preview_world.pMODE : if (input_value > 3) input_value = 3; break;
-                //case preview_world.p : if (input_value > ) input_value = ; break;
+                case preview_world.pITER : if (input_value > 64) input_value = 64; break;
+                default : if (input_value > 100) input_value = 100; break;
             }
             preview_world.generation_param[preview_world.selected_step][preview_world.selected_param] = input_value;
             input_value = 0;
         }
 
-        // Buttons
+        // Update Parameters
+        if (GetKey(olc::Key::S).bPressed)
+        {
+            if (preview_world.selected_step < preview_world.generation_steps-1) preview_world.selected_step++;
+        }
+        if (GetKey(olc::Key::W).bPressed)
+        {
+            if (preview_world.selected_step > 0) preview_world.selected_step--;
+        }
 
-        Button bclear = Button();
-        bclear.Setup(106, 70, 32, 8, 0.25, "Clear");
-        Button bconfig = Button();
-        bconfig.Setup(106, 78, 32, 8, 0.25, "Preset");
-        Button bpreview = Button();
-        bpreview.Setup(106, 86, 32, 8, 0.25, "Preview");
-        Button bgenerate = Button();
-        bgenerate.Setup(106, 94, 32, 8, 0.25, "Generate");
+        if (GetKey(olc::Key::A).bPressed)
+        {
+            if (preview_world.generation_param[preview_world.selected_step][preview_world.selected_param] > 0)
+            {
+                preview_world.generation_param[preview_world.selected_step][preview_world.selected_param]--;
+            }
+        }
+        if (GetKey(olc::Key::D).bPressed)
+        {
+            if (preview_world.selected_param == preview_world.pTILE)
+            {
+                if (preview_world.generation_param[preview_world.selected_step][preview_world.selected_param] < preview_world.total_tiles-1)
+                {
+                    preview_world.generation_param[preview_world.selected_step][preview_world.selected_param]++;
+                }
+            }
+            else if (preview_world.selected_param == preview_world.pMODE)
+            {
+                if (preview_world.generation_param[preview_world.selected_step][preview_world.selected_param] < preview_world.total_modes-1)
+                {
+                    preview_world.generation_param[preview_world.selected_step][preview_world.selected_param]++;
+                }
+            }
+            else
+            {
+                if (preview_world.generation_param[preview_world.selected_step][preview_world.selected_param] < 100)
+                {
+                    preview_world.generation_param[preview_world.selected_step][preview_world.selected_param]++;
+                }
+            }
+        }
 
-        Button btile = Button();
-        btile.Setup(104, 32, 16, 8, 0.25, "Tile");
-        Button bmode = Button();
-        bmode.Setup(104, 40, 16, 8, 0.25, "Mode");
-        Button bdense = Button();
-        bdense.Setup(104, 48, 16, 8, 0.25, "Density");
-        Button biter = Button();
-        biter.Setup(104, 56, 16, 8, 0.25, "Repeat");
-
-        Button bminx = Button();
-        bminx.Setup(124, 32, 16, 8, 0.25, "Min X");
-        Button bmaxx = Button();
-        bmaxx.Setup(124, 40, 16, 8, 0.25, "Max X");
-        Button bminy = Button();
-        bminy.Setup(124, 48, 16, 8, 0.25, "Min Y");
-        Button bmaxy = Button();
-        bmaxy.Setup(124, 56, 16, 8, 0.25, "Max Y");
-
-        Button bprobn = Button();
-        bprobn.Setup(118, 2, 8, 8, 0.25, "N");
-        Button bprobs = Button();
-        bprobs.Setup(118, 18, 8, 8, 0.25, "S");
-        Button bprobe = Button();
-        bprobe.Setup(126, 10, 8, 8, 0.25, "E");
-        Button bprobw = Button();
-        bprobw.Setup(110, 10, 8, 8, 0.25, "W");
-
-        DrawRect(2, 2, 100, 100, olc::GREY);  // Preview Box
-        DrawRect(183, 2, 70, 100, olc::GREY);  // Generation Steps Box
-        DrawRect(2, 105, 251, 36, olc::GREY);  // Information Box
-
-        DrawRect(bclear.x, bclear.y, bclear.width, bclear.height, olc::DARK_GREY);
-        DrawStringDecal({ bclear.TextX(),bclear.TextY() }, bclear.text, olc::WHITE, { bclear.font, bclear.font });
-        DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, olc::DARK_GREY);
-        DrawStringDecal({ bconfig.TextX(),bconfig.TextY() }, bconfig.text, olc::WHITE, { bconfig.font, bconfig.font });
-        DrawRect(bpreview.x, bpreview.y, bpreview.width, bpreview.height, olc::DARK_GREY);
-        DrawStringDecal({ bpreview.TextX(),bpreview.TextY() }, bpreview.text, olc::WHITE, { bpreview.font, bpreview.font });
-        DrawRect(bgenerate.x, bgenerate.y, bgenerate.width, bgenerate.height, olc::DARK_GREY);
-        DrawStringDecal({ bgenerate.TextX(),bgenerate.TextY() }, bgenerate.text, olc::WHITE, { bgenerate.font, bgenerate.font });
-
-        DrawRect(btile.x, btile.y, btile.width, btile.height, olc::DARK_GREY);
-        DrawStringDecal({ btile.TextX(),btile.TextY() }, btile.text, olc::WHITE, { btile.font, btile.font });
-        DrawRect(bmode.x, bmode.y, bmode.width, bmode.height, olc::DARK_GREY);
-        DrawStringDecal({ bmode.TextX(),bmode.TextY() }, bmode.text, olc::WHITE, { bmode.font, bmode.font });
-        DrawRect(bdense.x, bdense.y, bdense.width, bdense.height, olc::DARK_GREY);
-        DrawStringDecal({ bdense.TextX(),bdense.TextY() }, bdense.text, olc::WHITE, { bdense.font, bdense.font });
-        DrawRect(biter.x, biter.y, biter.width, biter.height, olc::DARK_GREY);
-        DrawStringDecal({ biter.TextX(),biter.TextY() }, biter.text, olc::WHITE, { biter.font, biter.font });
-
-        DrawRect(bminx.x, bminx.y, bminx.width, bminx.height, olc::DARK_GREY);
-        DrawStringDecal({ bminx.TextX(),bminx.TextY() }, bminx.text, olc::WHITE, { bminx.font, bminx.font });
-        DrawRect(bmaxx.x, bmaxx.y, bmaxx.width, bmaxx.height, olc::DARK_GREY);
-        DrawStringDecal({ bmaxx.TextX(),bmaxx.TextY() }, bmaxx.text, olc::WHITE, { bmaxx.font, bmaxx.font });
-        DrawRect(bminy.x, bminy.y, bminy.width, bminy.height, olc::DARK_GREY);
-        DrawStringDecal({ bminy.TextX(),bminy.TextY() }, bminy.text, olc::WHITE, { bminy.font, bminy.font });
-        DrawRect(bmaxy.x, bmaxy.y, bmaxy.width, bmaxy.height, olc::DARK_GREY);
-        DrawStringDecal({ bmaxy.TextX(),bmaxy.TextY() }, bmaxy.text, olc::WHITE, { bmaxy.font, bmaxy.font });
-
-        DrawRect(bprobn.x, bprobn.y, bprobn.width, bprobn.height, olc::DARK_GREY);
-        DrawStringDecal({ bprobn.TextX(),bprobn.TextY() }, bprobn.text, olc::WHITE, { bprobn.font, bprobn.font });
-        DrawRect(bprobs.x, bprobs.y, bprobs.width, bprobs.height, olc::DARK_GREY);
-        DrawStringDecal({ bprobs.TextX(),bprobs.TextY() }, bprobs.text, olc::WHITE, { bprobs.font, bprobs.font });
-        DrawRect(bprobe.x, bprobe.y, bprobe.width, bprobe.height, olc::DARK_GREY);
-        DrawStringDecal({ bprobe.TextX(),bprobe.TextY() }, bprobe.text, olc::WHITE, { bprobe.font, bprobe.font });
-        DrawRect(bprobw.x, bprobw.y, bprobw.width, bprobw.height, olc::DARK_GREY);
-        DrawStringDecal({ bprobw.TextX(),bprobw.TextY() }, bprobw.text, olc::WHITE, { bprobw.font, bprobw.font });
-
+        int list_height = 0;
+        int start_list = preview_world.selected_step-10;
+        int stop_list = preview_world.selected_step+10;
+        
+        if (start_list < 0) start_list = 0;
+        if (stop_list > preview_world.generation_steps) stop_list = preview_world.generation_steps;
+        if (stop_list-start_list > 10) start_list = stop_list-10;
         // Generation Steps
-        for (int i = 0; i < 10; i++)//preview_world.generation_steps; i++)
+        for (int i = start_list; i < stop_list; i++)
         {
             std::string mode_text = preview_world.modes[preview_world.generation_param[i][preview_world.selected_param]];
             std::string tile_text = preview_world.tiles[preview_world.generation_param[i][preview_world.selected_param]];
@@ -518,33 +536,56 @@ public:
                 tile_text = ">" + tile_text;
                 if (preview_world.selected_param == preview_world.pTILE)
                 {
-                    DrawStringDecal({ float(186),float((i*10)+6) }, tile_text, olc::WHITE, { 0.5, 0.5 });
+                    DrawStringDecal({ float(186),float((list_height*9)+10) }, tile_text, olc::WHITE, { 0.5, 0.5 });
                 }
                 else if (preview_world.selected_param == preview_world.pMODE)
                 {
-                    DrawStringDecal({ float(186),float((i*10)+6) }, mode_text, olc::WHITE, { 0.5, 0.5 });
+                    DrawStringDecal({ float(186),float((list_height*9)+10) }, mode_text, olc::WHITE, { 0.5, 0.5 });
                 }
                 else
                 {
-                    DrawStringDecal({ float(186),float((i*10)+6) }, vlue_text, olc::WHITE, { 0.5, 0.5 });
+                    DrawStringDecal({ float(186),float((list_height*9)+10) }, vlue_text, olc::WHITE, { 0.5, 0.5 });
                 }
             }
             else
             {
                 if (preview_world.selected_param == preview_world.pTILE)
                 {
-                    DrawStringDecal({ float(186),float((i*10)+6) }, tile_text, olc::DARK_GREY, { 0.5, 0.5 });
+                    DrawStringDecal({ float(186),float((list_height*9)+10) }, tile_text, olc::DARK_GREY, { 0.5, 0.5 });
                 }
                 else if (preview_world.selected_param == preview_world.pMODE)
                 {
-                    DrawStringDecal({ float(186),float((i*10)+6) }, mode_text, olc::DARK_GREY, { 0.5, 0.5 });
+                    DrawStringDecal({ float(186),float((list_height*9)+10) }, mode_text, olc::DARK_GREY, { 0.5, 0.5 });
                 }
                 else
                 {
-                    DrawStringDecal({ float(186),float((i*10)+6) }, vlue_text, olc::DARK_GREY, { 0.5, 0.5 });
+                    DrawStringDecal({ float(186),float((list_height*9)+10) }, vlue_text, olc::DARK_GREY, { 0.5, 0.5 });
                 }
             }
-
+            list_height++;
+        }
+        // Step Value
+        if (bminusgs.IsColliding(GetMouseX(), GetMouseY()))
+        {
+            info_text = "Removes A Generation Step From The List";
+            //dtls_text = "()";
+            DrawRect(bminusgs.x, bminusgs.y, bminusgs.width, bminusgs.height, olc::WHITE);
+            if (GetMouse(0).bReleased && preview_world.generation_steps > 1)
+            {
+                preview_world.generation_steps--;
+                preview_world.selected_step = preview_world.generation_steps-1;
+            }
+        }
+        if (bplusgs.IsColliding(GetMouseX(), GetMouseY()))
+        {
+            info_text = "Adds A Generation Step To The List";
+            //dtls_text = "()";
+            DrawRect(bplusgs.x, bplusgs.y, bplusgs.width, bplusgs.height, olc::WHITE);
+            if (GetMouse(0).bReleased && preview_world.generation_steps < preview_world.maximum_generation_steps)
+            {
+                preview_world.generation_steps++;
+                preview_world.selected_step = preview_world.generation_steps-1;
+            }
         }
         // Tile Value
         if (btile.IsColliding(GetMouseX(), GetMouseY()))
@@ -664,6 +705,7 @@ public:
                         world.generation_param[i][j] = preview_world.generation_param[i][j];
                     }
                 }
+                world.generation_steps = preview_world.generation_steps;
                 // Fix this to delete preview_world, instead
                 preview_world.ClearMatrix();
                 game_state = LOADING;
