@@ -19,7 +19,8 @@ public:
     int selected_step = 0;
     int selected_param = 0;
     int generation_step = 1;
-    int generation_steps = 0;
+    int generation_steps = 1;
+    int maximum_generation_steps = 64;
 
     int generation_param[64][12];
 
@@ -295,17 +296,21 @@ public:
 
     void PresetData()
     {
-        generation_steps = 9;
+        generation_steps = 12;
         int preset_data[generation_steps][total_parameters] = {
-            // T          M         D    i  x     X    y    Y    N    S    E    W
+            // T          M         D    I   x    X    y    Y    N    S    E    W
             { STONE,      mADD,     4,   1,  0,   100, 20,  80,  0,   0,   0,   0   },
+            { STONE,      mADD,     4,   1,  0,   100, 50,  80,  0,   0,   0,   0   },
+            { MANTLE,     mADD,     8,   1,  0,   100, 90,  100, 0,   0,   0,   0   },
+
             { STONE,      mEXPAND,  0,   4,  0,   100, 15,  80,  25,  50,  100, 100 },
+            { STONE,      mEXPAND,  0,   4,  0,   100, 40,  80,  25,  50,  100, 100 },
+            { STONE,      mEXPAND,  0,   4,  0,   100, 60,  60,  50,  25,  100, 100 },
             { MUD,        mEXPAND,  0,   8,  0,   100, 15,  40,  50,  25,  75,  75  },
             { DIRT,       mEXPAND,  0,   8,  0,   100, 10,  60,  50,  25,  90,  90  },
-            { STONE,      mEXPAND,  0,   4,  0,   100, 60,  60,  50,  25,  100, 100 },
             { GRAVEL,     mEXPAND,  0,   4,  0,   100, 30,  80,  50,  0,   0,   0   },
+            { GRAVEL,     mEXPAND,  0,   4,  0,   100, 50,  60,  50,  0,   0,   0   },
             { GRASS,      mEXPAND,  0,   1,  0,   100, 8,   25,  100, 0,   0,   0   },
-            { MANTLE,     mADD,     8,   1,  0,   100, 90,  100, 10,  10,  100, 100 },
             { MANTLE,     mEXPAND,  0,   16, 0,   100, 85,  100, 10,  10,  100, 100 },
         };
 
@@ -314,7 +319,6 @@ public:
             for (int p = 0; p < total_parameters; p++)
             {
                 generation_param[i][p] = preset_data[i][p];
-                std::cout << generation_param[i][p] << std::endl;
             }
         }
     }
