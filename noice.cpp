@@ -326,45 +326,45 @@ public:
         // Buttons
 
         Button bclear = Button();
-        bclear.Setup(106, 70, 32, 8, 0.25, "Clear");
+        bclear.Setup(105, 70, 32, 8, 0.25, "Clear");
         Button bconfig = Button();
-        bconfig.Setup(106, 78, 32, 8, 0.25, "Preset");
+        bconfig.Setup(105, 78, 32, 8, 0.25, "Preset");
         Button bpreview = Button();
-        bpreview.Setup(106, 86, 32, 8, 0.25, "Preview");
+        bpreview.Setup(105, 86, 32, 8, 0.25, "Preview");
         Button bgenerate = Button();
-        bgenerate.Setup(106, 94, 32, 8, 0.25, "Generate");
-
-        Button btile = Button();
-        btile.Setup(104, 32, 16, 8, 0.25, "Tile");
-        Button bmode = Button();
-        bmode.Setup(104, 40, 16, 8, 0.25, "Mode");
-        Button bdense = Button();
-        bdense.Setup(104, 48, 16, 8, 0.25, "Density");
-        Button biter = Button();
-        biter.Setup(104, 56, 16, 8, 0.25, "Repeat");
+        bgenerate.Setup(105, 94, 32, 8, 0.25, "Generate");
 
         Button bminusgs = Button();
         bminusgs.Setup(183, 2, 70, 4, 0.25, "-");
         Button bplusgs = Button();
         bplusgs.Setup(183, 98, 70, 4, 0.25, "+");
 
+        Button btile = Button();
+        btile.Setup(143, 70, 16, 8, 0.25, "Tile");
+        Button bmode = Button();
+        bmode.Setup(143, 78, 16, 8, 0.25, "Mode");
+        Button bdense = Button();
+        bdense.Setup(143, 86, 16, 8, 0.25, "Density");
+        Button biter = Button();
+        biter.Setup(143, 94, 16, 8, 0.25, "Repeat");
+
         Button bminx = Button();
-        bminx.Setup(124, 32, 16, 8, 0.25, "Min X");
+        bminx.Setup(164, 70, 16, 8, 0.25, "Min X");
         Button bmaxx = Button();
-        bmaxx.Setup(124, 40, 16, 8, 0.25, "Max X");
+        bmaxx.Setup(164, 78, 16, 8, 0.25, "Max X");
         Button bminy = Button();
-        bminy.Setup(124, 48, 16, 8, 0.25, "Min Y");
+        bminy.Setup(164, 86, 16, 8, 0.25, "Min Y");
         Button bmaxy = Button();
-        bmaxy.Setup(124, 56, 16, 8, 0.25, "Max Y");
+        bmaxy.Setup(164, 94, 16, 8, 0.25, "Max Y");
 
         Button bprobn = Button();
-        bprobn.Setup(118, 2, 8, 8, 0.25, "N");
+        bprobn.Setup(164, 2, 8, 8, 0.25, "N");
         Button bprobs = Button();
-        bprobs.Setup(118, 18, 8, 8, 0.25, "S");
+        bprobs.Setup(164, 18, 8, 8, 0.25, "S");
         Button bprobe = Button();
-        bprobe.Setup(126, 10, 8, 8, 0.25, "E");
+        bprobe.Setup(172, 10, 8, 8, 0.25, "E");
         Button bprobw = Button();
-        bprobw.Setup(110, 10, 8, 8, 0.25, "W");
+        bprobw.Setup(156, 10, 8, 8, 0.25, "W");
 
         DrawRect(2, 2, 100, 100, olc::GREY);  // Preview Box
         DrawRect(183, 2, 70, 100, olc::GREY);  // Generation Steps Box
