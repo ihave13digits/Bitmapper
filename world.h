@@ -296,22 +296,61 @@ public:
 
     void PresetData()
     {
-        generation_steps = 12;
+        generation_steps = 48;
         int preset_data[generation_steps][total_parameters] = {
             // T          M         D    I   x    X    y    Y    N    S    E    W
             { STONE,      mADD,     4,   1,  0,   100, 20,  80,  0,   0,   0,   0   },
             { STONE,      mADD,     4,   1,  0,   100, 50,  80,  0,   0,   0,   0   },
-            { MANTLE,     mADD,     8,   1,  0,   100, 90,  100, 0,   0,   0,   0   },
+            { MANTLE,     mADD,     8,   1,  0,   100, 95,  100, 0,   0,   0,   0   },
+            { MANTLE,     mADD,     16,  1,  0,   100, 97,  100, 0,   0,   0,   0   },
 
             { STONE,      mEXPAND,  0,   4,  0,   100, 15,  80,  25,  50,  100, 100 },
             { STONE,      mEXPAND,  0,   4,  0,   100, 40,  80,  25,  50,  100, 100 },
             { STONE,      mEXPAND,  0,   4,  0,   100, 60,  60,  50,  25,  100, 100 },
-            { MUD,        mEXPAND,  0,   8,  0,   100, 15,  40,  50,  25,  75,  75  },
-            { DIRT,       mEXPAND,  0,   8,  0,   100, 10,  60,  50,  25,  90,  90  },
+            { STONE,      mEXPAND,  0,   4,  0,   100, 70,  80,  25,  5,  100, 100 },
+            { MUD,        mEXPAND,  0,   2,  0,   100, 15,  40,  50,  25,  75,  75  },
+            { DIRT,       mEXPAND,  0,   1,  0,   100, 10,  60,  50,  25,  90,  90  },
+            { MUD,        mEXPAND,  0,   1,  0,   100, 15,  40,  25,  12,  37,  37  },
+            { DIRT,       mEXPAND,  0,   4,  0,   100, 10,  60,  50,  25,  90,  90  },
             { GRAVEL,     mEXPAND,  0,   4,  0,   100, 30,  80,  50,  0,   0,   0   },
             { GRAVEL,     mEXPAND,  0,   4,  0,   100, 50,  60,  50,  0,   0,   0   },
             { GRASS,      mEXPAND,  0,   1,  0,   100, 8,   25,  100, 0,   0,   0   },
             { MANTLE,     mEXPAND,  0,   16, 0,   100, 85,  100, 10,  10,  100, 100 },
+            { LAVA,       mEXPAND,  0,   16, 0,   100, 90,  100, 100, 100, 100, 100 },
+
+            { PLATINUM,   mSEED,    1,   1,  0,   100, 70,  80,  0,   0,   0,   0   },
+            { GOLD,       mSEED,    1,   1,  0,   100, 70,  80,  0,   0,   0,   0   },
+            { SILVER,     mSEED,    1,   1,  0,   100, 50,  70,  0,   0,   0,   0   },
+            { COPPER,     mSEED,    1,   1,  0,   100, 30,  50,  0,   0,   0,   0   },
+            { LEAD,       mSEED,    1,   1,  0,   100, 70,  80,  0,   0,   0,   0   },
+            { TIN,        mSEED,    1,   1,  0,   100, 50,  80,  0,   0,   0,   0   },
+            { IRON,       mSEED,    1,   1,  0,   100, 25,  50,  0,   0,   0,   0   },
+            { COBALT,     mSEED,    1,   1,  0,   100, 25,  40,  0,   0,   0,   0   },
+            { NICKEL,     mSEED,    1,   1,  0,   100, 25,  30,  0,   0,   0,   0   },
+            { TITANIUM,   mSEED,    1,   1,  0,   100, 40,  60,  0,   0,   0,   0   },
+            { TUNGSTEN,   mSEED,    1,   1,  0,   100, 70,  80,  0,   0,   0,   0   },
+
+            { PLATINUM,   mDEPOSIT, 0,   4,  0,   100, 70,  80,  25,  25,  25,  25  },
+            { GOLD,       mDEPOSIT, 0,   4,  0,   100, 70,  80,  25,  25,  25,  25  },
+            { SILVER,     mDEPOSIT, 0,   6,  0,   100, 50,  70,  25,  25,  25,  25  },
+            { COPPER,     mDEPOSIT, 0,   8,  0,   100, 30,  50,  25,  25,  25,  25  },
+            { LEAD,       mDEPOSIT, 0,   8,  0,   100, 70,  80,  25,  25,  25,  25  },
+            { TIN,        mDEPOSIT, 0,   8,  0,   100, 50,  80,  25,  25,  25,  25  },
+            { IRON,       mDEPOSIT, 0,   8,  0,   100, 25,  50,  25,  25,  25,  25  },
+            { COBALT,     mDEPOSIT, 0,   6,  0,   100, 25,  40,  25,  25,  25,  25  },
+            { NICKEL,     mDEPOSIT, 0,   6,  0,   100, 25,  30,  25,  25,  25,  25  },
+            { TITANIUM,   mDEPOSIT, 0,   6,  0,   100, 40,  60,  25,  25,  25,  25  },
+            { TUNGSTEN,   mDEPOSIT, 0,   4,  0,   100, 70,  80,  25,  25,  25,  25  },
+
+            { JADE,       mSEED,    2,   1,  0,   100, 50,  60,  0,   0,   0,   0   },
+            { RUBY,       mSEED,    2,   1,  0,   100, 50,  60,  0,   0,   0,   0   },
+            { AMBER,      mSEED,    2,   1,  0,   100, 50,  60,  0,   0,   0,   0   },
+            { LAPIS,      mSEED,    2,   1,  0,   100, 60,  70,  0,   0,   0,   0   },
+            { TOPAZ,      mSEED,    2,   1,  0,   100, 60,  70,  0,   0,   0,   0   },
+            { DIAMOND,    mSEED,    2,   1,  0,   100, 80,  90,  0,   0,   0,   0   },
+            { EMERALD,    mSEED,    2,   1,  0,   100, 80,  90,  0,   0,   0,   0   },
+            { AMETHYST,   mSEED,    2,   1,  0,   100, 70,  80,  0,   0,   0,   0   },
+            { SAPPHIRE,   mSEED,    2,   1,  0,   100, 70,  80,  0,   0,   0,   0   },
         };
 
         for (int i = 0; i < generation_steps; i++)
