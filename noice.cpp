@@ -325,6 +325,14 @@ public:
 
         // Buttons
 
+        //Button b = Button();
+        //b.Setup(105, 70, 32, 8, 0.25, "");
+        //Button b = Button();
+        //b.Setup(105, 78, 32, 8, 0.25, "");
+        Button bsave = Button();
+        bsave.Setup(105, 54, 32, 8, 0.25, "Save");
+        Button bload = Button();
+        bload.Setup(105, 62, 32, 8, 0.25, "Load");
         Button bclear = Button();
         bclear.Setup(105, 70, 32, 8, 0.25, "Clear");
         Button bconfig = Button();
@@ -358,18 +366,23 @@ public:
         bmaxy.Setup(164, 94, 16, 8, 0.25, "Max Y");
 
         Button bprobn = Button();
-        bprobn.Setup(164, 2, 8, 8, 0.25, "N");
+        bprobn.Setup(117, 6, 8, 8, 0.25, "N");
         Button bprobs = Button();
-        bprobs.Setup(164, 18, 8, 8, 0.25, "S");
+        bprobs.Setup(117, 22, 8, 8, 0.25, "S");
         Button bprobe = Button();
-        bprobe.Setup(172, 10, 8, 8, 0.25, "E");
+        bprobe.Setup(125, 14, 8, 8, 0.25, "E");
         Button bprobw = Button();
-        bprobw.Setup(156, 10, 8, 8, 0.25, "W");
+        bprobw.Setup(109, 14, 8, 8, 0.25, "W");
 
         DrawRect(2, 2, 100, 100, olc::GREY);  // Preview Box
         DrawRect(183, 2, 70, 100, olc::GREY);  // Generation Steps Box
         DrawRect(2, 105, 251, 36, olc::GREY);  // Information Box
+        DrawRect(105, 2, 32, 32, olc::GREY);  // Neighbors Box
 
+        DrawRect(bsave.x, bsave.y, bsave.width, bsave.height, olc::DARK_GREY);
+        DrawStringDecal({ bsave.TextX(),bsave.TextY() }, bsave.text, olc::WHITE, { bsave.font, bsave.font });
+        DrawRect(bload.x, bload.y, bload.width, bload.height, olc::DARK_GREY);
+        DrawStringDecal({ bload.TextX(),bload.TextY() }, bload.text, olc::WHITE, { bload.font, bload.font });
         DrawRect(bclear.x, bclear.y, bclear.width, bclear.height, olc::DARK_GREY);
         DrawStringDecal({ bclear.TextX(),bclear.TextY() }, bclear.text, olc::WHITE, { bclear.font, bclear.font });
         DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, olc::DARK_GREY);
@@ -690,6 +703,25 @@ public:
             }
         }
 
+        // Save/Load
+        if (bsave.IsColliding(GetMouseX(), GetMouseY()))
+        {
+            info_text = "Saves Generation Data";
+            DrawRect(bsave.x, bsave.y, bsave.width, bsave.height, olc::WHITE);
+            if (GetMouse(0).bReleased)
+            {
+                std::cout << "Data" << " " << "Saved" << std::endl;
+            }
+        }
+        if (bload.IsColliding(GetMouseX(), GetMouseY()))
+        {
+            info_text = "Loads Generation Data";
+            DrawRect(bload.x, bload.y, bload.width, bload.height, olc::WHITE);
+            if (GetMouse(0).bReleased)
+            {
+                std::cout << "Data" << " " << "Loaded" << std::endl;
+            }
+        }
         // Generate World
         if (bgenerate.IsColliding(GetMouseX(), GetMouseY()))
         {
