@@ -1,6 +1,8 @@
 #define OLC_PGE_APPLICATION
 #include "olcPixelGameEngine.h"
 
+#include <fstream>
+
 #include "sky.h"
 #include "world.h"
 #include "player.h"
@@ -36,6 +38,7 @@ public:
 
     int selected_tile = 0;
     int input_value = 0;
+    int save_slot = 0;
 
     int width = 256;
     int height = 144;
@@ -53,6 +56,66 @@ public:
     World preview_world = World();
 
 
+
+    void SaveGameData()
+    {
+    }
+
+    void LoadGameData()
+    {
+    }
+
+    void SaveGenerationData(std::string data_dir)
+    {
+        std::string params[12] = {"Tile", "Mode", "Dense", "Iter", "MinX", "MaxX", "MinY", "MaxY", "ProbN", "ProbS", "ProbE", "ProbW"};
+        std::string line;
+
+        std::fstream data_file;
+        data_file.open(data_dir);
+        
+        if (data_file.is_open())
+        {
+            for (int i = 0; i < preview_world.generation_steps; i++)
+            {
+                for (int j = 0; j < preview_world.total_parameters; j++)
+                {
+                    data_file << preview_world.generation_param[i][j] << "\n";
+                    //std::cout << "Saving Param (" << i << ") " << params[j] << " " << line << std::endl;
+                }
+            }
+            data_file.close();
+        }
+    }
+
+    void LoadGenerationData(std::string data_dir)
+    {
+        std::string params[12] = {"Tile", "Mode", "Dense", "Iter", "MinX", "MaxX", "MinY", "MaxY", "ProbN", "ProbS", "ProbE", "ProbW"};
+        std::string line;
+
+        std::fstream data_file;
+        data_file.open(data_dir);
+
+        if (data_file.is_open())
+        {
+            int i = 0;
+            int j = 0;
+            while (getline(data_file, line))
+            {
+                if (line != "")
+                {
+                    preview_world.generation_param[i][j] = std::stoi(line);
+                    j++;
+                    if (j % preview_world.total_parameters == 0)
+                    {
+                        i++;
+                        j = 0;
+                    }
+                }
+            }
+            preview_world.generation_steps = i;
+            data_file.close();
+        }
+    }
 
     void SpawnParticle(int X, int Y)
     {
@@ -710,7 +773,8 @@ public:
             DrawRect(bsave.x, bsave.y, bsave.width, bsave.height, olc::WHITE);
             if (GetMouse(0).bReleased)
             {
-                std::cout << "Data" << " " << "Saved" << std::endl;
+                std::string data_dir = std::to_string(save_slot) + ".txt";
+                SaveGenerationData(data_dir);
             }
         }
         if (bload.IsColliding(GetMouseX(), GetMouseY()))
@@ -719,7 +783,8 @@ public:
             DrawRect(bload.x, bload.y, bload.width, bload.height, olc::WHITE);
             if (GetMouse(0).bReleased)
             {
-                std::cout << "Data" << " " << "Loaded" << std::endl;
+                std::string data_dir = std::to_string(save_slot) + ".txt";
+                LoadGenerationData(data_dir);
             }
         }
         // Generate World
