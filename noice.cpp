@@ -1,3 +1,11 @@
+#ifdef WINDOWS
+#include <direct.h>
+#define GetCurrentDir _getcwd
+#else
+#include <unistd.h>
+#define GetCurrentDir getcwd
+#endif
+
 #define OLC_PGE_APPLICATION
 #include "olcPixelGameEngine.h"
 
@@ -57,6 +65,22 @@ public:
 
 
 
+    std::string GetCWD()
+    {
+        char buff[FILENAME_MAX];
+        GetCurrentDir(buff, FILENAME_MAX);
+        std::string _dir(buff);
+        return _dir;
+    }
+
+    void GenerateData()
+    {
+        std::string _dir = GetCWD() + "/Data";
+        std::string _cmd = "mkdir " + _dir;
+        const char* mkdir_cmd = _cmd.c_str();
+        system(mkdir_cmd);
+    }
+
     void SaveGameData()
     {
     }
@@ -71,7 +95,8 @@ public:
         std::string line;
 
         std::fstream data_file;
-        data_file.open(data_dir);
+        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        data_file.open(_dir);
         
         if (data_file.is_open())
         {
@@ -79,11 +104,15 @@ public:
             {
                 for (int j = 0; j < preview_world.total_parameters; j++)
                 {
-                    data_file << preview_world.generation_param[i][j] << "\n";
-                    //std::cout << "Saving Param (" << i << ") " << params[j] << " " << line << std::endl;
+                    data_file << preview_world.generation_param[i][j] << std::endl;
                 }
             }
             data_file.close();
+        }
+        else
+        {
+            std::ofstream new_file (_dir);
+            SaveGenerationData(data_dir);
         }
     }
 
@@ -93,7 +122,8 @@ public:
         std::string line;
 
         std::fstream data_file;
-        data_file.open(data_dir);
+        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        data_file.open(_dir);
 
         if (data_file.is_open())
         {
@@ -1061,6 +1091,7 @@ public:
 
 	bool OnUserCreate() override
 	{
+        GenerateData();
         for (int i = 0; i < world.generation_steps; i++)
         {
             world.generation_param[i][world.pITER] = 1;
