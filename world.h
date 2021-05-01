@@ -1015,7 +1015,7 @@ public:
 
     bool IsColliding(int x, int y)
     {
-        return matrix[y*width+x] > LAVA;
+        return matrix[y*width+x] > MUD;
     }
 
 };

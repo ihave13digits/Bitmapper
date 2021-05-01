@@ -149,11 +149,11 @@ public:
 
     void SpawnParticle(int X, int Y)
     {
-        int W = width/2;
-        int H = height/2;
+        float W = width/2;
+        float H = height/2;
         Particle p = Particle();
         p.Position(W, H);
-        p.Velocity(X-W, Y-H);
+        p.Velocity(float(X-W), float(Y-H));
         particles.push_back(p);
     }
 
@@ -312,12 +312,12 @@ public:
     {
         for (int p = 0; p < (particles.size()); p++)
         {
-            int x = particles[p].x+(player.x-(width/2));
-            int y = particles[p].y+(player.y-(height/2));
-            int vx = particles[p].vx;
-            int vy = particles[p].vy;
+            float x = particles[p].x+(player.x-(width/2));
+            float y = particles[p].y+(player.y-(height/2));
+            float vx = particles[p].vx;
+            float vy = particles[p].vy;
 
-            if (!world.Collision(x+vx, y+vy)) particles[p].Move(vx, vy);
+            particles[p].Move(particles[p].vx, particles[p].vy, world.Collision(int(x+vx), int(y+vy)));
             if ( particles[p].destroys && world.Collision(x, y) ) world.matrix[(y)*world.width+(x)] = world.AIR;
             
             if (particles[p].duration > 0.0)
@@ -1021,7 +1021,7 @@ public:
             sky.Update(fElapsedTime);
             DrawSky();
             game_tick = 0;
-            world.SettleTiles(player.x-(width/2), player.y-(height/2), width, height);
+            world.SettleTiles(player.x-(width), player.y-(height), width*2, height*2);
             DrawTerrain();
         }
 
