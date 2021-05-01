@@ -167,7 +167,7 @@ public:
 
     void DrawSky()
     {
-        sky.Update();
+        //sky.Update();
         if (player.status != player.TRIP) Clear(olc::Pixel(sky.R, sky.G, sky.B));
         
         if (sky.starlight >= 0)
@@ -905,7 +905,7 @@ public:
             
             if (world.generation_step > world.generation_steps)
             {
-                sky.GenerateSky(width, height, game_seed, tick_delay);
+                sky.GenerateSky(width, height, game_seed);
                 player.x = int(world.width/2);
                 player.y = player.height+2;
                 while (!world.IsColliding(player.x, player.y+1)) player.Move(0, 1);
@@ -1018,6 +1018,7 @@ public:
         // Update World
         if (game_tick == tick_delay)
         {
+            sky.Update(fElapsedTime);
             DrawSky();
             game_tick = 0;
             world.SettleTiles(player.x-(width/2), player.y-(height/2), width, height);
@@ -1084,7 +1085,6 @@ public:
         // End Frame
         game_tick++;
         player.tick++;
-        sky.tick++;
     }
 
 
