@@ -11,7 +11,7 @@ public:
 
     // Terrain Tiles
 
-    int total_tiles = 53;
+    int total_tiles = 59;
     int total_parameters = 12;
     int total_modes = 4;
 
@@ -71,11 +71,13 @@ public:
         STEAM,
         SMOKE,
         //
+        FOG,
         WATER,
         BRINE,
         HONEY,
         BLOOD,
         LAVA,
+        MUD,
         //
         SAND,
         SNOW,
@@ -84,7 +86,6 @@ public:
         GRAVEL,
         //
         ICE,
-        MUD,
         DIRT,
         SOIL,
         CLAY,
@@ -97,7 +98,13 @@ public:
         GRANITE,
         LIMESTONE,
         SANDSTONE,
+        //
         GLASS,
+        PLANKS,
+        PIPE_E,
+        PIPE_F,
+        GUTTER_E,
+        GUTTER_F,
         //
         WOOD,
         LEAVES,
@@ -129,17 +136,19 @@ public:
         MANTLE
     };
 
-    std::string tiles[53] = {
+    std::string tiles[59] = {
         //
         "Air",
         "Steam",
         "Smoke",
         //
+        "Fog",
         "Water",
         "Brine",
         "Honey",
         "Blood",
         "Lava",
+        "Mud",
         //
         "Sand",
         "Snow",
@@ -148,7 +157,6 @@ public:
         "Gravel",
         //
         "Ice",
-        "Mud",
         "Dirt",
         "Soil",
         "Clay",
@@ -161,7 +169,13 @@ public:
         "Granite",
         "Limestone",
         "Sandstone",
+        //
         "Glass",
+        "Planks",
+        "Empty Pipe",
+        "Filled Pipe",
+        "Empty Gutter",
+        "Filled Gutter",
         //
         "Wood",
         "Leaves",
@@ -193,18 +207,20 @@ public:
         "Mantle"
     };
 
-    int tileset[53][2][4] = {
+    int tileset[59][2][4] = {
         // |Base Color        |     |Variation       |
         // Gases
         {  {200, 200, 230, 5  },    {1,   1,   25,  0}  },// Air
         {  {220, 220, 230, 32 },    {5,   5,   25,  0}  },// Steam
         {  {128, 128, 128, 64 },    {5,   5,   5,   0}  },// Smoke
         // Fluids
+        {  {230, 230, 230, 64 },    {5,   5,   25,  0}  },// Fog
         {  {0,   0,   128, 128},    {1,   1,   25,  0}  },// Water
         {  {16,  16,  128, 128},    {1,   1,   25,  0}  },// Brine
         {  {230, 200, 0,   212},    {25,  10,  1,   0}  },// Honey
         {  {128, 0,   0,   255},    {25,  1,   1,   0}  },// Blood
         {  {254, 20,  0,   255},    {1,  180,  1,   0}  },// Lava
+        {  {58,  32,  16,  255},    {8,   4,   2,   0}  },// Mud
         // Granular Materials
         {  {230, 230, 128, 255},    {15,  15,  5,   0}  },// Sand
         {  {230, 230, 230, 255},    {1,   1,   25,  0}  },// Snow
@@ -213,7 +229,6 @@ public:
         {  {110, 105, 100, 255},    {10,  10,  10,  0}  },// Gravel
         // Solid Materials
         {  {180, 180, 200, 128},    {1,   1,   55,  0}  },// Ice
-        {  {58,  32,  16,  255},    {8,   4,   2,   0}  },// Mud
         {  {80,  64,  32,  255},    {8,   4,   2,   0}  },// Dirt
         {  {24,  20,  16,  255},    {8,   4,   2,   0}  },// Soil
         {  {160, 80,  20,  255},    {8,   4,   1,   0}  },// Clay
@@ -226,7 +241,13 @@ public:
         {  {80,  80,  80,  255},    {5,   15,  25,  0}  },// Granite
         {  {128, 128, 128, 255},    {5,   5,   10,  0}  },// Limestone
         {  {200, 200, 100, 255},    {5,   5,   10,  0}  },// Sandstone
+        // Crafted Materials
         {  {220, 220, 245,  64},    {5,   15,  10,  0}  },// Glass
+        {  {120, 80,  48,  255},    {25,  20,  10,  0}  },// Planks
+        {  {120, 100, 100, 255},    {15,  10,  10,  0}  },// Empty Pipe
+        {  {100, 100, 110, 255},    {15,  10,  10,  0}  },// Filled Pipe
+        {  {120, 100, 100, 255},    {15,  10,  10,  0}  },// Empty Gutter
+        {  {100, 100, 110, 255},    {15,  10,  10,  0}  },// Filled Gutter
         // Plant Materials
         {  {80,  64,  32,  255},    {25,  20,  10,  0}  },// Wood
         {  {40,   80, 0,   225},    {5,   20,  1,   0}  },// Leaves
@@ -285,7 +306,7 @@ public:
 
     void ClearData()
     {
-        for (int i = 0; i < 64; i++)
+        for (int i = 0; i < maximum_generation_steps; i++)
         {
             for (int p = 0; p < total_parameters; p++)
             {
@@ -296,25 +317,38 @@ public:
 
     void PresetData()
     {
-        generation_steps = 48;
+        generation_steps = 60;
         int preset_data[generation_steps][total_parameters] = {
             // T          M         D    I   x    X    y    Y    N    S    E    W
-            { STONE,      mADD,     4,   1,  0,   100, 20,  80,  0,   0,   0,   0   },
-            { STONE,      mADD,     4,   1,  0,   100, 50,  80,  0,   0,   0,   0   },
+            { STONE,      mADD,     8,   1,  0,   100, 20,  75,  0,   0,   0,   0   },
+            { STONE,      mADD,     4,   1,  0,   100, 30,  76,  0,   0,   0,   0   },
+            { STONE,      mADD,     2,   1,  0,   100, 40,  77,  0,   0,   0,   0   },
+            { STONE,      mADD,     1,   1,  0,   100, 50,  78,  0,   0,   0,   0   },
             { MANTLE,     mADD,     8,   1,  0,   100, 95,  100, 0,   0,   0,   0   },
             { MANTLE,     mADD,     16,  1,  0,   100, 97,  100, 0,   0,   0,   0   },
 
-            { STONE,      mEXPAND,  0,   4,  0,   100, 15,  80,  25,  50,  100, 100 },
-            { STONE,      mEXPAND,  0,   4,  0,   100, 40,  80,  25,  50,  100, 100 },
-            { STONE,      mEXPAND,  0,   4,  0,   100, 60,  60,  50,  25,  100, 100 },
-            { STONE,      mEXPAND,  0,   4,  0,   100, 70,  80,  25,  5,  100, 100 },
-            { MUD,        mEXPAND,  0,   2,  0,   100, 15,  40,  50,  25,  75,  75  },
-            { DIRT,       mEXPAND,  0,   1,  0,   100, 10,  60,  50,  25,  90,  90  },
-            { MUD,        mEXPAND,  0,   1,  0,   100, 15,  40,  25,  12,  37,  37  },
-            { DIRT,       mEXPAND,  0,   4,  0,   100, 10,  60,  50,  25,  90,  90  },
+            { STONE,      mEXPAND,  0,   1,  0,   100, 15,  85,  25,  50,  100, 100 },
+            { STONE,      mEXPAND,  0,   1,  0,   100, 25,  85,  25,  50,  100, 100 },
+            { STONE,      mEXPAND,  0,   1,  0,   100, 35,  85,  50,  25,  100, 100 },
+            { STONE,      mEXPAND,  0,   2,  0,   100, 45,  85,  25,  5,   100, 100 },
+            { STONE,      mEXPAND,  0,   2,  0,   100, 55,  85,  25,  50,  100, 100 },
+            { STONE,      mEXPAND,  0,   2,  0,   100, 65,  85,  25,  50,  100, 100 },
+            { STONE,      mEXPAND,  0,   4,  0,   100, 75,  85,  50,  25,  100, 100 },
+            { STONE,      mEXPAND,  0,   4,  0,   100, 80,  85,  25,  5,   100, 100 },
+            
+            { SOIL,       mEXPAND,  0,   4,  0,   100, 8,   30,  50,  25,  90,  90  },
+            { MUD,        mEXPAND,  0,   1,  0,   100, 10,  40,  50,  25,  75,  75  },
+            { SOIL,       mEXPAND,  0,   1,  0,   100, 8,   30,  50,  25,  90,  90  },
+            { MUD,        mEXPAND,  0,   2,  0,   100, 10,  40,  50,  25,  75,  75  },
+            { DIRT,       mEXPAND,  0,   1,  0,   100, 10,  40,  50,  25,  90,  90  },
+            { MUD,        mEXPAND,  0,   1,  0,   100, 15,  50,  25,  12,  37,  37  },
+            { DIRT,       mEXPAND,  0,   2,  0,   100, 15,  60,  50,  25,  90,  90  },
+            { MUD,        mEXPAND,  0,   1,  0,   100, 15,  70,  25,  12,  37,  37  },
+            { DIRT,       mEXPAND,  0,   4,  0,   100, 12,  80,  50,  25,  90,  90  },
+
             { GRAVEL,     mEXPAND,  0,   4,  0,   100, 30,  80,  50,  0,   0,   0   },
             { GRAVEL,     mEXPAND,  0,   4,  0,   100, 50,  60,  50,  0,   0,   0   },
-            { GRASS,      mEXPAND,  0,   1,  0,   100, 8,   25,  100, 0,   0,   0   },
+            { GRASS,      mEXPAND,  0,   1,  0,   100, 8,   25,  100, 0,   5,   5   },
             { MANTLE,     mEXPAND,  0,   16, 0,   100, 85,  100, 10,  10,  100, 100 },
             { LAVA,       mEXPAND,  0,   16, 0,   100, 90,  100, 100, 100, 100, 100 },
 
@@ -784,9 +818,11 @@ public:
                         case WATER : cell_type = FLUID; break;
                         case BRINE : cell_type = FLUID; break;
                         case BLOOD : cell_type = FLUID; break;
+                        case FOG : cell_type = FLUID; break;
                         
                         case HONEY : cell_type = GEL; break;
                         case LAVA : cell_type = GEL; break;
+                        case MUD : cell_type = GEL; break;
 
                         case SAND : cell_type = GRAIN; break;
                         case SNOW : cell_type = GRAIN; break;
@@ -979,7 +1015,7 @@ public:
 
     bool IsColliding(int x, int y)
     {
-        return matrix[y*width+x] > LAVA;
+        return matrix[y*width+x] > MUD;
     }
 
 };
