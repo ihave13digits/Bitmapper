@@ -673,24 +673,42 @@ public:
         // Step Value
         if (bminusgs.IsColliding(GetMouseX(), GetMouseY()))
         {
-            info_text = "Removes A Generation Step From The List";
+            info_text = "Removes The Selected Generation Step From The List";
             //dtls_text = "()";
             DrawRect(bminusgs.x, bminusgs.y, bminusgs.width, bminusgs.height, olc::WHITE);
             if (GetMouse(0).bReleased && world.generation_steps > 1)
             {
                 world.generation_steps--;
-                world.selected_step = world.generation_steps-1;
+                for (int i = world.selected_step; i < world.generation_steps; i++)
+                {
+                    for (int p = 0; p < world.total_parameters; p++)
+                    {
+                        world.generation_param[i][p] = world.generation_param[i+1][p];
+                    }
+                }
+                if (world.selected_step > 0) world.selected_step--;
             }
         }
         if (bplusgs.IsColliding(GetMouseX(), GetMouseY()))
         {
-            info_text = "Adds A Generation Step To The List";
+            info_text = "Inserts A Generation Step Into The List";
             //dtls_text = "()";
             DrawRect(bplusgs.x, bplusgs.y, bplusgs.width, bplusgs.height, olc::WHITE);
             if (GetMouse(0).bReleased && world.generation_steps < world.maximum_generation_steps)
             {
                 world.generation_steps++;
-                world.selected_step = world.generation_steps-1;
+                for (int i = world.generation_steps-1; i > world.selected_step+1; i--)
+                {
+                    for (int p = 0; p < world.total_parameters; p++)
+                    {
+                        world.generation_param[i-1][p] = world.generation_param[i-2][p];
+                    }
+                }
+                for (int p = 0; p < world.total_parameters; p++)
+                {
+                    world.generation_param[world.selected_step][p] = 0;
+                }
+                if (world.selected_step > 0) world.selected_step--;
             }
         }
         // Tile Value
@@ -825,16 +843,6 @@ public:
             if (GetMouse(0).bReleased)
             {
                 world.InitializeMatrix(world_width, world_height);
-                //for (int i = 0; i < preview_world.generation_steps; i++)
-                //{
-                //    for (int j = 0; j < preview_world.total_parameters; j++)
-                //    {
-                //        world.generation_param[i][j] = preview_world.generation_param[i][j];
-                //    }
-                //}
-                //world.generation_steps = preview_world.generation_steps;
-                // Fix this to delete preview_world, instead
-                //preview_world.ClearMatrix();
                 game_state = LOADING;
             }
         }
