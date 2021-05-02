@@ -22,7 +22,7 @@ public:
     bool bouncy = true;
     bool heavy = false;
 
-    bool destroys = false;
+    bool destroys = true;
     bool damages = false;
     bool poisons = false;
     bool trips = false;
