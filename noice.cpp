@@ -91,9 +91,7 @@ public:
 
     void SaveGenerationData(std::string data_dir)
     {
-        std::string params[12] = {"Tile", "Mode", "Dense", "Iter", "MinX", "MaxX", "MinY", "MaxY", "ProbN", "ProbS", "ProbE", "ProbW"};
         std::string line;
-
         std::fstream data_file;
         std::string _dir = GetCWD() + "/Data/" + data_dir;
         data_file.open(_dir);
@@ -118,9 +116,7 @@ public:
 
     void LoadGenerationData(std::string data_dir)
     {
-        std::string params[12] = {"Tile", "Mode", "Dense", "Iter", "MinX", "MaxX", "MinY", "MaxY", "ProbN", "ProbS", "ProbE", "ProbW"};
         std::string line;
-
         std::fstream data_file;
         std::string _dir = GetCWD() + "/Data/" + data_dir;
         data_file.open(_dir);
@@ -418,18 +414,18 @@ public:
 
         // Buttons
 
-        //Button b = Button();
-        //b.Setup(105, 70, 32, 8, 0.25, "");
-        //Button b = Button();
-        //b.Setup(105, 78, 32, 8, 0.25, "");
         Button bsave = Button();
-        bsave.Setup(105, 54, 32, 8, 0.25, "Save");
+        bsave.Setup(105, 37, 32, 8, 0.25, "Save");
         Button bload = Button();
-        bload.Setup(105, 62, 32, 8, 0.25, "Load");
+        bload.Setup(105, 45, 32, 8, 0.25, "Load");
+
         Button bclear = Button();
-        bclear.Setup(105, 70, 32, 8, 0.25, "Clear");
+        bclear.Setup(105, 57, 32, 8, 0.25, "Clear");
         Button bconfig = Button();
-        bconfig.Setup(105, 78, 32, 8, 0.25, "Preset");
+        bconfig.Setup(105, 65, 32, 8, 0.25, "Preset");
+        Button brandom = Button();
+        brandom.Setup(105, 73, 32, 8, 0.25, "Random");
+        
         Button bpreview = Button();
         bpreview.Setup(105, 86, 32, 8, 0.25, "Preview");
         Button bgenerate = Button();
@@ -438,25 +434,30 @@ public:
         Button bminusgs = Button();
         bminusgs.Setup(183, 2, 70, 4, 0.25, "-");
         Button bplusgs = Button();
-        bplusgs.Setup(183, 98, 70, 4, 0.25, "+");
+        bplusgs.Setup(183, 88, 70, 4, 0.25, "+");
+
+        Button bcopy = Button();
+        bcopy.Setup(183, 94, 35, 8, 0.25, "Copy");
+        Button bpaste = Button();
+        bpaste.Setup(218, 94, 35, 8, 0.25, "Paste");
 
         Button btile = Button();
-        btile.Setup(143, 70, 16, 8, 0.25, "Tile");
+        btile.Setup(141, 70, 18, 8, 0.25, "Tile");
         Button bmode = Button();
-        bmode.Setup(143, 78, 16, 8, 0.25, "Mode");
+        bmode.Setup(141, 78, 18, 8, 0.25, "Mode");
         Button bdense = Button();
-        bdense.Setup(143, 86, 16, 8, 0.25, "Density");
+        bdense.Setup(141, 86, 18, 8, 0.25, "Density");
         Button biter = Button();
-        biter.Setup(143, 94, 16, 8, 0.25, "Repeat");
+        biter.Setup(141, 94, 18, 8, 0.25, "Repeat");
 
         Button bminx = Button();
-        bminx.Setup(164, 70, 16, 8, 0.25, "Min X");
+        bminx.Setup(162, 70, 18, 8, 0.25, "Min X");
         Button bmaxx = Button();
-        bmaxx.Setup(164, 78, 16, 8, 0.25, "Max X");
+        bmaxx.Setup(162, 78, 18, 8, 0.25, "Max X");
         Button bminy = Button();
-        bminy.Setup(164, 86, 16, 8, 0.25, "Min Y");
+        bminy.Setup(162, 86, 18, 8, 0.25, "Min Y");
         Button bmaxy = Button();
-        bmaxy.Setup(164, 94, 16, 8, 0.25, "Max Y");
+        bmaxy.Setup(162, 94, 18, 8, 0.25, "Max Y");
 
         Button bprobn = Button();
         bprobn.Setup(117, 6, 8, 8, 0.25, "N");
@@ -468,7 +469,7 @@ public:
         bprobw.Setup(109, 14, 8, 8, 0.25, "W");
 
         DrawRect(2, 2, 100, 100, olc::GREY);  // Preview Box
-        DrawRect(183, 2, 70, 100, olc::GREY);  // Generation Steps Box
+        DrawRect(183, 2, 70, 90, olc::GREY);  // Generation Steps Box
         DrawRect(2, 105, 251, 36, olc::GREY);  // Information Box
         DrawRect(105, 2, 32, 32, olc::GREY);  // Neighbors Box
 
@@ -476,10 +477,19 @@ public:
         DrawStringDecal({ bsave.TextX(),bsave.TextY() }, bsave.text, olc::WHITE, { bsave.font, bsave.font });
         DrawRect(bload.x, bload.y, bload.width, bload.height, olc::DARK_GREY);
         DrawStringDecal({ bload.TextX(),bload.TextY() }, bload.text, olc::WHITE, { bload.font, bload.font });
+        
+        DrawRect(bcopy.x, bcopy.y, bcopy.width, bcopy.height, olc::DARK_GREY);
+        DrawStringDecal({ bcopy.TextX(),bcopy.TextY() }, bcopy.text, olc::WHITE, { bcopy.font, bcopy.font });
+        DrawRect(bpaste.x, bpaste.y, bpaste.width, bpaste.height, olc::DARK_GREY);
+        DrawStringDecal({ bpaste.TextX(),bpaste.TextY() }, bpaste.text, olc::WHITE, { bpaste.font, bpaste.font });
+        
         DrawRect(bclear.x, bclear.y, bclear.width, bclear.height, olc::DARK_GREY);
         DrawStringDecal({ bclear.TextX(),bclear.TextY() }, bclear.text, olc::WHITE, { bclear.font, bclear.font });
         DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, olc::DARK_GREY);
         DrawStringDecal({ bconfig.TextX(),bconfig.TextY() }, bconfig.text, olc::WHITE, { bconfig.font, bconfig.font });
+        DrawRect(brandom.x, brandom.y, brandom.width, brandom.height, olc::DARK_GREY);
+        DrawStringDecal({ brandom.TextX(),brandom.TextY() }, brandom.text, olc::WHITE, { brandom.font, brandom.font });
+
         DrawRect(bpreview.x, bpreview.y, bpreview.width, bpreview.height, olc::DARK_GREY);
         DrawStringDecal({ bpreview.TextX(),bpreview.TextY() }, bpreview.text, olc::WHITE, { bpreview.font, bpreview.font });
         DrawRect(bgenerate.x, bgenerate.y, bgenerate.width, bgenerate.height, olc::DARK_GREY);
@@ -625,12 +635,12 @@ public:
         }
 
         int list_height = 0;
-        int start_list = world.selected_step-10;
-        int stop_list = world.selected_step+10;
+        int start_list = world.selected_step-9;
+        int stop_list = world.selected_step+9;
         
         if (start_list < 0) start_list = 0;
         if (stop_list > world.generation_steps) stop_list = world.generation_steps;
-        if (stop_list-start_list > 10) start_list = stop_list-10;
+        if (stop_list-start_list > 9) start_list = stop_list-9;
         // Generation Steps
         for (int i = start_list; i < stop_list; i++)
         {
@@ -802,6 +812,16 @@ public:
             if (GetMouse(0).bReleased) world.selected_param = world.pMODE;
         }
 
+        // Clear Values
+        if (bclear.IsColliding(GetMouseX(), GetMouseY()))
+        {
+            info_text = "Clears All Generation Data";
+            DrawRect(bclear.x, bclear.y, bclear.width, bclear.height, olc::WHITE);
+            if (GetMouse(0).bReleased)
+            {
+                world.ClearData();
+            }
+        }
         // Auto Configure
         if (bconfig.IsColliding(GetMouseX(), GetMouseY()))
         {
@@ -813,7 +833,25 @@ public:
                 world.PresetData();
             }
         }
-
+        // Randomize Seed
+        if (brandom.IsColliding(GetMouseX(), GetMouseY()))
+        {
+            info_text = "Randomizes Game Seed";
+            DrawRect(brandom.x, brandom.y, brandom.width, brandom.height, olc::WHITE);
+            if (GetMouse(0).bReleased)
+            {
+                game_seed = rand() % 9999999999;
+                srand(game_seed);
+                world.ClearMatrix();
+                world.InitializeMatrix(100, 100);
+                for (int i = 0; i < world.generation_steps; i++)
+                {
+                    world.GeneratePreview();
+                }
+                world.generation_step = 1;
+                can_draw = true;
+            }
+        }
         // Save/Load
         if (bsave.IsColliding(GetMouseX(), GetMouseY()))
         {
@@ -835,6 +873,40 @@ public:
                 LoadGenerationData(data_dir);
             }
         }
+        // Copy/Paste
+        if (bcopy.IsColliding(GetMouseX(), GetMouseY()))
+        {
+            info_text = "Copies Selected Generation Step";
+            DrawRect(bcopy.x, bcopy.y, bcopy.width, bcopy.height, olc::WHITE);
+            if (GetMouse(0).bReleased)
+            {
+                for (int p = 0; p < world.total_parameters; p++)
+                {
+                    world.clipboard_param[p] = world.generation_param[world.selected_step][p];
+                }
+            }
+        }
+        if (bpaste.IsColliding(GetMouseX(), GetMouseY()))
+        {
+            info_text = "Pastes Selected Generation Step";
+            DrawRect(bpaste.x, bpaste.y, bpaste.width, bpaste.height, olc::WHITE);
+            if (GetMouse(0).bReleased)
+            {
+                 world.generation_steps++;
+                for (int i = world.generation_steps-1; i > world.selected_step; i--)
+                {
+                    for (int p = 0; p < world.total_parameters; p++)
+                    {
+                        world.generation_param[i-1][p] = world.generation_param[i-2][p];
+                    }
+                }
+                for (int p = 0; p < world.total_parameters; p++)
+                {
+                    world.generation_param[world.selected_step][p] = world.clipboard_param[p];
+                }
+                if (world.selected_step > 0) world.selected_step--;
+            }
+        }
         // Generate World
         if (bgenerate.IsColliding(GetMouseX(), GetMouseY()))
         {
@@ -843,16 +915,8 @@ public:
             if (GetMouse(0).bReleased)
             {
                 world.InitializeMatrix(world_width, world_height);
+                srand(game_seed);
                 game_state = LOADING;
-            }
-        }
-        if (bclear.IsColliding(GetMouseX(), GetMouseY()))
-        {
-            info_text = "Clears All Generation Data";
-            DrawRect(bclear.x, bclear.y, bclear.width, bclear.height, olc::WHITE);
-            if (GetMouse(0).bReleased)
-            {
-                world.ClearData();
             }
         }
         // Generate Preview
@@ -866,13 +930,12 @@ public:
                 world.InitializeMatrix(100, 100);
                 for (int i = 0; i < world.generation_steps; i++)
                 {
-                    world.GeneratePreview(game_seed);
+                    world.GeneratePreview();
                 }
                 world.generation_step = 1;
                 can_draw = true;
             }
         }
-
         // Draw Preview
         if (can_draw)
         {
@@ -894,7 +957,6 @@ public:
             }
             SetPixelMode(olc::Pixel::NORMAL);
         }
-
         // Draw Info
         DrawStringDecal({ 5,109 }, info_text, olc::WHITE, { 0.5, 0.5 });
         DrawStringDecal({ 5,115 }, dtls_text, olc::WHITE, { 0.5, 0.5 });
@@ -909,7 +971,7 @@ public:
         
         if (loading)
         {
-            message = world.GenerateWorld(game_seed);
+            message = world.GenerateWorld();
             
             if (world.generation_step > world.generation_steps)
             {

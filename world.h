@@ -11,7 +11,7 @@ public:
 
     // Terrain Tiles
 
-    int total_tiles = 71;
+    int total_tiles = 74;
     int total_parameters = 12;
     int total_modes = 4;
 
@@ -20,9 +20,10 @@ public:
     int selected_param = 0;
     int generation_step = 1;
     int generation_steps = 1;
-    int maximum_generation_steps = 64;
+    int maximum_generation_steps = 128;
 
-    int generation_param[64][12];
+    int clipboard_param[12];
+    int generation_param[128][12];
 
     enum MODES
     {
@@ -77,6 +78,7 @@ public:
         HONEY,
         BLOOD,
         LAVA,
+        MUCK,
         MUD,
         //
         SAND,
@@ -108,6 +110,7 @@ public:
         PIPE_HONEY,
         PIPE_BLOOD,
         PIPE_LAVA,
+        PIPE_MUCK,
         PIPE_MUD,
         DRAIN,
         GUTTER,
@@ -116,6 +119,7 @@ public:
         GUTTER_HONEY,
         GUTTER_BLOOD,
         GUTTER_LAVA,
+        GUTTER_MUCK,
         GUTTER_MUD,
         //
         WOOD,
@@ -148,7 +152,7 @@ public:
         MANTLE
     };
 
-    std::string tiles[71] = {
+    std::string tiles[74] = {
         //
         "Air",
         "Steam",
@@ -160,6 +164,7 @@ public:
         "Honey",
         "Blood",
         "Lava",
+        "Muck",
         "Mud",
         //
         "Sand",
@@ -191,6 +196,7 @@ public:
         "Pipe (Honey)",
         "Pipe (Blood)",
         "Pipe (Lava)",
+        "Pipe (Muck)",
         "Pipe (Mud)",
         "Drain",
         "Gutter",
@@ -199,6 +205,7 @@ public:
         "Gutter (Honey)",
         "Gutter (Blood)",
         "Gutter (Lava)",
+        "Gutter (Muck)",
         "Gutter (Mud)",
         //
         "Wood",
@@ -231,7 +238,7 @@ public:
         "Mantle"
     };
 
-    int tileset[71][2][4] = {
+    int tileset[74][2][4] = {
         // |Base Color        |     |Variation       |
         // Gases
         {  {200, 200, 230, 5  },    {1,   1,   25,  0}  },// Air
@@ -244,6 +251,7 @@ public:
         {  {230, 200, 0,   212},    {25,  10,  1,   0}  },// Honey
         {  {128, 0,   0,   255},    {25,  1,   1,   0}  },// Blood
         {  {254, 20,  0,   255},    {1,  180,  1,   0}  },// Lava
+        {  {20,  16,  12,  255},    {8,   4,   2,   0}  },// Muck
         {  {58,  32,  16,  255},    {8,   4,   2,   0}  },// Mud
         // Granular Materials
         {  {230, 230, 128, 255},    {15,  15,  5,   0}  },// Sand
@@ -275,6 +283,7 @@ public:
         {  {110, 110, 100, 255},    {15,  10,  10,  0}  },// Pipe (Honey)
         {  {110, 100, 100, 255},    {15,  10,  10,  0}  },// Pipe (Blood)
         {  {130, 120, 100, 255},    {15,  10,  10,  0}  },// Pipe (Lava)
+        {  {120, 110, 100, 255},    {15,  10,  10,  0}  },// Pipe (Muck)
         {  {130, 120, 110, 255},    {15,  10,  10,  0}  },// Pipe (Mud)
         {  {60,  60,  60,  255},    {15,  10,  10,  0}  },// Drain
         {  {100, 100, 100, 255},    {15,  10,  10,  0}  },// Gutter
@@ -283,6 +292,7 @@ public:
         {  {110, 110, 100, 255},    {15,  10,  10,  0}  },// Gutter (Honey)
         {  {110, 100, 100, 255},    {15,  10,  10,  0}  },// Gutter (Blood)
         {  {130, 120, 100, 255},    {15,  10,  10,  0}  },// Gutter (Lava)
+        {  {120, 110, 100, 255},    {15,  10,  10,  0}  },// Gutter (Muck)
         {  {130, 120, 110, 255},    {15,  10,  10,  0}  },// Gutter (Mud)
         // Plant Materials
         {  {80,  64,  32,  255},    {25,  20,  10,  0}  },// Wood
@@ -290,9 +300,9 @@ public:
         {  {0,   128, 0,   255},    {5,   20,  1,   0}  },// Grass
         {  {20,   80, 0,   255},    {5,   20,  1,   0}  },// Moss
         // Metals
-        {  {190, 190, 230, 255},    {10,  10,  25,  0}  },// Platinum
+        {  {200, 200, 230, 255},    {10,  10,  25,  0}  },// Platinum
         {  {245, 230, 0,   255},    {10,  5,   1,   0}  },// Gold
-        {  {180, 180, 220, 255},    {10,  10,  15,  0}  },// Silver
+        {  {160, 160, 200, 255},    {10,  10,  15,  0}  },// Silver
         {  {128, 60,  0,   255},    {10,  5,   1,   0}  },// Copper
         {  {16,  32,  48,  255},    {2,   4,   8,   0}  },// Lead
         {  {180, 200, 100, 255},    {15,  15,  10,  0}  },// Tin
@@ -388,39 +398,39 @@ public:
             { MANTLE,     mEXPAND,  0,   16, 0,   100, 85,  100, 10,  10,  100, 100 },
             { LAVA,       mEXPAND,  0,   16, 0,   100, 90,  100, 100, 100, 100, 100 },
 
-            { PLATINUM,   mSEED,    1,   1,  0,   100, 70,  80,  0,   0,   0,   0   },
-            { GOLD,       mSEED,    1,   1,  0,   100, 70,  80,  0,   0,   0,   0   },
-            { SILVER,     mSEED,    1,   1,  0,   100, 50,  70,  0,   0,   0,   0   },
-            { COPPER,     mSEED,    1,   1,  0,   100, 30,  50,  0,   0,   0,   0   },
-            { LEAD,       mSEED,    1,   1,  0,   100, 70,  80,  0,   0,   0,   0   },
-            { TIN,        mSEED,    1,   1,  0,   100, 50,  80,  0,   0,   0,   0   },
-            { IRON,       mSEED,    1,   1,  0,   100, 25,  50,  0,   0,   0,   0   },
-            { COBALT,     mSEED,    1,   1,  0,   100, 25,  40,  0,   0,   0,   0   },
-            { NICKEL,     mSEED,    1,   1,  0,   100, 25,  30,  0,   0,   0,   0   },
-            { TITANIUM,   mSEED,    1,   1,  0,   100, 40,  60,  0,   0,   0,   0   },
-            { TUNGSTEN,   mSEED,    1,   1,  0,   100, 70,  80,  0,   0,   0,   0   },
+            { PLATINUM,   mSEED,    2,   1,  0,   100, 50,  70,  0,   0,   0,   0   },
+            { GOLD,       mSEED,    2,   1,  0,   100, 60,  80,  0,   0,   0,   0   },
+            { SILVER,     mSEED,    3,   1,  0,   100, 50,  70,  0,   0,   0,   0   },
+            { COPPER,     mSEED,    4,   1,  0,   100, 30,  50,  0,   0,   0,   0   },
+            { LEAD,       mSEED,    3,   1,  0,   100, 70,  80,  0,   0,   0,   0   },
+            { TIN,        mSEED,    3,   1,  0,   100, 50,  70,  0,   0,   0,   0   },
+            { IRON,       mSEED,    4,   1,  0,   100, 25,  50,  0,   0,   0,   0   },
+            { COBALT,     mSEED,    3,   1,  0,   100, 25,  40,  0,   0,   0,   0   },
+            { NICKEL,     mSEED,    3,   1,  0,   100, 25,  30,  0,   0,   0,   0   },
+            { TITANIUM,   mSEED,    2,   1,  0,   100, 40,  60,  0,   0,   0,   0   },
+            { TUNGSTEN,   mSEED,    2,   1,  0,   100, 70,  80,  0,   0,   0,   0   },
 
-            { PLATINUM,   mDEPOSIT, 0,   4,  0,   100, 70,  80,  25,  25,  25,  25  },
-            { GOLD,       mDEPOSIT, 0,   4,  0,   100, 70,  80,  25,  25,  25,  25  },
+            { PLATINUM,   mDEPOSIT, 0,   4,  0,   100, 60,  80,  25,  25,  25,  25  },
+            { GOLD,       mDEPOSIT, 0,   4,  0,   100, 60,  80,  25,  25,  25,  25  },
             { SILVER,     mDEPOSIT, 0,   6,  0,   100, 50,  70,  25,  25,  25,  25  },
             { COPPER,     mDEPOSIT, 0,   8,  0,   100, 30,  50,  25,  25,  25,  25  },
             { LEAD,       mDEPOSIT, 0,   8,  0,   100, 70,  80,  25,  25,  25,  25  },
-            { TIN,        mDEPOSIT, 0,   8,  0,   100, 50,  80,  25,  25,  25,  25  },
+            { TIN,        mDEPOSIT, 0,   8,  0,   100, 50,  70,  25,  25,  25,  25  },
             { IRON,       mDEPOSIT, 0,   8,  0,   100, 25,  50,  25,  25,  25,  25  },
             { COBALT,     mDEPOSIT, 0,   6,  0,   100, 25,  40,  25,  25,  25,  25  },
             { NICKEL,     mDEPOSIT, 0,   6,  0,   100, 25,  30,  25,  25,  25,  25  },
             { TITANIUM,   mDEPOSIT, 0,   6,  0,   100, 40,  60,  25,  25,  25,  25  },
             { TUNGSTEN,   mDEPOSIT, 0,   4,  0,   100, 70,  80,  25,  25,  25,  25  },
 
-            { JADE,       mSEED,    2,   1,  0,   100, 50,  60,  0,   0,   0,   0   },
-            { RUBY,       mSEED,    2,   1,  0,   100, 50,  60,  0,   0,   0,   0   },
-            { AMBER,      mSEED,    2,   1,  0,   100, 50,  60,  0,   0,   0,   0   },
-            { LAPIS,      mSEED,    2,   1,  0,   100, 60,  70,  0,   0,   0,   0   },
-            { TOPAZ,      mSEED,    2,   1,  0,   100, 60,  70,  0,   0,   0,   0   },
-            { DIAMOND,    mSEED,    2,   1,  0,   100, 80,  90,  0,   0,   0,   0   },
-            { EMERALD,    mSEED,    2,   1,  0,   100, 80,  90,  0,   0,   0,   0   },
-            { AMETHYST,   mSEED,    2,   1,  0,   100, 70,  80,  0,   0,   0,   0   },
-            { SAPPHIRE,   mSEED,    2,   1,  0,   100, 70,  80,  0,   0,   0,   0   },
+            { JADE,       mSEED,    2,   1,  0,   100, 40,  60,  0,   0,   0,   0   },
+            { RUBY,       mSEED,    2,   1,  0,   100, 40,  60,  0,   0,   0,   0   },
+            { AMBER,      mSEED,    2,   1,  0,   100, 40,  60,  0,   0,   0,   0   },
+            { LAPIS,      mSEED,    2,   1,  0,   100, 50,  70,  0,   0,   0,   0   },
+            { TOPAZ,      mSEED,    2,   1,  0,   100, 50,  70,  0,   0,   0,   0   },
+            { DIAMOND,    mSEED,    2,   1,  0,   100, 70,  90,  0,   0,   0,   0   },
+            { EMERALD,    mSEED,    2,   1,  0,   100, 70,  90,  0,   0,   0,   0   },
+            { AMETHYST,   mSEED,    2,   1,  0,   100, 60,  80,  0,   0,   0,   0   },
+            { SAPPHIRE,   mSEED,    2,   1,  0,   100, 60,  80,  0,   0,   0,   0   },
         };
 
         for (int i = 0; i < generation_steps; i++)
@@ -432,10 +442,8 @@ public:
         }
     }
 
-    void GeneratePreview(int seed)
+    void GeneratePreview()
     {
-        srand(seed);
-
         std::string message = "";
         int index = generation_step-1;
 
@@ -505,10 +513,8 @@ public:
     }
 
     // Generation
-    std::string GenerateWorld(int seed)
+    std::string GenerateWorld()
     {
-        srand(seed);
-
         std::string message = "";
         int index = generation_step-1;
 
@@ -701,6 +707,12 @@ public:
                                     replace[dS] = MUD;
                                 }
                                 break;
+                                case SOIL :
+                                {
+                                    replace[index] = AIR;
+                                    replace[dS] = MUCK;
+                                }
+                                break;
                                 case SNOW :
                                 {
                                     replace[index] = AIR;
@@ -729,6 +741,12 @@ public:
                                     replace[dW] = MUD;
                                 }
                                 break;
+                                case SOIL :
+                                {
+                                    replace[index] = AIR;
+                                    replace[dW] = MUCK;
+                                }
+                                break;
                                 case LAVA :
                                 {
                                     replace[index] = STEAM;
@@ -746,6 +764,12 @@ public:
                                     replace[dE] = MUD;
                                 }
                                 break;
+                                case SOIL :
+                                {
+                                    replace[index] = AIR;
+                                    replace[dE] = MUCK;
+                                }
+                                break;
                                 case LAVA :
                                 {
                                     replace[index] = STEAM;
@@ -761,6 +785,12 @@ public:
                                 {
                                     replace[index] = AIR;
                                     replace[dN] = MUD;
+                                }
+                                break;
+                                case SOIL :
+                                {
+                                    replace[index] = AIR;
+                                    replace[dN] = MUCK;
                                 }
                                 break;
                                 case LAVA :
@@ -860,6 +890,7 @@ public:
                                 case PIPE_HONEY : {replace[dE] = PIPE; replace[index] = PIPE_HONEY;} break;
                                 case PIPE_BLOOD : {replace[dE] = PIPE; replace[index] = PIPE_BLOOD;} break;
                                 case PIPE_LAVA : {replace[dE] = PIPE; replace[index] = PIPE_LAVA;} break;
+                                case PIPE_MUCK : {replace[dE] = PIPE; replace[index] = PIPE_MUCK;} break;
                                 case PIPE_MUD : {replace[dE] = PIPE; replace[index] = PIPE_MUD;} break;
                             }
                             switch (matrix[dW])
@@ -869,6 +900,7 @@ public:
                                 case PIPE_HONEY : {replace[dW] = PIPE; replace[index] = PIPE_HONEY;} break;
                                 case PIPE_BLOOD : {replace[dW] = PIPE; replace[index] = PIPE_BLOOD;} break;
                                 case PIPE_LAVA : {replace[dW] = PIPE; replace[index] = PIPE_LAVA;} break;
+                                case PIPE_MUCK : {replace[dW] = PIPE; replace[index] = PIPE_MUCK;} break;
                                 case PIPE_MUD : {replace[dW] = PIPE; replace[index] = PIPE_MUD;} break;
                             }
                             switch (matrix[dS])
@@ -878,12 +910,14 @@ public:
                                 case PIPE_HONEY : {replace[dS] = PIPE; replace[index] = PIPE_HONEY;} break;
                                 case PIPE_BLOOD : {replace[dS] = PIPE; replace[index] = PIPE_BLOOD;} break;
                                 case PIPE_LAVA : {replace[dS] = PIPE; replace[index] = PIPE_LAVA;} break;
+                                case PIPE_MUCK : {replace[dS] = PIPE; replace[index] = PIPE_MUCK;} break;
                                 case PIPE_MUD : {replace[dS] = PIPE; replace[index] = PIPE_MUD;} break;
                                 case WATER : {replace[dS] = AIR; replace[index] = PIPE_WATER;} break;
                                 case BRINE : {replace[dS] = AIR; replace[index] = PIPE_BRINE;} break;
                                 case HONEY : {replace[dS] = AIR; replace[index] = PIPE_HONEY;} break;
                                 case BLOOD : {replace[dS] = AIR; replace[index] = PIPE_BLOOD;} break;
                                 case LAVA : {replace[dS] = AIR; replace[index] = PIPE_LAVA;} break;
+                                case MUCK : {replace[dS] = AIR; replace[index] = PIPE_MUCK;} break;
                                 case MUD : {replace[dS] = AIR; replace[index] = PIPE_MUD;} break;
                             }
 
@@ -902,6 +936,7 @@ public:
                                     case PIPE_HONEY : {replace[dS] = PIPE; replace[dN] = HONEY;} break;
                                     case PIPE_BLOOD : {replace[dS] = PIPE; replace[dN] = BLOOD;} break;
                                     case PIPE_LAVA : {replace[dS] = PIPE; replace[dN] = LAVA;} break;
+                                    case PIPE_MUCK : {replace[dS] = PIPE; replace[dN] = MUCK;} break;
                                     case PIPE_MUD : {replace[dS] = PIPE; replace[dN] = MUD;} break;
                                 }
                             }
@@ -921,6 +956,7 @@ public:
                                 case GUTTER_HONEY : {replace[dE] = GUTTER; replace[index] = GUTTER_HONEY;} break;
                                 case GUTTER_BLOOD : {replace[dE] = GUTTER; replace[index] = GUTTER_BLOOD;} break;
                                 case GUTTER_LAVA : {replace[dE] = GUTTER; replace[index] = GUTTER_LAVA;} break;
+                                case GUTTER_MUCK : {replace[dE] = GUTTER; replace[index] = GUTTER_MUCK;} break;
                                 case GUTTER_MUD : {replace[dE] = GUTTER; replace[index] = GUTTER_MUD;} break;
                             }
                             switch (matrix[dW])
@@ -930,6 +966,7 @@ public:
                                 case GUTTER_HONEY : {replace[dW] = GUTTER; replace[index] = GUTTER_HONEY;} break;
                                 case GUTTER_BLOOD : {replace[dW] = GUTTER; replace[index] = GUTTER_BLOOD;} break;
                                 case GUTTER_LAVA : {replace[dW] = GUTTER; replace[index] = GUTTER_LAVA;} break;
+                                case GUTTER_MUCK : {replace[dW] = GUTTER; replace[index] = GUTTER_MUCK;} break;
                                 case GUTTER_MUD : {replace[dW] = GUTTER; replace[index] = GUTTER_MUD;} break;
                             }
                             switch (matrix[dN])
@@ -939,12 +976,14 @@ public:
                                 case GUTTER_HONEY : {replace[dN] = GUTTER; replace[index] = GUTTER_HONEY;} break;
                                 case GUTTER_BLOOD : {replace[dN] = GUTTER; replace[index] = GUTTER_BLOOD;} break;
                                 case GUTTER_LAVA : {replace[dN] = GUTTER; replace[index] = GUTTER_LAVA;} break;
+                                case GUTTER_MUCK : {replace[dN] = GUTTER; replace[index] = GUTTER_MUCK;} break;
                                 case GUTTER_MUD : {replace[dN] = GUTTER; replace[index] = GUTTER_MUD;} break;
                                 case WATER : {replace[dN] = AIR; replace[index] = GUTTER_WATER;} break;
                                 case BRINE : {replace[dN] = AIR; replace[index] = GUTTER_BRINE;} break;
                                 case HONEY : {replace[dN] = AIR; replace[index] = GUTTER_HONEY;} break;
                                 case BLOOD : {replace[dN] = AIR; replace[index] = GUTTER_BLOOD;} break;
                                 case LAVA : {replace[dN] = AIR; replace[index] = GUTTER_LAVA;} break;
+                                case MUCK : {replace[dN] = AIR; replace[index] = GUTTER_MUCK;} break;
                                 case MUD : {replace[dN] = AIR; replace[index] = GUTTER_MUD;} break;
                             }
                         }
@@ -962,6 +1001,7 @@ public:
                                     case GUTTER_HONEY : {replace[dN] = GUTTER; replace[dS] = HONEY;} break;
                                     case GUTTER_BLOOD : {replace[dN] = GUTTER; replace[dS] = BLOOD;} break;
                                     case GUTTER_LAVA : {replace[dN] = GUTTER; replace[dS] = LAVA;} break;
+                                    case GUTTER_MUCK : {replace[dN] = GUTTER; replace[dS] = MUCK;} break;
                                     case GUTTER_MUD : {replace[dN] = GUTTER; replace[dS] = MUD;} break;
                                 }
                             }
@@ -979,6 +1019,7 @@ public:
                         
                         case HONEY : cell_type = GEL; break;
                         case LAVA : cell_type = GEL; break;
+                        case MUCK : cell_type = GEL; break;
                         case MUD : cell_type = GEL; break;
 
                         case SAND : cell_type = GRAIN; break;
