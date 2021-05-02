@@ -147,7 +147,7 @@ public:
         }
     }
 
-    void SpawnParticle(int X, int Y)
+    void SpawnParticle(float X, float Y)
     {
         float W = width/2;
         float H = height/2;

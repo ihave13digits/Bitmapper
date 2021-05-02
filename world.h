@@ -240,7 +240,7 @@ public:
         // Fluids
         {  {230, 230, 230, 64 },    {5,   5,   25,  0}  },// Fog
         {  {0,   0,   128, 128},    {1,   1,   25,  0}  },// Water
-        {  {16,  16,  128, 128},    {1,   1,   25,  0}  },// Brine
+        {  {0,   64,  128, 128},    {1,   1,   25,  0}  },// Brine
         {  {230, 200, 0,   212},    {25,  10,  1,   0}  },// Honey
         {  {128, 0,   0,   255},    {25,  1,   1,   0}  },// Blood
         {  {254, 20,  0,   255},    {1,  180,  1,   0}  },// Lava
@@ -846,25 +846,6 @@ public:
                             }
                         }
                         break;
-
-                        case PUMP :
-                        {
-                            int dN  = int( (y+Y-1) * width + (x+X  ) );
-                            int dS  = int( (y+Y+1) * width + (x+X  ) );
-                            if (matrix[dN] == AIR)
-                            {
-                                switch (matrix[dS])
-                                {
-                                    case PIPE_WATER : replace[dN] = WATER; break;
-                                    case PIPE_BRINE : replace[dN] = BRINE; break;
-                                    case PIPE_HONEY : replace[dN] = HONEY; break;
-                                    case PIPE_BLOOD : replace[dN] = BLOOD; break;
-                                    case PIPE_LAVA : replace[dN] = LAVA; break;
-                                    case PIPE_MUD : replace[dN] = MUD; break;
-                                }
-                            }
-                        }
-                        break;
                         case PIPE :
                         {
                             int dN  = int( (y+Y-1) * width + (x+X  ) );
@@ -874,70 +855,54 @@ public:
 
                             switch (matrix[dE])
                             {
-                                case PIPE_WATER : replace[index] = PIPE_WATER; break;
-                                case PIPE_BRINE : replace[index] = PIPE_BRINE; break;
-                                case PIPE_HONEY : replace[index] = PIPE_HONEY; break;
-                                case PIPE_BLOOD : replace[index] = PIPE_BLOOD; break;
-                                case PIPE_LAVA : replace[index] = PIPE_LAVA; break;
-                                case PIPE_MUD : replace[index] = PIPE_MUD; break;
-                                case WATER : replace[index] = PIPE_WATER; break;
-                                case BRINE : replace[index] = PIPE_BRINE; break;
-                                case HONEY : replace[index] = PIPE_HONEY; break;
-                                case BLOOD : replace[index] = PIPE_BLOOD; break;
-                                case LAVA : replace[index] = PIPE_LAVA; break;
-                                case MUD : replace[index] = PIPE_MUD; break;
-                                case AIR : replace[index] = PIPE; break;
+                                case PIPE_WATER : {replace[dE] = PIPE; replace[index] = PIPE_WATER;} break;
+                                case PIPE_BRINE : {replace[dE] = PIPE; replace[index] = PIPE_BRINE;} break;
+                                case PIPE_HONEY : {replace[dE] = PIPE; replace[index] = PIPE_HONEY;} break;
+                                case PIPE_BLOOD : {replace[dE] = PIPE; replace[index] = PIPE_BLOOD;} break;
+                                case PIPE_LAVA : {replace[dE] = PIPE; replace[index] = PIPE_LAVA;} break;
+                                case PIPE_MUD : {replace[dE] = PIPE; replace[index] = PIPE_MUD;} break;
                             }
                             switch (matrix[dW])
                             {
-                                case PIPE_WATER : replace[index] = PIPE_WATER; break;
-                                case PIPE_BRINE : replace[index] = PIPE_BRINE; break;
-                                case PIPE_HONEY : replace[index] = PIPE_HONEY; break;
-                                case PIPE_BLOOD : replace[index] = PIPE_BLOOD; break;
-                                case PIPE_LAVA : replace[index] = PIPE_LAVA; break;
-                                case PIPE_MUD : replace[index] = PIPE_MUD; break;
-                                case WATER : replace[index] = PIPE_WATER; break;
-                                case BRINE : replace[index] = PIPE_BRINE; break;
-                                case HONEY : replace[index] = PIPE_HONEY; break;
-                                case BLOOD : replace[index] = PIPE_BLOOD; break;
-                                case LAVA : replace[index] = PIPE_LAVA; break;
-                                case MUD : replace[index] = PIPE_MUD; break;
-                                case AIR : replace[index] = PIPE; break;
+                                case PIPE_WATER : {replace[dW] = PIPE; replace[index] = PIPE_WATER;} break;
+                                case PIPE_BRINE : {replace[dW] = PIPE; replace[index] = PIPE_BRINE;} break;
+                                case PIPE_HONEY : {replace[dW] = PIPE; replace[index] = PIPE_HONEY;} break;
+                                case PIPE_BLOOD : {replace[dW] = PIPE; replace[index] = PIPE_BLOOD;} break;
+                                case PIPE_LAVA : {replace[dW] = PIPE; replace[index] = PIPE_LAVA;} break;
+                                case PIPE_MUD : {replace[dW] = PIPE; replace[index] = PIPE_MUD;} break;
                             }
                             switch (matrix[dS])
                             {
-                                case PIPE_WATER : replace[index] = PIPE_WATER; break;
-                                case PIPE_BRINE : replace[index] = PIPE_BRINE; break;
-                                case PIPE_HONEY : replace[index] = PIPE_HONEY; break;
-                                case PIPE_BLOOD : replace[index] = PIPE_BLOOD; break;
-                                case PIPE_LAVA : replace[index] = PIPE_LAVA; break;
-                                case PIPE_MUD : replace[index] = PIPE_MUD; break;
-                                case WATER : replace[index] = PIPE_WATER; break;
-                                case BRINE : replace[index] = PIPE_BRINE; break;
-                                case HONEY : replace[index] = PIPE_HONEY; break;
-                                case BLOOD : replace[index] = PIPE_BLOOD; break;
-                                case LAVA : replace[index] = PIPE_LAVA; break;
-                                case MUD : replace[index] = PIPE_MUD; break;
-                                case AIR : replace[index] = PIPE; break;
+                                case PIPE_WATER : {replace[dS] = PIPE; replace[index] = PIPE_WATER;} break;
+                                case PIPE_BRINE : {replace[dS] = PIPE; replace[index] = PIPE_BRINE;} break;
+                                case PIPE_HONEY : {replace[dS] = PIPE; replace[index] = PIPE_HONEY;} break;
+                                case PIPE_BLOOD : {replace[dS] = PIPE; replace[index] = PIPE_BLOOD;} break;
+                                case PIPE_LAVA : {replace[dS] = PIPE; replace[index] = PIPE_LAVA;} break;
+                                case PIPE_MUD : {replace[dS] = PIPE; replace[index] = PIPE_MUD;} break;
+                                case WATER : {replace[dS] = AIR; replace[index] = PIPE_WATER;} break;
+                                case BRINE : {replace[dS] = AIR; replace[index] = PIPE_BRINE;} break;
+                                case HONEY : {replace[dS] = AIR; replace[index] = PIPE_HONEY;} break;
+                                case BLOOD : {replace[dS] = AIR; replace[index] = PIPE_BLOOD;} break;
+                                case LAVA : {replace[dS] = AIR; replace[index] = PIPE_LAVA;} break;
+                                case MUD : {replace[dS] = AIR; replace[index] = PIPE_MUD;} break;
                             }
 
                         }
                         break;
-
-                        case DRAIN :
+                        case PUMP :
                         {
                             int dN  = int( (y+Y-1) * width + (x+X  ) );
                             int dS  = int( (y+Y+1) * width + (x+X  ) );
-                            if (matrix[dS] == AIR)
+                            if (matrix[dN] == AIR)
                             {
-                                switch (matrix[dN])
+                                switch (matrix[dS])
                                 {
-                                    case GUTTER_WATER : replace[dS] = WATER; break;
-                                    case GUTTER_BRINE : replace[dS] = BRINE; break;
-                                    case GUTTER_HONEY : replace[dS] = HONEY; break;
-                                    case GUTTER_BLOOD : replace[dS] = BLOOD; break;
-                                    case GUTTER_LAVA : replace[dS] = LAVA; break;
-                                    case GUTTER_MUD : replace[dS] = MUD; break;
+                                    case PIPE_WATER : {replace[dS] = PIPE; replace[dN] = WATER;} break;
+                                    case PIPE_BRINE : {replace[dS] = PIPE; replace[dN] = BRINE;} break;
+                                    case PIPE_HONEY : {replace[dS] = PIPE; replace[dN] = HONEY;} break;
+                                    case PIPE_BLOOD : {replace[dS] = PIPE; replace[dN] = BLOOD;} break;
+                                    case PIPE_LAVA : {replace[dS] = PIPE; replace[dN] = LAVA;} break;
+                                    case PIPE_MUD : {replace[dS] = PIPE; replace[dN] = MUD;} break;
                                 }
                             }
                         }
@@ -951,48 +916,54 @@ public:
 
                             switch (matrix[dE])
                             {
-                                case GUTTER_WATER : replace[index] = GUTTER_WATER; break;
-                                case GUTTER_BRINE : replace[index] = GUTTER_BRINE; break;
-                                case GUTTER_HONEY : replace[index] = GUTTER_HONEY; break;
-                                case GUTTER_BLOOD : replace[index] = GUTTER_BLOOD; break;
-                                case GUTTER_LAVA : replace[index] = GUTTER_LAVA; break;
-                                case GUTTER_MUD : replace[index] = GUTTER_MUD; break;
-                                case WATER : replace[index] = GUTTER_WATER; break;
-                                case BRINE : replace[index] = GUTTER_BRINE; break;
-                                case HONEY : replace[index] = GUTTER_HONEY; break;
-                                case BLOOD : replace[index] = GUTTER_BLOOD; break;
-                                case LAVA : replace[index] = GUTTER_LAVA; break;
-                                case MUD : replace[index] = GUTTER_MUD; break;
+                                case GUTTER_WATER : {replace[dE] = GUTTER; replace[index] = GUTTER_WATER;} break;
+                                case GUTTER_BRINE : {replace[dE] = GUTTER; replace[index] = GUTTER_BRINE;} break;
+                                case GUTTER_HONEY : {replace[dE] = GUTTER; replace[index] = GUTTER_HONEY;} break;
+                                case GUTTER_BLOOD : {replace[dE] = GUTTER; replace[index] = GUTTER_BLOOD;} break;
+                                case GUTTER_LAVA : {replace[dE] = GUTTER; replace[index] = GUTTER_LAVA;} break;
+                                case GUTTER_MUD : {replace[dE] = GUTTER; replace[index] = GUTTER_MUD;} break;
                             }
                             switch (matrix[dW])
                             {
-                                case GUTTER_WATER : replace[index] = GUTTER_WATER; break;
-                                case GUTTER_BRINE : replace[index] = GUTTER_BRINE; break;
-                                case GUTTER_HONEY : replace[index] = GUTTER_HONEY; break;
-                                case GUTTER_BLOOD : replace[index] = GUTTER_BLOOD; break;
-                                case GUTTER_LAVA : replace[index] = GUTTER_LAVA; break;
-                                case GUTTER_MUD : replace[index] = GUTTER_MUD; break;
-                                case WATER : replace[index] = GUTTER_WATER; break;
-                                case BRINE : replace[index] = GUTTER_BRINE; break;
-                                case HONEY : replace[index] = GUTTER_HONEY; break;
-                                case BLOOD : replace[index] = GUTTER_BLOOD; break;
-                                case LAVA : replace[index] = GUTTER_LAVA; break;
-                                case MUD : replace[index] = GUTTER_MUD; break;
+                                case GUTTER_WATER : {replace[dW] = GUTTER; replace[index] = GUTTER_WATER;} break;
+                                case GUTTER_BRINE : {replace[dW] = GUTTER; replace[index] = GUTTER_BRINE;} break;
+                                case GUTTER_HONEY : {replace[dW] = GUTTER; replace[index] = GUTTER_HONEY;} break;
+                                case GUTTER_BLOOD : {replace[dW] = GUTTER; replace[index] = GUTTER_BLOOD;} break;
+                                case GUTTER_LAVA : {replace[dW] = GUTTER; replace[index] = GUTTER_LAVA;} break;
+                                case GUTTER_MUD : {replace[dW] = GUTTER; replace[index] = GUTTER_MUD;} break;
                             }
                             switch (matrix[dN])
                             {
-                                case GUTTER_WATER : replace[index] = GUTTER_WATER; break;
-                                case GUTTER_BRINE : replace[index] = GUTTER_BRINE; break;
-                                case GUTTER_HONEY : replace[index] = GUTTER_HONEY; break;
-                                case GUTTER_BLOOD : replace[index] = GUTTER_BLOOD; break;
-                                case GUTTER_LAVA : replace[index] = GUTTER_LAVA; break;
-                                case GUTTER_MUD : replace[index] = GUTTER_MUD; break;
-                                case WATER : replace[index] = GUTTER_WATER; break;
-                                case BRINE : replace[index] = GUTTER_BRINE; break;
-                                case HONEY : replace[index] = GUTTER_HONEY; break;
-                                case BLOOD : replace[index] = GUTTER_BLOOD; break;
-                                case LAVA : replace[index] = GUTTER_LAVA; break;
-                                case MUD : replace[index] = GUTTER_MUD; break;
+                                case GUTTER_WATER : {replace[dN] = GUTTER; replace[index] = GUTTER_WATER;} break;
+                                case GUTTER_BRINE : {replace[dN] = GUTTER; replace[index] = GUTTER_BRINE;} break;
+                                case GUTTER_HONEY : {replace[dN] = GUTTER; replace[index] = GUTTER_HONEY;} break;
+                                case GUTTER_BLOOD : {replace[dN] = GUTTER; replace[index] = GUTTER_BLOOD;} break;
+                                case GUTTER_LAVA : {replace[dN] = GUTTER; replace[index] = GUTTER_LAVA;} break;
+                                case GUTTER_MUD : {replace[dN] = GUTTER; replace[index] = GUTTER_MUD;} break;
+                                case WATER : {replace[dN] = AIR; replace[index] = GUTTER_WATER;} break;
+                                case BRINE : {replace[dN] = AIR; replace[index] = GUTTER_BRINE;} break;
+                                case HONEY : {replace[dN] = AIR; replace[index] = GUTTER_HONEY;} break;
+                                case BLOOD : {replace[dN] = AIR; replace[index] = GUTTER_BLOOD;} break;
+                                case LAVA : {replace[dN] = AIR; replace[index] = GUTTER_LAVA;} break;
+                                case MUD : {replace[dN] = AIR; replace[index] = GUTTER_MUD;} break;
+                            }
+                        }
+                        break;
+                        case DRAIN :
+                        {
+                            int dN  = int( (y+Y-1) * width + (x+X  ) );
+                            int dS  = int( (y+Y+1) * width + (x+X  ) );
+                            if (matrix[dS] == AIR)
+                            {
+                                switch (matrix[dN])
+                                {
+                                    case GUTTER_WATER : {replace[dN] = GUTTER; replace[dS] = WATER;} break;
+                                    case GUTTER_BRINE : {replace[dN] = GUTTER; replace[dS] = BRINE;} break;
+                                    case GUTTER_HONEY : {replace[dN] = GUTTER; replace[dS] = HONEY;} break;
+                                    case GUTTER_BLOOD : {replace[dN] = GUTTER; replace[dS] = BLOOD;} break;
+                                    case GUTTER_LAVA : {replace[dN] = GUTTER; replace[dS] = LAVA;} break;
+                                    case GUTTER_MUD : {replace[dN] = GUTTER; replace[dS] = MUD;} break;
+                                }
                             }
                         }
                         break;
