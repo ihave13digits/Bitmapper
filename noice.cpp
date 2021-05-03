@@ -407,13 +407,11 @@ public:
     void DrawCustom()
     {
         //Clear(olc::BLACK);
-
         bool can_draw = false;
         std::string info_text = "Hover Over A Button To See Details";
         std::string dtls_text = "";
 
         // Buttons
-
         Button bsave = Button();
         bsave.Setup(105, 37, 32, 8, 0.25, "Save");
         Button bload = Button();
@@ -591,7 +589,6 @@ public:
             world.generation_param[world.selected_step][world.selected_param] = input_value;
             input_value = 0;
         }
-
         // Update Parameters
         if (GetKey(olc::Key::S).bPressed)
         {
@@ -611,74 +608,33 @@ public:
         }
         if (GetKey(olc::Key::D).bPressed)
         {
-            if (world.selected_param == world.pTILE)
+            switch (world.selected_param)
             {
-                if (world.generation_param[world.selected_step][world.selected_param] < world.total_tiles-1)
+                case world.pTILE :
                 {
-                    world.generation_param[world.selected_step][world.selected_param]++;
+                    if (world.generation_param[world.selected_step][world.selected_param] < world.total_tiles-1)
+                    {
+                        world.generation_param[world.selected_step][world.selected_param]++;
+                    }
                 }
+                break;
+                case  world.pMODE :
+                {
+                    if (world.generation_param[world.selected_step][world.selected_param] < world.total_modes-1)
+                    {
+                        world.generation_param[world.selected_step][world.selected_param]++;
+                    }
+                }
+                break;
+                default :
+                {
+                    if (world.generation_param[world.selected_step][world.selected_param] < 100)
+                    {
+                        world.generation_param[world.selected_step][world.selected_param]++;
+                    }
+                }
+                break;
             }
-            else if (world.selected_param == world.pMODE)
-            {
-                if (world.generation_param[world.selected_step][world.selected_param] < world.total_modes-1)
-                {
-                    world.generation_param[world.selected_step][world.selected_param]++;
-                }
-            }
-            else
-            {
-                if (world.generation_param[world.selected_step][world.selected_param] < 100)
-                {
-                    world.generation_param[world.selected_step][world.selected_param]++;
-                }
-            }
-        }
-
-        int list_height = 0;
-        int start_list = world.selected_step-9;
-        int stop_list = world.selected_step+9;
-        
-        if (start_list < 0) start_list = 0;
-        if (stop_list > world.generation_steps) stop_list = world.generation_steps;
-        if (stop_list-start_list > 9) start_list = stop_list-9;
-        // Generation Steps
-        for (int i = start_list; i < stop_list; i++)
-        {
-            std::string mode_text = world.modes[world.generation_param[i][world.selected_param]];
-            std::string tile_text = world.tiles[world.generation_param[i][world.selected_param]];
-            std::string vlue_text = std::to_string(world.generation_param[i][world.selected_param]);
-            if (i == world.selected_step)
-            {
-                tile_text = ">" + tile_text;
-                if (world.selected_param == world.pTILE)
-                {
-                    DrawStringDecal({ float(186),float((list_height*9)+10) }, tile_text, olc::WHITE, { 0.5, 0.5 });
-                }
-                else if (world.selected_param == world.pMODE)
-                {
-                    DrawStringDecal({ float(186),float((list_height*9)+10) }, mode_text, olc::WHITE, { 0.5, 0.5 });
-                }
-                else
-                {
-                    DrawStringDecal({ float(186),float((list_height*9)+10) }, vlue_text, olc::WHITE, { 0.5, 0.5 });
-                }
-            }
-            else
-            {
-                if (world.selected_param == world.pTILE)
-                {
-                    DrawStringDecal({ float(186),float((list_height*9)+10) }, tile_text, olc::DARK_GREY, { 0.5, 0.5 });
-                }
-                else if (world.selected_param == world.pMODE)
-                {
-                    DrawStringDecal({ float(186),float((list_height*9)+10) }, mode_text, olc::DARK_GREY, { 0.5, 0.5 });
-                }
-                else
-                {
-                    DrawStringDecal({ float(186),float((list_height*9)+10) }, vlue_text, olc::DARK_GREY, { 0.5, 0.5 });
-                }
-            }
-            list_height++;
         }
         // Step Value
         if (bminusgs.IsColliding(GetMouseX(), GetMouseY()))
@@ -852,7 +808,7 @@ public:
                 can_draw = true;
             }
         }
-        // Save/Load
+        // Save
         if (bsave.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Saves Generation Data";
@@ -863,6 +819,7 @@ public:
                 SaveGenerationData(data_dir);
             }
         }
+        // Load
         if (bload.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Loads Generation Data";
@@ -873,7 +830,7 @@ public:
                 LoadGenerationData(data_dir);
             }
         }
-        // Copy/Paste
+        // Copy
         if (bcopy.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Copies Selected Generation Step";
@@ -886,6 +843,7 @@ public:
                 }
             }
         }
+        // Paste
         if (bpaste.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Pastes Selected Generation Step";
@@ -956,6 +914,46 @@ public:
                 }
             }
             SetPixelMode(olc::Pixel::NORMAL);
+        }
+        // Draw Generation Steps
+        int list_height = 0;
+        int start_list = world.selected_step-9;
+        int stop_list = world.selected_step+9;
+        if (start_list < 0) start_list = 0;
+        if (stop_list > world.generation_steps-1) stop_list = world.generation_steps-1;
+        if (stop_list-start_list > 9) start_list = stop_list-9;
+        for (int i = start_list; i < stop_list; i++)
+        {
+            std::string mode_text = "Error";
+            std::string tile_text = "Error";
+            std::string vlue_text = "Error";
+            try
+            {
+                mode_text = world.modes[world.generation_param[i][world.selected_param]];
+                tile_text = world.tiles[world.generation_param[i][world.selected_param]];
+                vlue_text = std::to_string(world.generation_param[i][world.selected_param]);
+            }
+            catch (std::bad_alloc & ba) {}
+            if (i == world.selected_step)
+            {
+                tile_text = ">" + tile_text;
+                switch (world.selected_param)
+                {
+                    case world.pTILE : DrawStringDecal({ float(186),float((list_height*9)+10) }, tile_text, olc::WHITE, { 0.5, 0.5 }); break;
+                    case world.pMODE : DrawStringDecal({ float(186),float((list_height*9)+10) }, mode_text, olc::WHITE, { 0.5, 0.5 }); break;
+                    default : DrawStringDecal({ float(186),float((list_height*9)+10) }, vlue_text, olc::WHITE, { 0.5, 0.5 }); break;
+                }
+            }
+            else
+            {
+                switch (world.selected_param)
+                {
+                    case world.pTILE : DrawStringDecal({ float(186),float((list_height*9)+10) }, tile_text, olc::DARK_GREY, { 0.5, 0.5 }); break;
+                    case world.pMODE : DrawStringDecal({ float(186),float((list_height*9)+10) }, mode_text, olc::DARK_GREY, { 0.5, 0.5 }); break;
+                    default : DrawStringDecal({ float(186),float((list_height*9)+10) }, vlue_text, olc::DARK_GREY, { 0.5, 0.5 }); break;
+                }
+            }
+            list_height++;
         }
         // Draw Info
         DrawStringDecal({ 5,109 }, info_text, olc::WHITE, { 0.5, 0.5 });
