@@ -924,9 +924,9 @@ public:
         if (stop_list-start_list > 9) start_list = stop_list-9;
         for (int i = start_list; i < stop_list; i++)
         {
+            std::string vlue_text = "Error";
             std::string mode_text = "Error";
             std::string tile_text = "Error";
-            std::string vlue_text = "Error";
             try
             {
                 mode_text = world.modes[world.generation_param[i][world.selected_param]];
