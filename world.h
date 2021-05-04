@@ -363,13 +363,14 @@ public:
 
     void PresetData()
     {
-        generation_steps = 60;
+        generation_steps = 62;
         int preset_data[generation_steps][total_parameters] = {
             // T          M         D    I   x    X    y    Y    N    S    E    W
             { STONE,      mADD,     8,   1,  0,   100, 20,  75,  0,   0,   0,   0   },
             { STONE,      mADD,     4,   1,  0,   100, 30,  76,  0,   0,   0,   0   },
             { STONE,      mADD,     2,   1,  0,   100, 40,  77,  0,   0,   0,   0   },
             { STONE,      mADD,     1,   1,  0,   100, 50,  78,  0,   0,   0,   0   },
+            { STONE,      mADD,     1,   1,  0,   100, 60,  79,  0,   0,   0,   0   },
             { MANTLE,     mADD,     8,   1,  0,   100, 95,  100, 0,   0,   0,   0   },
             { MANTLE,     mADD,     16,  1,  0,   100, 97,  100, 0,   0,   0,   0   },
 
@@ -391,6 +392,7 @@ public:
             { DIRT,       mEXPAND,  0,   2,  0,   100, 15,  60,  50,  25,  90,  90  },
             { MUD,        mEXPAND,  0,   1,  0,   100, 15,  70,  25,  12,  37,  37  },
             { DIRT,       mEXPAND,  0,   4,  0,   100, 12,  80,  50,  25,  90,  90  },
+            { DIRT,       mEXPAND,  0,   4,  0,   100, 6,   20,  50,  25,  100, 100 },
 
             { GRAVEL,     mEXPAND,  0,   4,  0,   100, 30,  80,  50,  0,   0,   0   },
             { GRAVEL,     mEXPAND,  0,   4,  0,   100, 50,  60,  50,  0,   0,   0   },
