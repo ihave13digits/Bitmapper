@@ -1020,9 +1020,22 @@ public:
             int tile = world.matrix[index];
             if (tile != world.MANTLE)
             {
-                player_inv.UseItem(selected_tile, 1);
-                player_inv.AddItem(tile, 1);
-                world.matrix[index] = selected_tile;
+                if (selected_tile != world.AIR)
+                {
+                    if (player_inv.HasItem(selected_tile))
+                    {
+                        int amnt = 1;
+                        if (tile == world.AIR) amnt = 0;
+                        player_inv.UseItem(selected_tile, 1);
+                        player_inv.AddItem(tile, amnt);
+                        world.matrix[index] = selected_tile;
+                    }
+                }
+                else if (selected_tile == world.AIR)
+                {
+                    if (tile != world.AIR) player_inv.AddItem(tile, 1);
+                    world.matrix[index] = selected_tile;
+                }
             }
         }
 
