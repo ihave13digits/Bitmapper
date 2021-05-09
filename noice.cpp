@@ -6,6 +6,8 @@
 #define GetCurrentDir getcwd
 #endif
 
+
+
 #define OLC_PGE_APPLICATION
 #include "olcPixelGameEngine.h"
 
@@ -15,7 +17,11 @@
 #include "world.h"
 #include "player.h"
 #include "particle.h"
+#include "inventory.h"
+
 #include "button.h"
+
+
 
 class Noice : public olc::PixelGameEngine
 {
@@ -45,6 +51,7 @@ public:
     int game_state = 0;
 
     int selected_tile = 0;
+    int selected_tool = 0;
     int input_value = 0;
     int save_slot = 0;
 
@@ -58,6 +65,7 @@ public:
     Sky sky = Sky();
     World world = World();
     Player player = Player();
+    Inventory player_inv = Inventory();
 
     // Temporary
 
@@ -338,10 +346,17 @@ public:
         //std::string standingon = world.tiles[world.matrix[(player.y+1)*world.width+player.x]];
         std::string lookingat = "Air";
         std::string selectedtile = world.tiles[selected_tile];
+        std::string selectedcount = "";
         std::string collision_at = std::to_string(world.Collision((player.x-(width/2)+GetMouseX()), (player.y-(height/2)+GetMouseY())));
 
         if ( ( (lookindex < world.width*world.height) && lookindex > 0) && (world.matrix[lookindex] < world.total_tiles) )
+        {
             lookingat = world.tiles[world.matrix[lookindex]];
+        }
+        if (player_inv.HasItem(selected_tile))
+        {
+            selectedcount = std::to_string(player_inv.data[selected_tile]);
+        }
 
         //DrawStringDecal({ 4,4  }, "Particles: " + std::to_string(particles.size()), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,8 }, "State: " + std::to_string(player.state), olc::WHITE, { font, font });
@@ -354,7 +369,7 @@ public:
         ProgressBar(4, 4, player.jp, player.JP, 32, 0, 255, 0, 0, 64, 0);
         ProgressBar(4, 6, player.bp, player.BP, 32, 0, 0, 255, 0, 0, 64);
         DrawStringDecal({ 4,8  }, "Looking At: " + lookingat, olc::WHITE, { font, font });
-        DrawStringDecal({ 4,12 }, "Selected Tile: " + selectedtile, olc::WHITE, { font, font });
+        DrawStringDecal({ 4,12 }, "Selected Tile: " + selectedtile + " " + selectedcount, olc::WHITE, { font, font });
         DrawStringDecal({ 4,16 }, "Collision: " + collision_at, olc::WHITE, { font, font });
         DrawStringDecal({ 4,20 }, "Day: " + std::to_string(sky.day), olc::WHITE, { font, font });
         DrawStringDecal({ 4,24 }, "Year: " + std::to_string(sky.year), olc::WHITE, { font, font });
@@ -999,9 +1014,16 @@ public:
         // Stuff
         if (GetMouse(0).bHeld) SpawnParticle(GetMouseX(), GetMouseY());
 
-        if ((GetMouse(1).bHeld) && (world.matrix[(GetMouseY()+(player.y-(height/2)))*world.width+(GetMouseX()+(player.x-(width/2)))] != world.MANTLE))
+        if (GetMouse(1).bHeld)
         {
-            world.matrix[(GetMouseY()+(player.y-(height/2)))*world.width+(GetMouseX()+(player.x-(width/2)))] = selected_tile;
+            int index = (GetMouseY()+(player.y-(height/2)))*world.width+(GetMouseX()+(player.x-(width/2)));
+            int tile = world.matrix[index];
+            if (tile != world.MANTLE)
+            {
+                player_inv.UseItem(selected_tile, 1);
+                player_inv.AddItem(tile, 1);
+                world.matrix[index] = selected_tile;
+            }
         }
 
         if (GetKey(olc::Key::Q).bPressed && selected_tile < world.total_tiles-1) selected_tile++;
