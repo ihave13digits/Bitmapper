@@ -325,8 +325,8 @@ public:
         {  {25,  20,  20,  255},    {25,  1,   1,   0}  },// Mantle
     };
 
-    std::vector<short> matrix;
-    std::vector<short> replace;
+    std::vector<char> matrix;
+    std::vector<char> replace;
 
 
 

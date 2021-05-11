@@ -50,10 +50,10 @@ public:
 
     int game_state = 0;
 
-    int selected_tile = 0;
-    int selected_tool = 0;
+    char selected_tile = 0;
+    char selected_tool = 0;
     int input_value = 0;
-    int save_slot = 0;
+    char save_slot = 0;
 
     int width = 256;
     int height = 144;
@@ -89,11 +89,19 @@ public:
         system(mkdir_cmd);
     }
 
-    void SaveGameData()
+    void SaveChunkData()
     {
     }
 
-    void LoadGameData()
+    void LoadChunkData()
+    {
+    }
+
+    void SavePlayerData()
+    {
+    }
+
+    void LoadPlayerData()
     {
     }
 

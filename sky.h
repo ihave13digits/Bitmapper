@@ -144,6 +144,8 @@ public:
     {
         for (int i = 0; i < humidity; i += 4)
         {
+            int chance = rand() % 1000;
+
             clouds[i][0] += wind*.5;
             if (clouds[i][0] <= 0) clouds[i][0] += width;
             else if (clouds[i][0] >= width) clouds[i][0] -= width;
@@ -159,6 +161,27 @@ public:
             clouds[i+3][0] += wind*.5;
             if (clouds[i+3][0] <= 0) clouds[i+3][0] += width;
             else if (clouds[i+3][0] >= width) clouds[i+3][0] -= width;
+
+            //
+            if (chance < 10)
+            {
+                int change = rand() % 3-1;
+                clouds[i][2] += change;
+                if (clouds[i][2] < 1) clouds[i][2] = 1;
+                else if (clouds[i][2] > 8) clouds[i][2] = 6;
+
+                clouds[i+1][2] += change;
+                if (clouds[i+1][2] < 1) clouds[i+1][2] = 1;
+                else if (clouds[i+1][2] > 8) clouds[i+1][2] = 6;
+
+                clouds[i+2][2] += change;
+                if (clouds[i+2][2] < 1) clouds[i+2][2] = 1;
+                else if (clouds[i+2][2] > 8) clouds[i+2][2] = 6;
+
+                clouds[i+3][2] += change;
+                if (clouds[i+3][2] < 1) clouds[i+3][2] = 1;
+                else if (clouds[i+3][2] > 8) clouds[i+3][2] = 6;
+            }
         }
     }
 
