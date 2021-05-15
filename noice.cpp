@@ -143,7 +143,7 @@ public:
             int j = 0;
             while (getline(data_file, line))
             {
-                if (line != "")
+                if (i <= world.maximum_generation_steps && line != "")
                 {
                     world.generation_param[i][j] = std::stoi(line);
                     j++;
@@ -615,7 +615,7 @@ public:
         // Update Parameters
         if (GetKey(olc::Key::S).bPressed)
         {
-            if (world.selected_step < world.generation_steps-1) world.selected_step++;
+            if (world.selected_step < world.generation_steps-2) world.selected_step++;
         }
         if (GetKey(olc::Key::W).bPressed)
         {

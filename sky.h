@@ -8,7 +8,7 @@ public:
     float hue = -0.5;
     float time = 1.0;
     float move = 1.0;
-    float speed = 0.01;
+    float speed = 0.1;
 
     int width = 0;
     int height = 0;
