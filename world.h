@@ -101,27 +101,6 @@ public:
         LIMESTONE,
         SANDSTONE,
         //
-        GLASS,
-        PLANKS,
-        PUMP,
-        PIPE,
-        PIPE_WATER,
-        PIPE_BRINE,
-        PIPE_HONEY,
-        PIPE_BLOOD,
-        PIPE_LAVA,
-        PIPE_MUCK,
-        PIPE_MUD,
-        DRAIN,
-        GUTTER,
-        GUTTER_WATER,
-        GUTTER_BRINE,
-        GUTTER_HONEY,
-        GUTTER_BLOOD,
-        GUTTER_LAVA,
-        GUTTER_MUCK,
-        GUTTER_MUD,
-        //
         WOOD,
         LEAVES,
         GRASS,
@@ -148,6 +127,27 @@ public:
         EMERALD,
         AMETHYST,
         SAPPHIRE,
+        //
+        GLASS,
+        PLANKS,
+        PUMP,
+        PIPE,
+        PIPE_WATER,
+        PIPE_BRINE,
+        PIPE_HONEY,
+        PIPE_BLOOD,
+        PIPE_LAVA,
+        PIPE_MUCK,
+        PIPE_MUD,
+        DRAIN,
+        GUTTER,
+        GUTTER_WATER,
+        GUTTER_BRINE,
+        GUTTER_HONEY,
+        GUTTER_BLOOD,
+        GUTTER_LAVA,
+        GUTTER_MUCK,
+        GUTTER_MUD,
         //
         MANTLE
     };
@@ -187,27 +187,6 @@ public:
         "Limestone",
         "Sandstone",
         //
-        "Glass",
-        "Planks",
-        "Pump",
-        "Pipe",
-        "Pipe (Water)",
-        "Pipe (Brine)",
-        "Pipe (Honey)",
-        "Pipe (Blood)",
-        "Pipe (Lava)",
-        "Pipe (Muck)",
-        "Pipe (Mud)",
-        "Drain",
-        "Gutter",
-        "Gutter (Water)",
-        "Gutter (Brine)",
-        "Gutter (Honey)",
-        "Gutter (Blood)",
-        "Gutter (Lava)",
-        "Gutter (Muck)",
-        "Gutter (Mud)",
-        //
         "Wood",
         "Leaves",
         "Grass",
@@ -234,6 +213,27 @@ public:
         "Emerald",
         "Amethyst",
         "Sapphire",
+        //
+        "Glass",
+        "Planks",
+        "Pump",
+        "Pipe",
+        "Pipe (Water)",
+        "Pipe (Brine)",
+        "Pipe (Honey)",
+        "Pipe (Blood)",
+        "Pipe (Lava)",
+        "Pipe (Muck)",
+        "Pipe (Mud)",
+        "Drain",
+        "Gutter",
+        "Gutter (Water)",
+        "Gutter (Brine)",
+        "Gutter (Honey)",
+        "Gutter (Blood)",
+        "Gutter (Lava)",
+        "Gutter (Muck)",
+        "Gutter (Mud)",
         //
         "Mantle"
     };
@@ -273,27 +273,6 @@ public:
         {  {80,  80,  80,  255},    {5,   15,  25,  0}  },// Granite
         {  {128, 128, 128, 255},    {5,   5,   10,  0}  },// Limestone
         {  {200, 200, 100, 255},    {5,   5,   10,  0}  },// Sandstone
-        // Crafted Materials
-        {  {220, 220, 245,  64},    {5,   15,  10,  0}  },// Glass
-        {  {120, 80,  48,  255},    {25,  20,  10,  0}  },// Planks
-        {  {80,  80,  80,  255},    {15,  10,  10,  0}  },// Pump
-        {  {100, 100, 100, 255},    {15,  10,  10,  0}  },// Pipe
-        {  {100, 100, 110, 255},    {15,  10,  10,  0}  },// Pipe (Water)
-        {  {100, 100, 110, 255},    {15,  10,  10,  0}  },// Pipe (Brine)
-        {  {110, 110, 100, 255},    {15,  10,  10,  0}  },// Pipe (Honey)
-        {  {110, 100, 100, 255},    {15,  10,  10,  0}  },// Pipe (Blood)
-        {  {130, 120, 100, 255},    {15,  10,  10,  0}  },// Pipe (Lava)
-        {  {120, 110, 100, 255},    {15,  10,  10,  0}  },// Pipe (Muck)
-        {  {130, 120, 110, 255},    {15,  10,  10,  0}  },// Pipe (Mud)
-        {  {60,  60,  60,  255},    {15,  10,  10,  0}  },// Drain
-        {  {100, 100, 100, 255},    {15,  10,  10,  0}  },// Gutter
-        {  {100, 100, 110, 255},    {15,  10,  10,  0}  },// Gutter (Water)
-        {  {100, 100, 110, 255},    {15,  10,  10,  0}  },// Gutter (Brine)
-        {  {110, 110, 100, 255},    {15,  10,  10,  0}  },// Gutter (Honey)
-        {  {110, 100, 100, 255},    {15,  10,  10,  0}  },// Gutter (Blood)
-        {  {130, 120, 100, 255},    {15,  10,  10,  0}  },// Gutter (Lava)
-        {  {120, 110, 100, 255},    {15,  10,  10,  0}  },// Gutter (Muck)
-        {  {130, 120, 110, 255},    {15,  10,  10,  0}  },// Gutter (Mud)
         // Plant Materials
         {  {80,  64,  32,  255},    {25,  20,  10,  0}  },// Wood
         {  {40,   80, 0,   225},    {5,   20,  1,   0}  },// Leaves
@@ -321,6 +300,27 @@ public:
         {  {0,   180, 90,  160},    {1,   25,  1,   0}  },// Emerald
         {  {150, 100, 200, 160},    {25,  1,   25,  0}  },// Amethyst
         {  {15,  80,  185, 160},    {1,   1,   25,  0}  },// Sapphire
+        // Crafted Materials
+        {  {220, 220, 245,  64},    {5,   15,  10,  0}  },// Glass
+        {  {120, 80,  48,  255},    {25,  20,  10,  0}  },// Planks
+        {  {80,  80,  80,  255},    {15,  10,  10,  0}  },// Pump
+        {  {100, 100, 100, 255},    {15,  10,  10,  0}  },// Pipe
+        {  {100, 100, 110, 255},    {15,  10,  10,  0}  },// Pipe (Water)
+        {  {100, 100, 110, 255},    {15,  10,  10,  0}  },// Pipe (Brine)
+        {  {110, 110, 100, 255},    {15,  10,  10,  0}  },// Pipe (Honey)
+        {  {110, 100, 100, 255},    {15,  10,  10,  0}  },// Pipe (Blood)
+        {  {130, 120, 100, 255},    {15,  10,  10,  0}  },// Pipe (Lava)
+        {  {120, 110, 100, 255},    {15,  10,  10,  0}  },// Pipe (Muck)
+        {  {130, 120, 110, 255},    {15,  10,  10,  0}  },// Pipe (Mud)
+        {  {60,  60,  60,  255},    {15,  10,  10,  0}  },// Drain
+        {  {100, 100, 100, 255},    {15,  10,  10,  0}  },// Gutter
+        {  {100, 100, 110, 255},    {15,  10,  10,  0}  },// Gutter (Water)
+        {  {100, 100, 110, 255},    {15,  10,  10,  0}  },// Gutter (Brine)
+        {  {110, 110, 100, 255},    {15,  10,  10,  0}  },// Gutter (Honey)
+        {  {110, 100, 100, 255},    {15,  10,  10,  0}  },// Gutter (Blood)
+        {  {130, 120, 100, 255},    {15,  10,  10,  0}  },// Gutter (Lava)
+        {  {120, 110, 100, 255},    {15,  10,  10,  0}  },// Gutter (Muck)
+        {  {130, 120, 110, 255},    {15,  10,  10,  0}  },// Gutter (Mud)
         // Unbreakable
         {  {25,  20,  20,  255},    {25,  1,   1,   0}  },// Mantle
     };
