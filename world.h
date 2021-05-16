@@ -617,17 +617,20 @@ public:
     }
 
     // Deposition Methods
-    void Expand(int t, int xmin, int xmax, int miny, int maxy, int dn=5, int ds=5, int de=25, int dw=25)
+    void Expand(int t, int minx, int maxx, int miny, int maxy, int dn=5, int ds=5, int de=25, int dw=25)
     {
         replace = matrix;
 
+        minx = std::max(minx, 1);
+        maxx = std::min(maxx, width-2);
+        miny = std::max(miny, 1);
+        maxy = std::min(maxy, height-2);
+
         for (int y = miny; y < maxy; y++)
         {
-            for (int x = xmin; x < xmax; x++)
+            for (int x = minx; x < maxx; x++)
             {
-                if (matrix[y*width+x] != AIR &&
-                        ( (x > 0) && (x < width-1) ) &&
-                        ( (y > 0) && (y < height-1) ))
+                if (matrix[y*width+x] != AIR)
                 {
                     int n = (y-1)*width+x;
                     int s = (y+1)*width+x;
@@ -644,18 +647,20 @@ public:
         matrix = replace;
     }
 
-    void Deposit(int t, int xmin, int xmax, int miny, int maxy, int dn=5, int ds=5, int de=25, int dw=25)
+    void Deposit(int t, int minx, int maxx, int miny, int maxy, int dn=5, int ds=5, int de=25, int dw=25)
     {
         replace = matrix;
 
+        minx = std::max(minx, 1);
+        maxx = std::min(maxx, width-2);
+        miny = std::max(miny, 1);
+        maxy = std::min(maxy, height-2);
+        
         for (int y = miny; y < maxy; y++)
         {
-            for (int x = xmin; x < xmax; x++)
+            for (int x = minx; x < maxx; x++)
             {
-                if (matrix[y*width+x] == t &&
-                        ( (x > 0) && (x < width-1) ) &&
-                        ( (y > 0) && (y < height-1) )
-                        )
+                if (matrix[y*width+x] == t)
                 {
                     int n = (y-1)*width+x;
                     int s = (y+1)*width+x;
