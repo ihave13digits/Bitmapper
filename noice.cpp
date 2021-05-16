@@ -328,7 +328,7 @@ public:
             float vx = particles[p].vx;
             float vy = particles[p].vy;
 
-            particles[p].Move(vx, vy, world.Collision(int(x+vx), int(y+vy)));
+            particles[p].Move(vx, vy, delta, world.Collision(int(x+vx), int(y+vy)));
             if ( particles[p].destroys && world.Collision(particles[p].x, particles[p].y) )
             {
                 world.matrix[int(particles[p].y+(vy+0.5))*world.width+int(particles[p].x+(vx+0.5))] = world.AIR;

@@ -8,6 +8,7 @@ public:
     float vx = 0;
     float vy = 0;
 
+    float speed = 25.0;
     float gravity = 0.3;
     float max_speed = 1.0;
 
@@ -20,9 +21,9 @@ public:
 
     bool sticky = false;
     bool bouncy = true;
-    bool heavy = true;
+    bool heavy = false;
 
-    bool destroys = true;
+    bool destroys = false;
     bool damages = false;
     bool poisons = false;
     bool trips = false;
@@ -42,20 +43,21 @@ public:
         CheckSpeed();
     }
 
-    void Move(float X, float Y, bool collision)
+    void Move(float X, float Y, float delta, bool collision)
     {
+        CheckSpeed();
         if (!collision)
         {
-            x += X;
-            if (!heavy) y += Y+gravity;
-            if (heavy) y += Y+gravity*2;
+            x += X*speed*delta;
+            if (!heavy) y += (Y+gravity)*speed*delta;
+            if (heavy) y += (Y+(gravity*2))*speed*delta;
         }
         else
         {
             if (bouncy)
             {
                 vx = -X;
-                vy = (-Y)+gravity;
+                vy = -Y;
             }
             if (sticky)
             {
@@ -63,7 +65,6 @@ public:
                 vy = 0.0;
             }
         }
-
     }
 
     void CheckSpeed()
