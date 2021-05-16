@@ -224,7 +224,7 @@ public:
         {
             int x = sky.clouds[i][0];
             int y = sky.clouds[i][1];
-            FillCircle(x, y, sky.clouds[i][2], olc::Pixel(sky.r, sky.g, sky.b, 8));
+            FillCircle(x, y, sky.clouds[i][2], olc::Pixel(sky.r, sky.g, sky.b, 4+(8*sky.time)));
         }
         if (sky.humidity > sky.cloudcount/4)
         {
@@ -371,7 +371,7 @@ public:
         //DrawStringDecal({ 4,8 }, "State: " + std::to_string(player.state), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,12 }, "Position: (" + std::to_string(player.x) + ", " + std::to_string(player.y) + ")", olc::WHITE, { font, font });
         //DrawStringDecal({ 4,16 }, "Standing On: " + standingon, olc::WHITE, { font, font });
-        //DrawStringDecal({ 4,20 }, "Light: " + std::to_string(sky.time), olc::WHITE, { font, font });
+        //DrawStringDecal({ 4,28 }, "Light: " + std::to_string(sky.time), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,24 }, "Hue: " + std::to_string(sky.hue), olc::WHITE, { font, font });
         //DrawStringDecal({ 4,28 }, "Clouds: " + std::to_string(sky.humidity), olc::WHITE, { font, font });
         ProgressBar(4, 2, player.hp, player.HP, 32, 255, 0, 0, 64, 0, 0);
