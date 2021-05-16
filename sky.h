@@ -8,7 +8,7 @@ public:
     float hue = -0.5;
     float time = 1.0;
     float move = 1.0;
-    float speed = 0.1;
+    float speed = 0.005; // ~24 Minute Day/Night Cycle
 
     int width = 0;
     int height = 0;
@@ -41,7 +41,7 @@ public:
     int cloudcount = 1024;
     int humidity = 128;
     int stars[256][2];
-    int clouds[1024][3];// x, y, size
+    float clouds[1024][3];// x, y, size
 
     void GenerateSky(int W, int H, int seed=0)
     {
