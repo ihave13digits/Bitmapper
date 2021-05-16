@@ -20,7 +20,7 @@ public:
 
     bool sticky = false;
     bool bouncy = true;
-    bool heavy = false;
+    bool heavy = true;
 
     bool destroys = true;
     bool damages = false;
@@ -47,25 +47,23 @@ public:
         if (!collision)
         {
             x += X;
-            y += Y+gravity;
+            if (!heavy) y += Y+gravity;
+            if (heavy) y += Y+gravity*2;
         }
         else
         {
             if (bouncy)
             {
                 vx = -X;
-                vy = -Y+gravity;
+                vy = (-Y)+gravity;
             }
             if (sticky)
             {
                 vx = 0.0;
                 vy = 0.0;
             }
-            if (heavy)
-            {
-                vy += gravity*2;
-            }
         }
+
     }
 
     void CheckSpeed()

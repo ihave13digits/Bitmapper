@@ -164,8 +164,8 @@ public:
         float W = width/2;
         float H = height/2;
         Particle p = Particle();
-        p.Position(W, H);
-        p.Velocity(float(X-W), float(Y-H));
+        p.Position(player.x, player.y);
+        p.Velocity(float((X-W)*0.1), float((Y-H)*0.1));
         particles.push_back(p);
     }
 
@@ -179,7 +179,6 @@ public:
 
     void DrawSky()
     {
-        //sky.Update();
         if (player.status != player.TRIP) Clear(olc::Pixel(sky.R, sky.G, sky.B));
         
         if (sky.starlight >= 0)
@@ -324,18 +323,20 @@ public:
     {
         for (int p = 0; p < (particles.size()); p++)
         {
-            float x = particles[p].x+(player.x-(width/2));
-            float y = particles[p].y+(player.y-(height/2));
+            float x = particles[p].x;
+            float y = particles[p].y;
             float vx = particles[p].vx;
             float vy = particles[p].vy;
 
-            particles[p].Move(particles[p].vx, particles[p].vy, world.Collision(int(x+vx), int(y+vy)));
-            if ( particles[p].destroys && world.Collision(x, y) ) world.matrix[(y)*world.width+(x)] = world.AIR;
-            
+            particles[p].Move(vx, vy, world.Collision(int(x+vx), int(y+vy)));
+            if ( particles[p].destroys && world.Collision(particles[p].x, particles[p].y) )
+            {
+                world.matrix[int(particles[p].y+(vy+0.5))*world.width+int(particles[p].x+(vx+0.5))] = world.AIR;
+            }
             if (particles[p].duration > 0.0)
             {
                 particles[p].duration -= delta;
-                Draw(particles[p].x, particles[p].y, olc::Pixel(particles[p].r, particles[p].g, particles[p].b, particles[p].a));
+                Draw(particles[p].x-(player.x-(width/2)), particles[p].y-(player.y-(height/2)), olc::Pixel(particles[p].r, particles[p].g, particles[p].b, particles[p].a));
             }
             else
             {
@@ -907,6 +908,7 @@ public:
             DrawRect(bpreview.x, bpreview.y, bpreview.width, bpreview.height, olc::WHITE);
             if (GetMouse(0).bReleased)
             {
+                srand(game_seed);
                 world.ClearMatrix();
                 world.InitializeMatrix(100, 100);
                 for (int i = 0; i < world.generation_steps; i++)
@@ -1020,7 +1022,7 @@ public:
     void GameLoop(float fElapsedTime)
     {
         // Stuff
-        if (GetMouse(0).bHeld) SpawnParticle(GetMouseX(), GetMouseY());
+        if (GetMouse(0).bHeld) SpawnParticle(float(GetMouseX()), float(GetMouseY()));
 
         if (GetMouse(1).bHeld)
         {
