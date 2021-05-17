@@ -378,10 +378,10 @@ public:
             { STONE,      mEXPAND,  0,   1,  0,   100, 25,  85,  25,  50,  100, 100 },
             { STONE,      mEXPAND,  0,   1,  0,   100, 35,  85,  50,  25,  100, 100 },
             { STONE,      mEXPAND,  0,   2,  0,   100, 45,  85,  25,  5,   100, 100 },
-            { STONE,      mEXPAND,  0,   2,  0,   100, 55,  85,  25,  50,  100, 100 },
-            { STONE,      mEXPAND,  0,   2,  0,   100, 65,  85,  25,  50,  100, 100 },
-            { STONE,      mEXPAND,  0,   4,  0,   100, 75,  85,  50,  25,  100, 100 },
-            { STONE,      mEXPAND,  0,   4,  0,   100, 80,  85,  25,  5,   100, 100 },
+            { STONE,      mEXPAND,  0,   1,  0,   100, 55,  85,  25,  50,  100, 100 },
+            { STONE,      mEXPAND,  0,   4,  0,   100, 65,  85,  25,  50,  100, 100 },
+            { STONE,      mEXPAND,  0,   2,  0,   100, 75,  85,  50,  25,  100, 100 },
+            { STONE,      mEXPAND,  0,   1,  0,   100, 80,  85,  25,  5,   100, 100 },
             
             { SOIL,       mEXPAND,  0,   4,  0,   100, 8,   30,  50,  25,  90,  90  },
             { MUD,        mEXPAND,  0,   1,  0,   100, 10,  40,  50,  25,  75,  75  },
@@ -691,6 +691,178 @@ public:
                     int index = (y+Y)*width+(x+X);
                     int current_cell = matrix[index];
 
+                    // Update Moving Tiles
+                    int cell_type = SOLID;
+                    switch (current_cell)
+                        {
+                        case WATER : cell_type = FLUID; break;
+                        case BRINE : cell_type = FLUID; break;
+                        case BLOOD : cell_type = FLUID; break;
+                        case FOG : cell_type = FLUID; break;
+                        
+                        case HONEY : cell_type = GEL; break;
+                        case LAVA : cell_type = GEL; break;
+                        case MUCK : cell_type = GEL; break;
+                        case MUD : cell_type = GEL; break;
+
+                        case SAND : cell_type = GRAIN; break;
+                        case SNOW : cell_type = GRAIN; break;
+                        case SLEET : cell_type = GRAIN; break;
+                        case SILT : cell_type = GRAIN; break;
+                        case GRAVEL : cell_type = GRAIN; break;
+                        
+                        case STEAM : cell_type = GAS; break;
+                        case SMOKE : cell_type = GAS; break;
+                    }
+
+                    int direction = rand() % 100;
+                    switch (cell_type)
+                    {
+                        case FLUID :
+                        {
+                            if (!FluidCollision(x+X, y+Y+2) && !FluidCollision(x+X, y+Y+1))
+                            {
+                                int rplc = (y+Y+2)*width+(x+X);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░░░░░
+                                                                  // ░░██░░
+                            }
+                            else if (!FluidCollision(x+X, y+Y+1))
+                            {
+                                int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░██░░
+                            }
+                            else if (!FluidCollision(x+X-1, y+Y+1) && direction < 50)
+                            {
+                                int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ██░░░░
+                            }
+                            else if (!FluidCollision(x+X+1, y+Y+1))
+                            {
+                                int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░░░██
+                            }
+                            else if (!FluidCollision(x+X-2, y+Y) && !FluidCollision(x+X-1, y+Y) && direction < 50)
+                            {
+                                int rplc = (y+Y)*width+(x+X-2);   // ░░░░░░░░
+                                replace[rplc] = matrix[index];    // ██░░▓▓░░
+                                replace[index] = AIR;             // ░░░░░░░░
+                            }
+                            else if (!FluidCollision(x+X+2, y+Y) && !FluidCollision(x+X+1, y+Y))
+                            {
+                                int rplc = (y+Y)*width+(x+X+2);   // ░░░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░██
+                                replace[index] = AIR;             // ░░░░░░░░
+                            }
+                            else if (!FluidCollision(x+X-1, y+Y) && FluidCollision(x+X+1, y+Y) && direction < 50)
+                            {
+                                int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ██▓▓░░
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                            else if (!FluidCollision(x+X+1, y+Y) && FluidCollision(x+X-1, y+Y))
+                            {
+                                int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓██
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                        };
+                        break;
+                        case GEL :
+                        {
+                            if (!FluidCollision(x+X, y+Y+1))
+                            {
+                                int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░██░░
+                            }
+                            else if (!FluidCollision(x+X-1, y+Y+1) && direction < 50)
+                            {
+                                int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ██░░░░
+                            }
+                            else if (!FluidCollision(x+X+1, y+Y+1))
+                            {
+                                int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░░░██
+                            }
+                            else if (!FluidCollision(x+X-1, y+Y) && FluidCollision(x+X+1, y+Y) && direction < 50)
+                            {
+                                int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ██▓▓░░
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                            else if (!FluidCollision(x+X+1, y+Y) && FluidCollision(x+X-1, y+Y))
+                            {
+                                int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓██
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                        };
+                        break;
+                        case GRAIN :
+                        {
+                            if (!DualCollision(x+X, y+Y+1))
+                            {
+                                int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░██░░
+                            }
+                            else if (!DualCollision(x+X-1, y+Y+1) && direction < 50)
+                            {
+                                int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ██░░░░
+                            }
+                            else if (!DualCollision(x+X+1, y+Y+1))
+                            {
+                                int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░░░██
+                            }
+                        };
+                        break;
+                        case GAS :
+                        {
+                            if (!DualCollision(x+X, y+Y-1))
+                            {
+                                int rplc = (y+Y-1)*width+(x+X);   // ░░██░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                            else if (!DualCollision(x+X-1, y+Y-1) && direction < 50)
+                            {
+                                int rplc = (y+Y-1)*width+(x+X-1); // ██░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                            else if (!DualCollision(x+X+1, y+Y-1))
+                            {
+                                int rplc = (y+Y-1)*width+(x+X+1); // ░░░░██
+                                replace[rplc] = matrix[index];    // ░░▓▓░░
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                            else if (!DualCollision(x+X-1, y+Y) && DualCollision(x+X+1, y+Y) && direction < 50)
+                            {
+                                int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ██▓▓░░
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                            else if (!DualCollision(x+X+1, y+Y) && DualCollision(x+X-1, y+Y))
+                            {
+                                int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
+                                replace[rplc] = matrix[index];    // ░░▓▓██
+                                replace[index] = AIR;             // ░░░░░░
+                            }
+                        };
+                        break;
+                    }
+
                     // Tile Interactions
                     switch (current_cell)
                     {
@@ -811,6 +983,34 @@ public:
                             }
                         }
                         break;
+                        case MUD :
+                        {
+                            int dN  = int( (y+Y-1) * width + (x+X  ) );
+                            int dE  = int( (y+Y  ) * width + (x+X+1) );
+                            int dS  = int( (y+Y+1) * width + (x+X  ) );
+                            int dW  = int( (y+Y  ) * width + (x+X-1) );
+                            if ((matrix[dN] == AIR) || (matrix[dS] == AIR) ||
+                                (matrix[dE] == AIR) || (matrix[dW] == AIR))
+                            {   
+                                int chance = rand() % 10000;
+                                if (chance < 5) replace[index] = DIRT;
+                            }
+                        }
+                        break;
+                        case MUCK :
+                        {
+                            int dN  = int( (y+Y-1) * width + (x+X  ) );
+                            int dE  = int( (y+Y  ) * width + (x+X+1) );
+                            int dS  = int( (y+Y+1) * width + (x+X  ) );
+                            int dW  = int( (y+Y  ) * width + (x+X-1) );
+                            if ((matrix[dN] == AIR) || (matrix[dS] == AIR) ||
+                                (matrix[dE] == AIR) || (matrix[dW] == AIR))
+                            {
+                                int chance = rand() % 10000;
+                                if (chance < 5) replace[index] = SOIL;
+                            }
+                        }
+                        break;
                         case SNOW :
                         {
                             int dS  = int( (y+Y+1) * width + (x+X  ) );
@@ -853,7 +1053,7 @@ public:
                             int dSE = int( (y+Y+1) * width + (x+X+1) );
                             int dSW = int( (y+Y+1) * width + (x+X-1) );
                             int dW  = int( (y+Y  ) * width + (x+X-1) );
-                            if (rand()%100 < 5)
+                            if (rand()%1000 < 5)
                             {
                                 if ((matrix[dE] == DIRT || matrix[dE] == SOIL) && !Collision(x+X+1, y+Y-1)) replace[dE] = GRASS;
                                 else if ((matrix[dW] == DIRT || matrix[dW] == SOIL) && !Collision(x+X-1, y+Y-1)) replace[dW] = GRASS;
@@ -989,9 +1189,9 @@ public:
                                 case BRINE : {replace[dN] = AIR; replace[index] = GUTTER_BRINE;} break;
                                 case HONEY : {replace[dN] = AIR; replace[index] = GUTTER_HONEY;} break;
                                 case BLOOD : {replace[dN] = AIR; replace[index] = GUTTER_BLOOD;} break;
-                                case LAVA : {replace[dN] = AIR; replace[index] = GUTTER_LAVA;} break;
-                                case MUCK : {replace[dN] = AIR; replace[index] = GUTTER_MUCK;} break;
-                                case MUD : {replace[dN] = AIR; replace[index] = GUTTER_MUD;} break;
+                                case LAVA : {replace[dN] = AIR; matrix[dN] = AIR; replace[index] = GUTTER_LAVA;} break;
+                                case MUCK : {replace[dN] = AIR; matrix[dN] = AIR; replace[index] = GUTTER_MUCK;} break;
+                                case MUD : {replace[dN] = AIR; matrix[dN] = AIR; replace[index] = GUTTER_MUD;} break;
                             }
                         }
                         break;
@@ -1013,176 +1213,6 @@ public:
                                 }
                             }
                         }
-                        break;
-                    }
-                    // Update Moving Tiles
-                    int cell_type = SOLID;
-                    switch (current_cell)
-                        {
-                        case WATER : cell_type = FLUID; break;
-                        case BRINE : cell_type = FLUID; break;
-                        case BLOOD : cell_type = FLUID; break;
-                        case FOG : cell_type = FLUID; break;
-                        
-                        case HONEY : cell_type = GEL; break;
-                        case LAVA : cell_type = GEL; break;
-                        case MUCK : cell_type = GEL; break;
-                        case MUD : cell_type = GEL; break;
-
-                        case SAND : cell_type = GRAIN; break;
-                        case SNOW : cell_type = GRAIN; break;
-                        case SLEET : cell_type = GRAIN; break;
-                        case SILT : cell_type = GRAIN; break;
-                        case GRAVEL : cell_type = GRAIN; break;
-                        
-                        case STEAM : cell_type = GAS; break;
-                        case SMOKE : cell_type = GAS; break;
-                    }
-
-                    switch (cell_type)
-                    {
-                        case FLUID :
-                        {
-                            if (!FluidCollision(x+X, y+Y+2) && !FluidCollision(x+X, y+Y+1))
-                            {
-                                int rplc = (y+Y+2)*width+(x+X);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░░░░░
-                                                                  // ░░██░░
-                            }
-                            else if (!FluidCollision(x+X, y+Y+1))
-                            {
-                                int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░██░░
-                            }
-                            else if (!FluidCollision(x+X-1, y+Y+1))
-                            {
-                                int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ██░░░░
-                            }
-                            else if (!FluidCollision(x+X+1, y+Y+1))
-                            {
-                                int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░░░██
-                            }
-                            else if (!FluidCollision(x+X-2, y+Y) && !FluidCollision(x+X-1, y+Y))
-                            {
-                                int rplc = (y+Y)*width+(x+X-2);   // ░░░░░░░░
-                                replace[rplc] = matrix[index];    // ██░░▓▓░░
-                                replace[index] = AIR;             // ░░░░░░░░
-                            }
-                            else if (!FluidCollision(x+X+2, y+Y) && !FluidCollision(x+X+1, y+Y))
-                            {
-                                int rplc = (y+Y)*width+(x+X+2);   // ░░░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░██
-                                replace[index] = AIR;             // ░░░░░░░░
-                            }
-                            else if (!FluidCollision(x+X-1, y+Y) && FluidCollision(x+X+1, y+Y))
-                            {
-                                int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ██▓▓░░
-                                replace[index] = AIR;             // ░░░░░░
-                            }
-                            else if (!FluidCollision(x+X+1, y+Y) && FluidCollision(x+X-1, y+Y))
-                            {
-                                int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓██
-                                replace[index] = AIR;             // ░░░░░░
-                            }
-                        };
-                        break;
-                        case GEL :
-                        {
-                            if (!FluidCollision(x+X, y+Y+1))
-                            {
-                                int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░██░░
-                            }
-                            else if (!FluidCollision(x+X-1, y+Y+1))
-                            {
-                                int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ██░░░░
-                            }
-                            else if (!FluidCollision(x+X+1, y+Y+1))
-                            {
-                                int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░░░██
-                            }
-                            else if (!FluidCollision(x+X-1, y+Y) && FluidCollision(x+X+1, y+Y))
-                            {
-                                int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ██▓▓░░
-                                replace[index] = AIR;             // ░░░░░░
-                            }
-                            else if (!FluidCollision(x+X+1, y+Y) && FluidCollision(x+X-1, y+Y))
-                            {
-                                int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓██
-                                replace[index] = AIR;             // ░░░░░░
-                            }
-                        };
-                        break;
-                        case GRAIN :
-                        {
-                            if (!DualCollision(x+X, y+Y+1))
-                            {
-                                int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░██░░
-                            }
-                            else if (!DualCollision(x+X-1, y+Y+1))
-                            {
-                                int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ██░░░░
-                            }
-                            else if (!DualCollision(x+X+1, y+Y+1))
-                            {
-                                int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░░░██
-                            }
-                        };
-                        break;
-                        case GAS :
-                        {
-                            if (!DualCollision(x+X, y+Y-1))
-                            {
-                                int rplc = (y+Y-1)*width+(x+X);   // ░░██░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░░░░░
-                            }
-                            else if (!DualCollision(x+X-1, y+Y-1))
-                            {
-                                int rplc = (y+Y-1)*width+(x+X-1); // ██░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░░░░░
-                            }
-                            else if (!DualCollision(x+X+1, y+Y-1))
-                            {
-                                int rplc = (y+Y-1)*width+(x+X+1); // ░░░░██
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░░░░░
-                            }
-                            else if (!DualCollision(x+X-1, y+Y) && DualCollision(x+X+1, y+Y))
-                            {
-                                int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ██▓▓░░
-                                replace[index] = AIR;             // ░░░░░░
-                            }
-                            else if (!DualCollision(x+X+1, y+Y) && DualCollision(x+X-1, y+Y))
-                            {
-                                int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓██
-                                replace[index] = AIR;             // ░░░░░░
-                            }
-                        };
                         break;
                     }
                 }
