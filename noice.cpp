@@ -41,6 +41,7 @@ public:
         PLAYING
     };
 
+    bool creative_mode = true;
     bool loading = false;
 
     int game_seed = 0;
@@ -328,15 +329,15 @@ public:
             float vx = particles[p].vx;
             float vy = particles[p].vy;
 
-            particles[p].Move(vx, vy, delta, world.Collision(int(x+vx), int(y+vy)));
-            if ( particles[p].destroys && world.Collision(particles[p].x, particles[p].y) )
+            particles[p].Move(vx, vy, delta, world.IsColliding(int(x+vx), int(y+vy)));
+            if ( particles[p].destroys && world.IsColliding(int(x+(vx*1.5)), int(y+(vy*1.5))) )
             {
-                world.matrix[int(particles[p].y+(vy+0.5))*world.width+int(particles[p].x+(vx+0.5))] = world.AIR;
+                world.matrix[int(y+(vy*1.5))*world.width+int(x+(vx*1.5))] = world.AIR;
             }
             if (particles[p].duration > 0.0)
             {
                 particles[p].duration -= delta;
-                Draw(particles[p].x-(player.x-(width/2)), particles[p].y-(player.y-(height/2)), olc::Pixel(particles[p].r, particles[p].g, particles[p].b, particles[p].a));
+                Draw(x-(player.x-(width/2)), y-(player.y-(height/2)), olc::Pixel(particles[p].r, particles[p].g, particles[p].b, particles[p].a));
             }
             else
             {
@@ -1032,7 +1033,7 @@ public:
             {
                 if (selected_tile != world.AIR)
                 {
-                    if (player_inv.HasItem(selected_tile))
+                    if (player_inv.HasItem(selected_tile) || creative_mode)
                     {
                         int amnt = 1;
                         if (tile == world.AIR) amnt = 0;
