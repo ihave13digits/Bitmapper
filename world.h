@@ -1025,123 +1025,37 @@ public:
                             int dW  = int( (y+Y  ) * width + (x+X-1) );
                             switch (matrix[dS])
                             {
-                                case GRASS :
-                                {
-                                    replace[index] = AIR;
-                                    replace[dS] = GRASS;
-                                }
-                                break;
-                                case DIRT :
-                                {
-                                    replace[index] = AIR;
-                                    replace[dS] = MUD;
-                                }
-                                break;
-                                case SOIL :
-                                {
-                                    replace[index] = AIR;
-                                    replace[dS] = MUCK;
-                                }
-                                break;
-                                case SNOW :
-                                {
-                                    replace[index] = AIR;
-                                    replace[dS] = ICE;
-                                }
-                                break;
-                                case MANTLE :
-                                {
-                                    replace[index] = STEAM;
-                                }
-                                break;
-                                case LAVA :
-                                {
-                                    replace[index] = STEAM;
-                                    matrix[index] = STEAM;
-                                    replace[dS] = OBSIDIAN;
-                                    matrix[dS] = OBSIDIAN;
-                                }
-                                break;
+                                case GRASS : {replace[index] = AIR; replace[dS] = GRASS;} break;
+                                case DIRT : {replace[index] = AIR; replace[dS] = MUD;} break;
+                                case SOIL : {replace[index] = AIR; replace[dS] = MUCK;} break;
+                                case SNOW : {replace[index] = AIR; replace[dS] = ICE;} break;
+                                case MANTLE : {replace[index] = STEAM;} break;
+                                case LAVA : {replace[index] = STEAM; replace[dS] = OBSIDIAN;} break;
                             }
                             switch (matrix[dW])
                             {
-                                case DIRT :
-                                {
-                                    replace[index] = AIR;
-                                    replace[dW] = MUD;
-                                }
-                                break;
-                                case SOIL :
-                                {
-                                    replace[index] = AIR;
-                                    replace[dW] = MUCK;
-                                }
-                                break;
-                                case LAVA :
-                                {
-                                    replace[index] = STEAM;
-                                    matrix[index] = STEAM;
-                                    replace[dW] = OBSIDIAN;
-                                    matrix[dW] = OBSIDIAN;
-                                }
-                                break;
+                                case DIRT : {replace[index] = AIR; replace[dW] = MUD;} break;
+                                case SOIL : {replace[index] = AIR; replace[dW] = MUCK;} break;
+                                case LAVA : {replace[index] = STEAM; replace[dW] = OBSIDIAN;} break;
                             }
                             switch (matrix[dE])
                             {
-                                case DIRT :
-                                {
-                                    replace[index] = AIR;
-                                    replace[dE] = MUD;
-                                }
-                                break;
-                                case SOIL :
-                                {
-                                    replace[index] = AIR;
-                                    replace[dE] = MUCK;
-                                }
-                                break;
-                                case LAVA :
-                                {
-                                    replace[index] = STEAM;
-                                    matrix[index] = STEAM;
-                                    replace[dE] = OBSIDIAN;
-                                    matrix[dE] = OBSIDIAN;
-                                }
-                                break;
+                                case DIRT : {replace[index] = AIR; replace[dE] = MUD;} break;
+                                case SOIL : {replace[index] = AIR; replace[dE] = MUCK;} break;
+                                case LAVA : {replace[index] = STEAM; replace[dE] = OBSIDIAN;} break;
                             }
                             switch (matrix[dN])
                             {
-                                case DIRT :
-                                {
-                                    replace[index] = AIR;
-                                    replace[dN] = MUD;
-                                }
-                                break;
-                                case SOIL :
-                                {
-                                    replace[index] = AIR;
-                                    replace[dN] = MUCK;
-                                }
-                                break;
-                                case LAVA :
-                                {
-                                    replace[index] = STEAM;
-                                    matrix[index] = STEAM;
-                                    replace[dN] = OBSIDIAN;
-                                    matrix[dN] = OBSIDIAN;
-                                }
-                                break;
+                                case DIRT : {replace[index] = AIR; replace[dN] = MUD;} break;
+                                case SOIL : {replace[index] = AIR; replace[dN] = MUCK;} break;
+                                case LAVA : {replace[index] = STEAM; replace[dN] = OBSIDIAN;} break;
                             }
                         }
                         break;
                         case MUD :
                         {
                             int dN  = int( (y+Y-1) * width + (x+X  ) );
-                            int dE  = int( (y+Y  ) * width + (x+X+1) );
-                            int dS  = int( (y+Y+1) * width + (x+X  ) );
-                            int dW  = int( (y+Y  ) * width + (x+X-1) );
-                            if ((matrix[dN] == AIR) || (matrix[dS] == AIR) ||
-                                (matrix[dE] == AIR) || (matrix[dW] == AIR))
+                            if (matrix[dN] == AIR)
                             {   
                                 int chance = rand() % 10000;
                                 if (chance < 5) replace[index] = DIRT;
@@ -1151,11 +1065,7 @@ public:
                         case MUCK :
                         {
                             int dN  = int( (y+Y-1) * width + (x+X  ) );
-                            int dE  = int( (y+Y  ) * width + (x+X+1) );
-                            int dS  = int( (y+Y+1) * width + (x+X  ) );
-                            int dW  = int( (y+Y  ) * width + (x+X-1) );
-                            if ((matrix[dN] == AIR) || (matrix[dS] == AIR) ||
-                                (matrix[dE] == AIR) || (matrix[dW] == AIR))
+                            if (matrix[dN] == AIR)
                             {
                                 int chance = rand() % 10000;
                                 if (chance < 5) replace[index] = SOIL;

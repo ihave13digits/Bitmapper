@@ -1016,7 +1016,7 @@ public:
         float msg_y = (height/2)-4;
 
         DrawStringDecal({ msg_x, msg_y }, message, olc::WHITE, { 0.5, 0.5 });
-        ProgressBar(prog_x, prog_y, world.generation_step, world.generation_steps, width/2);
+        ProgressBar(prog_x, prog_y, world.generation_step-1, world.generation_steps, width/2);
 
     }
 
