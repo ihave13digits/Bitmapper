@@ -270,28 +270,28 @@ public:
                     if (n4 > 2) s4 = 1.0/(n4-2);
 
                     Draw(x, y, olc::Pixel(
-                                int(world.tileset[v1][0][0]*s1) + rand() % world.tileset[v1][1][0],
-                                int(world.tileset[v1][0][1]*s1) + rand() % world.tileset[v1][1][1],
-                                int(world.tileset[v1][0][2]*s1) + rand() % world.tileset[v1][1][2],
+                                int(world.tileset[v1][0][0]*s1),// + rand() % world.tileset[v1][1][0],
+                                int(world.tileset[v1][0][1]*s1),// + rand() % world.tileset[v1][1][1],
+                                int(world.tileset[v1][0][2]*s1),// + rand() % world.tileset[v1][1][2],
                                 world.tileset[v1][0][3])
                             );
                     
                     Draw(x+1, y, olc::Pixel(
-                                int(world.tileset[v2][0][0]*s2) + rand() % world.tileset[v2][1][0],
-                                int(world.tileset[v2][0][1]*s2) + rand() % world.tileset[v2][1][1],
-                                int(world.tileset[v2][0][2]*s2) + rand() % world.tileset[v2][1][2],
+                                int(world.tileset[v2][0][0]*s2),// + rand() % world.tileset[v2][1][0],
+                                int(world.tileset[v2][0][1]*s2),// + rand() % world.tileset[v2][1][1],
+                                int(world.tileset[v2][0][2]*s2),// + rand() % world.tileset[v2][1][2],
                                 world.tileset[v2][0][3])
                             );
                     Draw(x+2, y, olc::Pixel(
-                                int(world.tileset[v3][0][0]*s3) + rand() % world.tileset[v3][1][0],
-                                int(world.tileset[v3][0][1]*s3) + rand() % world.tileset[v3][1][1],
-                                int(world.tileset[v3][0][2]*s3) + rand() % world.tileset[v3][1][2],
+                                int(world.tileset[v3][0][0]*s3),// + rand() % world.tileset[v3][1][0],
+                                int(world.tileset[v3][0][1]*s3),// + rand() % world.tileset[v3][1][1],
+                                int(world.tileset[v3][0][2]*s3),// + rand() % world.tileset[v3][1][2],
                                 world.tileset[v3][0][3])
                             );
                     Draw(x+3, y, olc::Pixel(
-                                int(world.tileset[v4][0][0]*s4) + rand() % world.tileset[v4][1][0],
-                                int(world.tileset[v4][0][1]*s4) + rand() % world.tileset[v4][1][1],
-                                int(world.tileset[v4][0][2]*s4) + rand() % world.tileset[v4][1][2],
+                                int(world.tileset[v4][0][0]*s4),// + rand() % world.tileset[v4][1][0],
+                                int(world.tileset[v4][0][1]*s4),// + rand() % world.tileset[v4][1][1],
+                                int(world.tileset[v4][0][2]*s4),// + rand() % world.tileset[v4][1][2],
                                 world.tileset[v4][0][3])
                             );
                 }
