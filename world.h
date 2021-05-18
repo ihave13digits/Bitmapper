@@ -720,144 +720,295 @@ public:
                     {
                         case FLUID :
                         {
-                            if (!FluidCollision(x+X, y+Y+2) && !FluidCollision(x+X, y+Y+1))
+                            if (direction < 50)
                             {
-                                int rplc = (y+Y+2)*width+(x+X);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░░░░░
-                                                                  // ░░██░░
+                                if (!FluidCollision(x+X, y+Y+2) && !FluidCollision(x+X, y+Y+1))
+                                {
+                                    int rplc = (y+Y+2)*width+(x+X);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░
+                                                                      // ░░██░░
+                                }
+                                else if (!FluidCollision(x+X, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░██░░
+                                }
+                                else if (!FluidCollision(x+X-1, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ██░░░░
+                                }
+                                else if (!FluidCollision(x+X+1, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░██
+                                }
+                                else if (!FluidCollision(x+X-2, y+Y) && !FluidCollision(x+X-1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X-2);   // ░░░░░░░░
+                                    replace[rplc] = matrix[index];    // ██░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░░░
+                                }
+                                else if (!FluidCollision(x+X+2, y+Y) && !FluidCollision(x+X+1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X+2);   // ░░░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░██
+                                    replace[index] = AIR;             // ░░░░░░░░
+                                }
+                                else if (!FluidCollision(x+X-1, y+Y) && FluidCollision(x+X+1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ██▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
+                                else if (!FluidCollision(x+X+1, y+Y) && FluidCollision(x+X-1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓██
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
                             }
-                            else if (!FluidCollision(x+X, y+Y+1))
+                            else
                             {
-                                int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░██░░
-                            }
-                            else if (!FluidCollision(x+X-1, y+Y+1) && direction < 50)
-                            {
-                                int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ██░░░░
-                            }
-                            else if (!FluidCollision(x+X+1, y+Y+1))
-                            {
-                                int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░░░██
-                            }
-                            else if (!FluidCollision(x+X-2, y+Y) && !FluidCollision(x+X-1, y+Y) && direction < 50)
-                            {
-                                int rplc = (y+Y)*width+(x+X-2);   // ░░░░░░░░
-                                replace[rplc] = matrix[index];    // ██░░▓▓░░
-                                replace[index] = AIR;             // ░░░░░░░░
-                            }
-                            else if (!FluidCollision(x+X+2, y+Y) && !FluidCollision(x+X+1, y+Y))
-                            {
-                                int rplc = (y+Y)*width+(x+X+2);   // ░░░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░██
-                                replace[index] = AIR;             // ░░░░░░░░
-                            }
-                            else if (!FluidCollision(x+X-1, y+Y) && FluidCollision(x+X+1, y+Y) && direction < 50)
-                            {
-                                int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ██▓▓░░
-                                replace[index] = AIR;             // ░░░░░░
-                            }
-                            else if (!FluidCollision(x+X+1, y+Y) && FluidCollision(x+X-1, y+Y))
-                            {
-                                int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓██
-                                replace[index] = AIR;             // ░░░░░░
+                                if (!FluidCollision(x+X, y+Y+2) && !FluidCollision(x+X, y+Y+1))
+                                {
+                                    int rplc = (y+Y+2)*width+(x+X);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░
+                                                                      // ░░██░░
+                                }
+                                else if (!FluidCollision(x+X, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░██░░
+                                }
+                                else if (!FluidCollision(x+X+1, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░██
+                                }
+                                else if (!FluidCollision(x+X-1, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ██░░░░
+                                }
+                                else if (!FluidCollision(x+X+2, y+Y) && !FluidCollision(x+X+1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X+2);   // ░░░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░██
+                                    replace[index] = AIR;             // ░░░░░░░░
+                                }
+                                else if (!FluidCollision(x+X-2, y+Y) && !FluidCollision(x+X-1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X-2);   // ░░░░░░░░
+                                    replace[rplc] = matrix[index];    // ██░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░░░
+                                }
+                                else if (!FluidCollision(x+X+1, y+Y) && FluidCollision(x+X-1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓██
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
+                                else if (!FluidCollision(x+X-1, y+Y) && FluidCollision(x+X+1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ██▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
                             }
                         };
                         break;
                         case GEL :
                         {
-                            if (!FluidCollision(x+X, y+Y+1))
+                            if (direction < 50)
                             {
-                                int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░██░░
+                                if (!FluidCollision(x+X, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░██░░
+                                }
+                                else if (!FluidCollision(x+X-1, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ██░░░░
+                                }
+                                else if (!FluidCollision(x+X+1, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░██
+                                }
+                                else if (!FluidCollision(x+X-1, y+Y) && FluidCollision(x+X+1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ██▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
+                                else if (!FluidCollision(x+X+1, y+Y) && FluidCollision(x+X-1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓██
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
                             }
-                            else if (!FluidCollision(x+X-1, y+Y+1) && direction < 50)
+                            else
                             {
-                                int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ██░░░░
-                            }
-                            else if (!FluidCollision(x+X+1, y+Y+1))
-                            {
-                                int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░░░██
-                            }
-                            else if (!FluidCollision(x+X-1, y+Y) && FluidCollision(x+X+1, y+Y) && direction < 50)
-                            {
-                                int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ██▓▓░░
-                                replace[index] = AIR;             // ░░░░░░
-                            }
-                            else if (!FluidCollision(x+X+1, y+Y) && FluidCollision(x+X-1, y+Y))
-                            {
-                                int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓██
-                                replace[index] = AIR;             // ░░░░░░
+                                if (!FluidCollision(x+X, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░██░░
+                                }
+                                else if (!FluidCollision(x+X+1, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░██
+                                }
+                                else if (!FluidCollision(x+X-1, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ██░░░░
+                                }
+                                else if (!FluidCollision(x+X+1, y+Y) && FluidCollision(x+X-1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓██
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
+                                else if (!FluidCollision(x+X-1, y+Y) && FluidCollision(x+X+1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ██▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
                             }
                         };
                         break;
                         case GRAIN :
                         {
-                            if (!DualCollision(x+X, y+Y+1))
+                            if (direction < 50)
                             {
-                                int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░██░░
+                                if (!DualCollision(x+X, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░██░░
+                                }
+                                else if (!DualCollision(x+X-1, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ██░░░░
+                                }
+                                else if (!DualCollision(x+X+1, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░██
+                                }
                             }
-                            else if (!DualCollision(x+X-1, y+Y+1) && direction < 50)
+                            else
                             {
-                                int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ██░░░░
-                            }
-                            else if (!DualCollision(x+X+1, y+Y+1))
-                            {
-                                int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░░░██
+                                if (!DualCollision(x+X, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░██░░
+                                }
+                                else if (!DualCollision(x+X+1, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X+1); // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░██
+                                }
+                                else if (!DualCollision(x+X-1, y+Y+1))
+                                {
+                                    int rplc = (y+Y+1)*width+(x+X-1); // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ██░░░░
+                                }
                             }
                         };
                         break;
                         case GAS :
                         {
-                            if (!DualCollision(x+X, y+Y-1))
+                            if (direction < 50)
                             {
-                                int rplc = (y+Y-1)*width+(x+X);   // ░░██░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░░░░░
+                                if (!DualCollision(x+X, y+Y-1))
+                                {
+                                    int rplc = (y+Y-1)*width+(x+X);   // ░░██░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
+                                else if (!DualCollision(x+X-1, y+Y-1))
+                                {
+                                    int rplc = (y+Y-1)*width+(x+X-1); // ██░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
+                                else if (!DualCollision(x+X+1, y+Y-1))
+                                {
+                                    int rplc = (y+Y-1)*width+(x+X+1); // ░░░░██
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
+                                else if (!DualCollision(x+X-1, y+Y) && DualCollision(x+X+1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ██▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
+                                else if (!DualCollision(x+X+1, y+Y) && DualCollision(x+X-1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓██
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
                             }
-                            else if (!DualCollision(x+X-1, y+Y-1) && direction < 50)
+                            else
                             {
-                                int rplc = (y+Y-1)*width+(x+X-1); // ██░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░░░░░
-                            }
-                            else if (!DualCollision(x+X+1, y+Y-1))
-                            {
-                                int rplc = (y+Y-1)*width+(x+X+1); // ░░░░██
-                                replace[rplc] = matrix[index];    // ░░▓▓░░
-                                replace[index] = AIR;             // ░░░░░░
-                            }
-                            else if (!DualCollision(x+X-1, y+Y) && DualCollision(x+X+1, y+Y) && direction < 50)
-                            {
-                                int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ██▓▓░░
-                                replace[index] = AIR;             // ░░░░░░
-                            }
-                            else if (!DualCollision(x+X+1, y+Y) && DualCollision(x+X-1, y+Y))
-                            {
-                                int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
-                                replace[rplc] = matrix[index];    // ░░▓▓██
-                                replace[index] = AIR;             // ░░░░░░
+                                if (!DualCollision(x+X, y+Y-1))
+                                {
+                                    int rplc = (y+Y-1)*width+(x+X);   // ░░██░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
+                                else if (!DualCollision(x+X+1, y+Y-1))
+                                {
+                                    int rplc = (y+Y-1)*width+(x+X+1); // ░░░░██
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
+                                else if (!DualCollision(x+X-1, y+Y-1))
+                                {
+                                    int rplc = (y+Y-1)*width+(x+X-1); // ██░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
+                                else if (!DualCollision(x+X+1, y+Y) && DualCollision(x+X-1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X+1);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ░░▓▓██
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
+                                else if (!DualCollision(x+X-1, y+Y) && DualCollision(x+X+1, y+Y))
+                                {
+                                    int rplc = (y+Y)*width+(x+X-1);   // ░░░░░░
+                                    replace[rplc] = matrix[index];    // ██▓▓░░
+                                    replace[index] = AIR;             // ░░░░░░
+                                }
                             }
                         };
                         break;
