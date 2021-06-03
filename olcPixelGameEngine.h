@@ -1861,6 +1861,36 @@ namespace olc
 	{
 		if (!pDrawTarget) return false;
 
+        switch (nPixelMode)
+        {
+            case Pixel::NORMAL :
+            {
+                return pDrawTarget->SetPixel(x, y, p);
+            }
+            break;
+            case Pixel::MASK :
+            {
+                if (p.a == 255) return pDrawTarget->SetPixel(x, y, p);
+            }
+            break;
+            case Pixel::ALPHA :
+            {
+                Pixel d = pDrawTarget->GetPixel(x, y);
+                float a = (float)(p.a / 255.0f) * fBlendFactor;
+                float c = 1.0f - a;
+                float r = a * (float)p.r + c * (float)d.r;
+                float g = a * (float)p.g + c * (float)d.g;
+                float b = a * (float)p.b + c * (float)d.b;
+                return pDrawTarget->SetPixel(x, y, Pixel((uint8_t)r, (uint8_t)g, (uint8_t)b/*, (uint8_t)(p.a * fBlendFactor)*/));
+            }
+            break;
+            case Pixel::CUSTOM :
+            {
+                return pDrawTarget->SetPixel(x, y, funcPixelMode(x, y, p, pDrawTarget->GetPixel(x, y)));
+            }
+            break;
+        }
+        /*
 		if (nPixelMode == Pixel::NORMAL)
 		{
 			return pDrawTarget->SetPixel(x, y, p);
@@ -1880,13 +1910,14 @@ namespace olc
 			float r = a * (float)p.r + c * (float)d.r;
 			float g = a * (float)p.g + c * (float)d.g;
 			float b = a * (float)p.b + c * (float)d.b;
-			return pDrawTarget->SetPixel(x, y, Pixel((uint8_t)r, (uint8_t)g, (uint8_t)b/*, (uint8_t)(p.a * fBlendFactor)*/));
+			return pDrawTarget->SetPixel(x, y, Pixel((uint8_t)r, (uint8_t)g, (uint8_t)b));
 		}
 
 		if (nPixelMode == Pixel::CUSTOM)
 		{
 			return pDrawTarget->SetPixel(x, y, funcPixelMode(x, y, p, pDrawTarget->GetPixel(x, y)));
 		}
+        */
 
 		return false;
 	}

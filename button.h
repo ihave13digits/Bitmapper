@@ -24,6 +24,8 @@ public:
         text = txt;
     }
 
+    void SetText(std::string txt) {text = txt;}
+
     float TextX()
     {
         return float( (x + ((width/2)) - ((text.size())*(4*font))) );
