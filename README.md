@@ -17,8 +17,10 @@ A Noita inspired game written in C++ with OLC PixelGameEngine
 ## Features
 
     Particles
+    Particle Effects
     World Collision Detection
     Custom Procedural World Generation
+    Inventory System
 
 ## Material Simulations
 

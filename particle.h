@@ -17,18 +17,9 @@ public:
     int b = 255;
     int a = 255;
 
+    Effect effect;
+
     float duration = 1.0;
-
-    bool sticky = false;
-    bool bouncy = true;
-    bool heavy = false;
-
-    bool destroys = true;
-    bool damages = false;
-    bool poisons = false;
-    bool trips = false;
-    bool stuns = false;
-    bool burns = false;
 
     void Position(float X, float Y)
     {
@@ -49,17 +40,17 @@ public:
         if (!collision)
         {
             x += X*speed*delta;
-            if (!heavy) y += (Y+gravity)*speed*delta;
-            if (heavy) y += (Y+(gravity*2))*speed*delta;
+            if (!effect.heavy) y += (Y+gravity)*speed*delta;
+            if (effect.heavy) y += (Y+(gravity*2))*speed*delta;
         }
         else
         {
-            if (bouncy)
+            if (effect.bouncy)
             {
                 vx = -X;
                 vy = -Y;
             }
-            if (sticky)
+            if (effect.sticky)
             {
                 vx = 0.0;
                 vy = 0.0;

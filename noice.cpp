@@ -16,6 +16,7 @@
 #include "sky.h"
 #include "world.h"
 #include "player.h"
+#include "effect.h"
 #include "particle.h"
 #include "inventory.h"
 
@@ -330,8 +331,13 @@ public:
             float vy = particles[p].vy;
 
             particles[p].Move(vx, vy, delta, world.IsColliding(int(x+vx), int(y+vy)));
-            if ( particles[p].destroys && world.IsColliding(int(x+(vx*1.5)), int(y+(vy*1.5))) )
+            if ( particles[p].effect.destroys && world.IsColliding(int(x+(vx*1.5)), int(y+(vy*1.5))) )
             {
+                world.matrix[int(y+(vy*1.5))*world.width+int(x+(vx*1.5))] = world.AIR;
+            }
+            if ( particles[p].effect.mines && world.IsColliding(int(x+(vx*1.5)), int(y+(vy*1.5))) )
+            {
+                player_inv.AddItem(world.matrix[int(y+(vy*1.5))*world.width+int(x+(vx*1.5))], 1);
                 world.matrix[int(y+(vy*1.5))*world.width+int(x+(vx*1.5))] = world.AIR;
             }
             if (particles[p].duration > 0.0)
@@ -464,6 +470,21 @@ public:
         Button bpaste = Button();
         bpaste.Setup(218, 94, 35, 8, 0.25, "Paste");
 
+        Button bsave0 = Button();
+        bsave0.Setup(141, 7, 38, 8, 0.25, "Save 0");
+        Button bsave1 = Button();
+        bsave1.Setup(141, 15, 38, 8, 0.25, "Save 1");
+        Button bsave2 = Button();
+        bsave2.Setup(141, 23, 38, 8, 0.25, "Save 2");
+        Button bsave3 = Button();
+        bsave3.Setup(141, 31, 38, 8, 0.25, "Save 3");
+        Button bsave4 = Button();
+        bsave4.Setup(141, 39, 38, 8, 0.25, "Save 4");
+        Button bsave5 = Button();
+        bsave5.Setup(141, 47, 38, 8, 0.25, "Save 5");
+        Button bsave6 = Button();
+        bsave6.Setup(141, 55, 38, 8, 0.25, "Save 6");
+
         Button btile = Button();
         btile.Setup(141, 70, 18, 8, 0.25, "Tile");
         Button bmode = Button();
@@ -522,6 +543,21 @@ public:
         DrawStringDecal({ bminusgs.TextX(),bminusgs.TextY() }, bminusgs.text, olc::WHITE, { btile.font, bminusgs.font });
         DrawRect(bplusgs.x, bplusgs.y, bplusgs.width, bplusgs.height, olc::DARK_GREY);
         DrawStringDecal({ bplusgs.TextX(),bplusgs.TextY() }, bplusgs.text, olc::WHITE, { bplusgs.font, bplusgs.font });
+
+        DrawRect(bsave0.x, bsave0.y, bsave0.width, bsave0.height, olc::DARK_GREY);
+        DrawStringDecal({ bsave0.TextX(),bsave0.TextY() }, bsave0.text, olc::WHITE, { bsave0.font, bsave0.font });
+        DrawRect(bsave1.x, bsave1.y, bsave1.width, bsave1.height, olc::DARK_GREY);
+        DrawStringDecal({ bsave1.TextX(),bsave1.TextY() }, bsave1.text, olc::WHITE, { bsave1.font, bsave1.font });
+        DrawRect(bsave2.x, bsave2.y, bsave2.width, bsave2.height, olc::DARK_GREY);
+        DrawStringDecal({ bsave2.TextX(),bsave2.TextY() }, bsave2.text, olc::WHITE, { bsave2.font, bsave2.font });
+        DrawRect(bsave3.x, bsave3.y, bsave3.width, bsave3.height, olc::DARK_GREY);
+        DrawStringDecal({ bsave3.TextX(),bsave3.TextY() }, bsave3.text, olc::WHITE, { bsave3.font, bsave3.font });
+        DrawRect(bsave4.x, bsave4.y, bsave4.width, bsave4.height, olc::DARK_GREY);
+        DrawStringDecal({ bsave4.TextX(),bsave4.TextY() }, bsave4.text, olc::WHITE, { bsave4.font, bsave4.font });
+        DrawRect(bsave5.x, bsave5.y, bsave5.width, bsave5.height, olc::DARK_GREY);
+        DrawStringDecal({ bsave5.TextX(),bsave5.TextY() }, bsave5.text, olc::WHITE, { bsave5.font, bsave5.font });
+        DrawRect(bsave6.x, bsave6.y, bsave6.width, bsave6.height, olc::DARK_GREY);
+        DrawStringDecal({ bsave6.TextX(),bsave6.TextY() }, bsave6.text, olc::WHITE, { bsave6.font, bsave6.font });
 
         DrawRect(btile.x, btile.y, btile.width, btile.height, olc::DARK_GREY);
         DrawStringDecal({ btile.TextX(),btile.TextY() }, btile.text, olc::WHITE, { btile.font, btile.font });
@@ -1130,11 +1166,11 @@ public:
         if (GetKey(olc::Key::T).bHeld) player.status = player.TRIP;
 
         // Update World
+        sky.Update(fElapsedTime);
         if (game_tick == tick_delay)
         {
-            sky.Update(fElapsedTime);
-            DrawSky();
             game_tick = 0;
+            DrawSky();
             world.SettleTiles(player.x-(width), player.y-(height), width*2, height*2);
             DrawTerrain();
         }
@@ -1184,6 +1220,18 @@ public:
                     else if (player.bp <= 0) player.status = player.DROWN;
                 }
                 break;
+                case world.MUCK:
+                {
+                    if (player.bp > 0) player.bp--;
+                    else if (player.bp <= 0) player.status = player.DROWN;
+                }
+                break;
+                case world.MUD:
+                {
+                    if (player.bp > 0) player.bp--;
+                    else if (player.bp <= 0) player.status = player.DROWN;
+                }
+                break;
                 case world.LAVA:
                 {
                     player.status = player.BURN;
@@ -1191,8 +1239,8 @@ public:
                 break;
             }
             if (!world.IsColliding(player.x+player.vx, player.y+player.vy)) player.Move(player.vx, player.vy);
-            DrawPlayer();
         }
+        DrawPlayer();
         DrawParticles(fElapsedTime);
         DrawHUD();
 
