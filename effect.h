@@ -15,4 +15,7 @@ public:
     bool stuns = false;
     bool burns = false;
 
+    int damage = 0;
+    int drain = 0;
+
 };

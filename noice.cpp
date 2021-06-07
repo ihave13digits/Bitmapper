@@ -52,6 +52,7 @@ public:
 
     int game_state = 0;
 
+    char selected_hotbar = 0;
     char selected_tile = 0;
     char selected_tool = 0;
     int input_value = 0;
@@ -63,6 +64,8 @@ public:
     int world_height = 2048;
 
     std::vector<Particle> particles;
+
+
 
     Sky sky = Sky();
     World world = World();
@@ -389,7 +392,27 @@ public:
         DrawStringDecal({ 4,16 }, "Collision: " + collision_at, olc::WHITE, { font, font });
         DrawStringDecal({ 4,20 }, "Day: " + std::to_string(sky.day), olc::WHITE, { font, font });
         DrawStringDecal({ 4,24 }, "Year: " + std::to_string(sky.year), olc::WHITE, { font, font });
-
+        //
+        int hb_size = 12;
+        int hb_offset = (width/2) - hb_size*4.5;
+        for (int i = 0; i < 9; i++)
+        {
+            int x = i*hb_size+hb_offset;
+            DrawRect(x, 2, hb_size, hb_size, olc::DARK_GREY);
+            /*
+            if ()
+            {
+                for (int iy = 0; iy < 8; iy++)
+                {
+                    for (int ix = 0; ix < 8; ix++)
+                    {
+                        if () Draw(ix, iy, olc::DARK_GREY);
+                    }
+                }
+            }
+            */
+        }
+        DrawRect(selected_hotbar*hb_size+hb_offset, 2, hb_size, hb_size, olc::WHITE);
     }
 
     void DrawTitle()
@@ -1058,6 +1081,18 @@ public:
 
     void GameLoop(float fElapsedTime)
     {
+        //
+        if (GetKey(olc::Key::K0).bPressed) {selected_hotbar = 9;}
+        if (GetKey(olc::Key::K1).bPressed) {selected_hotbar = 0;}
+        if (GetKey(olc::Key::K2).bPressed) {selected_hotbar = 1;}
+        if (GetKey(olc::Key::K3).bPressed) {selected_hotbar = 2;}
+        if (GetKey(olc::Key::K4).bPressed) {selected_hotbar = 3;}
+        if (GetKey(olc::Key::K5).bPressed) {selected_hotbar = 4;}
+        if (GetKey(olc::Key::K6).bPressed) {selected_hotbar = 5;}
+        if (GetKey(olc::Key::K7).bPressed) {selected_hotbar = 6;}
+        if (GetKey(olc::Key::K8).bPressed) {selected_hotbar = 7;}
+        if (GetKey(olc::Key::K9).bPressed) {selected_hotbar = 8;}
+        
         // Stuff
         if (GetMouse(0).bHeld) SpawnParticle(float(GetMouseX()), float(GetMouseY()));
 
