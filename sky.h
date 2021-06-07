@@ -55,7 +55,7 @@ public:
             stars[i][1] = rand() % year_length;
         }
         // Redistribute Stars
-        int tol = 4;
+        int tol = 1;
         for (int i = 0; i < starcount; i++)
         {
             for (int j = 0; j < starcount; j++)

@@ -11,7 +11,7 @@ public:
 
     // Terrain Tiles
 
-    int total_tiles = 74;
+    int total_tiles = 76;
     int total_parameters = 12;
     int total_modes = 4;
 
@@ -130,6 +130,8 @@ public:
         //
         GLASS,
         PLANKS,
+        VALVE_CLOSED,
+        VALVE_OPEN,
         PUMP,
         PIPE,
         PIPE_WATER,
@@ -152,7 +154,7 @@ public:
         MANTLE
     };
 
-    std::string tiles[74] = {
+    std::string tiles[76] = {
         //
         "Air",
         "Steam",
@@ -216,6 +218,8 @@ public:
         //
         "Glass",
         "Planks",
+        "Valve (Closed)",
+        "Valve (Open)",
         "Pump",
         "Pipe",
         "Pipe (Water)",
@@ -238,7 +242,7 @@ public:
         "Mantle"
     };
 
-    int tileset[74][2][4] = {
+    int tileset[76][2][4] = {
         // |Base Color        |     |Variation       |
         // Gases
         {  {200, 200, 230, 5  },    {1,   1,   25,  0}  },// Air
@@ -303,6 +307,8 @@ public:
         // Crafted Materials
         {  {220, 220, 245,  64},    {5,   15,  10,  0}  },// Glass
         {  {120, 80,  48,  255},    {25,  20,  10,  0}  },// Planks
+        {  {80,  80,  80,  255},    {15,  10,  10,  0}  },// Valve (Closed)
+        {  {80,  80,  80,  255},    {15,  10,  10,  0}  },// Valve (Open)
         {  {80,  80,  80,  255},    {15,  10,  10,  0}  },// Pump
         {  {100, 100, 100, 255},    {15,  10,  10,  0}  },// Pipe
         {  {100, 100, 110, 255},    {15,  10,  10,  0}  },// Pipe (Water)
@@ -1272,6 +1278,68 @@ public:
                                     case GUTTER_MUCK : {replace[dN] = GUTTER; replace[dS] = MUCK;} break;
                                     case GUTTER_MUD : {replace[dN] = GUTTER; replace[dS] = MUD;} break;
                                 }
+                            }
+                        }
+                        break;
+                        case VALVE_OPEN :
+                        {
+                            int dN  = int( (y+Y-1) * width + (x+X  ) );
+                            int dS  = int( (y+Y+1) * width + (x+X  ) );
+                            int dE  = int( (y+Y  ) * width + (x+X+1) );
+                            int dW  = int( (y+Y  ) * width + (x+X-1) );
+                            switch (matrix[dN])
+                            {
+                                case GUTTER_WATER : {if (matrix[dS] == GUTTER) replace[dN] = GUTTER; replace[dS] = GUTTER_WATER;} break;
+                                case GUTTER_BRINE : {if (matrix[dS] == GUTTER) replace[dN] = GUTTER; replace[dS] = GUTTER_BRINE;} break;
+                                case GUTTER_HONEY : {if (matrix[dS] == GUTTER) replace[dN] = GUTTER; replace[dS] = GUTTER_HONEY;} break;
+                                case GUTTER_BLOOD : {if (matrix[dS] == GUTTER) replace[dN] = GUTTER; replace[dS] = GUTTER_BLOOD;} break;
+                                case GUTTER_LAVA : {if (matrix[dS] == GUTTER) replace[dN] = GUTTER; replace[dS] = GUTTER_LAVA;} break;
+                                case GUTTER_MUCK : {if (matrix[dS] == GUTTER) replace[dN] = GUTTER; replace[dS] = GUTTER_MUCK;} break;
+                                case GUTTER_MUD : {if (matrix[dS] == GUTTER) replace[dN] = GUTTER; replace[dS] = GUTTER_MUD;} break;
+                            }
+                            switch (matrix[dS])
+                            {
+                                case PIPE_WATER : {if (matrix[dN] == PIPE) replace[dS] = PIPE; replace[dN] = PIPE_WATER;} break;
+                                case PIPE_BRINE : {if (matrix[dN] == PIPE) replace[dS] = PIPE; replace[dN] = PIPE_BRINE;} break;
+                                case PIPE_HONEY : {if (matrix[dN] == PIPE) replace[dS] = PIPE; replace[dN] = PIPE_HONEY;} break;
+                                case PIPE_BLOOD : {if (matrix[dN] == PIPE) replace[dS] = PIPE; replace[dN] = PIPE_BLOOD;} break;
+                                case PIPE_LAVA : {if (matrix[dN] == PIPE) replace[dS] = PIPE; replace[dN] = PIPE_LAVA;} break;
+                                case PIPE_MUCK : {if (matrix[dN] == PIPE) replace[dS] = PIPE; replace[dN] = PIPE_MUCK;} break;
+                                case PIPE_MUD : {if (matrix[dN] == PIPE) replace[dS] = PIPE; replace[dN] = PIPE_MUD;} break;
+                            }
+                            switch (matrix[dE])
+                            {
+                                case PIPE_WATER : {if (matrix[dW] == PIPE) replace[dE] = PIPE; replace[dW] = PIPE_WATER;} break;
+                                case PIPE_BRINE : {if (matrix[dW] == PIPE) replace[dE] = PIPE; replace[dW] = PIPE_BRINE;} break;
+                                case PIPE_HONEY : {if (matrix[dW] == PIPE) replace[dE] = PIPE; replace[dW] = PIPE_HONEY;} break;
+                                case PIPE_BLOOD : {if (matrix[dW] == PIPE) replace[dE] = PIPE; replace[dW] = PIPE_BLOOD;} break;
+                                case PIPE_LAVA : {if (matrix[dW] == PIPE) replace[dE] = PIPE; replace[dW] = PIPE_LAVA;} break;
+                                case PIPE_MUCK : {if (matrix[dW] == PIPE) replace[dE] = PIPE; replace[dW] = PIPE_MUCK;} break;
+                                case PIPE_MUD : {if (matrix[dW] == PIPE) replace[dE] = PIPE; replace[dW] = PIPE_MUD;} break;
+                                case GUTTER_WATER : {if (matrix[dW] == GUTTER) replace[dE] = GUTTER; replace[dW] = GUTTER_WATER;} break;
+                                case GUTTER_BRINE : {if (matrix[dW] == GUTTER) replace[dE] = GUTTER; replace[dW] = GUTTER_BRINE;} break;
+                                case GUTTER_HONEY : {if (matrix[dW] == GUTTER) replace[dE] = GUTTER; replace[dW] = GUTTER_HONEY;} break;
+                                case GUTTER_BLOOD : {if (matrix[dW] == GUTTER) replace[dE] = GUTTER; replace[dW] = GUTTER_BLOOD;} break;
+                                case GUTTER_LAVA : {if (matrix[dW] == GUTTER) replace[dE] = GUTTER; replace[dW] = GUTTER_LAVA;} break;
+                                case GUTTER_MUCK : {if (matrix[dW] == GUTTER) replace[dE] = GUTTER; replace[dW] = GUTTER_MUCK;} break;
+                                case GUTTER_MUD : {if (matrix[dW] == GUTTER) replace[dE] = GUTTER; replace[dW] = GUTTER_MUD;} break;
+                            }
+                            switch (matrix[dW])
+                            {
+                                case PIPE_WATER : {if (matrix[dE] == PIPE) replace[dW] = PIPE; replace[dE] = PIPE_WATER;} break;
+                                case PIPE_BRINE : {if (matrix[dE] == PIPE) replace[dW] = PIPE; replace[dE] = PIPE_BRINE;} break;
+                                case PIPE_HONEY : {if (matrix[dE] == PIPE) replace[dW] = PIPE; replace[dE] = PIPE_HONEY;} break;
+                                case PIPE_BLOOD : {if (matrix[dE] == PIPE) replace[dW] = PIPE; replace[dE] = PIPE_BLOOD;} break;
+                                case PIPE_LAVA : {if (matrix[dE] == PIPE) replace[dW] = PIPE; replace[dE] = PIPE_LAVA;} break;
+                                case PIPE_MUCK : {if (matrix[dE] == PIPE) replace[dW] = PIPE; replace[dE] = PIPE_MUCK;} break;
+                                case PIPE_MUD : {if (matrix[dE] == PIPE) replace[dW] = PIPE; replace[dE] = PIPE_MUD;} break;
+                                case GUTTER_WATER : {if (matrix[dE] == GUTTER) replace[dW] = GUTTER; replace[dE] = GUTTER_WATER;} break;
+                                case GUTTER_BRINE : {if (matrix[dE] == GUTTER) replace[dW] = GUTTER; replace[dE] = GUTTER_BRINE;} break;
+                                case GUTTER_HONEY : {if (matrix[dE] == GUTTER) replace[dW] = GUTTER; replace[dE] = GUTTER_HONEY;} break;
+                                case GUTTER_BLOOD : {if (matrix[dE] == GUTTER) replace[dW] = GUTTER; replace[dE] = GUTTER_BLOOD;} break;
+                                case GUTTER_LAVA : {if (matrix[dE] == GUTTER) replace[dW] = GUTTER; replace[dE] = GUTTER_LAVA;} break;
+                                case GUTTER_MUCK : {if (matrix[dE] == GUTTER) replace[dW] = GUTTER; replace[dE] = GUTTER_MUCK;} break;
+                                case GUTTER_MUD : {if (matrix[dE] == GUTTER) replace[dW] = GUTTER; replace[dE] = GUTTER_MUD;} break;
                             }
                         }
                         break;
