@@ -11,7 +11,7 @@
 #define OLC_PGE_APPLICATION
 #include "olcPixelGameEngine.h"
 
-#include <fstream>
+//#include <fstream>
 
 #include "sky.h"
 #include "world.h"
@@ -39,9 +39,11 @@ public:
         TITLE,
         CUSTOM,
         LOADING,
-        PLAYING
+        PLAYING,
+        EXIT
     };
 
+    bool running = true;
     bool creative_mode = true;
     bool loading = false;
 
@@ -102,12 +104,81 @@ public:
     {
     }
 
-    void SavePlayerData()
+    void SavePlayerData(std::string data_dir = "player_data")
     {
+        std::fstream data_file;
+        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        data_file.open(_dir);
+
+        if (data_file.is_open())
+        {
+            data_file << "#blocks" << std::endl;
+            for (int i = 0; i < player_inv.data.size(); i++)
+            {
+                data_file << i << "=" << player_inv.data[i] << std::endl;
+            }
+            data_file.close();
+        }
+        else
+        {
+            std::ofstream new_file (_dir);
+            SavePlayerData(data_dir);
+        }
     }
 
-    void LoadPlayerData()
+    void LoadPlayerData(std::string data_dir = "player_data")
     {
+        std::string line;
+        std::fstream data_file;
+        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        data_file.open(_dir);
+
+        if (data_file.is_open())
+        {
+            std::string read_state = "";
+
+            while (getline(data_file, line))
+            {
+                //if (line == "")
+                //{}
+                if (line == "#blocks")
+                {
+                    read_state = "#blocks";
+                }
+
+                if (read_state == "#blocks")
+                {
+                    bool next = false;
+                    std::string itm = "";
+                    std::string amnt = "";
+
+                    for (int i = 0; i < line.length(); i++)
+                    {
+                        std::string c = line.substr(i, 1);
+                        if (c == "=")
+                        {
+                            next = true;
+                        }
+                        if (
+                                c == "1" || c == "2" || c == "3" || c == "4" || c == "5" ||
+                                c == "6" || c == "7" || c == "8" || c == "9" || c == "0"
+                                )
+                        {
+                            if (!next) {itm = itm + c;}
+                            if (next) {amnt = amnt + c;}
+                        }
+                    }
+                    if (line.substr(0, 1) != "#")
+                    {
+                        //std::cout << itm << "=" << amnt << std::endl;
+                        int item = std::stoi(itm);
+                        int amount = std::stoi(amnt);
+                        player_inv.AddItem(item, amount);
+                    }
+                }
+            }
+        data_file.close();
+        }
     }
 
     void SaveGenerationData(std::string data_dir)
@@ -1081,6 +1152,7 @@ public:
 
     void GameLoop(float fElapsedTime)
     {
+        if (GetKey(olc::Key::ESCAPE).bPressed) game_state = EXIT;
         //
         if (GetKey(olc::Key::K0).bPressed) {selected_hotbar = 9;}
         if (GetKey(olc::Key::K1).bPressed) {selected_hotbar = 0;}
@@ -1293,6 +1365,7 @@ public:
         {
             world.generation_param[i][world.pITER] = 1;
         }
+        LoadPlayerData();
 		return true;
 	}
 
@@ -1304,8 +1377,10 @@ public:
             case LOADING : DrawLoading(); break;
             case CUSTOM : DrawCustom(); break;
             case TITLE : DrawTitle(); break;
+            case EXIT : {SavePlayerData(); running = false;} break;
         }
-        return !GetKey(olc::Key::ESCAPE).bPressed;
+        return running;
+        //return !GetKey(olc::Key::ESCAPE).bPressed;
 	}
 };
 
