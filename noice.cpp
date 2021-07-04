@@ -62,8 +62,8 @@ public:
 
     int width = 256;
     int height = 144;
-    int world_width = 4096;
-    int world_height = 2048;
+    int world_width = 4096;//8192;
+    int world_height = 2048;//4096;
 
     std::vector<Particle> particles;
 
@@ -73,10 +73,6 @@ public:
     World world = World();
     Player player = Player();
     Inventory player_inv = Inventory();
-
-    // Temporary
-
-    //World preview_world = World();
 
 
 
@@ -96,12 +92,84 @@ public:
         system(mkdir_cmd);
     }
 
-    void SaveChunkData()
+    void SaveWorldData()
+    {
+    }
+    
+    void LoadWorldData()
     {
     }
 
-    void LoadChunkData()
+    void SaveChunkData(int X, int Y, std::string data_dir = "")
     {
+        std::fstream data_file;
+        data_dir = std::to_string(X) + "-" + std::to_string(Y);
+        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        data_file.open(_dir);
+
+        int x_ = X*world.chunk_size;
+        int y_ = Y*world.chunk_size;
+
+        if (data_file.is_open())
+        {
+            for (int y = 0; y < world.chunk_size; y++)
+            {
+                for (int x = 0; x < world.chunk_size; x++)
+                {
+                    int index = (y_+y)*world.width+(x_+x);
+                    int tile = world.matrix[index];
+                    data_file << tile << ",\t";
+                }
+                data_file << std::endl;
+            }
+            data_file.close();
+        }
+        else
+        {
+            std::ofstream new_file (_dir);
+            SaveChunkData(X, Y, data_dir);
+        }
+    }
+
+    void LoadChunkData(int X, int Y, std::string data_dir = "")
+    {
+        std::string line;
+        data_dir = std::to_string(X) + "-" + std::to_string(Y);
+        std::fstream data_file;
+        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        data_file.open(_dir);
+
+        int x = 0;
+        int y = 0;
+        int x_ = X*world.chunk_size;
+        int y_ = Y*world.chunk_size;
+
+        if (data_file.is_open())
+        {
+            std::string v = "";
+            while (getline(data_file, line))
+            {
+                for (int i = 0; i < line.length(); i++)
+                {
+                    std::string c = line.substr(i, 1);
+                    if (c == ",") {x++;}
+                    if (
+                            c == "1" || c == "2" || c == "3" || c == "4" || c == "5" ||
+                            c == "6" || c == "7" || c == "8" || c == "9" || c == "0"
+                            )
+                    {
+                        v = v + c;
+                    }
+                }
+                int value = std::stoi(v);
+                int index = (y_+y)*world.width+(x_+x);
+                world.matrix[index] = value;
+                v = "";
+                y++;
+                x = 0;
+            }
+            data_file.close();
+        }
     }
 
     void SavePlayerData(std::string data_dir = "player_data")
@@ -524,7 +592,9 @@ public:
             if (GetMouse(0).bReleased)
             {
                 Clear(olc::BLACK);
-                game_state = CUSTOM;
+                LoadPlayerData();
+                //LoadWorldData();
+                game_state = PLAYING;
             }
         }
     }
@@ -1365,7 +1435,6 @@ public:
         {
             world.generation_param[i][world.pITER] = 1;
         }
-        LoadPlayerData();
 		return true;
 	}
 
@@ -1377,7 +1446,7 @@ public:
             case LOADING : DrawLoading(); break;
             case CUSTOM : DrawCustom(); break;
             case TITLE : DrawTitle(); break;
-            case EXIT : {SavePlayerData(); running = false;} break;
+            case EXIT : {SavePlayerData(); SaveWorldData();running = false;} break;
         }
         return running;
         //return !GetKey(olc::Key::ESCAPE).bPressed;
