@@ -12,7 +12,7 @@ public:
 
     // Terrain Tiles
 
-    int total_tiles = 80;
+    int total_tiles = 82;
     int total_parameters = 12;
     int total_modes = 4;
 
@@ -72,6 +72,7 @@ public:
         AIR,
         STEAM,
         SMOKE,
+        FLARE,
         FLAME,
         FIRE,
         //
@@ -92,6 +93,7 @@ public:
         SILT,
         GRAVEL,
         //
+        CHARCOAL,
         ICE,
         DIRT,
         SOIL,
@@ -159,11 +161,12 @@ public:
         MANTLE
     };
 
-    std::string tiles[80] = {
+    std::string tiles[82] = {
         //
         "Air",
         "Steam",
         "Smoke",
+        "Flare",
         "Flame",
         "Fire",
         //
@@ -184,6 +187,7 @@ public:
         "Silt",
         "Gravel",
         //
+        "Charcoal",
         "Ice",
         "Dirt",
         "Soil",
@@ -251,14 +255,15 @@ public:
         "Mantle"
     };
 
-    int tileset[80][2][4] = {
+    int tileset[82][2][4] = {
         // |Base Color        |     |Variation       |
         // Gases
         {  {200, 200, 230, 5  },    {1,   1,   25,  0}  },// Air
         {  {220, 220, 230, 32 },    {5,   5,   25,  0}  },// Steam
         {  {128, 128, 128, 64 },    {5,   5,   5,   0}  },// Smoke
-        {  {255, 200, 0,   255},    {1,  180,  1,   0}  },// Flame
-        {  {255, 180, 0,   255},    {1,  180,  1,   0}  },// Fire
+        {  {255, 255, 0,   200},    {1,  180,  1,   0}  },// Flare
+        {  {255, 200, 0,   200},    {1,  180,  1,   0}  },// Flame
+        {  {255, 180, 0,   200},    {1,  180,  1,   0}  },// Fire
         // Fluids
         {  {230, 230, 230, 64 },    {5,   5,   25,  0}  },// Fog
         {  {0,   0,   128, 128},    {1,   1,   25,  0}  },// Water
@@ -272,11 +277,12 @@ public:
         {  {225, 225, 225, 255},    {1,   1,   1,   0}  },// Ash
         {  {255, 100, 0,   255},    {1,  180,  1,   0}  },// Ember
         {  {230, 230, 128, 255},    {15,  15,  5,   0}  },// Sand
-        {  {230, 230, 230, 255},    {1,   1,   25,  0}  },// Snow
+        {  {255, 255, 255, 255},    {1,   1,   25,  0}  },// Snow
         {  {200, 200, 200, 212},    {1,   1,   55,  0}  },// Sleet
         {  {130, 120, 140, 255},    {10,  10,  10,  0}  },// Silt
         {  {110, 105, 100, 255},    {10,  10,  10,  0}  },// Gravel
         // Solid Materials
+        {  {16,  10,  8,   255},    {10,  5,   1,   0}  },// Charcoal
         {  {180, 180, 200, 128},    {1,   1,   55,  0}  },// Ice
         {  {80,  64,  32,  255},    {8,   4,   2,   0}  },// Dirt
         {  {24,  20,  16,  255},    {8,   4,   2,   0}  },// Soil
@@ -1059,6 +1065,42 @@ public:
                             }
                         }
                         break;
+                        case LAVA :
+                        {
+                            int dN  = int( (_y-1) * width + (_x  ) );
+                            int dE  = int( (_y  ) * width + (_x+1) );
+                            int dS  = int( (_y+1) * width + (_x  ) );
+                            int dW  = int( (_y  ) * width + (_x-1) );
+                            int chance = rand()%10000;
+                            switch (matrix[dS])
+                            {
+                                case ICE : {replace[index] = AIR; replace[dS] = WATER;} break;
+                                case SNOW : {replace[index] = AIR; replace[dS] = WATER;} break;
+                                case MANTLE : {replace[index] = STEAM;} break;
+                                case WATER : {replace[index] = STEAM; replace[dS] = OBSIDIAN;} break;
+                                case CHARCOAL : { if (chance < 1000) replace[dS] = EMBER; } break;
+                                case WOOD: { if (chance < 500) replace[dS] = CHARCOAL; } break;
+                            }
+                            switch (matrix[dW])
+                            {
+                                case WATER : {replace[index] = STEAM; replace[dW] = OBSIDIAN;} break;
+                                case CHARCOAL : { if (chance < 1000) replace[dW] = EMBER; } break;
+                                case WOOD: { if (chance < 500) replace[dW] = CHARCOAL; } break;
+                            }
+                            switch (matrix[dE])
+                            {
+                                case WATER : {replace[index] = STEAM; replace[dE] = OBSIDIAN;} break;
+                                case CHARCOAL : { if (chance < 1000) replace[dE] = EMBER; } break;
+                                case WOOD: { if (chance < 500) replace[dE] = CHARCOAL; } break;
+                            }
+                            switch (matrix[dN])
+                            {
+                                case WATER : {replace[index] = STEAM; replace[dN] = OBSIDIAN;} break;
+                                case CHARCOAL : { if (chance < 1000) replace[dN] = EMBER; } break;
+                                case WOOD: { if (chance < 500) replace[dN] = CHARCOAL; } break;
+                            }
+                        }
+                        break;
                         case MUD :
                         {
                             int dN  = int( (_y-1) * width + (_x  ) );
@@ -1087,27 +1129,39 @@ public:
                             int dS  = int( (_y+1) * width + (_x  ) );
                             int dE  = int( (_y  ) * width + (_x+1) );
                             int dW  = int( (_y  ) * width + (_x-1) );
+                            int chance = rand()%10000;
                             switch (matrix[dN])
                             {
+                                case WATER : { replace[index] = CHARCOAL; } break;
                                 case AIR: { replace[dN] = FIRE; } break;
-                                case WOOD: { if (rand()%10000 < 25) replace[dN] = EMBER; } break;
+                                case ASH : { replace[index] = CHARCOAL; } break;
+                                case SMOKE : { replace[index] = CHARCOAL; } break;
+                                case CHARCOAL : { if (chance < 1000) replace[dN] = EMBER; } break;
+                                case WOOD: { if (chance < 500) replace[dN] = CHARCOAL; } break;
                             }
                             switch (matrix[dS])
                             {
-                                case WOOD: { if (rand()%10000 < 25) replace[dS] = EMBER; } break;
+                                case SMOKE : { replace[dS] = EMBER; } break;
+                                case WATER : { replace[index] = AIR; } break;
+                                case CHARCOAL : { if (chance < 500) replace[dS] = EMBER; } break;
+                                case WOOD: { if (chance < 250) replace[dS] = CHARCOAL; } break;
                             }
                             switch (matrix[dE])
                             {
+                                case WATER : { replace[index] = AIR; } break;
                                 case AIR: { replace[dE] = FIRE; } break;
-                                case WOOD: { if (rand()%10000 < 25) replace[dE] = EMBER; } break;
+                                case CHARCOAL : { if (chance < 500) replace[dE] = EMBER; } break;
+                                case WOOD: { if (chance < 250) replace[dE] = CHARCOAL; } break;
                             }
                             switch (matrix[dW])
                             {
+                                case WATER : { replace[index] = AIR; } break;
                                 case AIR: { replace[dW] = FIRE; } break;
-                                case WOOD: { if (rand()%10000 < 25) replace[dW] = EMBER; } break;
+                                case CHARCOAL : { if (chance < 500) replace[dW] = EMBER; } break;
+                                case WOOD: { if (chance < 250) replace[dW] = CHARCOAL; } break;
                             }
 
-                            if (rand()%10000 < 25) replace[index] = FIRE;
+                            if (chance < 50) replace[index] = FIRE;
                         }
                         break;
                         case FIRE :
@@ -1116,24 +1170,39 @@ public:
                             int dS  = int( (_y+1) * width + (_x  ) );
                             int dE  = int( (_y  ) * width + (_x+1) );
                             int dW  = int( (_y  ) * width + (_x-1) );
+                            int chance = rand()%1000;
                             switch (matrix[dN])
                             {
-                                case AIR: { replace[index] = FLAME; } break;
-                                case WOOD: { if (rand()%1000 < 25) replace[dN] = EMBER; } break;
+                                case WATER : { replace[index] = AIR; } break;
+                                case AIR: { replace[dN] = FLAME; } break;
+                                case ASH : { replace[index] = AIR; } break;
+                                case SMOKE : { replace[index] = AIR; } break;
+                                case FIRE : { replace[index] = AIR; } break;
+                                case CHARCOAL : { if (chance < 250) replace[dN] = EMBER; } break;
+                                case WOOD: { if (chance < 100) replace[dN] = CHARCOAL; } break;
                             }
                             switch (matrix[dS])
                             {
-                                case WOOD: { replace[dN] = EMBER; } break;
+                                case CHARCOAL : { if (chance < 50) replace[dS] = EMBER; } break;
+                                case WOOD: { if (chance < 25) replace[dN] = CHARCOAL; } break;
                             }
                             switch (matrix[dE])
                             {
+                                case WATER : { replace[index] = AIR; } break;
                                 case AIR: { replace[index] = FLAME; } break;
-                                case WOOD: { if (rand()%1000 < 25) replace[dE] = EMBER; } break;
+                                case ASH : { replace[index] = AIR; } break;
+                                case SMOKE : { replace[index] = AIR; } break;
+                                case CHARCOAL : { if (chance < 50) replace[dE] = EMBER; } break;
+                                case WOOD: { if (chance < 25) replace[dE] = CHARCOAL; } break;
                             }
                             switch (matrix[dW])
                             {
+                                case WATER : { replace[index] = AIR; } break;
                                 case AIR: { replace[index] = FLAME; } break;
-                                case WOOD: { if (rand()%1000 < 25) replace[dW] = EMBER; } break;
+                                case ASH : { replace[index] = AIR; } break;
+                                case SMOKE : { replace[index] = AIR; } break;
+                                case CHARCOAL : { if (chance < 50) replace[dW] = EMBER; } break;
+                                case WOOD: { if (chance < 25) replace[dW] = CHARCOAL; } break;
                             }
                         }
                         break;
@@ -1145,30 +1214,79 @@ public:
                             int chance = rand()%1000;
                             switch (matrix[dN])
                             {
+                                case WATER : { replace[index] = AIR; } break;
                                 case AIR:
                                     {
+                                        if (chance < 50) replace[dN] = FLARE;
                                         if (chance < 25) replace[index] = SMOKE;
                                         if (chance > 24) replace[index] = AIR;
                                     } break;
-                                case WOOD: { if (rand()%1000 < 25) replace[dN] = FIRE; } break;
+                                case ASH : { replace[index] = AIR; } break;
+                                case SMOKE : { replace[index] = AIR; } break;
+                                case CHARCOAL: { if (chance < 250) replace[dN] = EMBER; } break;
                             }
                             switch (matrix[dE])
                             {
+                                case WATER : { replace[index] = AIR; } break;
                                 case AIR:
                                     {
+                                        if (chance < 50) replace[dE] = FLARE;
                                         if (chance < 25) replace[index] = SMOKE;
+                                        if (chance < 5) replace[index] = ASH;
                                         if (chance > 24) replace[index] = AIR;
                                     } break;
-                                case WOOD: { if (rand()%100 < 25) replace[dE] = FIRE; } break;
+                                case ASH : { replace[index] = AIR; } break;
+                                case SMOKE : { replace[index] = AIR; } break;
+                                case CHARCOAL: { if (chance < 50) replace[dE] = EMBER; } break;
                             }
                             switch (matrix[dW])
                             {
+                                case WATER : { replace[index] = AIR; } break;
                                 case AIR:
                                     {
+                                        if (chance < 50) replace[dW] = FLARE;
                                         if (chance < 25) replace[index] = SMOKE;
+                                        if (chance < 5) replace[index] = ASH;
                                         if (chance > 24) replace[index] = AIR;
                                     } break;
-                                case WOOD: { if (rand()%100 < 25) replace[dW] = FIRE; } break;
+                                case ASH : { replace[index] = AIR; } break;
+                                case SMOKE : { replace[index] = AIR; } break;
+                                case CHARCOAL: { if (chance < 50) replace[dW] = EMBER; } break;
+                            }
+                        }
+                        break;
+                        case FLARE :
+                        {
+                            int dN  = int( (_y-1) * width + (_x  ) );
+                            int dE  = int( (_y  ) * width + (_x+1) );
+                            int dW  = int( (_y  ) * width + (_x-1) );
+                            int chance = rand()%1000;
+                            switch (matrix[dN])
+                            {
+                                case WATER : { replace[index] = AIR; } break;
+                                case AIR: { replace[dN] = FIRE; } break;
+                                case ASH : { replace[index] = AIR; } break;
+                                case SMOKE : { replace[index] = AIR; } break;
+                                case CHARCOAL : { if (chance < 500) replace[dN] = EMBER; } break;
+                                case WOOD: { if (chance < 250) replace[dN] = CHARCOAL; } break;
+                            }
+                            switch (matrix[dE])
+                            {
+                                case WATER : { replace[index] = AIR; } break;
+                                case AIR: { replace[index] = FIRE; } break;
+                                case ASH : { replace[index] = AIR; } break;
+                                case SMOKE : { replace[index] = AIR; } break;
+                                case CHARCOAL : { if (chance < 250) replace[dE] = EMBER; } break;
+                                case WOOD: { if (chance < 100) replace[dE] = CHARCOAL; } break;
+                            }
+                            switch (matrix[dW])
+                            {
+                                case WATER : { replace[index] = AIR; } break;
+                                case AIR: { replace[index] = FIRE; } break;
+                                case ASH : { replace[index] = AIR; } break;
+                                case SMOKE : { replace[index] = AIR; } break;
+                                case CHARCOAL : { if (chance < 250) replace[dW] = EMBER; } break;
+                                case WOOD: { if (chance < 100) replace[dW] = CHARCOAL; } break;
                             }
                         }
                         break;
@@ -1181,7 +1299,19 @@ public:
                             if ((matrix[dN] == LAVA) ||
                                 (matrix[dS] == LAVA) ||
                                 (matrix[dE] == LAVA) ||
-                                (matrix[dW] == LAVA)) { replace[index] = WATER; }
+                                (matrix[dW] == LAVA) ||
+                                (matrix[dN] == EMBER) ||
+                                (matrix[dS] == EMBER) ||
+                                (matrix[dE] == EMBER) ||
+                                (matrix[dW] == EMBER) ||
+                                (matrix[dN] == FIRE) ||
+                                (matrix[dS] == FIRE) ||
+                                (matrix[dE] == FIRE) ||
+                                (matrix[dW] == FIRE) ||
+                                (matrix[dN] == FLAME) ||
+                                (matrix[dS] == FLAME) ||
+                                (matrix[dE] == FLAME) ||
+                                (matrix[dW] == FLAME)) { replace[index] = WATER; }
                             if (matrix[dS] == GRASS) { replace[index] = WATER; }
                         }
                         break;
