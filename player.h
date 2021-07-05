@@ -17,11 +17,11 @@ public:
 
     enum STATES
     {
-    IDLE,
-    WALK,
-    JUMP,
-    FALL,
-    SWIM,
+        IDLE,
+        WALK,
+        JUMP,
+        FALL,
+        SWIM,
     };
 
     int state = 0;
@@ -42,7 +42,7 @@ public:
     int vx = 0;
     int vy = 0;
 
-    int height = 1;
+    int height = 2;
 
     int HP = 100;
     int hp = 100;
@@ -57,6 +57,19 @@ public:
     int BP = 100;
 
     float defense = 0.0;
+
+    int hotbar[9][2] =
+    {
+        {1, 0},
+        {2, 0},
+        {0, 0},
+        {0, 0},
+        {0, 0},
+        {0, 0},
+        {0, 0},
+        {0, 0},
+        {0, 0},
+    };
 
 
 

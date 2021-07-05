@@ -8,8 +8,6 @@ public:
 
     std::vector<Effect> effects;
 
-    bool icon[64];
-
     void generate_wand()
     {
         generate_stats();
@@ -21,24 +19,6 @@ public:
         shuffle = true;
         shuffle = false;
         capacity = 5;
-    }
-
-    void generate_image()
-    {
-        icon = {
-            0,0,0,0,0,1,0,0,
-            0,0,0,0,0,1,0,0,
-            0,0,0,0,1,0,0,0,
-            0,0,0,0,1,0,0,0,
-            0,0,0,1,1,0,0,0,
-            0,0,0,1,0,0,0,0,
-            0,0,1,1,0,0,0,0,
-            0,0,1,1,0,0,0,0,
-        };
-    }
-
-    void cast()
-    {
     }
 
 };

@@ -21,6 +21,7 @@
 #include "inventory.h"
 
 #include "button.h"
+#include "icon.h"
 
 
 
@@ -69,6 +70,7 @@ public:
 
 
 
+    Icon icon = Icon();
     Sky sky = Sky();
     World world = World();
     Player player = Player();
@@ -207,8 +209,6 @@ public:
 
             while (getline(data_file, line))
             {
-                //if (line == "")
-                //{}
                 if (line == "#blocks")
                 {
                     read_state = "#blocks";
@@ -238,7 +238,6 @@ public:
                     }
                     if (line.substr(0, 1) != "#")
                     {
-                        //std::cout << itm << "=" << amnt << std::endl;
                         int item = std::stoi(itm);
                         int amount = std::stoi(amnt);
                         player_inv.AddItem(item, amount);
@@ -501,7 +500,6 @@ public:
         int lookindex = (player.y-(height/2)+GetMouseY())*world.width+(player.x-(width/2)+GetMouseX());
 
         std::string health = std::to_string(player.hp)+"/"+std::to_string(player.HP);
-        //std::string standingon = world.tiles[world.matrix[(player.y+1)*world.width+player.x]];
         std::string lookingat = "Air";
         std::string selectedtile = world.tiles[selected_tile];
         std::string selectedcount = "";
@@ -516,13 +514,6 @@ public:
             selectedcount = std::to_string(player_inv.data[selected_tile]);
         }
 
-        //DrawStringDecal({ 4,4  }, "Particles: " + std::to_string(particles.size()), olc::WHITE, { font, font });
-        //DrawStringDecal({ 4,8 }, "State: " + std::to_string(player.state), olc::WHITE, { font, font });
-        //DrawStringDecal({ 4,12 }, "Position: (" + std::to_string(player.x) + ", " + std::to_string(player.y) + ")", olc::WHITE, { font, font });
-        //DrawStringDecal({ 4,16 }, "Standing On: " + standingon, olc::WHITE, { font, font });
-        //DrawStringDecal({ 4,28 }, "Light: " + std::to_string(sky.time), olc::WHITE, { font, font });
-        //DrawStringDecal({ 4,24 }, "Hue: " + std::to_string(sky.hue), olc::WHITE, { font, font });
-        //DrawStringDecal({ 4,28 }, "Clouds: " + std::to_string(sky.humidity), olc::WHITE, { font, font });
         ProgressBar(4, 2, player.hp, player.HP, 32, 255, 0, 0, 64, 0, 0);
         ProgressBar(4, 4, player.jp, player.JP, 32, 0, 255, 0, 0, 64, 0);
         ProgressBar(4, 6, player.bp, player.BP, 32, 0, 0, 255, 0, 0, 64);
@@ -532,25 +523,49 @@ public:
         DrawStringDecal({ 4,20 }, "Day: " + std::to_string(sky.day), olc::WHITE, { font, font });
         DrawStringDecal({ 4,24 }, "Year: " + std::to_string(sky.year), olc::WHITE, { font, font });
         //
-        int hb_size = 12;
+        int hb_size = icon.size+1;
         int hb_offset = (width/2) - hb_size*4.5;
+        SetPixelMode(olc::Pixel::ALPHA);
         for (int i = 0; i < 9; i++)
         {
             int x = i*hb_size+hb_offset;
+            //FillRect(x, 2, hb_size, hb_size, olc::GREY);
             DrawRect(x, 2, hb_size, hb_size, olc::DARK_GREY);
-            /*
-            if ()
+            
+            if (player.hotbar[i][0] == 1)
             {
-                for (int iy = 0; iy < 8; iy++)
+                float R = 80.0;
+                float G = 64.0;
+                float B = 32.0;
+                for (int iy = 0; iy < icon.size; iy++)
                 {
-                    for (int ix = 0; ix < 8; ix++)
+                    for (int ix = 0; ix < icon.size; ix++)
                     {
-                        if () Draw(ix, iy, olc::DARK_GREY);
+                        int index_value = icon.wand[iy*icon.size+ix];
+                        float v = (0.25*float(index_value));
+                        if (index_value > 0) Draw(ix+x+1, iy+3, olc::Pixel(int(R*v), int(G*v), int(B*v)));
                     }
                 }
             }
-            */
+            if (player.hotbar[i][0] == 2)
+            {
+                int tile_value = player.hotbar[i][1];
+                float R = float(world.tileset[tile_value][0][0]);
+                float G = float(world.tileset[tile_value][0][1]);
+                float B = float(world.tileset[tile_value][0][2]);
+                int A = world.tileset[tile_value][0][3];
+                for (int iy = 0; iy < icon.size; iy++)
+                {
+                    for (int ix = 0; ix < icon.size; ix++)
+                    {
+                        int index_value = icon.material[iy*icon.size+ix];
+                        float v = (0.25*float(index_value));
+                        if (index_value > 0) Draw(ix+x+1, iy+3, olc::Pixel(int(R*v), int(G*v), int(B*v), A));
+                    }
+                }
+            }
         }
+        SetPixelMode(olc::Pixel::NORMAL);
         DrawRect(selected_hotbar*hb_size+hb_offset, 2, hb_size, hb_size, olc::WHITE);
     }
 
@@ -1130,7 +1145,6 @@ public:
                 for (int x = 0; x < 100; x++)
                 {
                     int v = world.matrix[y*world.width+x];
-                    //std::cout << v;
                     Draw(x+3, y+3, olc::Pixel(
                         world.tileset[v][0][0],
                         world.tileset[v][0][1],
@@ -1224,7 +1238,7 @@ public:
     {
         if (GetKey(olc::Key::ESCAPE).bPressed) game_state = EXIT;
         //
-        if (GetKey(olc::Key::K0).bPressed) {selected_hotbar = 9;}
+        //if (GetKey(olc::Key::K0).bPressed) {selected_hotbar = 9;}
         if (GetKey(olc::Key::K1).bPressed) {selected_hotbar = 0;}
         if (GetKey(olc::Key::K2).bPressed) {selected_hotbar = 1;}
         if (GetKey(olc::Key::K3).bPressed) {selected_hotbar = 2;}
@@ -1236,29 +1250,42 @@ public:
         if (GetKey(olc::Key::K9).bPressed) {selected_hotbar = 8;}
         
         // Stuff
-        if (GetMouse(0).bHeld) SpawnParticle(float(GetMouseX()), float(GetMouseY()));
-
-        if (GetMouse(1).bHeld)
+        if (GetMouse(0).bHeld)
         {
+            if (player.hotbar[selected_hotbar][0] == 0)
+            {
+                std::cout << "No Item Selected" << std::endl;
+            }
+            if (player.hotbar[selected_hotbar][0] == 1)
+            {
+                SpawnParticle(float(GetMouseX()), float(GetMouseY()));
+            }
             int index = (GetMouseY()+(player.y-(height/2)))*world.width+(GetMouseX()+(player.x-(width/2)));
             int tile = world.matrix[index];
-            if (tile != world.MANTLE)
+            int _tile = selected_tile;
+            if (player.hotbar[selected_hotbar][0] == 2)
             {
-                if (selected_tile != world.AIR)
+                int index = (GetMouseY()+(player.y-(height/2)))*world.width+(GetMouseX()+(player.x-(width/2)));
+                int tile = world.matrix[index];
+                int _tile = player.hotbar[selected_hotbar][1];
+                if (tile != world.MANTLE)
                 {
-                    if (player_inv.HasItem(selected_tile) || creative_mode)
+                    if (_tile != world.AIR)
                     {
-                        int amnt = 1;
-                        if (tile == world.AIR) amnt = 0;
-                        player_inv.UseItem(selected_tile, 1);
-                        player_inv.AddItem(tile, amnt);
-                        world.matrix[index] = selected_tile;
+                        if (player_inv.HasItem(_tile) || creative_mode)
+                        {
+                            int amnt = 1;
+                            if (tile == world.AIR) amnt = 0;
+                            player_inv.UseItem(_tile, 1);
+                            player_inv.AddItem(tile, amnt);
+                            world.matrix[index] = _tile;
+                        }
                     }
-                }
-                else if (selected_tile == world.AIR)
-                {
-                    if (tile != world.AIR) player_inv.AddItem(tile, 1);
-                    world.matrix[index] = selected_tile;
+                    else if (_tile == world.AIR)
+                    {
+                        if (tile != world.AIR) player_inv.AddItem(tile, 1);
+                        world.matrix[index] = _tile;
+                    }
                 }
             }
         }
@@ -1341,6 +1368,12 @@ public:
 
         // For Fun
         if (GetKey(olc::Key::T).bHeld) player.status = player.TRIP;
+
+        if (GetKey(olc::Key::ENTER).bPressed)
+        {
+            player.hotbar[selected_hotbar][0] = 2;
+            player.hotbar[selected_hotbar][1] = selected_tile;
+        }
 
         // Update World
         sky.Update(fElapsedTime);
