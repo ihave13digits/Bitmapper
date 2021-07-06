@@ -8,7 +8,7 @@ public:
     float hue = -0.5;
     float time = 1.0;
     float move = 1.0;
-    float speed = 0.005; // ~24 Minute Day/Night Cycle
+    float speed = 0.001; // ~24 Minute Day/Night Cycle
 
     int width = 0;
     int height = 0;
@@ -117,7 +117,7 @@ public:
         {
             if (change < 50)
             {
-                wind += 0.05;
+                wind += 0.01;
                 humidity++;
             }
         }
@@ -125,13 +125,13 @@ public:
         {
             if (change < 50)
             {
-                wind -= 0.05;
+                wind -= 0.01;
                 humidity--;
             }
         }
 
-        if (wind > 4.0) wind = 4.0;
-        if (wind < -4.0) wind = -4.0;
+        if (wind > 1.0) wind = 1.0;
+        if (wind < -1.0) wind = -1.0;
 
         if (humidity < 4) humidity = 4;
         if (humidity > cloudcount) humidity = cloudcount-1;

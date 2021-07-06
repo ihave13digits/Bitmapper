@@ -12,7 +12,7 @@ public:
 
     // Terrain Tiles
 
-    int total_tiles = 86;
+    int total_tiles = 87;
     int total_parameters = 12;
     int total_modes = 4;
 
@@ -92,6 +92,7 @@ public:
         SAND,
         SNOW,
         SLEET,
+        SALT,
         SILT,
         GRAVEL,
         //
@@ -165,7 +166,7 @@ public:
         MANTLE
     };
 
-    std::string tiles[86] = {
+    std::string tiles[87] = {
         //
         "Air",
         "Steam",
@@ -190,6 +191,7 @@ public:
         "Sand",
         "Snow",
         "Sleet",
+        "Salt",
         "Silt",
         "Gravel",
         //
@@ -263,14 +265,14 @@ public:
         "Mantle"
     };
 
-    int tileset[86][2][4] = {
+    int tileset[87][2][4] = {
         // |Base Color        |     |Variation       |
         // Gases
         {  {200, 200, 230, 5  },    {1,   1,   25,  0}  },// Air
         {  {220, 220, 230, 32 },    {5,   5,   25,  0}  },// Steam
         {  {128, 128, 128, 32 },    {5,   5,   5,   0}  },// Thin Smoke
         {  {128, 128, 128, 64 },    {5,   5,   5,   0}  },// Smoke
-        {  {128, 128, 128, 128 },    {5,   5,   5,   0}  },// Thick Smoke
+        {  {128, 128, 128, 128},    {5,   5,   5,   0}  },// Thick Smoke
         {  {255, 255, 0,   200},    {1,  180,  1,   0}  },// Flare
         {  {255, 200, 0,   200},    {1,  180,  1,   0}  },// Flame
         {  {255, 180, 0,   200},    {1,  180,  1,   0}  },// Fire
@@ -289,6 +291,7 @@ public:
         {  {230, 230, 128, 255},    {15,  15,  5,   0}  },// Sand
         {  {255, 255, 255, 255},    {1,   1,   25,  0}  },// Snow
         {  {200, 200, 200, 212},    {1,   1,   55,  0}  },// Sleet
+        {  {240, 240, 240, 255},    {10,  10,  10,  0}  },// Salt
         {  {130, 120, 140, 255},    {10,  10,  10,  0}  },// Silt
         {  {110, 105, 100, 255},    {10,  10,  10,  0}  },// Gravel
         // Solid Materials
@@ -1344,17 +1347,16 @@ public:
                             int dE  = int( (_y  ) * width + (_x+1) );
                             int dS  = int( (_y+1) * width + (_x  ) );
                             int dW  = int( (_y  ) * width + (_x-1) );
-                            if ((matrix[dN] == AIR && matrix[dS] == AIR) &&
-                                (matrix[dE] == AIR && matrix[dW] == AIR))
-                            {
-                                replace[index] = AIR;
-                            }
-                            if ((matrix[dN] == THIN_SMOKE && matrix[dS] == THIN_SMOKE) &&
-                                (matrix[dE] == THIN_SMOKE && matrix[dW] == THIN_SMOKE))
-                            {
-                                replace[dS] = AIR;
-                                replace[index] = SMOKE;
-                            }
+
+                            if (matrix[dN] == AIR) { matrix[index] = AIR; }
+                            if (matrix[dS] == AIR) { matrix[index] = AIR; }
+                            if (matrix[dE] == AIR) { matrix[index] = AIR; }
+                            if (matrix[dW] == AIR) { matrix[index] = AIR; }
+
+                            if (matrix[dN] == THICK_SMOKE) { matrix[index] = SMOKE; }
+                            if (matrix[dS] == THICK_SMOKE) { matrix[index] = SMOKE; }
+                            if (matrix[dE] == THICK_SMOKE) { matrix[index] = SMOKE; }
+                            if (matrix[dW] == THICK_SMOKE) { matrix[index] = SMOKE; }
                         }
                         break;
                         case SMOKE :
@@ -1363,24 +1365,11 @@ public:
                             int dE  = int( (_y  ) * width + (_x+1) );
                             int dS  = int( (_y+1) * width + (_x  ) );
                             int dW  = int( (_y  ) * width + (_x-1) );
-                            if ((matrix[dN] == AIR && matrix[dS] == AIR) &&
-                                (matrix[dE] == AIR && matrix[dW] == AIR))
-                            {
-                                replace[dN] = THIN_SMOKE;
-                                replace[dS] = THIN_SMOKE;
-                                replace[dE] = THIN_SMOKE;
-                                replace[dW] = THIN_SMOKE;
-                                replace[index] = AIR;
-                            }
-                            if ((matrix[dN] == SMOKE && matrix[dS] == SMOKE) &&
-                                (matrix[dE] == SMOKE && matrix[dW] == SMOKE))
-                            {
-                                replace[dN] = AIR;
-                                replace[dS] = AIR;
-                                replace[dE] = AIR;
-                                replace[dW] = AIR;
-                                replace[index] = THICK_SMOKE;
-                            }
+
+                            if (matrix[dN] == AIR) { matrix[index] = THIN_SMOKE; }
+                            if (matrix[dS] == AIR) { matrix[index] = THIN_SMOKE; }
+                            if (matrix[dE] == AIR) { matrix[index] = THIN_SMOKE; }
+                            if (matrix[dW] == AIR) { matrix[index] = THIN_SMOKE; }
                         }
                         break;
                         case THICK_SMOKE :
@@ -1389,19 +1378,16 @@ public:
                             int dE  = int( (_y  ) * width + (_x+1) );
                             int dS  = int( (_y+1) * width + (_x  ) );
                             int dW  = int( (_y  ) * width + (_x-1) );
-                            if ((matrix[dN] == AIR && matrix[dS] == AIR) &&
-                                (matrix[dE] == AIR && matrix[dW] == AIR))
-                            {
-                                replace[index] = SMOKE;
-                            }
-                            if ((matrix[dN] == THIN_SMOKE && matrix[dS] == THIN_SMOKE) &&
-                                (matrix[dE] == THIN_SMOKE && matrix[dW] == THIN_SMOKE))
-                            {
-                                replace[dE] = AIR;
-                                replace[dW] = AIR;
-                                replace[dS] = AIR;
-                                replace[index] = SMOKE;
-                            }
+                            
+                            if (matrix[dN] == AIR) { matrix[index] = THIN_SMOKE; }
+                            if (matrix[dS] == AIR) { matrix[index] = THIN_SMOKE; }
+                            if (matrix[dE] == AIR) { matrix[index] = THIN_SMOKE; }
+                            if (matrix[dW] == AIR) { matrix[index] = THIN_SMOKE; }
+
+                            if (matrix[dN] == THIN_SMOKE) { matrix[index] = SMOKE; }
+                            if (matrix[dS] == THIN_SMOKE) { matrix[index] = SMOKE; }
+                            if (matrix[dE] == THIN_SMOKE) { matrix[index] = SMOKE; }
+                            if (matrix[dW] == THIN_SMOKE) { matrix[index] = SMOKE; }
                         }
                         break;
                         case ICE :
@@ -1737,6 +1723,41 @@ public:
             case SAND : cell_type = GRAIN; break;
             case SNOW : cell_type = GRAIN; break;
             case SLEET : cell_type = GRAIN; break;
+            case SALT : cell_type = GRAIN; break;
+            case SILT : cell_type = GRAIN; break;
+            case GRAVEL : cell_type = GRAIN; break;
+            // Gas
+            case STEAM : cell_type = GAS; break;
+            case THIN_SMOKE : cell_type = GAS; break;
+            case SMOKE : cell_type = GAS; break;
+            case THICK_SMOKE : cell_type = GAS; break;
+        }
+        return cell_type;
+    }
+
+    int GetType(int current_cell)
+    {
+        int cell_type = SOLID;
+        switch (current_cell)
+        {
+            // Fluid
+            case WATER : cell_type = FLUID; break;
+            case BRINE : cell_type = FLUID; break;
+            case BLOOD : cell_type = FLUID; break;
+            case FOG : cell_type = FLUID; break;
+            // Gel
+            case HONEY : cell_type = GEL; break;
+            case LAVA : cell_type = GEL; break;
+            case MUCK : cell_type = GEL; break;
+            case MUD : cell_type = GEL; break;
+            // Grain
+            case ASH : cell_type = GRAIN; break;
+            case CHARCOAL : cell_type = GRAIN; break;
+            case EMBER : cell_type = GRAIN; break;
+            case SAND : cell_type = GRAIN; break;
+            case SNOW : cell_type = GRAIN; break;
+            case SLEET : cell_type = GRAIN; break;
+            case SALT : cell_type = GRAIN; break;
             case SILT : cell_type = GRAIN; break;
             case GRAVEL : cell_type = GRAIN; break;
             // Gas
