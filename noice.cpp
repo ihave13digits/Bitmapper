@@ -35,12 +35,20 @@ public:
 
 public:
 
+    enum ITEM_TYPES
+    {
+        itNONE,
+        itTILE,
+        itWAND
+    };
+
     enum STATES
     {
         TITLE,
         CUSTOM,
         LOADING,
         PLAYING,
+        PAUSED,
         EXIT
     };
 
@@ -525,14 +533,19 @@ public:
         //
         int hb_size = icon.size+1;
         int hb_offset = (width/2) - hb_size*4.5;
+        std::string selected_item = "";
+        if (player.hotbar[selected_hotbar][0] == itWAND) { selected_item = "Wand"; }
+        if (player.hotbar[selected_hotbar][0] == itTILE) { selected_item = world.tiles[player.hotbar[selected_hotbar][1]]; }
+        float select_x = (width/2)-(selected_item.size());
+        DrawStringDecal({ select_x,15 }, selected_item, olc::WHITE, { 0.25, 0.25 });
         SetPixelMode(olc::Pixel::ALPHA);
         for (int i = 0; i < 9; i++)
         {
             int x = i*hb_size+hb_offset;
-            //FillRect(x, 2, hb_size, hb_size, olc::GREY);
+            //FillRect(x, 2, hb_size, hb_size, olc::Pixel(0, 0, 0, 128));
             DrawRect(x, 2, hb_size, hb_size, olc::DARK_GREY);
             
-            if (player.hotbar[i][0] == 1)
+            if (player.hotbar[i][0] == itWAND)
             {
                 float R = 80.0;
                 float G = 64.0;
@@ -547,18 +560,23 @@ public:
                     }
                 }
             }
-            if (player.hotbar[i][0] == 2)
+            if (player.hotbar[i][0] == itTILE)
             {
                 int tile_value = player.hotbar[i][1];
                 float R = float(world.tileset[tile_value][0][0]);
                 float G = float(world.tileset[tile_value][0][1]);
                 float B = float(world.tileset[tile_value][0][2]);
                 int A = world.tileset[tile_value][0][3];
+                int tile_type = world.GetType(tile_value);
                 for (int iy = 0; iy < icon.size; iy++)
                 {
                     for (int ix = 0; ix < icon.size; ix++)
                     {
-                        int index_value = icon.material[iy*icon.size+ix];
+                        int index_value = icon.solid[iy*icon.size+ix];
+                        if (tile_type == world.GRAIN) index_value = icon.grain[iy*icon.size+ix];
+                        if (tile_type == world.GEL) index_value = icon.gel[iy*icon.size+ix];
+                        if (tile_type == world.FLUID) index_value = icon.fluid[iy*icon.size+ix];
+                        if (tile_type == world.GAS) index_value = icon.gas[iy*icon.size+ix];
                         float v = (0.25*float(index_value));
                         if (index_value > 0) Draw(ix+x+1, iy+3, olc::Pixel(int(R*v), int(G*v), int(B*v), A));
                     }
@@ -1234,9 +1252,23 @@ public:
 
     }
 
+    void PausedGame()
+    {
+        if (GetKey(olc::Key::ESCAPE).bPressed) game_state = PLAYING;
+        if (GetKey(olc::Key::ENTER).bPressed)
+        {
+            world.SettleTiles(player.x-(width), player.y-(height), width*2, height*2);
+        }
+        DrawSky();
+        DrawTerrain();
+        DrawPlayer();
+        //DrawParticles(fElapsedTime);
+        DrawHUD();
+    }
+
     void GameLoop(float fElapsedTime)
     {
-        if (GetKey(olc::Key::ESCAPE).bPressed) game_state = EXIT;
+        if (GetKey(olc::Key::ESCAPE).bPressed) game_state = PAUSED;
         //
         //if (GetKey(olc::Key::K0).bPressed) {selected_hotbar = 9;}
         if (GetKey(olc::Key::K1).bPressed) {selected_hotbar = 0;}
@@ -1252,18 +1284,18 @@ public:
         // Stuff
         if (GetMouse(0).bHeld)
         {
-            if (player.hotbar[selected_hotbar][0] == 0)
+            if (player.hotbar[selected_hotbar][0] == itNONE)
             {
                 std::cout << "No Item Selected" << std::endl;
             }
-            if (player.hotbar[selected_hotbar][0] == 1)
+            if (player.hotbar[selected_hotbar][0] == itWAND)
             {
                 SpawnParticle(float(GetMouseX()), float(GetMouseY()));
             }
             int index = (GetMouseY()+(player.y-(height/2)))*world.width+(GetMouseX()+(player.x-(width/2)));
             int tile = world.matrix[index];
             int _tile = selected_tile;
-            if (player.hotbar[selected_hotbar][0] == 2)
+            if (player.hotbar[selected_hotbar][0] == itTILE)
             {
                 int index = (GetMouseY()+(player.y-(height/2)))*world.width+(GetMouseX()+(player.x-(width/2)));
                 int tile = world.matrix[index];
@@ -1314,6 +1346,15 @@ public:
         {
             player.vy = 0;
             player.state = player.IDLE;
+        }
+
+        if (GetKey(olc::Key::S).bPressed)
+        {
+            int tile = world.matrix[(player.y+(player.height-1))*world.width+player.x];
+            if (tile == world.PLANKS)
+            {
+                player.Move(0, 1);
+            }
         }
 
         if (!world.IsColliding(player.x, player.y+1) && player.state != player.JUMP)
@@ -1448,7 +1489,10 @@ public:
                 }
                 break;
             }
-            if (!world.IsColliding(player.x+player.vx, player.y+player.vy)) player.Move(player.vx, player.vy);
+            if (!world.IsColliding(player.x+player.vx, player.y+player.vy))
+            {
+                player.Move(player.vx, player.vy);
+            }
         }
         DrawPlayer();
         DrawParticles(fElapsedTime);
@@ -1476,6 +1520,7 @@ public:
         switch (game_state)
         {
             case PLAYING : GameLoop(fElapsedTime); break;
+            case PAUSED : PausedGame(); break;
             case LOADING : DrawLoading(); break;
             case CUSTOM : DrawCustom(); break;
             case TITLE : DrawTitle(); break;
