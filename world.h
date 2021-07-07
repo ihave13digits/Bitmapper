@@ -12,7 +12,7 @@ public:
 
     // Terrain Tiles
 
-    int total_tiles = 90;
+    int total_tiles = 92;
     int total_parameters = 12;
     int total_modes = 4;
 
@@ -163,13 +163,16 @@ public:
         GUTTER_LAVA,
         GUTTER_MUCK,
         GUTTER_MUD,
+        //
+        AXLE_LEFT,
+        AXLE_RIGHT,
         CONVEYOR_LEFT,
         CONVEYOR_RIGHT,
         //
         MANTLE
     };
 
-    std::string tiles[90] = {
+    std::string tiles[92] = {
         //
         "Air",
         "Steam",
@@ -265,13 +268,16 @@ public:
         "Gutter (Lava)",
         "Gutter (Muck)",
         "Gutter (Mud)",
+        //
+        "Axle (Left)",
+        "Axle (Right)",
         "Conveyor (Left)",
         "Conveyor (Right)",
         //
         "Mantle"
     };
 
-    int tileset[90][2][4] = {
+    int tileset[92][2][4] = {
         // |Base Color        |     |Variation       |
         // Gases
         {  {200, 200, 230, 5  },    {1,   1,   25,  0}  },// Air
@@ -368,6 +374,8 @@ public:
         {  {130, 120, 100, 255},    {15,  10,  10,  0}  },// Gutter (Lava)
         {  {120, 110, 100, 255},    {15,  10,  10,  0}  },// Gutter (Muck)
         {  {130, 120, 110, 255},    {15,  10,  10,  0}  },// Gutter (Mud)
+        {  {40,  40,  50,  255},    {15,  10,  10,  0}  },// Axle (Left)
+        {  {40,  40,  50,  255},    {15,  10,  10,  0}  },// Axle (Right)
         {  {50,  50,  50,  255},    {15,  10,  10,  0}  },// Conveyor (Left)
         {  {50,  50,  50,  255},    {15,  10,  10,  0}  },// Conveyor (Right)
         // Unbreakable
@@ -1284,9 +1292,9 @@ public:
                                 case WATER : { replace[index] = AIR; } break;
                                 case AIR:
                                     {
-                                        if (chance < 50) replace[dN] = FLARE;
-                                        if (chance < 25) replace[index] = SMOKE;
-                                        if (chance > 24) replace[index] = AIR;
+                                        if (chance < 100) replace[dN] = FLARE;
+                                        if (chance < 2) replace[index] = THICK_SMOKE;
+                                        if (chance > 500) replace[index] = AIR;
                                     } break;
                                 case ASH : { replace[index] = AIR; } break;
                                 case SMOKE : { replace[index] = AIR; } break;
@@ -1301,10 +1309,10 @@ public:
                                 case WATER : { replace[index] = AIR; } break;
                                 case AIR:
                                     {
-                                        if (chance < 50) replace[dE] = FLARE;
-                                        if (chance < 25) replace[index] = SMOKE;
-                                        if (chance < 5) replace[index] = ASH;
-                                        if (chance > 24) replace[index] = AIR;
+                                        if (chance < 100) replace[dE] = FLARE;
+                                        if (chance < 5) replace[index] = SMOKE;
+                                        if (chance < 3) replace[index] = ASH;
+                                        if (chance > 500) replace[index] = AIR;
                                     } break;
                                 case ASH : { replace[index] = AIR; } break;
                                 case SMOKE : { replace[index] = AIR; } break;
@@ -1319,10 +1327,10 @@ public:
                                 case WATER : { replace[index] = AIR; } break;
                                 case AIR:
                                     {
-                                        if (chance < 50) replace[dW] = FLARE;
-                                        if (chance < 25) replace[index] = SMOKE;
-                                        if (chance < 2) replace[index] = ASH;
-                                        if (chance > 24) replace[index] = AIR;
+                                        if (chance < 100) replace[dW] = FLARE;
+                                        if (chance < 5) replace[index] = SMOKE;
+                                        if (chance < 3) replace[index] = ASH;
+                                        if (chance > 500) replace[index] = AIR;
                                     } break;
                                 case ASH : { replace[index] = AIR; } break;
                                 case SMOKE : { replace[index] = AIR; } break;
@@ -1380,70 +1388,100 @@ public:
                         break;
                         case THIN_SMOKE :
                         {
-                            //int dN  = int( (_y-1) * width + (_x  ) );
-                            //int dE  = int( (_y  ) * width + (_x+1) );
+                            int dE  = int( (_y  ) * width + (_x+1) );
+                            int dW  = int( (_y  ) * width + (_x-1) );
                             int dS  = int( (_y+1) * width + (_x  ) );
-                            //int dW  = int( (_y  ) * width + (_x-1) );
 
-                            if (matrix[dS] == AIR && rand()%10000 < 500)
+                            int chance = rand()%100;
+                            switch (matrix[dS])
                             {
-                                replace[index] = AIR;
+                                case AIR : { matrix[index] = AIR; replace[index] = AIR;} break;
+                                case SMOKE : { if (rand()%10 < 6) {replace[dS] = THIN_SMOKE; replace[index] = AIR;}} break;
+                                case THICK_SMOKE : { if (rand()%100 < 4) {replace[dS] = THIN_SMOKE; replace[index] = THIN_SMOKE;}} break;
                             }
-                            if (matrix[dS] == SMOKE && rand()%10000 < 500)
+                            if (chance < 40)
                             {
-                                replace[dS] = THIN_SMOKE;
-                                replace[index] = THIN_SMOKE;
+                                switch (matrix[dE])
+                                {
+                                    case AIR : { replace[dE] = THIN_SMOKE; replace[index] = AIR; } break;
+                                    case SMOKE : { replace[dE] = THIN_SMOKE; replace[index] = SMOKE; } break;
+                                    case THICK_SMOKE : { replace[dE] = THIN_SMOKE; replace[index] = THICK_SMOKE; } break;
+                                }
                             }
-                            if (matrix[dS] == THICK_SMOKE && rand()%10000 < 500)
+                            if (chance > 60)
                             {
-                                replace[dS] = SMOKE;
-                                replace[index] = SMOKE;
+                                switch (matrix[dW])
+                                {
+                                    case AIR : { replace[dW] = THIN_SMOKE; replace[index] = AIR; } break;
+                                    case SMOKE : { replace[dW] = THIN_SMOKE; replace[index] = SMOKE; } break;
+                                    case THICK_SMOKE : { replace[dW] = THIN_SMOKE; replace[index] = THICK_SMOKE; } break;
+                                }
                             }
                         }
                         break;
                         case SMOKE :
                         {
-                            //int dN  = int( (_y-1) * width + (_x  ) );
-                            //int dE  = int( (_y  ) * width + (_x+1) );
+                            int dE  = int( (_y  ) * width + (_x+1) );
+                            int dW  = int( (_y  ) * width + (_x-1) );
                             int dS  = int( (_y+1) * width + (_x  ) );
-                            //int dW  = int( (_y  ) * width + (_x-1) );
 
-                            if (matrix[dS] == AIR && rand()%10000 < 250)
+                            int chance = rand()%100;
+                            switch (matrix[dS])
                             {
-                                replace[index] = THIN_SMOKE;
+                                case AIR : { matrix[index] = THIN_SMOKE; replace[index] = THIN_SMOKE;} break;
+                                case THIN_SMOKE : { if (rand()%10 < 6) {replace[dS] = SMOKE; replace[index] = THIN_SMOKE;}} break;
+                                case THICK_SMOKE : { if (rand()%100 < 4) {replace[dS] = SMOKE; replace[index] = SMOKE;}} break;
                             }
-                            if (matrix[dS] == THIN_SMOKE && rand()%10000 < 250)
+                            if (chance < 40)
                             {
-                                replace[dS] = THIN_SMOKE;
-                                replace[index] = THIN_SMOKE;
+                            switch (matrix[dE])
+                            {
+                                case AIR : { replace[dE] = SMOKE; replace[index] = AIR; } break;
+                                case THIN_SMOKE : { replace[dE] = SMOKE; replace[index] = THIN_SMOKE; } break;
+                                case THICK_SMOKE : { replace[dE] = SMOKE; replace[index] = THICK_SMOKE; } break;
                             }
-                            if (matrix[dS] == THICK_SMOKE && rand()%10000 < 250)
+                            }
+                            if (chance > 60)
                             {
-                                replace[dS] = SMOKE;
-                                replace[index] = SMOKE;
+                            switch (matrix[dW])
+                            {
+                                case AIR : { replace[dW] = SMOKE; replace[index] = AIR; } break;
+                                case THIN_SMOKE : { replace[dW] = SMOKE; replace[index] = THIN_SMOKE; } break;
+                                case THICK_SMOKE : { replace[dW] = SMOKE; replace[index] = THICK_SMOKE; } break;
+                            }
                             }
                         }
                         break;
                         case THICK_SMOKE :
                         {
-                            //int dN  = int( (_y-1) * width + (_x  ) );
-                            //int dE  = int( (_y  ) * width + (_x+1) );
+                            int dE  = int( (_y  ) * width + (_x+1) );
+                            int dW  = int( (_y  ) * width + (_x-1) );
                             int dS  = int( (_y+1) * width + (_x  ) );
-                            //int dW  = int( (_y  ) * width + (_x-1) );
                             
-                            if (matrix[dS] == AIR && rand()%10000 < 100)
+                            int chance = rand()%100;
+                            switch (matrix[dS])
                             {
-                                replace[index] = THIN_SMOKE;
+                                case AIR : { matrix[index] = THIN_SMOKE; replace[index] = THIN_SMOKE;} break;
+                                case THIN_SMOKE : { if (rand()%10 < 6) {replace[dS] = THICK_SMOKE; replace[index] = THIN_SMOKE;}} break;
+                                case SMOKE : { if (rand()%100 < 4) {replace[dS] = THICK_SMOKE; replace[index] = SMOKE;}} break;
                             }
-                            if (matrix[dS] == THIN_SMOKE && rand()%10000 < 100)
+                            if (chance < 40)
                             {
-                                replace[dS] = THIN_SMOKE;
-                                replace[index] = THIN_SMOKE;
+                                switch (matrix[dE])
+                                {
+                                    case AIR : { replace[dE] = THICK_SMOKE; replace[index] = AIR; } break;
+                                    case THIN_SMOKE : { replace[dE] = THICK_SMOKE; replace[index] = THIN_SMOKE; } break;
+                                    case SMOKE : { replace[dE] = THICK_SMOKE; replace[index] = SMOKE; } break;
+                                }
                             }
-                            if (matrix[dS] == SMOKE && rand()%10000 < 100)
+                            if (chance > 60)
                             {
-                                replace[dS] = THIN_SMOKE;
-                                replace[index] = SMOKE;
+                                switch (matrix[dW])
+                                {
+                                    case AIR : { replace[dW] = THICK_SMOKE; replace[index] = AIR; } break;
+                                    case THIN_SMOKE : { replace[dW] = THICK_SMOKE; replace[index] = THIN_SMOKE; } break;
+                                    case SMOKE : { replace[dW] = THICK_SMOKE; replace[index] = SMOKE; } break;
+                                }
                             }
                         }
                         break;
@@ -1745,17 +1783,125 @@ public:
                             }
                         }
                         break;
+                        case AXLE_LEFT :
+                        {
+                            int dNW = int( (_y-1) * width + (_x-1) );
+                            int dN = int( (_y-1) * width + (_x) );
+                            int dNE = int( (_y-1) * width + (_x+1) );
+                            int dW = int( (_y) * width + (_x-1) );
+                            int dE = int( (_y) * width + (_x+1) );
+                            int dSW = int( (_y+1) * width + (_x-1) );
+                            int dSE = int( (_y+1) * width + (_x+1) );
+                            int dS = int( (_y+1) * width + (_x) );
+                            
+                            if (
+                                    (GetType(matrix[dNW]) == SOLID) &&
+                                    (GetType(matrix[dN]) == SOLID) &&
+                                    (GetType(matrix[dNE]) == SOLID) &&
+                                    (GetType(matrix[dE]) == SOLID) &&
+                                    (GetType(matrix[dSE]) == SOLID) &&
+                                    (GetType(matrix[dS]) == SOLID) &&
+                                    (GetType(matrix[dSW]) == SOLID) &&
+                                    (GetType(matrix[dW]) == SOLID) )
+                            {
+                                int v1 = matrix[dNW];
+                                int v2 = matrix[dN];
+                                int v3 = matrix[dNE];
+                                int v4 = matrix[dE];
+                                int v5 = matrix[dSE];
+                                int v6 = matrix[dS];
+                                int v7 = matrix[dSW];
+                                int v8 = matrix[dW];
+
+                                replace[dNW] = v2;
+                                replace[dN] =  v3;
+                                replace[dNE] = v4;
+                                replace[dE] =  v5;
+                                replace[dSE] = v6;
+                                replace[dS] =  v7;
+                                replace[dSW] = v8;
+                                replace[dW] =  v1;
+
+                                matrix[dNW] = v2;
+                                matrix[dN] =  v3;
+                                matrix[dNE] = v4;
+                                matrix[dE] =  v5;
+                                matrix[dSE] = v6;
+                                matrix[dS] =  v7;
+                                matrix[dSW] = v8;
+                                matrix[dW] =  v1;
+                            }
+                        }
+                        break;
+                        case AXLE_RIGHT:
+                        {
+                            int dNW = int( (_y-1) * width + (_x-1) );
+                            int dN = int( (_y-1) * width + (_x) );
+                            int dNE = int( (_y-1) * width + (_x+1) );
+                            int dW = int( (_y) * width + (_x-1) );
+                            int dE = int( (_y) * width + (_x+1) );
+                            int dSW = int( (_y+1) * width + (_x-1) );
+                            int dSE = int( (_y+1) * width + (_x+1) );
+                            int dS = int( (_y+1) * width + (_x) );
+
+                            if (
+                                    (GetType(matrix[dNW]) == SOLID) &&
+                                    (GetType(matrix[dN]) == SOLID) &&
+                                    (GetType(matrix[dNE]) == SOLID) &&
+                                    (GetType(matrix[dE]) == SOLID) &&
+                                    (GetType(matrix[dSE]) == SOLID) &&
+                                    (GetType(matrix[dS]) == SOLID) &&
+                                    (GetType(matrix[dSW]) == SOLID) &&
+                                    (GetType(matrix[dW]) == SOLID) )
+                            {
+                                int v1 = matrix[dNW];
+                                int v2 = matrix[dN];
+                                int v3 = matrix[dNE];
+                                int v4 = matrix[dE];
+                                int v5 = matrix[dSE];
+                                int v6 = matrix[dS];
+                                int v7 = matrix[dSW];
+                                int v8 = matrix[dW];
+
+                                replace[dNW] = v8;
+                                replace[dN] =  v1;
+                                replace[dNE] = v2;
+                                replace[dE] =  v3;
+                                replace[dSE] = v4;
+                                replace[dS] =  v5;
+                                replace[dSW] = v6;
+                                replace[dW] =  v7;
+
+                                matrix[dNW] = v8;
+                                matrix[dN] =  v1;
+                                matrix[dNE] = v2;
+                                matrix[dE] =  v3;
+                                matrix[dSE] = v4;
+                                matrix[dS] =  v5;
+                                matrix[dSW] = v6;
+                                matrix[dW] =  v7;
+                            }
+
+                        }
+                        break;
                         case CONVEYOR_LEFT :
                         {
                             int dNW = int( (_y-1) * width + (_x-1) );
                             int dNE = int( (_y-1) * width + (_x+1) );
                             int dN = int( (_y-1) * width + (_x) );
 
-                            if (matrix[dN] > MUD && matrix[dNW] == AIR)
+                            if ( matrix[dN] < VALVE_CLOSED && matrix[dNE] < VALVE_CLOSED && matrix[dNW] < VALVE_CLOSED )
                             {
-                                replace[dNW] = matrix[dN];
-                                replace[dN] = matrix[dNE];
-                                replace[dNE] = AIR;
+                                if (matrix[dN] > MUD && matrix[dNW] == AIR)
+                                {
+                                    replace[dNW] = matrix[dN];
+                                    replace[dN] = matrix[dNE];
+                                    replace[dNE] = AIR;
+
+                                    matrix[dNW] = matrix[dN];
+                                    matrix[dN] = matrix[dNE];
+                                    matrix[dNE] = AIR;
+                                }
                             }
                         }
                         break;
@@ -1764,12 +1910,18 @@ public:
                             int dNW = int( (_y-1) * width + (_x-1) );
                             int dNE = int( (_y-1) * width + (_x+1) );
                             int dN = int( (_y-1) * width + (_x) );
-
-                            if (matrix[dN] > MUD && matrix[dNE] == AIR)
+                            if ( matrix[dN] < VALVE_CLOSED && matrix[dNE] < VALVE_CLOSED && matrix[dNW] < VALVE_CLOSED )
                             {
-                                replace[dNE] = matrix[dN];
-                                replace[dN] = matrix[dNW];
-                                replace[dNW] = AIR;
+                                if (matrix[dN] > MUD && matrix[dNE] == AIR)
+                                {
+                                    replace[dNE] = matrix[dN];
+                                    replace[dN] = matrix[dNW];
+                                    replace[dNW] = AIR;
+
+                                    matrix[dNW] = matrix[dN];
+                                    matrix[dN] = matrix[dNE];
+                                    matrix[dNE] = AIR;
+                                }
                             }
                         }
                         break;
@@ -1850,6 +2002,8 @@ public:
             case THIN_SMOKE : cell_type = GAS; break;
             case SMOKE : cell_type = GAS; break;
             case THICK_SMOKE : cell_type = GAS; break;
+            // 
+            // Mechanism
         }
         return cell_type;
     }

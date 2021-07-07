@@ -1417,12 +1417,6 @@ public:
         if (GetKey(olc::Key::Q).bPressed && selected_tile < world.total_tiles-1) selected_tile++;
         if (GetKey(olc::Key::E).bPressed && selected_tile > 0) selected_tile--;
 
-        if (GetKey(olc::Key::ENTER).bPressed)
-        {
-            player.hotbar[selected_hotbar][0] = itTILE;
-            player.hotbar[selected_hotbar][1] = selected_tile;
-        }
-
         if (GetKey(olc::Key::SPACE).bPressed)
         {
             world.SettleTiles(player.x-(width), player.y-(height), width*2, height*2);
