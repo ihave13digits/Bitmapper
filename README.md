@@ -4,15 +4,16 @@ A Noita inspired game written in C++ with OLC PixelGameEngine
 ## Controls:
 
     W - Levitate
-    S - None (Future Crouch/Drop)
+    S - None Drop Through (Planks)
     A - Move Left
     D - Move Right
 
     Q - Scroll Tiles
     E - Scroll Tiles
 
-    Left Mouse - Spawn Particles
-    Right Mouse - Place Tile
+    Enter - Set Hotbar Item
+
+    Left Mouse - Use Hotbar Selection
 
 ## Features
 
@@ -25,6 +26,7 @@ A Noita inspired game written in C++ with OLC PixelGameEngine
 ## Material Simulations
 
     Gas
+    Fire
     Fluid
     Gel
     Grain

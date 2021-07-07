@@ -27,7 +27,8 @@ public:
     bool HasItem(int item)
     {
         bool can_do = bool(data.count(item));
-        if (can_do) if (data[item] == 0) can_do = false;
-        return can_do;
+        if (can_do) { if (data[item] <= 0) { return false; } }
+        return true;
     }
+
 };
