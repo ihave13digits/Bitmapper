@@ -4,7 +4,7 @@ A Noita inspired game written in C++ with OLC PixelGameEngine
 ## Controls:
 
     W - Levitate
-    S - None Drop Through (Planks)
+    S - Drop Through (Planks)
     A - Move Left
     D - Move Right
 
