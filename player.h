@@ -72,8 +72,16 @@ public:
     };
 
     Inventory inventory = Inventory();
+    std::vector<Wand> wands;
 
 
+
+    void Setup()
+    {
+        Wand w = Wand();
+        w.GenerateWand();
+        wands.push_back(w);
+    }
 
     void Move(int X, int Y)
     {
@@ -120,6 +128,14 @@ public:
                 }
                 break;
             }
+        }
+    }
+
+    void UpdateWands(float delta)
+    {
+        for (int i = 0; i < wands.size(); i++)
+        {
+            wands[i].Update(delta);
         }
     }
 

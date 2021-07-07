@@ -72,6 +72,11 @@ public:
         duration = D;
     }
 
+    void SetEffect(Effect e)
+    {
+        effect = e;
+    }
+
     void Color(int R, int G, int B, int A)
     {
         r = R;

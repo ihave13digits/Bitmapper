@@ -36,6 +36,11 @@ public:
 
 public:
 
+    enum PAUSE_STATES
+    {
+        psTILES,
+        psWANDS
+    };
     enum ITEM_TYPES
     {
         itNONE,
@@ -63,10 +68,11 @@ public:
     int tick_delay = 2;
 
     int game_state = 0;
+    int pause_state = 0;
 
     char selected_hotbar = 0;
     char selected_tile = 0;
-    char selected_tool = 0;
+    char selected_wand = 0;
     int input_value = 0;
     char save_slot = 0;
 
@@ -320,11 +326,12 @@ public:
         }
     }
 
-    void SpawnParticle(float X, float Y)
+    void SpawnParticle(float X, float Y, Effect e)
     {
         float W = width/2;
         float H = height/2;
         Particle p = Particle();
+        p.SetEffect(e);
         p.Position(player.x, player.y);
         p.Velocity(float((X-W)*0.1), float((Y-H)*0.1));
         particles.push_back(p);
@@ -336,6 +343,66 @@ public:
         int x2 = W*completed;
         DrawLine(x, y, x+W, y, olc::Pixel(r, g, b));
         DrawLine(x, y, x+x2, y, olc::Pixel(R, G, B));
+    }
+
+    void DrawWands()
+    {
+        int cols = 16;
+        int rows = 8;
+        int x_margin = 48;
+        int y_margin = 32;
+        int wand_value = 0;
+
+        Button buttons[cols*rows];
+
+        FillRect({x_margin-3, y_margin-3}, {167, 87}, panel_color);
+        DrawRect({x_margin-4, y_margin-4}, {168, 88}, border_color);
+        SetPixelMode(olc::Pixel::ALPHA);
+        for (int y = 0; y < rows; y++)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                if (wand_value < player.wands.size())
+                {
+                    int wand_color = player.wands[wand_value].material;
+                    float R = float(world.tileset[wand_color][0][0]);
+                    float G = float(world.tileset[wand_color][0][1]);
+                    float B = float(world.tileset[wand_color][0][2]);
+                    int A = world.tileset[wand_color][0][3];
+                    for (int iy = 0; iy < icon.size; iy++)
+                    {
+                        for (int ix = 0; ix < icon.size; ix++)
+                        {
+                            Button b = Button();
+                            b.Setup((x*10)+x_margin, (y*10)+y_margin, 10, 10, 1.0, std::to_string(wand_value));
+                            buttons[y*cols+x] = b;
+                            int index_value = icon.wand[iy*icon.size+ix];
+                            float v = (0.25*float(index_value));
+                            if (index_value > 0) Draw(ix+(x*10)+x_margin, iy+(y*10)+y_margin, olc::Pixel(int(R*v), int(G*v), int(B*v), A));
+                        }
+                    }
+                }
+                wand_value++;
+            }
+        }
+        SetPixelMode(olc::Pixel::NORMAL);
+
+        for (int y = 0; y < rows; y++)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                Button b = buttons[y*cols+x];
+                if (b.IsColliding(GetMouseX(), GetMouseY()))
+                {
+                    DrawRect(b.x, b.y, b.width, b.height, select_color);
+                    if (GetMouse(0).bReleased)
+                    {
+                        player.hotbar[selected_hotbar][0] = itWAND;
+                        player.hotbar[selected_hotbar][1] = std::stoi(b.text);
+                    }
+                }
+            }
+        }
     }
 
     void DrawInventory()
@@ -599,10 +666,10 @@ public:
         ProgressBar(4, 4, player.jp, player.JP, 32, 0, 255, 0, 0, 64, 0);
         ProgressBar(4, 6, player.bp, player.BP, 32, 0, 0, 255, 0, 0, 64);
         DrawStringDecal({ 4,8  }, "Looking At: " + lookingat, text_color, { font, font });
-        DrawStringDecal({ 4,12 }, "Selected Tile: " + selectedtile + " " + selectedcount, text_color, { font, font });
-        DrawStringDecal({ 4,16 }, "Collision: " + collision_at, text_color, { font, font });
-        DrawStringDecal({ 4,20 }, "Day: " + std::to_string(sky.day), text_color, { font, font });
-        DrawStringDecal({ 4,24 }, "Year: " + std::to_string(sky.year), text_color, { font, font });
+        //DrawStringDecal({ 4,12 }, "Selected Tile: " + selectedtile + " " + selectedcount, text_color, { font, font });
+        DrawStringDecal({ 4,12 }, "Collision: " + collision_at, text_color, { font, font });
+        DrawStringDecal({ 4,16 }, "Day: " + std::to_string(sky.day), text_color, { font, font });
+        DrawStringDecal({ 4,20 }, "Year: " + std::to_string(sky.year), text_color, { font, font });
         //
         int hb_size = icon.size+1;
         int hb_offset = (width/2) - hb_size*4.5;
@@ -620,9 +687,10 @@ public:
             
             if (player.hotbar[i][0] == itWAND)
             {
-                float R = 80.0;
-                float G = 64.0;
-                float B = 32.0;
+                int tile_value = player.hotbar[i][1];
+                float R = float(world.tileset[tile_value][0][0]);
+                float G = float(world.tileset[tile_value][0][1]);
+                float B = float(world.tileset[tile_value][0][2]);
                 for (int iy = 0; iy < icon.size; iy++)
                 {
                     for (int ix = 0; ix < icon.size; ix++)
@@ -690,6 +758,7 @@ public:
             {
                 Clear(olc::BLACK);
                 game_state = CUSTOM;
+                player.Setup();
             }
         }
         if (bLoad.IsColliding(GetMouseX(), GetMouseY()))
@@ -1362,13 +1431,18 @@ public:
             DrawPlayer();
         }
 
-        if (GetKey(olc::Key::I).bHeld) DrawInventory();
-        if (GetKey(olc::Key::I).bReleased)
-        {
-            DrawSky();
-            DrawTerrain();
-            DrawPlayer();
-        }
+        if (GetKey(olc::Key::I).bPressed) pause_state = psTILES;
+        if (GetKey(olc::Key::W).bPressed) pause_state = psWANDS;
+        
+        if (pause_state == psWANDS) DrawWands();
+        if (pause_state == psTILES) DrawInventory();
+        
+        //if (GetKey(olc::Key::I).bReleased)
+        //{
+        //    DrawSky();
+        //    DrawTerrain();
+        //    DrawPlayer();
+        //}
         DrawHUD();
     }
 
@@ -1395,7 +1469,12 @@ public:
             }
             if (player.hotbar[selected_hotbar][0] == itWAND)
             {
-                SpawnParticle(float(GetMouseX()), float(GetMouseY()));
+                if (player.wands[selected_wand].can_fire)
+                {
+                    player.wands[selected_wand].Cast();
+                    Effect e = player.wands[selected_wand].effects[player.wands[selected_wand].current_effect];
+                    SpawnParticle(float(GetMouseX()), float(GetMouseY()), e);
+                }
             }
             int index = (GetMouseY()+(player.y-(height/2)))*world.width+(GetMouseX()+(player.x-(width/2)));
             int tile = world.matrix[index];
@@ -1427,8 +1506,8 @@ public:
             }
         }
 
-        if (GetKey(olc::Key::Q).bPressed && selected_tile < world.total_tiles-1) selected_tile++;
-        if (GetKey(olc::Key::E).bPressed && selected_tile > 0) selected_tile--;
+        //if (GetKey(olc::Key::Q).bPressed && selected_tile < world.total_tiles-1) selected_tile++;
+        //if (GetKey(olc::Key::E).bPressed && selected_tile > 0) selected_tile--;
 
         // Vertical Movement
         if (GetKey(olc::Key::W).bHeld)
@@ -1513,13 +1592,13 @@ public:
         }
 
         // For Fun
-        if (GetKey(olc::Key::T).bHeld) player.status = player.TRIP;
+        //if (GetKey(olc::Key::T).bHeld) player.status = player.TRIP;
 
-        if (GetKey(olc::Key::ENTER).bPressed)
-        {
-            player.hotbar[selected_hotbar][0] = itTILE;
-            player.hotbar[selected_hotbar][1] = selected_tile;
-        }
+        //if (GetKey(olc::Key::ENTER).bPressed)
+        //{
+        //    player.hotbar[selected_hotbar][0] = itTILE;
+        //    player.hotbar[selected_hotbar][1] = selected_tile;
+        //}
 
         // Update World
         sky.Update(fElapsedTime);
@@ -1600,6 +1679,7 @@ public:
             }
         }
         DrawPlayer();
+        player.UpdateWands(fElapsedTime);
         DrawParticles(fElapsedTime);
         DrawHUD();
 
