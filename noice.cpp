@@ -15,10 +15,11 @@
 
 #include "sky.h"
 #include "world.h"
-#include "player.h"
 #include "effect.h"
 #include "particle.h"
+#include "wand.h"
 #include "inventory.h"
+#include "player.h"
 
 #include "button.h"
 #include "icon.h"
@@ -71,6 +72,8 @@ public:
 
     int width = 256;
     int height = 144;
+    int pixel_size = 4;
+
     int world_width = 4096;//8192;
     int world_height = 2048;//4096;
 
@@ -82,7 +85,6 @@ public:
     Sky sky = Sky();
     World world = World();
     Player player = Player();
-    Inventory player_inv = Inventory();
 
 
 
@@ -191,9 +193,9 @@ public:
         if (data_file.is_open())
         {
             data_file << "#blocks" << std::endl;
-            for (int i = 0; i < player_inv.data.size(); i++)
+            for (int i = 0; i < player.inventory.data.size(); i++)
             {
-                data_file << i << "=" << player_inv.data[i] << std::endl;
+                data_file << i << "=" << player.inventory.data[i] << std::endl;
             }
             data_file.close();
         }
@@ -248,7 +250,7 @@ public:
                     {
                         int item = std::stoi(itm);
                         int amount = std::stoi(amnt);
-                        player_inv.AddItem(item, amount);
+                        player.inventory.AddItem(item, amount);
                     }
                 }
             }
@@ -328,6 +330,64 @@ public:
         DrawLine(x, y, x+x2, y, olc::Pixel(R, G, B));
     }
 
+    void DrawInventory()
+    {
+        int x_margin = 48;
+        int y_margin = 32;
+        int tile_value = 0;
+
+        Button buttons[16*8];
+
+        SetPixelMode(olc::Pixel::ALPHA);
+        for (int y = 0; y < 8; y++)
+        {
+            for (int x = 0; x < 16; x++)
+            {
+                float R = float(world.tileset[tile_value][0][0]);
+                float G = float(world.tileset[tile_value][0][1]);
+                float B = float(world.tileset[tile_value][0][2]);
+                int A = world.tileset[tile_value][0][3];
+                int tile_type = world.GetType(tile_value);
+                for (int iy = 0; iy < icon.size; iy++)
+                {
+                    for (int ix = 0; ix < icon.size; ix++)
+                    {
+                        if (tile_value < world.total_tiles)
+                        {
+                            Button b = Button();
+                            b.Setup((x*10)+x_margin, (y*10)+y_margin, 10, 10, 1.0, std::to_string(tile_value));
+                            buttons[y*16+x] = b;
+                            int index_value = icon.solid[iy*icon.size+ix];
+                            if (tile_type == world.GRAIN) index_value = icon.grain[iy*icon.size+ix];
+                            if (tile_type == world.GEL) index_value = icon.gel[iy*icon.size+ix];
+                            if (tile_type == world.FLUID) index_value = icon.fluid[iy*icon.size+ix];
+                            if (tile_type == world.GAS) index_value = icon.gas[iy*icon.size+ix];
+                            float v = (0.25*float(index_value));
+                            if (index_value > 0) Draw(ix+(x*10)+x_margin, iy+(y*10)+y_margin, olc::Pixel(int(R*v), int(G*v), int(B*v), A));
+                        }
+                    }
+                }
+                tile_value++;
+            }
+        }
+        SetPixelMode(olc::Pixel::NORMAL);
+        for (int y = 0; y < 8; y++)
+        {
+            for (int x = 0; x < 16; x++)
+            {
+                Button b = buttons[y*16+x];
+                if (b.IsColliding(GetMouseX(), GetMouseY()))
+                {
+                    DrawRect(b.x, b.y, b.width, b.height, olc::WHITE);
+                    if (GetMouse(0).bReleased)
+                    {
+                        selected_tile = std::stoi(b.text);
+                    }
+                }
+            }
+        }
+    }
+
     void DrawSky()
     {
         if (player.status != player.TRIP) Clear(olc::Pixel(sky.R, sky.G, sky.B));
@@ -404,10 +464,10 @@ public:
                     int v3 = world.matrix[(y+Y)*world.width+(x+X)+2];
                     int v4 = world.matrix[(y+Y)*world.width+(x+X)+3];
 
-                    int n1 = world.Neighbors(x+X, y+Y);
-                    int n2 = world.Neighbors(x+X+1, y+Y);
-                    int n3 = world.Neighbors(x+X+2, y+Y);
-                    int n4 = world.Neighbors(x+X+3, y+Y);
+                    float n1 = world.Neighbors(x+X, y+Y);
+                    float n2 = world.Neighbors(x+X+1, y+Y);
+                    float n3 = world.Neighbors(x+X+2, y+Y);
+                    float n4 = world.Neighbors(x+X+3, y+Y);
 
                     float s1 = 1.0;
                     float s2 = 1.0;
@@ -425,7 +485,7 @@ public:
                                 int(world.tileset[v1][0][2]*s1),// + rand() % world.tileset[v1][1][2],
                                 world.tileset[v1][0][3])
                             );
-                    
+
                     Draw(x+1, y, olc::Pixel(
                                 int(world.tileset[v2][0][0]*s2),// + rand() % world.tileset[v2][1][0],
                                 int(world.tileset[v2][0][1]*s2),// + rand() % world.tileset[v2][1][1],
@@ -486,7 +546,7 @@ public:
             }
             if ( particles[p].effect.mines && world.IsColliding(int(x+(vx*1.5)), int(y+(vy*1.5))) )
             {
-                player_inv.AddItem(world.matrix[int(y+(vy*1.5))*world.width+int(x+(vx*1.5))], 1);
+                player.inventory.AddItem(world.matrix[int(y+(vy*1.5))*world.width+int(x+(vx*1.5))], 1);
                 world.matrix[int(y+(vy*1.5))*world.width+int(x+(vx*1.5))] = world.AIR;
             }
             if (particles[p].duration > 0.0)
@@ -517,9 +577,9 @@ public:
         {
             lookingat = world.tiles[world.matrix[lookindex]];
         }
-        if (player_inv.HasItem(selected_tile))
+        if (player.inventory.HasItem(selected_tile))
         {
-            selectedcount = std::to_string(player_inv.data[selected_tile]);
+            selectedcount = std::to_string(player.inventory.data[selected_tile]);
         }
 
         ProgressBar(4, 2, player.hp, player.HP, 32, 255, 0, 0, 64, 0, 0);
@@ -1130,6 +1190,12 @@ public:
             DrawRect(bgenerate.x, bgenerate.y, bgenerate.width, bgenerate.height, olc::WHITE);
             if (GetMouse(0).bReleased)
             {
+                bool is_data_valid = false;
+                for (int i = 0; i < world.generation_steps; i++)
+                {
+                    if (world.generation_param[i][0] != world.AIR) is_data_valid = true;
+                }
+                if (!is_data_valid) world.PresetData();
                 world.InitializeMatrix(world_width, world_height);
                 srand(game_seed);
                 game_state = LOADING;
@@ -1252,16 +1318,38 @@ public:
 
     }
 
-    void PausedGame()
+    void GamePaused()
     {
         if (GetKey(olc::Key::ESCAPE).bPressed) game_state = PLAYING;
+     
+        if (GetKey(olc::Key::K1).bPressed) {selected_hotbar = 0;}
+        if (GetKey(olc::Key::K2).bPressed) {selected_hotbar = 1;}
+        if (GetKey(olc::Key::K3).bPressed) {selected_hotbar = 2;}
+        if (GetKey(olc::Key::K4).bPressed) {selected_hotbar = 3;}
+        if (GetKey(olc::Key::K5).bPressed) {selected_hotbar = 4;}
+        if (GetKey(olc::Key::K6).bPressed) {selected_hotbar = 5;}
+        if (GetKey(olc::Key::K7).bPressed) {selected_hotbar = 6;}
+        if (GetKey(olc::Key::K8).bPressed) {selected_hotbar = 7;}
+        if (GetKey(olc::Key::K9).bPressed) {selected_hotbar = 8;}
+
+        if (GetKey(olc::Key::Q).bPressed && selected_tile < world.total_tiles-1) selected_tile++;
+        if (GetKey(olc::Key::E).bPressed && selected_tile > 0) selected_tile--;
+
         if (GetKey(olc::Key::ENTER).bPressed)
+        {
+            player.hotbar[selected_hotbar][0] = itTILE;
+            player.hotbar[selected_hotbar][1] = selected_tile;
+        }
+
+        if (GetKey(olc::Key::SPACE).bPressed)
         {
             world.SettleTiles(player.x-(width), player.y-(height), width*2, height*2);
         }
+
         DrawSky();
         DrawTerrain();
         DrawPlayer();
+        DrawInventory();
         //DrawParticles(fElapsedTime);
         DrawHUD();
     }
@@ -1304,18 +1392,18 @@ public:
                 {
                     if (_tile != world.AIR)
                     {
-                        if (player_inv.HasItem(_tile) || creative_mode)
+                        if (player.inventory.HasItem(_tile) || creative_mode)
                         {
                             int amnt = 1;
                             if (tile == world.AIR) amnt = 0;
-                            player_inv.UseItem(_tile, 1);
-                            player_inv.AddItem(tile, amnt);
+                            player.inventory.UseItem(_tile, 1);
+                            player.inventory.AddItem(tile, amnt);
                             world.matrix[index] = _tile;
                         }
                     }
                     else if (_tile == world.AIR)
                     {
-                        if (tile != world.AIR) player_inv.AddItem(tile, 1);
+                        if (tile != world.AIR) player.inventory.AddItem(tile, 1);
                         world.matrix[index] = _tile;
                     }
                 }
@@ -1412,7 +1500,7 @@ public:
 
         if (GetKey(olc::Key::ENTER).bPressed)
         {
-            player.hotbar[selected_hotbar][0] = 2;
+            player.hotbar[selected_hotbar][0] = itTILE;
             player.hotbar[selected_hotbar][1] = selected_tile;
         }
 
@@ -1520,7 +1608,7 @@ public:
         switch (game_state)
         {
             case PLAYING : GameLoop(fElapsedTime); break;
-            case PAUSED : PausedGame(); break;
+            case PAUSED : GamePaused(); break;
             case LOADING : DrawLoading(); break;
             case CUSTOM : DrawCustom(); break;
             case TITLE : DrawTitle(); break;

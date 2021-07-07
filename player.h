@@ -42,7 +42,7 @@ public:
     int vx = 0;
     int vy = 0;
 
-    int height = 2;
+    int height = 3;
 
     int HP = 100;
     int hp = 100;
@@ -70,6 +70,8 @@ public:
         { 0,   0 },
         { 0,   0 },
     };
+
+    Inventory inventory = Inventory();
 
 
 
