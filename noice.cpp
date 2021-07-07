@@ -86,6 +86,14 @@ public:
     World world = World();
     Player player = Player();
 
+    olc::Pixel hud_color = olc::Pixel(64, 64, 64);
+    olc::Pixel hud_select_color = olc::Pixel(255, 255, 255);
+    olc::Pixel text_color = olc::Pixel(255, 255, 255);
+    olc::Pixel panel_color = olc::Pixel(10, 10, 10);
+    olc::Pixel border_color = olc::Pixel(80, 80, 80);
+    olc::Pixel button_color = olc::Pixel(32, 32, 32);
+    olc::Pixel select_color = olc::Pixel(64, 64, 64);
+
 
 
     std::string GetCWD()
@@ -332,16 +340,20 @@ public:
 
     void DrawInventory()
     {
+        int cols = 16;
+        int rows = 8;
         int x_margin = 48;
         int y_margin = 32;
         int tile_value = 0;
 
-        Button buttons[16*8];
+        Button buttons[cols*rows];
 
+        FillRect({x_margin-3, y_margin-3}, {167, 87}, panel_color);
+        DrawRect({x_margin-4, y_margin-4}, {168, 88}, border_color);
         SetPixelMode(olc::Pixel::ALPHA);
-        for (int y = 0; y < 8; y++)
+        for (int y = 0; y < rows; y++)
         {
-            for (int x = 0; x < 16; x++)
+            for (int x = 0; x < cols; x++)
             {
                 float R = float(world.tileset[tile_value][0][0]);
                 float G = float(world.tileset[tile_value][0][1]);
@@ -356,7 +368,7 @@ public:
                         {
                             Button b = Button();
                             b.Setup((x*10)+x_margin, (y*10)+y_margin, 10, 10, 1.0, std::to_string(tile_value));
-                            buttons[y*16+x] = b;
+                            buttons[y*cols+x] = b;
                             int index_value = icon.solid[iy*icon.size+ix];
                             if (tile_type == world.GRAIN) index_value = icon.grain[iy*icon.size+ix];
                             if (tile_type == world.GEL) index_value = icon.gel[iy*icon.size+ix];
@@ -371,17 +383,18 @@ public:
             }
         }
         SetPixelMode(olc::Pixel::NORMAL);
-        for (int y = 0; y < 8; y++)
+        for (int y = 0; y < rows; y++)
         {
-            for (int x = 0; x < 16; x++)
+            for (int x = 0; x < cols; x++)
             {
-                Button b = buttons[y*16+x];
+                Button b = buttons[y*cols+x];
                 if (b.IsColliding(GetMouseX(), GetMouseY()))
                 {
-                    DrawRect(b.x, b.y, b.width, b.height, olc::WHITE);
+                    DrawRect(b.x, b.y, b.width, b.height, select_color);
                     if (GetMouse(0).bReleased)
                     {
-                        selected_tile = std::stoi(b.text);
+                        player.hotbar[selected_hotbar][0] = itTILE;
+                        player.hotbar[selected_hotbar][1] = std::stoi(b.text);
                     }
                 }
             }
@@ -585,11 +598,11 @@ public:
         ProgressBar(4, 2, player.hp, player.HP, 32, 255, 0, 0, 64, 0, 0);
         ProgressBar(4, 4, player.jp, player.JP, 32, 0, 255, 0, 0, 64, 0);
         ProgressBar(4, 6, player.bp, player.BP, 32, 0, 0, 255, 0, 0, 64);
-        DrawStringDecal({ 4,8  }, "Looking At: " + lookingat, olc::WHITE, { font, font });
-        DrawStringDecal({ 4,12 }, "Selected Tile: " + selectedtile + " " + selectedcount, olc::WHITE, { font, font });
-        DrawStringDecal({ 4,16 }, "Collision: " + collision_at, olc::WHITE, { font, font });
-        DrawStringDecal({ 4,20 }, "Day: " + std::to_string(sky.day), olc::WHITE, { font, font });
-        DrawStringDecal({ 4,24 }, "Year: " + std::to_string(sky.year), olc::WHITE, { font, font });
+        DrawStringDecal({ 4,8  }, "Looking At: " + lookingat, text_color, { font, font });
+        DrawStringDecal({ 4,12 }, "Selected Tile: " + selectedtile + " " + selectedcount, text_color, { font, font });
+        DrawStringDecal({ 4,16 }, "Collision: " + collision_at, text_color, { font, font });
+        DrawStringDecal({ 4,20 }, "Day: " + std::to_string(sky.day), text_color, { font, font });
+        DrawStringDecal({ 4,24 }, "Year: " + std::to_string(sky.year), text_color, { font, font });
         //
         int hb_size = icon.size+1;
         int hb_offset = (width/2) - hb_size*4.5;
@@ -597,13 +610,13 @@ public:
         if (player.hotbar[selected_hotbar][0] == itWAND) { selected_item = "Wand"; }
         if (player.hotbar[selected_hotbar][0] == itTILE) { selected_item = world.tiles[player.hotbar[selected_hotbar][1]]; }
         float select_x = (width/2)-(selected_item.size());
-        DrawStringDecal({ select_x,15 }, selected_item, olc::WHITE, { 0.25, 0.25 });
+        DrawStringDecal({ select_x,15 }, selected_item, text_color, { 0.25, 0.25 });
         SetPixelMode(olc::Pixel::ALPHA);
         for (int i = 0; i < 9; i++)
         {
             int x = i*hb_size+hb_offset;
             //FillRect(x, 2, hb_size, hb_size, olc::Pixel(0, 0, 0, 128));
-            DrawRect(x, 2, hb_size, hb_size, olc::DARK_GREY);
+            DrawRect(x, 2, hb_size, hb_size, hud_color);
             
             if (player.hotbar[i][0] == itWAND)
             {
@@ -644,7 +657,7 @@ public:
             }
         }
         SetPixelMode(olc::Pixel::NORMAL);
-        DrawRect(selected_hotbar*hb_size+hb_offset, 2, hb_size, hb_size, olc::WHITE);
+        DrawRect(selected_hotbar*hb_size+hb_offset, 2, hb_size, hb_size, hud_select_color);
     }
 
     void DrawTitle()
@@ -658,21 +671,21 @@ public:
         float Lx = (width/2)+4;
         float By = (height*0.75);
 
-        DrawStringDecal({ Tx,Ty }, sAppName, olc::WHITE, { 2.0, 2.0 });
+        DrawStringDecal({ Tx,Ty }, sAppName, text_color, { 2.0, 2.0 });
         
         Button bNew = Button();
         bNew.Setup(Nx, By, 48, 16, 1.0, "New");
         Button bLoad = Button();
         bLoad.Setup(Lx, By, 48, 16, 1.0, "Load");
 
-        DrawStringDecal({ bNew.TextX(),bNew.TextY() }, bNew.text, olc::WHITE, { 1.0, 1.0 });
-        DrawRect(bNew.x, bNew.y, bNew.width, bNew.height, olc::DARK_GREY);
-        DrawStringDecal({ bLoad.TextX(),bLoad.TextY() }, bLoad.text, olc::WHITE, { 1.0, 1.0 });
-        DrawRect(bLoad.x, bLoad.y, bLoad.width, bLoad.height, olc::DARK_GREY);
+        DrawStringDecal({ bNew.TextX(),bNew.TextY() }, bNew.text, text_color, { 1.0, 1.0 });
+        DrawRect(bNew.x, bNew.y, bNew.width, bNew.height, button_color);
+        DrawStringDecal({ bLoad.TextX(),bLoad.TextY() }, bLoad.text, text_color, { 1.0, 1.0 });
+        DrawRect(bLoad.x, bLoad.y, bLoad.width, bLoad.height, button_color);
 
         if (bNew.IsColliding(GetMouseX(), GetMouseY()))
         {
-            DrawRect(bNew.x, bNew.y, bNew.width, bNew.height, olc::WHITE);
+            DrawRect(bNew.x, bNew.y, bNew.width, bNew.height, select_color);
             if (GetMouse(0).bReleased)
             {
                 Clear(olc::BLACK);
@@ -681,7 +694,7 @@ public:
         }
         if (bLoad.IsColliding(GetMouseX(), GetMouseY()))
         {
-            DrawRect(bLoad.x, bLoad.y, bLoad.width, bLoad.height, olc::WHITE);
+            DrawRect(bLoad.x, bLoad.y, bLoad.width, bLoad.height, select_color);
             if (GetMouse(0).bReleased)
             {
                 Clear(olc::BLACK);
@@ -769,79 +782,79 @@ public:
         Button bprobw = Button();
         bprobw.Setup(109, 14, 8, 8, 0.25, "W");
 
-        DrawRect(2, 2, 100, 100, olc::GREY);  // Preview Box
-        DrawRect(183, 2, 70, 90, olc::GREY);  // Generation Steps Box
-        DrawRect(2, 105, 251, 36, olc::GREY);  // Information Box
-        DrawRect(105, 2, 32, 32, olc::GREY);  // Neighbors Box
+        DrawRect(2, 2, 100, 100, border_color);  // Preview Box
+        DrawRect(183, 2, 70, 90, border_color);  // Generation Steps Box
+        DrawRect(2, 105, 251, 36, border_color);  // Information Box
+        DrawRect(105, 2, 32, 32, border_color);  // Neighbors Box
 
-        DrawRect(bsave.x, bsave.y, bsave.width, bsave.height, olc::DARK_GREY);
-        DrawStringDecal({ bsave.TextX(),bsave.TextY() }, bsave.text, olc::WHITE, { bsave.font, bsave.font });
-        DrawRect(bload.x, bload.y, bload.width, bload.height, olc::DARK_GREY);
-        DrawStringDecal({ bload.TextX(),bload.TextY() }, bload.text, olc::WHITE, { bload.font, bload.font });
+        DrawRect(bsave.x, bsave.y, bsave.width, bsave.height, button_color);
+        DrawStringDecal({ bsave.TextX(),bsave.TextY() }, bsave.text, text_color, { bsave.font, bsave.font });
+        DrawRect(bload.x, bload.y, bload.width, bload.height, button_color);
+        DrawStringDecal({ bload.TextX(),bload.TextY() }, bload.text, text_color, { bload.font, bload.font });
         
-        DrawRect(bcopy.x, bcopy.y, bcopy.width, bcopy.height, olc::DARK_GREY);
-        DrawStringDecal({ bcopy.TextX(),bcopy.TextY() }, bcopy.text, olc::WHITE, { bcopy.font, bcopy.font });
-        DrawRect(bpaste.x, bpaste.y, bpaste.width, bpaste.height, olc::DARK_GREY);
-        DrawStringDecal({ bpaste.TextX(),bpaste.TextY() }, bpaste.text, olc::WHITE, { bpaste.font, bpaste.font });
+        DrawRect(bcopy.x, bcopy.y, bcopy.width, bcopy.height, button_color);
+        DrawStringDecal({ bcopy.TextX(),bcopy.TextY() }, bcopy.text, text_color, { bcopy.font, bcopy.font });
+        DrawRect(bpaste.x, bpaste.y, bpaste.width, bpaste.height, button_color);
+        DrawStringDecal({ bpaste.TextX(),bpaste.TextY() }, bpaste.text, text_color, { bpaste.font, bpaste.font });
         
-        DrawRect(bclear.x, bclear.y, bclear.width, bclear.height, olc::DARK_GREY);
-        DrawStringDecal({ bclear.TextX(),bclear.TextY() }, bclear.text, olc::WHITE, { bclear.font, bclear.font });
-        DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, olc::DARK_GREY);
-        DrawStringDecal({ bconfig.TextX(),bconfig.TextY() }, bconfig.text, olc::WHITE, { bconfig.font, bconfig.font });
-        DrawRect(brandom.x, brandom.y, brandom.width, brandom.height, olc::DARK_GREY);
-        DrawStringDecal({ brandom.TextX(),brandom.TextY() }, brandom.text, olc::WHITE, { brandom.font, brandom.font });
+        DrawRect(bclear.x, bclear.y, bclear.width, bclear.height, button_color);
+        DrawStringDecal({ bclear.TextX(),bclear.TextY() }, bclear.text, text_color, { bclear.font, bclear.font });
+        DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, button_color);
+        DrawStringDecal({ bconfig.TextX(),bconfig.TextY() }, bconfig.text, text_color, { bconfig.font, bconfig.font });
+        DrawRect(brandom.x, brandom.y, brandom.width, brandom.height, button_color);
+        DrawStringDecal({ brandom.TextX(),brandom.TextY() }, brandom.text, text_color, { brandom.font, brandom.font });
 
-        DrawRect(bpreview.x, bpreview.y, bpreview.width, bpreview.height, olc::DARK_GREY);
-        DrawStringDecal({ bpreview.TextX(),bpreview.TextY() }, bpreview.text, olc::WHITE, { bpreview.font, bpreview.font });
-        DrawRect(bgenerate.x, bgenerate.y, bgenerate.width, bgenerate.height, olc::DARK_GREY);
-        DrawStringDecal({ bgenerate.TextX(),bgenerate.TextY() }, bgenerate.text, olc::WHITE, { bgenerate.font, bgenerate.font });
+        DrawRect(bpreview.x, bpreview.y, bpreview.width, bpreview.height, button_color);
+        DrawStringDecal({ bpreview.TextX(),bpreview.TextY() }, bpreview.text, text_color, { bpreview.font, bpreview.font });
+        DrawRect(bgenerate.x, bgenerate.y, bgenerate.width, bgenerate.height, button_color);
+        DrawStringDecal({ bgenerate.TextX(),bgenerate.TextY() }, bgenerate.text, text_color, { bgenerate.font, bgenerate.font });
 
-        DrawRect(bminusgs.x, bminusgs.y, bminusgs.width, bminusgs.height, olc::DARK_GREY);
-        DrawStringDecal({ bminusgs.TextX(),bminusgs.TextY() }, bminusgs.text, olc::WHITE, { btile.font, bminusgs.font });
-        DrawRect(bplusgs.x, bplusgs.y, bplusgs.width, bplusgs.height, olc::DARK_GREY);
-        DrawStringDecal({ bplusgs.TextX(),bplusgs.TextY() }, bplusgs.text, olc::WHITE, { bplusgs.font, bplusgs.font });
+        DrawRect(bminusgs.x, bminusgs.y, bminusgs.width, bminusgs.height, button_color);
+        DrawStringDecal({ bminusgs.TextX(),bminusgs.TextY() }, bminusgs.text, text_color, { btile.font, bminusgs.font });
+        DrawRect(bplusgs.x, bplusgs.y, bplusgs.width, bplusgs.height, button_color);
+        DrawStringDecal({ bplusgs.TextX(),bplusgs.TextY() }, bplusgs.text, text_color, { bplusgs.font, bplusgs.font });
 
-        DrawRect(bsave0.x, bsave0.y, bsave0.width, bsave0.height, olc::DARK_GREY);
-        DrawStringDecal({ bsave0.TextX(),bsave0.TextY() }, bsave0.text, olc::WHITE, { bsave0.font, bsave0.font });
-        DrawRect(bsave1.x, bsave1.y, bsave1.width, bsave1.height, olc::DARK_GREY);
-        DrawStringDecal({ bsave1.TextX(),bsave1.TextY() }, bsave1.text, olc::WHITE, { bsave1.font, bsave1.font });
-        DrawRect(bsave2.x, bsave2.y, bsave2.width, bsave2.height, olc::DARK_GREY);
-        DrawStringDecal({ bsave2.TextX(),bsave2.TextY() }, bsave2.text, olc::WHITE, { bsave2.font, bsave2.font });
-        DrawRect(bsave3.x, bsave3.y, bsave3.width, bsave3.height, olc::DARK_GREY);
-        DrawStringDecal({ bsave3.TextX(),bsave3.TextY() }, bsave3.text, olc::WHITE, { bsave3.font, bsave3.font });
-        DrawRect(bsave4.x, bsave4.y, bsave4.width, bsave4.height, olc::DARK_GREY);
-        DrawStringDecal({ bsave4.TextX(),bsave4.TextY() }, bsave4.text, olc::WHITE, { bsave4.font, bsave4.font });
-        DrawRect(bsave5.x, bsave5.y, bsave5.width, bsave5.height, olc::DARK_GREY);
-        DrawStringDecal({ bsave5.TextX(),bsave5.TextY() }, bsave5.text, olc::WHITE, { bsave5.font, bsave5.font });
-        DrawRect(bsave6.x, bsave6.y, bsave6.width, bsave6.height, olc::DARK_GREY);
-        DrawStringDecal({ bsave6.TextX(),bsave6.TextY() }, bsave6.text, olc::WHITE, { bsave6.font, bsave6.font });
+        DrawRect(bsave0.x, bsave0.y, bsave0.width, bsave0.height, button_color);
+        DrawStringDecal({ bsave0.TextX(),bsave0.TextY() }, bsave0.text, text_color, { bsave0.font, bsave0.font });
+        DrawRect(bsave1.x, bsave1.y, bsave1.width, bsave1.height, button_color);
+        DrawStringDecal({ bsave1.TextX(),bsave1.TextY() }, bsave1.text, text_color, { bsave1.font, bsave1.font });
+        DrawRect(bsave2.x, bsave2.y, bsave2.width, bsave2.height, button_color);
+        DrawStringDecal({ bsave2.TextX(),bsave2.TextY() }, bsave2.text, text_color, { bsave2.font, bsave2.font });
+        DrawRect(bsave3.x, bsave3.y, bsave3.width, bsave3.height, button_color);
+        DrawStringDecal({ bsave3.TextX(),bsave3.TextY() }, bsave3.text, text_color, { bsave3.font, bsave3.font });
+        DrawRect(bsave4.x, bsave4.y, bsave4.width, bsave4.height, button_color);
+        DrawStringDecal({ bsave4.TextX(),bsave4.TextY() }, bsave4.text, text_color, { bsave4.font, bsave4.font });
+        DrawRect(bsave5.x, bsave5.y, bsave5.width, bsave5.height, button_color);
+        DrawStringDecal({ bsave5.TextX(),bsave5.TextY() }, bsave5.text, text_color, { bsave5.font, bsave5.font });
+        DrawRect(bsave6.x, bsave6.y, bsave6.width, bsave6.height, button_color);
+        DrawStringDecal({ bsave6.TextX(),bsave6.TextY() }, bsave6.text, text_color, { bsave6.font, bsave6.font });
 
-        DrawRect(btile.x, btile.y, btile.width, btile.height, olc::DARK_GREY);
-        DrawStringDecal({ btile.TextX(),btile.TextY() }, btile.text, olc::WHITE, { btile.font, btile.font });
-        DrawRect(bmode.x, bmode.y, bmode.width, bmode.height, olc::DARK_GREY);
-        DrawStringDecal({ bmode.TextX(),bmode.TextY() }, bmode.text, olc::WHITE, { bmode.font, bmode.font });
-        DrawRect(bdense.x, bdense.y, bdense.width, bdense.height, olc::DARK_GREY);
-        DrawStringDecal({ bdense.TextX(),bdense.TextY() }, bdense.text, olc::WHITE, { bdense.font, bdense.font });
-        DrawRect(biter.x, biter.y, biter.width, biter.height, olc::DARK_GREY);
-        DrawStringDecal({ biter.TextX(),biter.TextY() }, biter.text, olc::WHITE, { biter.font, biter.font });
+        DrawRect(btile.x, btile.y, btile.width, btile.height, button_color);
+        DrawStringDecal({ btile.TextX(),btile.TextY() }, btile.text, text_color, { btile.font, btile.font });
+        DrawRect(bmode.x, bmode.y, bmode.width, bmode.height, button_color);
+        DrawStringDecal({ bmode.TextX(),bmode.TextY() }, bmode.text, text_color, { bmode.font, bmode.font });
+        DrawRect(bdense.x, bdense.y, bdense.width, bdense.height, button_color);
+        DrawStringDecal({ bdense.TextX(),bdense.TextY() }, bdense.text, text_color, { bdense.font, bdense.font });
+        DrawRect(biter.x, biter.y, biter.width, biter.height, button_color);
+        DrawStringDecal({ biter.TextX(),biter.TextY() }, biter.text, text_color, { biter.font, biter.font });
 
-        DrawRect(bminx.x, bminx.y, bminx.width, bminx.height, olc::DARK_GREY);
-        DrawStringDecal({ bminx.TextX(),bminx.TextY() }, bminx.text, olc::WHITE, { bminx.font, bminx.font });
-        DrawRect(bmaxx.x, bmaxx.y, bmaxx.width, bmaxx.height, olc::DARK_GREY);
-        DrawStringDecal({ bmaxx.TextX(),bmaxx.TextY() }, bmaxx.text, olc::WHITE, { bmaxx.font, bmaxx.font });
-        DrawRect(bminy.x, bminy.y, bminy.width, bminy.height, olc::DARK_GREY);
-        DrawStringDecal({ bminy.TextX(),bminy.TextY() }, bminy.text, olc::WHITE, { bminy.font, bminy.font });
-        DrawRect(bmaxy.x, bmaxy.y, bmaxy.width, bmaxy.height, olc::DARK_GREY);
-        DrawStringDecal({ bmaxy.TextX(),bmaxy.TextY() }, bmaxy.text, olc::WHITE, { bmaxy.font, bmaxy.font });
+        DrawRect(bminx.x, bminx.y, bminx.width, bminx.height, button_color);
+        DrawStringDecal({ bminx.TextX(),bminx.TextY() }, bminx.text, text_color, { bminx.font, bminx.font });
+        DrawRect(bmaxx.x, bmaxx.y, bmaxx.width, bmaxx.height, button_color);
+        DrawStringDecal({ bmaxx.TextX(),bmaxx.TextY() }, bmaxx.text, text_color, { bmaxx.font, bmaxx.font });
+        DrawRect(bminy.x, bminy.y, bminy.width, bminy.height, button_color);
+        DrawStringDecal({ bminy.TextX(),bminy.TextY() }, bminy.text, text_color, { bminy.font, bminy.font });
+        DrawRect(bmaxy.x, bmaxy.y, bmaxy.width, bmaxy.height, button_color);
+        DrawStringDecal({ bmaxy.TextX(),bmaxy.TextY() }, bmaxy.text, text_color, { bmaxy.font, bmaxy.font });
 
-        DrawRect(bprobn.x, bprobn.y, bprobn.width, bprobn.height, olc::DARK_GREY);
-        DrawStringDecal({ bprobn.TextX(),bprobn.TextY() }, bprobn.text, olc::WHITE, { bprobn.font, bprobn.font });
-        DrawRect(bprobs.x, bprobs.y, bprobs.width, bprobs.height, olc::DARK_GREY);
-        DrawStringDecal({ bprobs.TextX(),bprobs.TextY() }, bprobs.text, olc::WHITE, { bprobs.font, bprobs.font });
-        DrawRect(bprobe.x, bprobe.y, bprobe.width, bprobe.height, olc::DARK_GREY);
-        DrawStringDecal({ bprobe.TextX(),bprobe.TextY() }, bprobe.text, olc::WHITE, { bprobe.font, bprobe.font });
-        DrawRect(bprobw.x, bprobw.y, bprobw.width, bprobw.height, olc::DARK_GREY);
-        DrawStringDecal({ bprobw.TextX(),bprobw.TextY() }, bprobw.text, olc::WHITE, { bprobw.font, bprobw.font });
+        DrawRect(bprobn.x, bprobn.y, bprobn.width, bprobn.height, button_color);
+        DrawStringDecal({ bprobn.TextX(),bprobn.TextY() }, bprobn.text, text_color, { bprobn.font, bprobn.font });
+        DrawRect(bprobs.x, bprobs.y, bprobs.width, bprobs.height, button_color);
+        DrawStringDecal({ bprobs.TextX(),bprobs.TextY() }, bprobs.text, text_color, { bprobs.font, bprobs.font });
+        DrawRect(bprobe.x, bprobe.y, bprobe.width, bprobe.height, button_color);
+        DrawStringDecal({ bprobe.TextX(),bprobe.TextY() }, bprobe.text, text_color, { bprobe.font, bprobe.font });
+        DrawRect(bprobw.x, bprobw.y, bprobw.width, bprobw.height, button_color);
+        DrawStringDecal({ bprobw.TextX(),bprobw.TextY() }, bprobw.text, text_color, { bprobw.font, bprobw.font });
 
         // Numeric Input
         if (GetKey(olc::Key::K0).bPressed)
@@ -959,7 +972,7 @@ public:
         {
             info_text = "Removes The Selected Generation Step From The List";
             //dtls_text = "()";
-            DrawRect(bminusgs.x, bminusgs.y, bminusgs.width, bminusgs.height, olc::WHITE);
+            DrawRect(bminusgs.x, bminusgs.y, bminusgs.width, bminusgs.height, select_color);
             if (GetMouse(0).bReleased && world.generation_steps > 1)
             {
                 world.generation_steps--;
@@ -977,7 +990,7 @@ public:
         {
             info_text = "Inserts A Generation Step Into The List";
             //dtls_text = "()";
-            DrawRect(bplusgs.x, bplusgs.y, bplusgs.width, bplusgs.height, olc::WHITE);
+            DrawRect(bplusgs.x, bplusgs.y, bplusgs.width, bplusgs.height, select_color);
             if (GetMouse(0).bReleased && world.generation_steps < world.maximum_generation_steps)
             {
                 world.generation_steps++;
@@ -1000,7 +1013,7 @@ public:
         {
             info_text = "Material To add To World";
             //dtls_text = "()";
-            DrawRect(btile.x, btile.y, btile.width, btile.height, olc::WHITE);
+            DrawRect(btile.x, btile.y, btile.width, btile.height, select_color);
             if (GetMouse(0).bReleased) world.selected_param = world.pTILE;
         }
         // Density Value
@@ -1008,14 +1021,14 @@ public:
         {
             info_text = "Probability A Material Will Spawn Per Cell";
             dtls_text = "(Add Layer, Seed Material)";
-            DrawRect(bdense.x, bdense.y, bdense.width, bdense.height, olc::WHITE);
+            DrawRect(bdense.x, bdense.y, bdense.width, bdense.height, select_color);
             if (GetMouse(0).bReleased) world.selected_param = world.pDENSE;
         }
         if (biter.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "How Many Times to Repeat Current Step";
             //dtls_text = "()";
-            DrawRect(biter.x, biter.y, biter.width, biter.height, olc::WHITE);
+            DrawRect(biter.x, biter.y, biter.width, biter.height, select_color);
             if (GetMouse(0).bReleased) world.selected_param = world.pITER;
         }
         // X Values
@@ -1023,14 +1036,14 @@ public:
         {
             info_text = "Minimum Width Range Of Effect";
             dtls_text = "(0-100 %)";
-            DrawRect(bminx.x, bminx.y, bminx.width, bminx.height, olc::WHITE);
+            DrawRect(bminx.x, bminx.y, bminx.width, bminx.height, select_color);
             if (GetMouse(0).bReleased) world.selected_param = world.pMINX;
         }
         if (bmaxx.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Maximum Width Range Of Effect";
             dtls_text = "(0-100 %)";
-            DrawRect(bmaxx.x, bmaxx.y, bmaxx.width, bmaxx.height, olc::WHITE);
+            DrawRect(bmaxx.x, bmaxx.y, bmaxx.width, bmaxx.height, select_color);
             if (GetMouse(0).bReleased) world.selected_param = world.pMAXX;
         }
         // Y values
@@ -1038,14 +1051,14 @@ public:
         {
             info_text = "Minimum Height Range Of Effect";
             dtls_text = "(0-100 %)";
-            DrawRect(bminy.x, bminy.y, bminy.width, bminy.height, olc::WHITE);
+            DrawRect(bminy.x, bminy.y, bminy.width, bminy.height, select_color);
             if (GetMouse(0).bReleased) world.selected_param = world.pMINY;
         }
         if (bmaxy.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Maximum Height Range Of Effect";
             dtls_text = "(0-100 %)";
-            DrawRect(bmaxy.x, bmaxy.y, bmaxy.width, bmaxy.height, olc::WHITE);
+            DrawRect(bmaxy.x, bmaxy.y, bmaxy.width, bmaxy.height, select_color);
             if (GetMouse(0).bReleased) world.selected_param = world.pMAXY;
         }
         // Neighbor Values
@@ -1053,28 +1066,28 @@ public:
         {
             info_text = "Probability That A Northern Neighbor Will Spawn";
             //dtls_text = "()";
-            DrawRect(bprobn.x, bprobn.y, bprobn.width, bprobn.height, olc::WHITE);
+            DrawRect(bprobn.x, bprobn.y, bprobn.width, bprobn.height, select_color);
             if (GetMouse(0).bReleased) world.selected_param = world.pPROBN;
         }
         if (bprobs.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Probability That A Southern Neighbor Will Spawn";
             //dtls_text = "()";
-            DrawRect(bprobs.x, bprobs.y, bprobs.width, bprobs.height, olc::WHITE);
+            DrawRect(bprobs.x, bprobs.y, bprobs.width, bprobs.height, select_color);
             if (GetMouse(0).bReleased) world.selected_param = world.pPROBS;
         }
         if (bprobe.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Probability That An Eastern Neighbor Will Spawn";
             //dtls_text = "()";
-            DrawRect(bprobe.x, bprobe.y, bprobe.width, bprobe.height, olc::WHITE);
+            DrawRect(bprobe.x, bprobe.y, bprobe.width, bprobe.height, select_color);
             if (GetMouse(0).bReleased) world.selected_param = world.pPROBE;
         }
         if (bprobw.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Probability That A Western Neighbor Will Spawn";
             //dtls_text = "()";
-            DrawRect(bprobw.x, bprobw.y, bprobw.width, bprobw.height, olc::WHITE);
+            DrawRect(bprobw.x, bprobw.y, bprobw.width, bprobw.height, select_color);
             if (GetMouse(0).bReleased) world.selected_param = world.pPROBW;
         }
         // Mode Value
@@ -1082,7 +1095,7 @@ public:
         {
             info_text = "Changes Generation Mode";
             //dtls_text = "()";
-            DrawRect(bmode.x, bmode.y, bmode.width, bmode.height, olc::WHITE);
+            DrawRect(bmode.x, bmode.y, bmode.width, bmode.height, select_color);
             if (GetMouse(0).bReleased) world.selected_param = world.pMODE;
         }
 
@@ -1090,7 +1103,7 @@ public:
         if (bclear.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Clears All Generation Data";
-            DrawRect(bclear.x, bclear.y, bclear.width, bclear.height, olc::WHITE);
+            DrawRect(bclear.x, bclear.y, bclear.width, bclear.height, select_color);
             if (GetMouse(0).bReleased)
             {
                 world.ClearData();
@@ -1101,7 +1114,7 @@ public:
         {
             info_text = "Standard World Generation";
             //dtls_text = "()";
-            DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, olc::WHITE);
+            DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, select_color);
             if (GetMouse(0).bReleased)
             {
                 world.PresetData();
@@ -1111,7 +1124,7 @@ public:
         if (brandom.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Randomizes Game Seed";
-            DrawRect(brandom.x, brandom.y, brandom.width, brandom.height, olc::WHITE);
+            DrawRect(brandom.x, brandom.y, brandom.width, brandom.height, select_color);
             if (GetMouse(0).bReleased)
             {
                 game_seed = rand() % 9999999999;
@@ -1130,7 +1143,7 @@ public:
         if (bsave.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Saves Generation Data";
-            DrawRect(bsave.x, bsave.y, bsave.width, bsave.height, olc::WHITE);
+            DrawRect(bsave.x, bsave.y, bsave.width, bsave.height, select_color);
             if (GetMouse(0).bReleased)
             {
                 std::string data_dir = std::to_string(save_slot) + ".txt";
@@ -1141,7 +1154,7 @@ public:
         if (bload.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Loads Generation Data";
-            DrawRect(bload.x, bload.y, bload.width, bload.height, olc::WHITE);
+            DrawRect(bload.x, bload.y, bload.width, bload.height, select_color);
             if (GetMouse(0).bReleased)
             {
                 std::string data_dir = std::to_string(save_slot) + ".txt";
@@ -1152,7 +1165,7 @@ public:
         if (bcopy.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Copies Selected Generation Step";
-            DrawRect(bcopy.x, bcopy.y, bcopy.width, bcopy.height, olc::WHITE);
+            DrawRect(bcopy.x, bcopy.y, bcopy.width, bcopy.height, select_color);
             if (GetMouse(0).bReleased)
             {
                 for (int p = 0; p < world.total_parameters; p++)
@@ -1165,7 +1178,7 @@ public:
         if (bpaste.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Pastes Selected Generation Step";
-            DrawRect(bpaste.x, bpaste.y, bpaste.width, bpaste.height, olc::WHITE);
+            DrawRect(bpaste.x, bpaste.y, bpaste.width, bpaste.height, select_color);
             if (GetMouse(0).bReleased)
             {
                  world.generation_steps++;
@@ -1187,7 +1200,7 @@ public:
         if (bgenerate.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Generates World And Starts Game";
-            DrawRect(bgenerate.x, bgenerate.y, bgenerate.width, bgenerate.height, olc::WHITE);
+            DrawRect(bgenerate.x, bgenerate.y, bgenerate.width, bgenerate.height, select_color);
             if (GetMouse(0).bReleased)
             {
                 bool is_data_valid = false;
@@ -1205,7 +1218,7 @@ public:
         if (bpreview.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Updates The Preview Box";
-            DrawRect(bpreview.x, bpreview.y, bpreview.width, bpreview.height, olc::WHITE);
+            DrawRect(bpreview.x, bpreview.y, bpreview.width, bpreview.height, select_color);
             if (GetMouse(0).bReleased)
             {
                 srand(game_seed);
@@ -1263,25 +1276,25 @@ public:
                 tile_text = ">" + tile_text;
                 switch (world.selected_param)
                 {
-                    case world.pTILE : DrawStringDecal({ float(186),float((list_height*9)+10) }, tile_text, olc::WHITE, { 0.5, 0.5 }); break;
-                    case world.pMODE : DrawStringDecal({ float(186),float((list_height*9)+10) }, mode_text, olc::WHITE, { 0.5, 0.5 }); break;
-                    default : DrawStringDecal({ float(186),float((list_height*9)+10) }, vlue_text, olc::WHITE, { 0.5, 0.5 }); break;
+                    case world.pTILE : DrawStringDecal({ float(186),float((list_height*9)+10) }, tile_text, text_color, { 0.5, 0.5 }); break;
+                    case world.pMODE : DrawStringDecal({ float(186),float((list_height*9)+10) }, mode_text, text_color, { 0.5, 0.5 }); break;
+                    default : DrawStringDecal({ float(186),float((list_height*9)+10) }, vlue_text, text_color, { 0.5, 0.5 }); break;
                 }
             }
             else
             {
                 switch (world.selected_param)
                 {
-                    case world.pTILE : DrawStringDecal({ float(186),float((list_height*9)+10) }, tile_text, olc::DARK_GREY, { 0.5, 0.5 }); break;
-                    case world.pMODE : DrawStringDecal({ float(186),float((list_height*9)+10) }, mode_text, olc::DARK_GREY, { 0.5, 0.5 }); break;
-                    default : DrawStringDecal({ float(186),float((list_height*9)+10) }, vlue_text, olc::DARK_GREY, { 0.5, 0.5 }); break;
+                    case world.pTILE : DrawStringDecal({ float(186),float((list_height*9)+10) }, tile_text, button_color, { 0.5, 0.5 }); break;
+                    case world.pMODE : DrawStringDecal({ float(186),float((list_height*9)+10) }, mode_text, button_color, { 0.5, 0.5 }); break;
+                    default : DrawStringDecal({ float(186),float((list_height*9)+10) }, vlue_text, button_color, { 0.5, 0.5 }); break;
                 }
             }
             list_height++;
         }
         // Draw Info
-        DrawStringDecal({ 5,109 }, info_text, olc::WHITE, { 0.5, 0.5 });
-        DrawStringDecal({ 5,115 }, dtls_text, olc::WHITE, { 0.5, 0.5 });
+        DrawStringDecal({ 5,109 }, info_text, text_color, { 0.5, 0.5 });
+        DrawStringDecal({ 5,115 }, dtls_text, text_color, { 0.5, 0.5 });
 
     }
 
@@ -1313,7 +1326,7 @@ public:
         float msg_x = width/2-((message.size()/2)*4);
         float msg_y = (height/2)-4;
 
-        DrawStringDecal({ msg_x, msg_y }, message, olc::WHITE, { 0.5, 0.5 });
+        DrawStringDecal({ msg_x, msg_y }, message, text_color, { 0.5, 0.5 });
         ProgressBar(prog_x, prog_y, world.generation_step-1, world.generation_steps, width/2);
 
     }
@@ -1344,13 +1357,18 @@ public:
         if (GetKey(olc::Key::SPACE).bPressed)
         {
             world.SettleTiles(player.x-(width), player.y-(height), width*2, height*2);
+            DrawSky();
+            DrawTerrain();
+            DrawPlayer();
         }
 
-        DrawSky();
-        DrawTerrain();
-        DrawPlayer();
-        DrawInventory();
-        //DrawParticles(fElapsedTime);
+        if (GetKey(olc::Key::I).bHeld) DrawInventory();
+        if (GetKey(olc::Key::I).bReleased)
+        {
+            DrawSky();
+            DrawTerrain();
+            DrawPlayer();
+        }
         DrawHUD();
     }
 
@@ -1374,7 +1392,6 @@ public:
         {
             if (player.hotbar[selected_hotbar][0] == itNONE)
             {
-                std::cout << "No Item Selected" << std::endl;
             }
             if (player.hotbar[selected_hotbar][0] == itWAND)
             {
