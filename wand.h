@@ -16,9 +16,13 @@ public:
     void GenerateWand()
     {
         GenerateStats();
-        Effect e = Effect();
-        e.mines = true;
-        effects.push_back(e);
+        Effect e1 = Effect();
+        e1.mines = true;
+        Effect e2 = Effect();
+        e2.bouncy = true;
+        
+        effects.push_back(e1);
+        effects.push_back(e2);
     }
 
     void GenerateStats()
@@ -42,7 +46,7 @@ public:
     {
         can_fire = false;
         current_effect++;
-        if (current_effect >= effects.size()-1)
+        if (current_effect >= effects.size())
         {
             current_effect = 0;
         }

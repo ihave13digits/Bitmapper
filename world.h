@@ -12,7 +12,7 @@ public:
 
     // Terrain Tiles
 
-    int total_tiles = 92;
+    int total_tiles = 96;
     int total_parameters = 12;
     int total_modes = 4;
 
@@ -64,6 +64,8 @@ public:
         GRAIN,
         GEL,
         SOLID,
+        GIZMO,
+        PLUMBING,
     };
 
     enum TILES
@@ -168,11 +170,15 @@ public:
         AXLE_RIGHT,
         CONVEYOR_LEFT,
         CONVEYOR_RIGHT,
+        PISTON_UP,
+        PISTON_DOWN,
+        PISTON_LEFT,
+        PISTON_RIGHT,
         //
         MANTLE
     };
 
-    std::string tiles[92] = {
+    std::string tiles[96] = {
         //
         "Air",
         "Steam",
@@ -273,11 +279,15 @@ public:
         "Axle (Right)",
         "Conveyor (Left)",
         "Conveyor (Right)",
+        "Piston (Up)",
+        "Piston (Down)",
+        "Piston (Left)",
+        "Piston (Right)",
         //
         "Mantle"
     };
 
-    int tileset[92][2][4] = {
+    int tileset[96][2][4] = {
         // |Base Color        |     |Variation       |
         // Gases
         {  {200, 200, 230, 5  },    {1,   1,   25,  0}  },// Air
@@ -376,8 +386,12 @@ public:
         {  {130, 120, 110, 255},    {15,  10,  10,  0}  },// Gutter (Mud)
         {  {40,  40,  50,  255},    {15,  10,  10,  0}  },// Axle (Left)
         {  {40,  40,  50,  255},    {15,  10,  10,  0}  },// Axle (Right)
-        {  {50,  50,  50,  255},    {15,  10,  10,  0}  },// Conveyor (Left)
-        {  {50,  50,  50,  255},    {15,  10,  10,  0}  },// Conveyor (Right)
+        {  {60,  50,  50,  255},    {15,  10,  10,  0}  },// Conveyor (Left)
+        {  {60,  50,  50,  255},    {15,  10,  10,  0}  },// Conveyor (Right)
+        {  {75,  75,  75,  255},    {15,  10,  10,  0}  },// Piston (Up)
+        {  {75,  75,  75,  255},    {15,  10,  10,  0}  },// Piston (Down)
+        {  {75,  75,  75,  255},    {15,  10,  10,  0}  },// Piston (Left)
+        {  {75,  75,  75,  255},    {15,  10,  10,  0}  },// Piston (Right)
         // Unbreakable
         {  {25,  20,  20,  255},    {25,  1,   1,   0}  },// Mantle
     };
@@ -1163,7 +1177,7 @@ public:
                             int dS  = int( (_y+1) * width + (_x  ) );
                             switch (matrix[dS])
                             {
-                                case GRASS : { if (rand()%100 < 25) replace[index] = AIR; } break;
+                                case GRASS : { if (rand()%1000 < 5) replace[index] = AIR; } break;
                                 case LAVA : { replace[index] = WATER; } break;
                             }
                         }
@@ -1399,7 +1413,7 @@ public:
                                 case SMOKE : { if (rand()%10 < 6) {replace[dS] = THIN_SMOKE; replace[index] = AIR;}} break;
                                 case THICK_SMOKE : { if (rand()%100 < 4) {replace[dS] = THIN_SMOKE; replace[index] = THIN_SMOKE;}} break;
                             }
-                            if (chance < 40)
+                            if (chance < 25)
                             {
                                 switch (matrix[dE])
                                 {
@@ -1408,7 +1422,7 @@ public:
                                     case THICK_SMOKE : { replace[dE] = THIN_SMOKE; replace[index] = THICK_SMOKE; } break;
                                 }
                             }
-                            if (chance > 60)
+                            if (chance > 75)
                             {
                                 switch (matrix[dW])
                                 {
@@ -1432,7 +1446,7 @@ public:
                                 case THIN_SMOKE : { if (rand()%10 < 6) {replace[dS] = SMOKE; replace[index] = THIN_SMOKE;}} break;
                                 case THICK_SMOKE : { if (rand()%100 < 4) {replace[dS] = SMOKE; replace[index] = SMOKE;}} break;
                             }
-                            if (chance < 40)
+                            if (chance < 25)
                             {
                             switch (matrix[dE])
                             {
@@ -1441,7 +1455,7 @@ public:
                                 case THICK_SMOKE : { replace[dE] = SMOKE; replace[index] = THICK_SMOKE; } break;
                             }
                             }
-                            if (chance > 60)
+                            if (chance > 75)
                             {
                             switch (matrix[dW])
                             {
@@ -1465,7 +1479,7 @@ public:
                                 case THIN_SMOKE : { if (rand()%10 < 6) {replace[dS] = THICK_SMOKE; replace[index] = THIN_SMOKE;}} break;
                                 case SMOKE : { if (rand()%100 < 4) {replace[dS] = THICK_SMOKE; replace[index] = SMOKE;}} break;
                             }
-                            if (chance < 40)
+                            if (chance < 25)
                             {
                                 switch (matrix[dE])
                                 {
@@ -1474,7 +1488,7 @@ public:
                                     case SMOKE : { replace[dE] = THICK_SMOKE; replace[index] = SMOKE; } break;
                                 }
                             }
-                            if (chance > 60)
+                            if (chance > 75)
                             {
                                 switch (matrix[dW])
                                 {
@@ -1508,6 +1522,7 @@ public:
                                 (matrix[dE] == FLAME) ||
                                 (matrix[dW] == FLAME)) { replace[index] = WATER; }
                             if (matrix[dS] == GRASS) { replace[index] = WATER; }
+                            if (rand()%1000 < 5) { replace[index] = WATER; }
                         }
                         break;
                         case TRUNK :
@@ -1794,42 +1809,33 @@ public:
                             int dSE = int( (_y+1) * width + (_x+1) );
                             int dS = int( (_y+1) * width + (_x) );
                             
+                            int v1 = matrix[dNW];
+                            int v2 = matrix[dN];
+                            int v3 = matrix[dNE];
+                            int v4 = matrix[dE];
+                            int v5 = matrix[dSE];
+                            int v6 = matrix[dS];
+                            int v7 = matrix[dSW];
+                            int v8 = matrix[dW];
+
                             if (
-                                    (GetType(matrix[dNW]) == SOLID) &&
-                                    (GetType(matrix[dN]) == SOLID) &&
-                                    (GetType(matrix[dNE]) == SOLID) &&
-                                    (GetType(matrix[dE]) == SOLID) &&
-                                    (GetType(matrix[dSE]) == SOLID) &&
-                                    (GetType(matrix[dS]) == SOLID) &&
-                                    (GetType(matrix[dSW]) == SOLID) &&
-                                    (GetType(matrix[dW]) == SOLID) )
+                               (GetType(v1) == SOLID || GetType(v1) == GIZMO) &&
+                               (GetType(v2) == SOLID || GetType(v2) == GIZMO) &&
+                               (GetType(v3) == SOLID || GetType(v3) == GIZMO) &&
+                               (GetType(v4) == SOLID || GetType(v4) == GIZMO) &&
+                               (GetType(v5) == SOLID || GetType(v5) == GIZMO) &&
+                               (GetType(v6) == SOLID || GetType(v6) == GIZMO) &&
+                               (GetType(v7) == SOLID || GetType(v7) == GIZMO) &&
+                               (GetType(v8) == SOLID || GetType(v8) == GIZMO) )
                             {
-                                int v1 = matrix[dNW];
-                                int v2 = matrix[dN];
-                                int v3 = matrix[dNE];
-                                int v4 = matrix[dE];
-                                int v5 = matrix[dSE];
-                                int v6 = matrix[dS];
-                                int v7 = matrix[dSW];
-                                int v8 = matrix[dW];
-
-                                replace[dNW] = v2;
-                                replace[dN] =  v3;
-                                replace[dNE] = v4;
-                                replace[dE] =  v5;
-                                replace[dSE] = v6;
-                                replace[dS] =  v7;
-                                replace[dSW] = v8;
-                                replace[dW] =  v1;
-
-                                matrix[dNW] = v2;
-                                matrix[dN] =  v3;
-                                matrix[dNE] = v4;
-                                matrix[dE] =  v5;
-                                matrix[dSE] = v6;
-                                matrix[dS] =  v7;
-                                matrix[dSW] = v8;
-                                matrix[dW] =  v1;
+                                replace[dNW] = v2; matrix[dNW] = v2;
+                                replace[dN] = v3; matrix[dN] = v3;
+                                replace[dNE] = v4; matrix[dNE] = v4;
+                                replace[dE] = v5; matrix[dE] = v5;
+                                replace[dSE] = v6; matrix[dSE] = v6;
+                                replace[dS] = v7; matrix[dS] = v7;
+                                replace[dSW] = v8; matrix[dSW] = v8;
+                                replace[dW] = v1; matrix[dW] = v1;
                             }
                         }
                         break;
@@ -1844,44 +1850,34 @@ public:
                             int dSE = int( (_y+1) * width + (_x+1) );
                             int dS = int( (_y+1) * width + (_x) );
 
+                            int v1 = matrix[dNW];
+                            int v2 = matrix[dN];
+                            int v3 = matrix[dNE];
+                            int v4 = matrix[dE];
+                            int v5 = matrix[dSE];
+                            int v6 = matrix[dS];
+                            int v7 = matrix[dSW];
+                            int v8 = matrix[dW];
+
                             if (
-                                    (GetType(matrix[dNW]) == SOLID) &&
-                                    (GetType(matrix[dN]) == SOLID) &&
-                                    (GetType(matrix[dNE]) == SOLID) &&
-                                    (GetType(matrix[dE]) == SOLID) &&
-                                    (GetType(matrix[dSE]) == SOLID) &&
-                                    (GetType(matrix[dS]) == SOLID) &&
-                                    (GetType(matrix[dSW]) == SOLID) &&
-                                    (GetType(matrix[dW]) == SOLID) )
+                                (GetType(v1) == SOLID || GetType(v1) == GIZMO) &&
+                                (GetType(v2) == SOLID || GetType(v2) == GIZMO) &&
+                                (GetType(v3) == SOLID || GetType(v3) == GIZMO) &&
+                                (GetType(v4) == SOLID || GetType(v4) == GIZMO) &&
+                                (GetType(v5) == SOLID || GetType(v5) == GIZMO) &&
+                                (GetType(v6) == SOLID || GetType(v6) == GIZMO) &&
+                                (GetType(v7) == SOLID || GetType(v7) == GIZMO) &&
+                                (GetType(v8) == SOLID || GetType(v8) == GIZMO) )
                             {
-                                int v1 = matrix[dNW];
-                                int v2 = matrix[dN];
-                                int v3 = matrix[dNE];
-                                int v4 = matrix[dE];
-                                int v5 = matrix[dSE];
-                                int v6 = matrix[dS];
-                                int v7 = matrix[dSW];
-                                int v8 = matrix[dW];
-
-                                replace[dNW] = v8;
-                                replace[dN] =  v1;
-                                replace[dNE] = v2;
-                                replace[dE] =  v3;
-                                replace[dSE] = v4;
-                                replace[dS] =  v5;
-                                replace[dSW] = v6;
-                                replace[dW] =  v7;
-
-                                matrix[dNW] = v8;
-                                matrix[dN] =  v1;
-                                matrix[dNE] = v2;
-                                matrix[dE] =  v3;
-                                matrix[dSE] = v4;
-                                matrix[dS] =  v5;
-                                matrix[dSW] = v6;
-                                matrix[dW] =  v7;
+                                replace[dNW] = v8; matrix[dNW] = v8;
+                                replace[dN] = v1; matrix[dN] = v1;
+                                replace[dNE] = v2; matrix[dNE] = v2;
+                                replace[dE] = v3; matrix[dE] = v3;
+                                replace[dSE] = v4; matrix[dSE] = v4;
+                                replace[dS] = v5; matrix[dS] = v5;
+                                replace[dSW] = v6; matrix[dSW] = v6;
+                                replace[dW] = v7; matrix[dW] = v7;
                             }
-
                         }
                         break;
                         case CONVEYOR_LEFT :
@@ -1889,18 +1885,16 @@ public:
                             int dNW = int( (_y-1) * width + (_x-1) );
                             int dNE = int( (_y-1) * width + (_x+1) );
                             int dN = int( (_y-1) * width + (_x) );
-
-                            if ( matrix[dN] < VALVE_CLOSED && matrix[dNE] < VALVE_CLOSED && matrix[dNW] < VALVE_CLOSED )
+                            int v1 = matrix[dNW];
+                            int v2 = matrix[dN];
+                            int v3 = matrix[dNE];
+                            if ( v1<VALVE_CLOSED && v2<VALVE_CLOSED && v3<VALVE_CLOSED)
                             {
-                                if (matrix[dN] > MUD && matrix[dNW] == AIR)
+                                if (v2 > MUD && v1 == AIR)
                                 {
-                                    replace[dNW] = matrix[dN];
-                                    replace[dN] = matrix[dNE];
-                                    replace[dNE] = AIR;
-
-                                    matrix[dNW] = matrix[dN];
-                                    matrix[dN] = matrix[dNE];
-                                    matrix[dNE] = AIR;
+                                    replace[dNW] = v2; v1 = AIR;
+                                    if (GetType(v3) != SOLID) replace[dN] = v3; matrix[dN] = v1;
+                                    if (GetType(v3) == SOLID) replace[dN] = AIR; matrix[dN] = AIR;
                                 }
                             }
                         }
@@ -1910,21 +1904,64 @@ public:
                             int dNW = int( (_y-1) * width + (_x-1) );
                             int dNE = int( (_y-1) * width + (_x+1) );
                             int dN = int( (_y-1) * width + (_x) );
-                            if ( matrix[dN] < VALVE_CLOSED && matrix[dNE] < VALVE_CLOSED && matrix[dNW] < VALVE_CLOSED )
+                            int v1 = matrix[dNE];
+                            int v2 = matrix[dN];
+                            int v3 = matrix[dNW];
+                            if ( v1<VALVE_CLOSED && v2<VALVE_CLOSED && v3<VALVE_CLOSED)
                             {
-                                if (matrix[dN] > MUD && matrix[dNE] == AIR)
+                                if (v2 > MUD && v1 == AIR)
                                 {
-                                    replace[dNE] = matrix[dN];
-                                    replace[dN] = matrix[dNW];
-                                    replace[dNW] = AIR;
-
-                                    matrix[dNW] = matrix[dN];
-                                    matrix[dN] = matrix[dNE];
-                                    matrix[dNE] = AIR;
+                                    replace[dNE] = v2; matrix[dNW] = AIR;
+                                    if (GetType(v3) != SOLID) replace[dN] = v1; matrix[dN] = v3;
+                                    if (GetType(v3) == SOLID) replace[dN] = AIR; matrix[dN] = AIR;
                                 }
                             }
                         }
                         break;
+                        case PISTON_UP :
+                        {
+                            int dN = int( (_y-1) * width + (_x) );
+                            int dNN = int( (_y-2) * width + (_x) );
+                            int v = matrix[dN];
+                            if (matrix[dNN] == AIR)
+                            {
+                                replace[dNN] = v; replace[dN] = AIR;
+                                matrix[dNN] = v; matrix[dN] = AIR;
+                            }
+                        } break;
+                        case PISTON_DOWN :
+                        {
+                            int dS = int( (_y+1) * width + (_x) );
+                            int dSS = int( (_y+2) * width + (_x) );
+                            int v = matrix[dS];
+                            if (matrix[dSS] == AIR)
+                            {
+                                replace[dSS] = v; replace[dS] = AIR;
+                                matrix[dSS] = v; matrix[dS] = AIR;
+                            }
+                        } break;
+                        case PISTON_LEFT :
+                        {
+                            int dW = int( (_y) * width + (_x-1) );
+                            int dWW = int( (_y) * width + (_x-2) );
+                            int v = matrix[dW];
+                            if (matrix[dWW] == AIR)
+                            {
+                                replace[dWW] = v; replace[dW] = AIR;
+                                matrix[dWW] = v; matrix[dW] = AIR;
+                            }
+                        } break;
+                        case PISTON_RIGHT :
+                        {
+                            int dE = int( (_y) * width + (_x+1) );
+                            int dEE = int( (_y) * width + (_x+2) );
+                            int v = matrix[dE];
+                            if (matrix[dEE] == AIR)
+                            {
+                                replace[dEE] = v; replace[dE] = AIR;
+                                matrix[dEE] = v; matrix[dE] = AIR;
+                            }
+                        } break;
                     }
                 }
             }
@@ -2002,8 +2039,35 @@ public:
             case THIN_SMOKE : cell_type = GAS; break;
             case SMOKE : cell_type = GAS; break;
             case THICK_SMOKE : cell_type = GAS; break;
-            // 
-            // Mechanism
+            // Gizmo
+            case VALVE_CLOSED : cell_type = PLUMBING; break;
+            case VALVE_OPEN : cell_type = PLUMBING; break;
+            case PUMP : cell_type = PLUMBING; break;
+            case PIPE : cell_type = PLUMBING; break;
+            case PIPE_WATER : cell_type = PLUMBING; break;
+            case PIPE_BRINE : cell_type = PLUMBING; break;
+            case PIPE_HONEY : cell_type = PLUMBING; break;
+            case PIPE_BLOOD : cell_type = PLUMBING; break;
+            case PIPE_LAVA : cell_type = PLUMBING; break;
+            case PIPE_MUCK : cell_type = PLUMBING; break;
+            case PIPE_MUD : cell_type = PLUMBING; break;
+            case DRAIN : cell_type = PLUMBING; break;
+            case GUTTER : cell_type = PLUMBING; break;
+            case GUTTER_WATER : cell_type = PLUMBING; break;
+            case GUTTER_BRINE : cell_type = PLUMBING; break;
+            case GUTTER_HONEY : cell_type = PLUMBING; break;
+            case GUTTER_BLOOD : cell_type = PLUMBING; break;
+            case GUTTER_LAVA : cell_type = PLUMBING; break;
+            case GUTTER_MUCK : cell_type = PLUMBING; break;
+            case GUTTER_MUD : cell_type = PLUMBING; break;
+            case AXLE_LEFT : cell_type = GIZMO; break;
+            case AXLE_RIGHT : cell_type = GIZMO; break;
+            case CONVEYOR_LEFT : cell_type = GIZMO; break;
+            case CONVEYOR_RIGHT : cell_type = GIZMO; break;
+            case PISTON_UP : cell_type = GIZMO; break;
+            case PISTON_DOWN : cell_type = GIZMO; break;
+            case PISTON_LEFT : cell_type = GIZMO; break;
+            case PISTON_RIGHT : cell_type = GIZMO; break;
         }
         return cell_type;
     }
