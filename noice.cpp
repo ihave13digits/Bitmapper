@@ -374,7 +374,7 @@ public:
                         for (int ix = 0; ix < icon.size; ix++)
                         {
                             Button b = Button();
-                            b.Setup((x*10)+x_margin, (y*10)+y_margin, 10, 10, 1.0, std::to_string(wand_value));
+                            b.Setup((x*10)+x_margin, (y*10)+y_margin, 9, 9, 1.0, std::to_string(wand_value));
                             buttons[y*cols+x] = b;
                             int index_value = icon.wand[iy*icon.size+ix];
                             float v = (0.25*float(index_value));
@@ -434,13 +434,15 @@ public:
                         if (tile_value < world.total_tiles)
                         {
                             Button b = Button();
-                            b.Setup((x*10)+x_margin, (y*10)+y_margin, 10, 10, 1.0, std::to_string(tile_value));
+                            b.Setup((x*10)+x_margin, (y*10)+y_margin, 9, 9, 1.0, std::to_string(tile_value));
                             buttons[y*cols+x] = b;
                             int index_value = icon.solid[iy*icon.size+ix];
                             if (tile_type == world.GRAIN) index_value = icon.grain[iy*icon.size+ix];
                             if (tile_type == world.GEL) index_value = icon.gel[iy*icon.size+ix];
                             if (tile_type == world.FLUID) index_value = icon.fluid[iy*icon.size+ix];
                             if (tile_type == world.GAS) index_value = icon.gas[iy*icon.size+ix];
+                            if (tile_type == world.GIZMO) index_value = icon.gizmo[iy*icon.size+ix];
+                            if (tile_type == world.PLUMBING) index_value = icon.plumbing[iy*icon.size+ix];
                             float v = (0.25*float(index_value));
                             if (index_value > 0) Draw(ix+(x*10)+x_margin, iy+(y*10)+y_margin, olc::Pixel(int(R*v), int(G*v), int(B*v), A));
                         }
@@ -718,6 +720,8 @@ public:
                         if (tile_type == world.GEL) index_value = icon.gel[iy*icon.size+ix];
                         if (tile_type == world.FLUID) index_value = icon.fluid[iy*icon.size+ix];
                         if (tile_type == world.GAS) index_value = icon.gas[iy*icon.size+ix];
+                        if (tile_type == world.GIZMO) index_value = icon.gizmo[iy*icon.size+ix];
+                        if (tile_type == world.PLUMBING) index_value = icon.plumbing[iy*icon.size+ix];
                         float v = (0.25*float(index_value));
                         if (index_value > 0) Draw(ix+x+1, iy+3, olc::Pixel(int(R*v), int(G*v), int(B*v), A));
                     }
