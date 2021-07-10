@@ -592,6 +592,30 @@ public:
         SetPixelMode(olc::Pixel::NORMAL);
     }
 
+    bool PlayerVsWorld()
+    {
+        bool colliding = false;
+        int f = player.animations[player.anim][player.frame];
+        for (int y = 0; y < 8; y++)
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                int index = y*8+x;
+                if (player.image[f][index] > 0)
+                {
+                    int _x = x+int(width/2)-4;
+                    int _y = y+int(height/2)-7;
+                    if ( world.IsColliding((player.x+player.vx)+(x-4), (player.y+player.vy)+(y-7)) )
+                    {
+                        Draw(_x, _y, olc::RED);
+                        colliding = true;
+                    }
+                }
+            }
+        }
+        return colliding;
+    }
+
     void DrawPlayer()
     {
         int r = 0;
@@ -607,9 +631,27 @@ public:
             case player.TRIP :     {r=0;   g=255; b=255;} break;
             case player.POISON :   {r=0;   g=255; b=0  ;} break;
             case player.CONFUSED : {r=128; g=128; b=128;} break;
-
         }
-        DrawLine(int(width/2), int(height/2), int(width/2), int(height/2)-player.height, olc::Pixel(r, g, b));
+        int f = player.animations[player.anim][player.frame];
+        for (int y = 0; y < 8; y++)
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                int index = y*8+x;
+                if (player.image[f][index] > 0)
+                {
+                    int v = player.image[f][index];
+                    int R = std::min((((v*32)+r)/2), 255);
+                    int G = std::min((((v*32)+g)/2), 255);
+                    int B = std::min((((v*32)+b)/2), 255);
+                    int _x = x+int(width/2)-4;
+                    int _y = y+int(height/2)-7;
+                    Draw(_x, _y, olc::Pixel(R, G, B));
+                    if ( world.IsColliding(player.x+(x-4), player.y+(y-7)) ) { Draw(_x, _y, olc::RED); }
+                    if ( world.IsColliding((player.x+player.vx)+(x-4), (player.y+player.vy)+(y-7)) ) { Draw(_x+player.vx, _y+player.vy, olc::YELLOW); }
+                }
+            }
+        }
     }
 
     void DrawParticles(float delta)
@@ -1435,12 +1477,6 @@ public:
         if (pause_state == psWANDS) DrawWands();
         if (pause_state == psTILES) DrawInventory();
         
-        //if (GetKey(olc::Key::I).bReleased)
-        //{
-        //    DrawSky();
-        //    DrawTerrain();
-        //    DrawPlayer();
-        //}
         DrawHUD();
     }
 
@@ -1448,7 +1484,6 @@ public:
     {
         if (GetKey(olc::Key::ESCAPE).bPressed) game_state = PAUSED;
         //
-        //if (GetKey(olc::Key::K0).bPressed) {selected_hotbar = 9;}
         if (GetKey(olc::Key::K1).bPressed) {selected_hotbar = 0;}
         if (GetKey(olc::Key::K2).bPressed) {selected_hotbar = 1;}
         if (GetKey(olc::Key::K3).bPressed) {selected_hotbar = 2;}
@@ -1504,9 +1539,6 @@ public:
             }
         }
 
-        //if (GetKey(olc::Key::Q).bPressed && selected_tile < world.total_tiles-1) selected_tile++;
-        //if (GetKey(olc::Key::E).bPressed && selected_tile > 0) selected_tile--;
-
         // Vertical Movement
         if (GetKey(olc::Key::W).bHeld)
         {
@@ -1517,6 +1549,8 @@ public:
                 player.jp--;
                 player.vy = -1;
                 player.state = player.JUMP;
+                if (GetKey(olc::Key::A).bHeld) player.anim = player.aJUMP_LEFT;
+                if (GetKey(olc::Key::D).bHeld) player.anim = player.aJUMP_RIGHT;
             }
             else
             {
@@ -1543,20 +1577,34 @@ public:
         {
             player.vy = 1;
             player.state = player.FALL;
+            if (GetKey(olc::Key::A).bHeld) player.anim = player.aFALL_LEFT;
+            if (GetKey(olc::Key::D).bHeld) player.anim = player.aFALL_RIGHT;
         }
 
         // Horizontal Movement
         if (GetKey(olc::Key::A).bHeld && player.x > width/2)
         {
             if (player.state != player.FALL && player.state != player.JUMP) player.vy = 0;
-            if (!world.IsColliding(player.x-1, player.y))
+            if (!world.IsColliding(player.x-2, player.y) )//|| (world.IsColliding(player.x-1, player.y) && !world.IsColliding(player.x-2, player.y)))
             {
-                player.state = player.WALK;
+                if (!GetKey(olc::Key::W).bHeld && player.state != player.FALL)
+                {
+                    player.state = player.WALK;
+                    player.anim = player.aWALK_LEFT;
+                }
                 player.vx = -1;
             }
-            else if (world.IsColliding(player.x-1, player.y) && !world.IsColliding(player.x-1, player.y-1))
+            else if (world.IsColliding(player.x-1, player.y) ||
+                    world.IsColliding(player.x-2, player.y) ||
+                    world.IsColliding(player.x-1, player.y-1) ||
+                    world.IsColliding(player.x-2, player.y-1)
+                    )
             {
-                player.state = player.WALK;
+                if (!GetKey(olc::Key::W).bHeld && player.state != player.FALL)
+                {
+                    player.state = player.WALK;
+                    player.anim = player.aWALK_LEFT;
+                }
                 player.vx = -1;
                 player.Move(0, -1);
             }
@@ -1564,39 +1612,61 @@ public:
         if (GetKey(olc::Key::D).bHeld && player.x < world.width-(width/2))
         {
             if (player.state != player.FALL && player.state != player.JUMP) player.vy = 0;
-            if (!world.IsColliding(player.x+1, player.y))
+            if (!world.IsColliding(player.x+1, player.y) )//|| (world.IsColliding(player.x+1, player.y) && !world.IsColliding(player.x+2, player.y)))
             {
-                player.state = player.WALK;
+                if (!GetKey(olc::Key::W).bHeld && player.state != player.FALL)
+                {
+                    player.state = player.WALK;
+                    player.anim = player.aWALK_RIGHT;
+                }
                 player.vx = 1;
 
             }
-            else if (world.IsColliding(player.x+1, player.y) && !world.IsColliding(player.x+1, player.y-1))
+            else if (world.IsColliding(player.x, player.y) ||
+                    world.IsColliding(player.x+1, player.y) ||
+                    world.IsColliding(player.x, player.y-1) ||
+                    world.IsColliding(player.x+1, player.y-1)
+                    )
             {
-                player.state = player.WALK;
+                if (!GetKey(olc::Key::W).bHeld && player.state != player.FALL)
+                {
+                    player.state = player.WALK;
+                    player.anim = player.aWALK_RIGHT;
+                }
                 player.vx = 1;
                 player.Move(0, -1);
             }
+        }
+        if (world.IsColliding(player.x, player.y+1))
+        {
+            player.state = player.IDLE;
         }
 
         if (GetKey(olc::Key::A).bReleased)
         {
             player.vx = 0;
-            player.state = player.IDLE;
+            if (
+                    world.IsColliding(player.x, player.y+1))// ||
+                    //world.IsColliding(player.x-1, player.y+1) ||
+                    //world.IsColliding(player.x+1, player.y+1) )
+            {
+
+                player.state = player.IDLE;
+                player.anim = player.aIDLE_LEFT;
+            }
         }
         if (GetKey(olc::Key::D).bReleased)
         {
             player.vx = 0;
-            player.state = player.IDLE;
+            if (
+                    world.IsColliding(player.x, player.y+1))// ||
+                    //world.IsColliding(player.x-1, player.y+1) ||
+                    //world.IsColliding(player.x+1, player.y+1) )
+            {
+                player.state = player.IDLE;
+                player.anim = player.aIDLE_RIGHT;
+            }
         }
-
-        // For Fun
-        //if (GetKey(olc::Key::T).bHeld) player.status = player.TRIP;
-
-        //if (GetKey(olc::Key::ENTER).bPressed)
-        //{
-        //    player.hotbar[selected_hotbar][0] = itTILE;
-        //    player.hotbar[selected_hotbar][1] = selected_tile;
-        //}
 
         // Update World
         sky.Update(fElapsedTime);
@@ -1629,49 +1699,13 @@ public:
                     if (player.status == player.DROWN) player.status = player.FINE;
                 }
                 break;
-                case world.WATER:
-                {
-                    if (player.bp > 0) player.bp--;
-                    else if (player.bp <= 0) player.status = player.DROWN;
-                }
-                break;
-                case world.BRINE:
-                {
-                    if (player.bp > 0) player.bp--;
-                    else if (player.bp <= 0) player.status = player.DROWN;
-                }
-                break;
-                case world.HONEY:
-                {
-                    if (player.bp > 0) player.bp--;
-                    else if (player.bp <= 0) player.status = player.DROWN;
-                }
-                break;
-                case world.BLOOD:
-                {
-                    if (player.bp > 0) player.bp--;
-                    else if (player.bp <= 0) player.status = player.DROWN;
-                }
-                break;
-                case world.MUCK:
-                {
-                    if (player.bp > 0) player.bp--;
-                    else if (player.bp <= 0) player.status = player.DROWN;
-                }
-                break;
-                case world.MUD:
-                {
-                    if (player.bp > 0) player.bp--;
-                    else if (player.bp <= 0) player.status = player.DROWN;
-                }
-                break;
                 case world.LAVA:
                 {
                     player.status = player.BURN;
                 }
                 break;
             }
-            if (!world.IsColliding(player.x+player.vx, player.y+player.vy))
+            if (!PlayerVsWorld())
             {
                 player.Move(player.vx, player.vy);
             }
@@ -1710,7 +1744,6 @@ public:
             case EXIT : {SavePlayerData(); SaveWorldData();running = false;} break;
         }
         return running;
-        //return !GetKey(olc::Key::ESCAPE).bPressed;
 	}
 };
 

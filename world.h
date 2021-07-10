@@ -1527,46 +1527,218 @@ public:
                         break;
                         case TRUNK :
                         {
-                            int dN  = int( (_y-1) * width + (_x  ) );
-                            int dE  = int( (_y  ) * width + (_x+1) );
-                            int dS  = int( (_y+1) * width + (_x  ) );
-                            int dW  = int( (_y  ) * width + (_x-1) );
-                            if (rand()%1000 < 5)
+                            int dL = int( (_y+64) * width + (_x  ) );
+                            int dM = int( (_y+12) * width + (_x  ) );
+                            int bottom = matrix[dL];
+                            int middle = matrix[dM];
+                            if (bottom == MUD || bottom == DIRT || bottom == SOIL || bottom == STONE)
                             {
-                                if (matrix[dN] == AIR && rand()%1000 < 10) { replace[dN] = TRUNK; }
-                                if (matrix[dE] == AIR && matrix[dN] == AIR && matrix[dS] == AIR && rand()%1000 < 5) { replace[dE] = TRUNK; }
-                                if (matrix[dW] == AIR && matrix[dN] == AIR && matrix[dS] == AIR && rand()%1000 < 5) { replace[dW] = TRUNK; }
-                                if (matrix[dN] == AIR && matrix[dS] == AIR && matrix[dE] == AIR && matrix[dW] == TRUNK && rand()%1000 < 10) { replace[dE] = BRANCH; }
-                                if (matrix[dN] == AIR && matrix[dS] == AIR && matrix[dE] == TRUNK && matrix[dW] == AIR && rand()%1000 < 10) { replace[dW] = BRANCH; }
+                                int dN  = int( (_y-1) * width + (_x  ) );
+                                int dS  = int( (_y+1) * width + (_x  ) );
+                                int dE  = int( (_y  ) * width + (_x+1) );
+                                int dNE = int( (_y-1  ) * width + (_x+1) );
+                                int dSE = int( (_y+1  ) * width + (_x+1) );
+                                int dSSE = int( (_y+2  ) * width + (_x+1) );
+                                int dW  = int( (_y  ) * width + (_x-1) );
+                                int dNW = int( (_y-1  ) * width + (_x-1) );
+                                int dSW = int( (_y+1  ) * width + (_x-1) );
+                                int dSSW = int( (_y+2  ) * width + (_x-1) );
+                                if (rand()%100 < 5)
+                                {
+                                    int chance = rand()%1000;
+                                    if (chance > 5 && chance < 995)
+                                    {
+                                        switch (matrix[dN])
+                                        {
+                                            case AIR : { replace[dN] = TRUNK; } break;
+                                            case WATER : { replace[dN] = TRUNK; } break;
+                                            case LEAVES : { replace[dN] = TRUNK; } break;
+                                            case BRANCH : { replace[dN] = TRUNK; } break;
+                                        }
+                                    }
+                                    if (
+                                            matrix[dNW] != TRUNK &&
+                                            matrix[dSE] == TRUNK &&
+                                            matrix[dSSE] == TRUNK &&
+                                            matrix[dSSW] != TRUNK &&
+                                            matrix[dN] != TRUNK &&
+                                            matrix[dW] != TRUNK &&
+                                            matrix[dE] == TRUNK &&
+                                            chance < 5)
+                                    {
+                                        switch (matrix[dNE])
+                                        {
+                                            case AIR : { replace[dE] = TRUNK; } break;
+                                            case WATER : { replace[dE] = TRUNK; } break;
+                                            case LEAVES : { replace[dE] = TRUNK; } break;
+                                            case BRANCH : { replace[dE] = TRUNK; } break;
+                                        }
+                                    }
+                                    if (
+                                            matrix[dNE] != TRUNK &&
+                                            matrix[dSW] == TRUNK &&
+                                            matrix[dSSE] != TRUNK &&
+                                            matrix[dSSW] == TRUNK &&
+                                            matrix[dN] != TRUNK &&
+                                            matrix[dW] == TRUNK &&
+                                            matrix[dE] != TRUNK &&
+                                            chance > 995)
+                                    {
+                                        switch (matrix[dNW])
+                                        {
+                                            case AIR : { replace[dW] = TRUNK; } break;
+                                            case WATER : { replace[dW] = TRUNK; } break;
+                                            case LEAVES : { replace[dW] = TRUNK; } break;
+                                            case BRANCH : { replace[dW] = TRUNK; } break;
+                                        }
+                                    }
+
+                                    if (middle == TRUNK)
+                                    {
+                                        if (matrix[dM-1] == GRASS && matrix[dW] == AIR) replace[dW] = BRANCH;
+                                        if (matrix[dM+1] == GRASS && matrix[dE] == AIR) replace[dE] = BRANCH;
+                                        if (matrix[dE] == AIR && chance < 50)
+                                        {
+                                            if (matrix[dW] == AIR && matrix[dNW] == AIR && matrix[dSW] == AIR)
+                                            {
+                                                if (matrix[dSSW] == BRANCH) { replace[dE] = BRANCH; }
+                                            }
+                                        }
+                                        if (matrix[dW] == AIR && chance > 50)
+                                        {
+                                            if (matrix[dE] == AIR && matrix[dNE] == AIR && matrix[dSE] == AIR)
+                                            {
+                                                if (matrix[dSSE] == BRANCH) { replace[dW] = BRANCH; }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
+                        break;
                         case BRANCH :
                         {
+                            int dL = int( (_y+16+rand()%4) * width + (_x  ) );
+                            int dM = int( (_y+48+rand()%2) * width + (_x  ) );
                             int dN  = int( (_y-1) * width + (_x  ) );
                             int dE  = int( (_y  ) * width + (_x+1) );
+                            int dEE = int( (_y  ) * width + (_x+2) );
                             int dS  = int( (_y+1) * width + (_x  ) );
+                            int dSS = int( (_y+2) * width + (_x  ) );
                             int dW  = int( (_y  ) * width + (_x-1) );
-                            if (rand()%100 < 5)
+                            int dWW = int( (_y  ) * width + (_x-2) );
+                            int middle = matrix[dM];
+                            int bottom = matrix[dL];
+                            int left = matrix[dW];
+                            int right = matrix[dE];
+                            if (rand()%10 < 5)
                             {
-                                if (matrix[dN] == AIR && matrix[dE] == AIR && matrix[dW] == AIR && rand()%1000 < 5) { replace[dN] = BRANCH; }
-                                if (matrix[dE] == AIR && matrix[dS] == AIR && matrix[dN] == AIR && rand()%1000 < 10) { replace[dE] = BRANCH; }
-                                if (matrix[dW] == AIR && matrix[dS] == AIR && matrix[dN] == AIR && rand()%1000 < 10) { replace[dW] = BRANCH; }
-                                if (matrix[dN] == AIR && matrix[dS] == AIR && matrix[dE] == AIR && matrix[dW] == AIR && rand()%1000 < 5) { replace[dN] = LEAVES; }
+                                int chance = rand()%100;
+                                if (matrix[dE] == TRUNK)
+                                {
+                                    if (chance < 5) { replace[dW] = BRANCH; }
+                                }
+                                if (matrix[dW] == TRUNK)
+                                {
+                                    if (chance < 5) { replace[dE] = BRANCH; }
+                                }
+                                if (middle == AIR || middle == BRANCH || middle == LEAVES)
+                                {
+                                    if ((right == BRANCH || right == LEAVES) && matrix[dEE] == TRUNK)
+                                    {
+                                        if (chance < 40) { replace[dN] = BRANCH; }
+                                        if (chance > 60) { replace[dW] = BRANCH; }
+                                        if (chance > 40 && chance < 60) { replace[dN] = LEAVES;}
+                                    }
+                                    if ((left == BRANCH || left == LEAVES) && matrix[dWW] == TRUNK)
+                                    {
+                                        if (chance < 40) { replace[dN] = BRANCH; }
+                                        if (chance > 60) { replace[dE] = BRANCH; }
+                                        if (chance > 40 && chance < 60) { replace[dN] = LEAVES;}
+                                    }
+                                }
+                                if (bottom == AIR || bottom == BRANCH || bottom == LEAVES)
+                                {
+                                    if ((right == BRANCH || right == LEAVES) && matrix[dEE] == BRANCH && (matrix[dEE+1] == TRUNK || matrix[dEE+2] == TRUNK))
+                                    {
+                                        if (chance < 40) { replace[dN] = BRANCH; }
+                                        if (chance > 60) { replace[dW] = BRANCH; }
+                                        if (chance > 40 && chance < 60) { replace[dN] = LEAVES;}
+                                    }
+                                    if ((left == BRANCH || left == LEAVES) && matrix[dWW] == BRANCH && (matrix[dWW-1] == TRUNK || matrix[dEE-2] == TRUNK))
+                                    {
+                                        if (chance < 40) { replace[dN] = BRANCH; }
+                                        if (chance > 60) { replace[dE] = BRANCH; }
+                                        if (chance > 40 && chance < 60) { replace[dN] = LEAVES;}
+                                    }
+                                }
                             }
                         }
+                        break;
                         case LEAVES :
                         {
                             int dN  = int( (_y-1) * width + (_x  ) );
-                            int dE  = int( (_y  ) * width + (_x+1) );
                             int dS  = int( (_y+1) * width + (_x  ) );
+                            int dE  = int( (_y  ) * width + (_x+1) );
+                            int dNE = int( (_y-1) * width + (_x+1) );
                             int dW  = int( (_y  ) * width + (_x-1) );
-                            if (rand()%10000 < 5)
+                            int dNW = int( (_y-1) * width + (_x-1) );
+                            int n;
+                            if (rand()%100 < 5)
                             {
-                                if (matrix[dN] == AIR && matrix[dE] == BRANCH || matrix[dW] == BRANCH && rand()%1000 < 5) { replace[dN] = LEAVES; }
-                                if (matrix[dE] == AIR && matrix[dS] == BRANCH || matrix[dN] == BRANCH && rand()%1000 < 10) { replace[dE] = LEAVES; }
-                                if (matrix[dW] == AIR && matrix[dS] == BRANCH || matrix[dN] == BRANCH && rand()%1000 < 10) { replace[dW] = LEAVES; }
+                                if (matrix[dN] == AIR)
+                                {
+                                    n = 0;
+                                    if (matrix[dS] == BRANCH) n++;
+                                    if (matrix[dE] == BRANCH) n++;
+                                    if (matrix[dW] == BRANCH) n++;
+                                    if (matrix[dW] == BRANCH) n++;
+                                    if (matrix[dW] == BRANCH) n++;
+                                    if (n == 1 || n == 2) {replace[dN] = LEAVES;}
+                                }
+                                else if (matrix[dNE] == AIR)
+                                {
+                                    n = 0;
+                                    if (matrix[dS] == BRANCH) n++;
+                                    if (matrix[dN] == BRANCH) n++;
+                                    if (matrix[dNW] == BRANCH) n++;
+                                    if (matrix[dE] == BRANCH) n++;
+                                    if (matrix[dW] == BRANCH) n++;
+                                    if (n == 1 || n == 2) {replace[dNE] = LEAVES;}
+                                }
+                                else if (matrix[dNW] == AIR)
+                                {
+                                    n = 0;
+                                    if (matrix[dS] == BRANCH) n++;
+                                    if (matrix[dN] == BRANCH) n++;
+                                    if (matrix[dNE] == BRANCH) n++;
+                                    if (matrix[dE] == BRANCH) n++;
+                                    if (matrix[dW] == BRANCH) n++;
+                                    if (n == 1 || n == 2) {replace[dNW] = LEAVES;}
+                                }
+                                else if (matrix[dE] == AIR)
+                                {
+                                    n = 0;
+                                    if (matrix[dS] == BRANCH) n++;
+                                    if (matrix[dN] == BRANCH) n++;
+                                    if (matrix[dNE] == BRANCH) n++;
+                                    if (matrix[dNW] == BRANCH) n++;
+                                    if (matrix[dW] == BRANCH) n++;
+                                    if (n == 1 || n == 2) {replace[dE] = LEAVES;}
+                                }
+                                else if (matrix[dW] == AIR)
+                                {
+                                    n = 0;
+                                    if (matrix[dS] == BRANCH) n++;
+                                    if (matrix[dN] == BRANCH) n++;
+                                    if (matrix[dNE] == BRANCH) n++;
+                                    if (matrix[dNW] == BRANCH) n++;
+                                    if (matrix[dE] == BRANCH) n++;
+                                    if (n == 1 || n == 2) {replace[dW] = LEAVES;}
+                                }
                             }
                         }
+                        break;
                         case GRASS :
                         {
                             int dNW = int( (_y-1) * width + (_x-1) );
@@ -2106,6 +2278,24 @@ public:
         */
 
         return value;
+    }
+
+    int GetDurability(int x, int y)
+    {
+        int durability = 0;
+
+        int index = y*width+x;
+        switch (matrix[index])
+        {
+            case WOOD : { durability = 1;} break;
+            case TRUNK : { durability = 1;} break;
+            case BRANCH : { durability = 1;} break;
+            
+            case STONE : { durability = 4;} break;
+            case OBSIDIAN : { durability = 8;} break;
+        }
+
+        return durability;
     }
 
     float GetLightValue(int x, int y)
