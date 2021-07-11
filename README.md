@@ -11,7 +11,10 @@ A Noita inspired game written in C++ with OLC PixelGameEngine
     Q - Scroll Tiles
     E - Scroll Tiles
 
-    Enter - Set Hotbar Item
+    Tab - Inventory (Left Click To Set Hotbar Item)
+    Esc - Pause (Enter To Step World Updates)
+
+    1-9 - Select Hotbar
 
     Left Mouse - Use Hotbar Selection
 
@@ -19,9 +22,14 @@ A Noita inspired game written in C++ with OLC PixelGameEngine
 
     Particles
     Particle Effects
+    
+    World Interaction
     World Collision Detection
     Custom Procedural World Generation
+    
     Inventory System
+    
+    Player Animation And States
 
 ## Material Simulations
 

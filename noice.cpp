@@ -54,6 +54,7 @@ public:
         CUSTOM,
         LOADING,
         PLAYING,
+        INVENTORY,
         PAUSED,
         EXIT
     };
@@ -101,6 +102,9 @@ public:
     olc::Pixel select_color = olc::Pixel(64, 64, 64);
 
 
+    //
+    //
+    //
 
     std::string GetCWD()
     {
@@ -326,13 +330,19 @@ public:
         }
     }
 
+
+
+    //
+    //
+    //
+
     void SpawnParticle(float X, float Y, Effect e)
     {
         float W = width/2;
         float H = height/2;
         Particle p = Particle();
         p.SetEffect(e);
-        p.Position(player.x, player.y);
+        p.Position(player.x+(player.direction*(player.height/2)), player.y-player.height/2);
         p.Velocity(float((X-W)*0.1), float((Y-H)*0.1));
         particles.push_back(p);
     }
@@ -344,6 +354,24 @@ public:
         DrawLine(x, y, x+W, y, olc::Pixel(r, g, b));
         DrawLine(x, y, x+x2, y, olc::Pixel(R, G, B));
     }
+
+    void HotbarInput()
+    {
+        if (GetKey(olc::Key::K1).bPressed) {selected_hotbar = 0;}
+        if (GetKey(olc::Key::K2).bPressed) {selected_hotbar = 1;}
+        if (GetKey(olc::Key::K3).bPressed) {selected_hotbar = 2;}
+        if (GetKey(olc::Key::K4).bPressed) {selected_hotbar = 3;}
+        if (GetKey(olc::Key::K5).bPressed) {selected_hotbar = 4;}
+        if (GetKey(olc::Key::K6).bPressed) {selected_hotbar = 5;}
+        if (GetKey(olc::Key::K7).bPressed) {selected_hotbar = 6;}
+        if (GetKey(olc::Key::K8).bPressed) {selected_hotbar = 7;}
+        if (GetKey(olc::Key::K9).bPressed) {selected_hotbar = 8;}
+    }
+
+
+    //
+    //
+    //
 
     void DrawWands()
     {
@@ -647,8 +675,8 @@ public:
                     int _x = x+int(width/2)-4;
                     int _y = y+int(height/2)-7;
                     Draw(_x, _y, olc::Pixel(R, G, B));
-                    if ( world.IsColliding(player.x+(x-4), player.y+(y-7)) ) { Draw(_x, _y, olc::RED); }
                     if ( world.IsColliding((player.x+player.vx)+(x-4), (player.y+player.vy)+(y-7)) ) { Draw(_x+player.vx, _y+player.vy, olc::YELLOW); }
+                    if ( world.IsColliding(player.x+(x-4), player.y+(y-7)) ) { Draw(_x, _y, olc::RED); }
                 }
             }
         }
@@ -1449,50 +1477,107 @@ public:
     void GamePaused()
     {
         if (GetKey(olc::Key::ESCAPE).bPressed) game_state = PLAYING;
-     
-        if (GetKey(olc::Key::K1).bPressed) {selected_hotbar = 0;}
-        if (GetKey(olc::Key::K2).bPressed) {selected_hotbar = 1;}
-        if (GetKey(olc::Key::K3).bPressed) {selected_hotbar = 2;}
-        if (GetKey(olc::Key::K4).bPressed) {selected_hotbar = 3;}
-        if (GetKey(olc::Key::K5).bPressed) {selected_hotbar = 4;}
-        if (GetKey(olc::Key::K6).bPressed) {selected_hotbar = 5;}
-        if (GetKey(olc::Key::K7).bPressed) {selected_hotbar = 6;}
-        if (GetKey(olc::Key::K8).bPressed) {selected_hotbar = 7;}
-        if (GetKey(olc::Key::K9).bPressed) {selected_hotbar = 8;}
+        if (GetKey(olc::Key::TAB).bPressed) game_state = INVENTORY;
+        
+        if (player.state == player.DEAD) return;
 
-        if (GetKey(olc::Key::Q).bPressed && selected_tile < world.total_tiles-1) selected_tile++;
-        if (GetKey(olc::Key::E).bPressed && selected_tile > 0) selected_tile--;
+        if (GetMouse(0).bHeld)
+        {
+            if (player.hotbar[selected_hotbar][0] == itNONE)
+            {
+            }
+            if (player.hotbar[selected_hotbar][0] == itWAND)
+            {
+                if (player.wands[selected_wand].can_fire)
+                {
+                    player.wands[selected_wand].Cast();
+                    Effect e = player.wands[selected_wand].effects[player.wands[selected_wand].current_effect];
+                    SpawnParticle(float(GetMouseX()), float(GetMouseY()), e);
+                }
+            }
+            int index = (GetMouseY()+(player.y-(height/2)))*world.width+(GetMouseX()+(player.x-(width/2)));
+            int tile = world.matrix[index];
+            int _tile = selected_tile;
+            if (player.hotbar[selected_hotbar][0] == itTILE)
+            {
+                int index = (GetMouseY()+(player.y-(height/2)))*world.width+(GetMouseX()+(player.x-(width/2)));
+                int tile = world.matrix[index];
+                int _tile = player.hotbar[selected_hotbar][1];
+                if (tile != world.MANTLE)
+                {
+                    if (_tile != world.AIR)
+                    {
+                        if (player.inventory.HasItem(_tile) || creative_mode)
+                        {
+                            int amnt = 1;
+                            if (tile == world.AIR) amnt = 0;
+                            player.inventory.UseItem(_tile, 1);
+                            player.inventory.AddItem(tile, amnt);
+                            world.matrix[index] = _tile;
+                        }
+                    }
+                    else if (_tile == world.AIR)
+                    {
+                        if (tile != world.AIR) player.inventory.AddItem(tile, 1);
+                        world.matrix[index] = _tile;
+                    }
+                }
+            }
+        }
 
         if (GetKey(olc::Key::SPACE).bPressed)
         {
             world.SettleTiles(player.x-(width), player.y-(height), width*2, height*2);
-            DrawSky();
-            DrawTerrain();
-            DrawPlayer();
         }
+        DrawSky();
+        DrawTerrain();
+        DrawPlayer();
+        HotbarInput();
+        DrawHUD();
+    }
+
+    void GameInventory()
+    {
+        if (GetKey(olc::Key::ESCAPE).bPressed) game_state = PAUSED;
+        if (GetKey(olc::Key::TAB).bPressed) game_state = PLAYING;
+
+        if (GetKey(olc::Key::Q).bPressed && selected_tile < world.total_tiles-1) selected_tile++;
+        if (GetKey(olc::Key::E).bPressed && selected_tile > 0) selected_tile--;
 
         if (GetKey(olc::Key::I).bPressed) pause_state = psTILES;
         if (GetKey(olc::Key::W).bPressed) pause_state = psWANDS;
         
         if (pause_state == psWANDS) DrawWands();
         if (pause_state == psTILES) DrawInventory();
-        
+
+        HotbarInput();
         DrawHUD();
     }
 
     void GameLoop(float fElapsedTime)
     {
+        if (player.state == player.DEAD)
+        {
+            if (GetKey(olc::Key::ESCAPE).bPressed) game_state = PAUSED;
+            player.Update();
+            
+            return; 
+        }
+
+        if (!world.IsColliding(player.x, player.y+1) && !world.IsColliding(player.x-1, player.y+1) && player.state != player.JUMP)
+        {
+            player.vy = 1;
+            player.state = player.FALL;
+        }
+        if (world.IsColliding(player.x, player.y+1) || world.IsColliding(player.x-1, player.y+1))
+        {
+            player.state = player.IDLE;
+        }
+
         if (GetKey(olc::Key::ESCAPE).bPressed) game_state = PAUSED;
+        if (GetKey(olc::Key::TAB).bPressed) game_state = INVENTORY;
         //
-        if (GetKey(olc::Key::K1).bPressed) {selected_hotbar = 0;}
-        if (GetKey(olc::Key::K2).bPressed) {selected_hotbar = 1;}
-        if (GetKey(olc::Key::K3).bPressed) {selected_hotbar = 2;}
-        if (GetKey(olc::Key::K4).bPressed) {selected_hotbar = 3;}
-        if (GetKey(olc::Key::K5).bPressed) {selected_hotbar = 4;}
-        if (GetKey(olc::Key::K6).bPressed) {selected_hotbar = 5;}
-        if (GetKey(olc::Key::K7).bPressed) {selected_hotbar = 6;}
-        if (GetKey(olc::Key::K8).bPressed) {selected_hotbar = 7;}
-        if (GetKey(olc::Key::K9).bPressed) {selected_hotbar = 8;}
+        HotbarInput();
         
         // Stuff
         if (GetMouse(0).bHeld)
@@ -1549,8 +1634,6 @@ public:
                 player.jp--;
                 player.vy = -1;
                 player.state = player.JUMP;
-                if (GetKey(olc::Key::A).bHeld) player.anim = player.aJUMP_LEFT;
-                if (GetKey(olc::Key::D).bHeld) player.anim = player.aJUMP_RIGHT;
             }
             else
             {
@@ -1558,115 +1641,44 @@ public:
             }
         }
 
-        if (GetKey(olc::Key::W).bReleased)
-        {
-            player.vy = 0;
-            player.state = player.IDLE;
-        }
+        if (GetKey(olc::Key::W).bReleased) { player.vy = 0; player.state = player.IDLE; }
 
         if (GetKey(olc::Key::S).bPressed)
         {
             int tile = world.matrix[(player.y+(player.height-1))*world.width+player.x];
-            if (tile == world.PLANKS)
-            {
-                player.Move(0, 1);
-            }
+            if (tile == world.PLANKS) { player.Move(0, 1); }
         }
 
         if (!world.IsColliding(player.x, player.y+1) && player.state != player.JUMP)
-        {
-            player.vy = 1;
-            player.state = player.FALL;
-            if (GetKey(olc::Key::A).bHeld) player.anim = player.aFALL_LEFT;
-            if (GetKey(olc::Key::D).bHeld) player.anim = player.aFALL_RIGHT;
-        }
+        { player.vy = 1; player.state = player.FALL; }
 
         // Horizontal Movement
         if (GetKey(olc::Key::A).bHeld && player.x > width/2)
         {
             if (player.state != player.FALL && player.state != player.JUMP) player.vy = 0;
-            if (!world.IsColliding(player.x-2, player.y) )//|| (world.IsColliding(player.x-1, player.y) && !world.IsColliding(player.x-2, player.y)))
-            {
-                if (!GetKey(olc::Key::W).bHeld && player.state != player.FALL)
-                {
-                    player.state = player.WALK;
-                    player.anim = player.aWALK_LEFT;
-                }
-                player.vx = -1;
-            }
-            else if (world.IsColliding(player.x-1, player.y) ||
-                    world.IsColliding(player.x-2, player.y) ||
-                    world.IsColliding(player.x-1, player.y-1) ||
+            if (!world.IsColliding(player.x-2, player.y) ) { player.vx = -1; }
+            else if (world.IsColliding(player.x-2, player.y) ||
                     world.IsColliding(player.x-2, player.y-1)
                     )
-            {
-                if (!GetKey(olc::Key::W).bHeld && player.state != player.FALL)
-                {
-                    player.state = player.WALK;
-                    player.anim = player.aWALK_LEFT;
-                }
-                player.vx = -1;
-                player.Move(0, -1);
-            }
+            { player.vx = -1; player.Move(0, -1); }
+            if (!GetKey(olc::Key::W).bHeld && player.state != player.FALL) { player.state = player.WALK; }
+            player.direction = -1;
         }
         if (GetKey(olc::Key::D).bHeld && player.x < world.width-(width/2))
         {
             if (player.state != player.FALL && player.state != player.JUMP) player.vy = 0;
-            if (!world.IsColliding(player.x+1, player.y) )//|| (world.IsColliding(player.x+1, player.y) && !world.IsColliding(player.x+2, player.y)))
-            {
-                if (!GetKey(olc::Key::W).bHeld && player.state != player.FALL)
-                {
-                    player.state = player.WALK;
-                    player.anim = player.aWALK_RIGHT;
-                }
-                player.vx = 1;
-
-            }
-            else if (world.IsColliding(player.x, player.y) ||
-                    world.IsColliding(player.x+1, player.y) ||
-                    world.IsColliding(player.x, player.y-1) ||
-                    world.IsColliding(player.x+1, player.y-1)
-                    )
-            {
-                if (!GetKey(olc::Key::W).bHeld && player.state != player.FALL)
-                {
-                    player.state = player.WALK;
-                    player.anim = player.aWALK_RIGHT;
-                }
-                player.vx = 1;
-                player.Move(0, -1);
-            }
-        }
-        if (world.IsColliding(player.x, player.y+1))
-        {
-            player.state = player.IDLE;
+            if (!world.IsColliding(player.x+1, player.y) ) { player.vx = 1; }
+            else if (world.IsColliding(player.x+1, player.y) ||
+                    world.IsColliding(player.x+1, player.y-1) )
+            { player.vx = 1; player.Move(0, -1); }
+            if (!GetKey(olc::Key::W).bHeld && player.state != player.FALL) { player.state = player.WALK; }
+            player.direction = 1;
         }
 
-        if (GetKey(olc::Key::A).bReleased)
-        {
-            player.vx = 0;
-            if (
-                    world.IsColliding(player.x, player.y+1))// ||
-                    //world.IsColliding(player.x-1, player.y+1) ||
-                    //world.IsColliding(player.x+1, player.y+1) )
-            {
+        if (GetKey(olc::Key::A).bReleased) { player.vx = 0; }
+        if (GetKey(olc::Key::D).bReleased) { player.vx = 0; }
 
-                player.state = player.IDLE;
-                player.anim = player.aIDLE_LEFT;
-            }
-        }
-        if (GetKey(olc::Key::D).bReleased)
-        {
-            player.vx = 0;
-            if (
-                    world.IsColliding(player.x, player.y+1))// ||
-                    //world.IsColliding(player.x-1, player.y+1) ||
-                    //world.IsColliding(player.x+1, player.y+1) )
-            {
-                player.state = player.IDLE;
-                player.anim = player.aIDLE_RIGHT;
-            }
-        }
+
 
         // Update World
         sky.Update(fElapsedTime);
@@ -1682,7 +1694,7 @@ public:
         if (player.tick == player.tick_delay)
         {
             player.Update();
-            if (player.hp < 1) player.hp = player.HP;
+            if (player.hp < 1) player.state = player.DEAD;
             // Tile Effects
             switch (world.matrix[(player.y+1)*world.width+player.x])
             {
@@ -1738,6 +1750,7 @@ public:
         {
             case PLAYING : GameLoop(fElapsedTime); break;
             case PAUSED : GamePaused(); break;
+            case INVENTORY : GameInventory(); break;
             case LOADING : DrawLoading(); break;
             case CUSTOM : DrawCustom(); break;
             case TITLE : DrawTitle(); break;
