@@ -19,7 +19,7 @@ public:
 
     Effect effect;
 
-    float duration = 1.0;
+    float duration = 5.0;
 
     void Position(float X, float Y)
     {

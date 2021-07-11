@@ -14,6 +14,10 @@ public:
         aJUMP_LEFT,
         aFALL_RIGHT,
         aFALL_LEFT,
+        aSWIM_LEFT,
+        aSWIM_RIGHT,
+        aDEAD_RIGHT,
+        aDEAD_LEFT,
     };
 
     enum STATUS
@@ -36,8 +40,10 @@ public:
         JUMP,
         FALL,
         SWIM,
+        DEAD,
     };
 
+    int direction = 1;
     int state = 0;
     int status = 0;
 
@@ -56,7 +62,7 @@ public:
     int vx = 0;
     int vy = 0;
 
-    int height = 3;
+    int height = 8;
 
     int HP = 100;
     int hp = 100;
@@ -89,7 +95,7 @@ public:
         { 0,   0 },
     };
 
-    char animations[10][4] = {
+    char animations[14][4] = {
         {  0,  2,  0,  2 }, // Idle Right
         {  1,  3,  1,  3 }, // Idle Left
         {  2,  4,  2,  6 }, // Walk Right
@@ -100,9 +106,13 @@ public:
         {  5,  5,  5,  5 }, // Jump Left
         {  8,  8,  8,  8 }, // Fall Right
         {  9,  9,  9,  9 }, // Fall Left
+        { 12, 14, 12, 14 }, // Swim Right
+        { 13, 15, 13, 15 }, // Swim Left
+        { 16, 16, 16, 16 }, // Dead Right
+        { 17, 17, 17, 17 }, // Dead Left
     };
 
-    char image[12][64] = {
+    char image[18][64] = {
         { // Idle Right 1
             0,0,0,0,7,8,0,0,
             0,0,0,0,6,7,0,0,
@@ -143,8 +153,7 @@ public:
             0,0,0,2,3,0,0,0,
             0,0,0,1,2,0,0,0,
         },
-        // Walk
-        {
+        {// Walk
             0,0,0,0,7,8,0,0,
             0,0,0,0,6,7,0,0,
             0,0,0,3,2,0,0,0,
@@ -184,8 +193,7 @@ public:
             0,0,0,3,4,2,0,0,
             0,0,0,1,0,0,0,0,
         },
-        // Run
-        {
+        { // Run
             0,0,0,0,0,0,0,0,
             0,0,0,0,7,8,0,0,
             0,0,0,3,6,7,0,0,
@@ -225,6 +233,68 @@ public:
             0,0,0,3,4,2,0,0,
             0,0,0,1,0,0,0,0,
         },
+        // Swim
+        {
+            0,0,0,0,0,7,8,0,
+            0,0,0,0,0,6,7,0,
+            0,0,0,0,3,2,0,0,
+            0,0,0,2,1,6,0,0,
+            0,0,2,1,2,0,7,0,
+            0,0,4,4,0,0,0,0,
+            0,3,4,3,0,0,0,0,
+            0,2,1,0,0,0,0,0,
+        },
+        {
+            0,8,7,0,0,0,0,0,
+            0,7,6,0,0,0,0,0,
+            0,0,2,3,0,0,0,0,
+            0,0,6,1,2,0,0,0,
+            0,7,0,2,1,2,0,0,
+            0,0,0,0,4,4,0,0,
+            0,0,0,0,3,4,3,0,
+            0,0,0,0,0,1,2,0,
+        },
+        {
+            0,0,0,0,0,7,8,0,
+            0,0,0,0,0,6,7,0,
+            0,0,0,0,3,2,0,0,
+            0,0,0,2,1,6,7,0,
+            0,0,2,1,2,0,0,0,
+            0,0,4,4,0,0,0,0,
+            0,3,4,3,0,0,0,0,
+            0,2,1,0,0,0,0,0,
+        },
+        {
+            0,8,7,0,0,0,0,0,
+            0,7,6,0,0,0,0,0,
+            0,0,2,3,0,0,0,0,
+            0,7,6,1,2,0,0,0,
+            0,0,0,2,1,2,0,0,
+            0,0,0,0,4,4,0,0,
+            0,0,0,0,3,4,3,0,
+            0,0,0,0,0,1,2,0,
+        },
+        // Dead
+        {
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,2,4,4,2,1,7,8,
+            1,4,4,4,1,1,6,7,
+        },
+        {
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            8,7,1,2,4,4,2,0,
+            7,6,1,1,4,4,4,1,
+        },
     };
 
     Inventory inventory = Inventory();
@@ -251,8 +321,52 @@ public:
         state = HURT;
     }
 
+    void UpdateState()
+    {
+        switch (state)
+        {
+            case IDLE :
+            {
+                if (direction == 1) {anim = aIDLE_RIGHT; }
+                if (direction == -1) {anim = aIDLE_LEFT; }
+            }
+            break;
+            case WALK :
+            {
+                if (direction == 1) {anim = aWALK_RIGHT; }
+                if (direction == -1) {anim = aWALK_LEFT; }
+            }
+            break;
+            case JUMP :
+            {
+                if (direction == 1) {anim = aJUMP_RIGHT; }
+                if (direction == -1) {anim = aJUMP_LEFT; }
+            }
+            break;
+            case FALL :
+            {
+                if (direction == 1) {anim = aFALL_RIGHT; }
+                if (direction == -1) {anim = aFALL_LEFT; }
+            }
+            break;
+            case SWIM :
+            {
+                if (direction == 1) {anim = aSWIM_RIGHT; }
+                if (direction == -1) {anim = aSWIM_LEFT; }
+            }
+            break;
+            case DEAD :
+            {
+                if (direction == 1) {anim = aDEAD_RIGHT; }
+                if (direction == -1) {anim = aDEAD_LEFT; }
+            }
+            break;
+        }
+    }
+
     void Update()
     {
+        UpdateState();
         anim_tick++;
         if (anim_tick > 8)
         {
