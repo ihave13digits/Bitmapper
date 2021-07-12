@@ -1,37 +1,14 @@
-#ifdef WINDOWS
-#include <direct.h>
-#define GetCurrentDir _getcwd
-#else
-#include <unistd.h>
-#define GetCurrentDir getcwd
-#endif
-
-
-
 #define OLC_PGE_APPLICATION
-#include "olcPixelGameEngine.h"
+#include "../../lib/olcPixelGameEngine.h"
 
-//#include <fstream>
+#include "core.h"
 
-#include "sky.h"
-#include "world.h"
-#include "effect.h"
-#include "particle.h"
-#include "wand.h"
-#include "inventory.h"
-#include "player.h"
-
-#include "button.h"
-#include "icon.h"
-
-
-
-class Noice : public olc::PixelGameEngine
+class Game : public olc::PixelGameEngine
 {
 public:
-	Noice()
+	Game()
 	{
-		sAppName = "Noice";
+		sAppName = core::game_title;
 	}
 
 public:
@@ -39,13 +16,13 @@ public:
     enum PAUSE_STATES
     {
         psTILES,
-        psWANDS
+        psWANDS,
     };
     enum ITEM_TYPES
     {
         itNONE,
         itTILE,
-        itWAND
+        itWAND,
     };
 
     enum STATES
@@ -77,9 +54,9 @@ public:
     int input_value = 0;
     char save_slot = 0;
 
-    int width = 256;
-    int height = 144;
-    int pixel_size = 4;
+    int width = core::width;
+    int height = core::height;
+    int pixel_size = core::resolution;
 
     int world_width = 4096;//8192;
     int world_height = 2048;//4096;
@@ -102,21 +79,9 @@ public:
     olc::Pixel select_color = olc::Pixel(64, 64, 64);
 
 
-    //
-    //
-    //
-
-    std::string GetCWD()
-    {
-        char buff[FILENAME_MAX];
-        GetCurrentDir(buff, FILENAME_MAX);
-        std::string _dir(buff);
-        return _dir;
-    }
-
     void GenerateData()
     {
-        std::string _dir = GetCWD() + "/Data";
+        std::string _dir = os::GetCWD() + "/Data";
         std::string _cmd = "mkdir " + _dir;
         const char* mkdir_cmd = _cmd.c_str();
         system(mkdir_cmd);
@@ -134,7 +99,7 @@ public:
     {
         std::fstream data_file;
         data_dir = std::to_string(X) + "-" + std::to_string(Y);
-        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
         data_file.open(_dir);
 
         int x_ = X*world.chunk_size;
@@ -166,7 +131,7 @@ public:
         std::string line;
         data_dir = std::to_string(X) + "-" + std::to_string(Y);
         std::fstream data_file;
-        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
         data_file.open(_dir);
 
         int x = 0;
@@ -205,7 +170,7 @@ public:
     void SavePlayerData(std::string data_dir = "player_data")
     {
         std::fstream data_file;
-        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
         data_file.open(_dir);
 
         if (data_file.is_open())
@@ -228,7 +193,7 @@ public:
     {
         std::string line;
         std::fstream data_file;
-        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
         data_file.open(_dir);
 
         if (data_file.is_open())
@@ -280,7 +245,7 @@ public:
     {
         std::string line;
         std::fstream data_file;
-        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
         data_file.open(_dir);
         
         if (data_file.is_open())
@@ -305,7 +270,7 @@ public:
     {
         std::string line;
         std::fstream data_file;
-        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
         data_file.open(_dir);
 
         if (data_file.is_open())
@@ -1766,14 +1731,3 @@ public:
         return running;
 	}
 };
-
-
-int main()
-{
-	Noice demo;
-	//if (demo.Construct(256, 144, 4, 4, false, false, false))
-    if (demo.Construct(256, 144, 4, 4))
-		demo.Start();
-
-	return 0;
-}

@@ -81,10 +81,12 @@ public:
         FIRE,
         //
         FOG,
+        //SLAG,
+        //OIL,
         WATER,
         BRINE,
-        HONEY,
         BLOOD,
+        HONEY,
         LAVA,
         MUCK,
         MUD,
@@ -124,6 +126,7 @@ public:
         LEAVES,
         GRASS,
         MOSS,
+        //PURPLE_SPIDERWORT,
         //
         PLATINUM,
         GOLD,
@@ -148,6 +151,7 @@ public:
         SAPPHIRE,
         //
         GLASS,
+        //BROKEN_GLASS,
         PLANKS,
         VALVE_CLOSED,
         VALVE_OPEN,
@@ -179,12 +183,36 @@ public:
         PISTON_LEFT,
         PISTON_RIGHT,
         //
+        //WIRE_I,
+        //WIRE_O,
+        //OR_GATE_I,
+        //OR_GATE_O,
+        //XOR_GATE_I,
+        //XOR_GATE_O,
+        //XNOR_GATE_I,
+        //XNOR_GATE_O,
+        //NOT_GATE_I,
+        //NOT_GATE_O,
+        //AND_GATE_I,
+        //AND_GATE_O,
+        //NAND_GATE_I,
+        //NAND_GATE_O,
+        //
         MANTLE,
         //
         //FROG,
         //MOUSE,
         //MOLE,
         //RAT,
+        //HEDGEHOG,
+        //
+        //SNAKE_HEAD,
+        //SNAKE,
+        //SNAKE_TAIL,
+        //BIRD_WING
+        //BIRD,
+        //BAT_WING,
+        //BAT,
     };
 
     std::string tiles[100] = {
@@ -201,8 +229,8 @@ public:
         "Fog",
         "Water",
         "Brine",
-        "Honey",
         "Blood",
+        "Honey",
         "Lava",
         "Muck",
         "Mud",
@@ -320,8 +348,8 @@ public:
         {  {230, 230, 230, 64 },    {5,   5,   25,  0}  },// Fog
         {  {0,   0,   128, 128},    {1,   1,   25,  0}  },// Water
         {  {0,   64,  128, 128},    {1,   1,   25,  0}  },// Brine
-        {  {230, 200, 0,   212},    {25,  10,  1,   0}  },// Honey
         {  {128, 0,   0,   255},    {25,  1,   1,   0}  },// Blood
+        {  {230, 200, 0,   212},    {25,  10,  1,   0}  },// Honey
         {  {254, 80,  0,   255},    {1,  180,  1,   0}  },// Lava
         {  {20,  16,  12,  255},    {8,   4,   2,   0}  },// Muck
         {  {58,  32,  16,  255},    {8,   4,   2,   0}  },// Mud
@@ -2547,17 +2575,12 @@ public:
     {
         float value = 0.0;
 
-        //value += GetLightValue(x, y-2);
-        //value += GetLightValue(x, y-1);
-        //value += GetLightValue(x-1, y);
-        //value += GetLightValue(x+1, y);
-
-        //value += GetLightValue(x, y);
-        value += GetLightValue(x, y-2);
+        value += GetLightValue(  x, y-4);
+        value += GetLightValue(  x, y-2);
         value += GetLightValue(x-1, y-1);
         value += GetLightValue(x+1, y-1);
-        value += GetLightValue(x-2, y);
-        value += GetLightValue(x+2, y);
+        value += GetLightValue(x-2,   y);
+        value += GetLightValue(x+2,   y);
 
         return value;
     }
@@ -2567,14 +2590,19 @@ public:
         float value = 0.125;
         switch (matrix[y*width+x])
         {
-            // Light
+            // Gases
             case AIR :    { value = -0.275; } break;
+            case THIN_SMOKE :  { value = -0.062; } break;
+            case SMOKE :  { value = -0.062; } break;
+            case THICK_SMOKE :  { value = -0.062; } break;
+            // Softly Lit
             case GRASS :  { value = -0.062; } break;
-            case LAVA :   { value = -0.475; } break;
-            case EMBER :  { value = -0.250; } break;
-            case FIRE :   { value = -0.275; } break;
-            case FLAME :  { value = -0.300; } break;
-            case FLARE :  { value = -0.325; } break;
+            // Flickering Light
+            case LAVA :   { value = (((rand()%100) * -0.475) * 0.01 ); } break;
+            case EMBER :  { value = (((rand()%100) * -0.250) * 0.01 ); } break;
+            case FIRE :   { value = (((rand()%100) * -0.275) * 0.01 ); } break;
+            case FLAME :  { value = (((rand()%100) * -0.300) * 0.01 ); } break;
+            case FLARE :  { value = (((rand()%100) * -0.325) * 0.01 ); } break;
             // Dark
             case WATER :  { value = 0.0500; } break;
             case BRINE :  { value = 0.0750; } break;
