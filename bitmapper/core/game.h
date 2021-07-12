@@ -1,37 +1,14 @@
-#ifdef WINDOWS
-#include <direct.h>
-#define GetCurrentDir _getcwd
-#else
-#include <unistd.h>
-#define GetCurrentDir getcwd
-#endif
-
-
-
 #define OLC_PGE_APPLICATION
-#include "olcPixelGameEngine.h"
+#include "../../lib/olcPixelGameEngine.h"
 
-//#include <fstream>
+#include "core.h"
 
-#include "sky.h"
-#include "world.h"
-#include "effect.h"
-#include "particle.h"
-#include "wand.h"
-#include "inventory.h"
-#include "player.h"
-
-#include "button.h"
-#include "icon.h"
-
-
-
-class Noice : public olc::PixelGameEngine
+class Game : public olc::PixelGameEngine
 {
 public:
-	Noice()
+	Game()
 	{
-		sAppName = "Noice";
+		sAppName = core::game_title;
 	}
 
 public:
@@ -39,13 +16,13 @@ public:
     enum PAUSE_STATES
     {
         psTILES,
-        psWANDS
+        psWANDS,
     };
     enum ITEM_TYPES
     {
         itNONE,
         itTILE,
-        itWAND
+        itWAND,
     };
 
     enum STATES
@@ -77,9 +54,9 @@ public:
     int input_value = 0;
     char save_slot = 0;
 
-    int width = 256;
-    int height = 144;
-    int pixel_size = 4;
+    int width = core::width;
+    int height = core::height;
+    int pixel_size = core::resolution;
 
     int world_width = 4096;//8192;
     int world_height = 2048;//4096;
@@ -102,21 +79,9 @@ public:
     olc::Pixel select_color = olc::Pixel(64, 64, 64);
 
 
-    //
-    //
-    //
-
-    std::string GetCWD()
-    {
-        char buff[FILENAME_MAX];
-        GetCurrentDir(buff, FILENAME_MAX);
-        std::string _dir(buff);
-        return _dir;
-    }
-
     void GenerateData()
     {
-        std::string _dir = GetCWD() + "/Data";
+        std::string _dir = os::GetCWD() + "/Data";
         std::string _cmd = "mkdir " + _dir;
         const char* mkdir_cmd = _cmd.c_str();
         system(mkdir_cmd);
@@ -134,7 +99,7 @@ public:
     {
         std::fstream data_file;
         data_dir = std::to_string(X) + "-" + std::to_string(Y);
-        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
         data_file.open(_dir);
 
         int x_ = X*world.chunk_size;
@@ -166,7 +131,7 @@ public:
         std::string line;
         data_dir = std::to_string(X) + "-" + std::to_string(Y);
         std::fstream data_file;
-        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
         data_file.open(_dir);
 
         int x = 0;
@@ -205,7 +170,7 @@ public:
     void SavePlayerData(std::string data_dir = "player_data")
     {
         std::fstream data_file;
-        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
         data_file.open(_dir);
 
         if (data_file.is_open())
@@ -228,7 +193,7 @@ public:
     {
         std::string line;
         std::fstream data_file;
-        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
         data_file.open(_dir);
 
         if (data_file.is_open())
@@ -280,7 +245,7 @@ public:
     {
         std::string line;
         std::fstream data_file;
-        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
         data_file.open(_dir);
         
         if (data_file.is_open())
@@ -305,7 +270,7 @@ public:
     {
         std::string line;
         std::fstream data_file;
-        std::string _dir = GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
         data_file.open(_dir);
 
         if (data_file.is_open())
@@ -574,6 +539,7 @@ public:
                     int v3 = world.matrix[(y+Y)*world.width+(x+X)+2];
                     int v4 = world.matrix[(y+Y)*world.width+(x+X)+3];
 
+                    /*
                     float n1 = world.Neighbors(x+X, y+Y);
                     float n2 = world.Neighbors(x+X+1, y+Y);
                     float n3 = world.Neighbors(x+X+2, y+Y);
@@ -588,6 +554,12 @@ public:
                     if (n2 > 2) s2 = 1.0/(n2-2);
                     if (n3 > 2) s3 = 1.0/(n3-2);
                     if (n4 > 2) s4 = 1.0/(n4-2);
+                    */
+
+                    float s1 = 1.0f-std::min(std::max(world.Neighbors(x+X, y+Y), 0.0f), 1.0f);
+                    float s2 = 1.0f-std::min(std::max(world.Neighbors(x+X+1, y+Y), 0.0f), 1.0f);
+                    float s3 = 1.0f-std::min(std::max(world.Neighbors(x+X+2, y+Y), 0.0f), 1.0f);
+                    float s4 = 1.0f-std::min(std::max(world.Neighbors(x+X+3, y+Y), 0.0f), 1.0f);
 
                     Draw(x, y, olc::Pixel(
                                 int(world.tileset[v1][0][0]*s1),// + rand() % world.tileset[v1][1][0],
@@ -1759,14 +1731,3 @@ public:
         return running;
 	}
 };
-
-
-int main()
-{
-	Noice demo;
-	//if (demo.Construct(256, 144, 4, 4, false, false, false))
-    if (demo.Construct(256, 144, 4, 4))
-		demo.Start();
-
-	return 0;
-}

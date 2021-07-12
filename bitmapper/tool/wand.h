@@ -10,26 +10,45 @@ public:
     int material;
     float fire_rate;
     float tick = 0.0;
+    float mp = 0.0;
+    float MP = 0.0;
 
     std::vector<Effect> effects;
+
+    Effect GenerateSpell()
+    {
+        Effect e = Effect();
+        //e.sticky = true;
+        //e.bouncy = true;
+        //e.heavy = true;
+        //e.destroys = true;
+        //e.damages = true;
+        //e.poisons = true;
+        //e.mines = true;
+        //e.trips = true;
+        //e.stuns = true;
+        //e.burns = true;
+        
+        e.damage = 1.0;
+        e.drain = 1.0;
+
+        e.name = "";
+
+        return e;
+    }
 
     void GenerateWand()
     {
         GenerateStats();
-        Effect e1 = Effect();
-        e1.mines = true;
-        Effect e2 = Effect();
-        e2.bouncy = true;
-        
-        effects.push_back(e1);
-        effects.push_back(e2);
+        Effect e = GenerateSpell();
+        effects.push_back(e);
     }
 
     void GenerateStats()
     {
         shuffle = bool(rand()%2);
-        capacity = 5;
-        fire_rate = 0.2;
+        capacity = 1;
+        fire_rate = 0.1;
     }
 
     void Update(float delta)

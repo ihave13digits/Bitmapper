@@ -18,4 +18,6 @@ public:
     int damage = 0;
     int drain = 0;
 
+    std::string name = "Template";
+
 };
