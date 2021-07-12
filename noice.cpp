@@ -574,6 +574,7 @@ public:
                     int v3 = world.matrix[(y+Y)*world.width+(x+X)+2];
                     int v4 = world.matrix[(y+Y)*world.width+(x+X)+3];
 
+                    /*
                     float n1 = world.Neighbors(x+X, y+Y);
                     float n2 = world.Neighbors(x+X+1, y+Y);
                     float n3 = world.Neighbors(x+X+2, y+Y);
@@ -588,6 +589,12 @@ public:
                     if (n2 > 2) s2 = 1.0/(n2-2);
                     if (n3 > 2) s3 = 1.0/(n3-2);
                     if (n4 > 2) s4 = 1.0/(n4-2);
+                    */
+
+                    float s1 = 1.0f-std::min(std::max(world.Neighbors(x+X, y+Y), 0.0f), 1.0f);
+                    float s2 = 1.0f-std::min(std::max(world.Neighbors(x+X+1, y+Y), 0.0f), 1.0f);
+                    float s3 = 1.0f-std::min(std::max(world.Neighbors(x+X+2, y+Y), 0.0f), 1.0f);
+                    float s4 = 1.0f-std::min(std::max(world.Neighbors(x+X+3, y+Y), 0.0f), 1.0f);
 
                     Draw(x, y, olc::Pixel(
                                 int(world.tileset[v1][0][0]*s1),// + rand() % world.tileset[v1][1][0],
