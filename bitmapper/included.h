@@ -40,6 +40,7 @@
 #include "environment/tile/gel.h"
 #include "environment/tile/gizmo.h"
 #include "environment/tile/grain.h"
+#include "environment/tile/logic.h"
 #include "environment/tile/loose.h"
 #include "environment/tile/plant.h"
 #include "environment/tile/plasma.h"

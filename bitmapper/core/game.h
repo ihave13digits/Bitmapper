@@ -81,7 +81,7 @@ public:
 
     void GenerateData()
     {
-        std::string _dir = os::GetCWD() + "/Data";
+        std::string _dir = os::GetCWD() + "/data";
         std::string _cmd = "mkdir " + _dir;
         const char* mkdir_cmd = _cmd.c_str();
         system(mkdir_cmd);
@@ -99,7 +99,7 @@ public:
     {
         std::fstream data_file;
         data_dir = std::to_string(X) + "-" + std::to_string(Y);
-        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/data/" + data_dir;
         data_file.open(_dir);
 
         int x_ = X*world.chunk_size;
@@ -131,7 +131,7 @@ public:
         std::string line;
         data_dir = std::to_string(X) + "-" + std::to_string(Y);
         std::fstream data_file;
-        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/data/" + data_dir;
         data_file.open(_dir);
 
         int x = 0;
@@ -170,12 +170,12 @@ public:
     void SavePlayerData(std::string data_dir = "player_data")
     {
         std::fstream data_file;
-        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/data/" + data_dir;
         data_file.open(_dir);
 
         if (data_file.is_open())
         {
-            data_file << "#blocks" << std::endl;
+            data_file << "#tiles" << std::endl;
             for (int i = 0; i < player.inventory.data.size(); i++)
             {
                 data_file << i << "=" << player.inventory.data[i] << std::endl;
@@ -193,7 +193,7 @@ public:
     {
         std::string line;
         std::fstream data_file;
-        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/data/" + data_dir;
         data_file.open(_dir);
 
         if (data_file.is_open())
@@ -202,12 +202,12 @@ public:
 
             while (getline(data_file, line))
             {
-                if (line == "#blocks")
+                if (line == "#tiles")
                 {
-                    read_state = "#blocks";
+                    read_state = "#tiles";
                 }
 
-                if (read_state == "#blocks")
+                if (read_state == "#tiles")
                 {
                     bool next = false;
                     std::string itm = "";
@@ -245,7 +245,7 @@ public:
     {
         std::string line;
         std::fstream data_file;
-        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/data/" + data_dir;
         data_file.open(_dir);
         
         if (data_file.is_open())
@@ -270,7 +270,7 @@ public:
     {
         std::string line;
         std::fstream data_file;
-        std::string _dir = os::GetCWD() + "/Data/" + data_dir;
+        std::string _dir = os::GetCWD() + "/data/" + data_dir;
         data_file.open(_dir);
 
         if (data_file.is_open())
@@ -748,7 +748,7 @@ public:
             {
                 int tile_value = player.hotbar[i][1];
                 int tile_type = tTool::GetType(tile_value);
-                DrawIcon(i*10+x+1, 3, tile_type, tile_value);
+                DrawIcon(x+1, 3, tile_type, tile_value);
             }
         }
         SetPixelMode(olc::Pixel::NORMAL);
