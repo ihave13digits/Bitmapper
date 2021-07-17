@@ -14,19 +14,9 @@ namespace core
     std::string game_title = "Bitmapper";
     std::string version = "0.0.0";
 
-    void out(std::string text="", std::string end="now")
-    {
-        std::cout << text;
-        if (end == "now")
-        {
-            std::cout << std::endl;
-        }
-        else {std::cout << end;}
-    }
-
     void InstallGame()
     {
-        out("Installing game");
+        tTile::LoadTileData();
     }
 
 }

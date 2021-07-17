@@ -1,11 +1,11 @@
-class World
+class WorldGenerator
 {
+
 public:
 
-    // Class Attributes //
-
-    // World Dimensions
-    int chunk_size = 32;
+    //
+    //
+    //
 
     // Terrain Tiles
     int total_parameters = 12;
@@ -53,6 +53,43 @@ public:
     };
 
 
+    //
+    //
+    //
+
+    bool IsDataValid()
+    {
+        for (int i = 0; i < generation_steps; i++)
+        {
+            if (generation_param[i][0] != tTile::AIR) is_data_valid = true;
+        }
+        return is_data_valid;
+    }
+
+    void Copy()
+    {
+        for (int p = 0; p < world.total_parameters; p++)
+        {
+            world.clipboard_param[p] = world.generation_param[world.selected_step][p];
+        }
+    }
+
+    void Paste()
+    {
+        generation_steps++;
+        for (int i = generation_steps-1; i > selected_step; i--)
+        {
+            for (int p = 0; p < total_parameters; p++)
+            {
+                generation_param[i-1][p] = generation_param[i-2][p];
+            }
+        }
+        for (int p = 0; p < total_parameters; p++)
+        {
+            generation_param[selected_step][p] = clipboard_param[p];
+        }
+        if (selected_step > 0) selected_step--;
+    }
 
     // Matrix
     void ClearMatrix()
@@ -105,7 +142,7 @@ public:
             { tTile::STONE,      mEXPAND,  0,   4,  0,   100, 65,  85,  25,  50,  100, 100 },
             { tTile::STONE,      mEXPAND,  0,   2,  0,   100, 75,  85,  50,  25,  100, 100 },
             { tTile::STONE,      mEXPAND,  0,   1,  0,   100, 80,  85,  25,  5,   100, 100 },
-            
+
             { tTile::SOIL,       mEXPAND,  0,   4,  0,   100, 8,   30,  50,  25,  90,  90  },
             { tTile::MUD,        mEXPAND,  0,   1,  0,   100, 10,  40,  50,  25,  75,  75  },
             { tTile::SOIL,       mEXPAND,  0,   1,  0,   100, 8,   30,  50,  25,  90,  90  },
@@ -157,7 +194,7 @@ public:
             { tTile::AMETHYST,   mSEED,    2,   1,  0,   100, 60,  80,  0,   0,   0,   0   },
             { tTile::SAPPHIRE,   mSEED,    2,   1,  0,   100, 60,  80,  0,   0,   0,   0   },
         };
-        
+
         for (int i = 0; i < generation_steps; i++)
         {
             for (int p = 0; p < total_parameters; p++)
@@ -167,6 +204,7 @@ public:
         }
     }
 
+    //
     void GeneratePreview()
     {
         int index = generation_step-1;
@@ -230,7 +268,7 @@ public:
         generation_step++;
     }
 
-    // Generation
+    //
     std::string GenerateWorld()
     {
         std::string message = "";
@@ -297,147 +335,11 @@ public:
                             generation_param[index][pPROBE],
                             generation_param[index][pPROBW]
                             );
-        
                 }
                 break;
         }
-        
-
         generation_step++;
-
         return message;
-    }
-
-    // Seed Methods
-    void AddLayer(int t, int density, int xmin, int xmax, int ymin, int ymax)
-    {
-        for (int y = ymin; y < ymax; y++)
-        {
-            for (int x = xmin; x < xmax; x++)
-            {
-                if (rand()%1000 < density) tCell::matrix[y*tCell::width+x] = t;
-            }
-        }
-    }
-
-    void SeedLayer(int t, int density, int xmin, int xmax, int ymin, int ymax)
-    {
-        for (int y = ymin; y < ymax; y++)
-        {
-            for (int x = xmin; x < xmax; x++)
-            {
-                int index = y*tCell::width+x;
-                if (tCell::matrix[index] != tTile::AIR && rand()%10000 < density) tCell::matrix[index] = t;
-            }
-        }
-    }
-
-    // Deposition Methods
-    void Expand(int t, int minx, int maxx, int miny, int maxy, int dn=5, int ds=5, int de=25, int dw=25)
-    {
-        tCell::replace = tCell::matrix;
-
-        minx = std::max(minx, 1);
-        maxx = std::min(maxx, tCell::width-2);
-        miny = std::max(miny, 1);
-        maxy = std::min(maxy, tCell::height-2);
-
-        for (int y = miny; y < maxy; y++)
-        {
-            for (int x = minx; x < maxx; x++)
-            {
-                if (tCell::matrix[y*tCell::width+x] != tTile::AIR)
-                {
-                    int n = (y-1)*tCell::width+x;
-                    int s = (y+1)*tCell::width+x;
-                    int e = y*tCell::width+(x+1);
-                    int w = y*tCell::width+(x-1);
-
-                    if (tCell::matrix[n] == tTile::AIR && rand()%100 < dn) tCell::replace[n] = t;
-                    if (tCell::matrix[s] == tTile::AIR && rand()%100 < ds) tCell::replace[s] = t;
-                    if (tCell::matrix[e] == tTile::AIR && rand()%100 < de) tCell::replace[e] = t;
-                    if (tCell::matrix[w] == tTile::AIR && rand()%100 < dw) tCell::replace[w] = t;
-                }
-            }
-        }
-        tCell::matrix = tCell::replace;
-    }
-
-    void Deposit(int t, int minx, int maxx, int miny, int maxy, int dn=5, int ds=5, int de=25, int dw=25)
-    {
-        tCell::replace = tCell::matrix;
-
-        minx = std::max(minx, 1);
-        maxx = std::min(maxx, tCell::width-2);
-        miny = std::max(miny, 1);
-        maxy = std::min(maxy, tCell::height-2);
-        
-        for (int y = miny; y < maxy; y++)
-        {
-            for (int x = minx; x < maxx; x++)
-            {
-                if (tCell::matrix[y*tCell::width+x] == t)
-                {
-                    int n = (y-1)*tCell::width+x;
-                    int s = (y+1)*tCell::width+x;
-                    int e = y*tCell::width+(x+1);
-                    int w = y*tCell::width+(x-1);
-
-                    if (rand()%100 < dn) tCell::replace[n] = t;
-                    if (rand()%100 < ds) tCell::replace[s] = t;
-                    if (rand()%100 < de) tCell::replace[e] = t;
-                    if (rand()%100 < dw) tCell::replace[w] = t;
-                }
-            }
-        }
-        tCell::matrix = tCell::replace;
-    }
-
-    // Update Method
-    void SettleTiles(int X, int Y, int W, int H)
-    {
-        tCell::replace = tCell::matrix;
-
-        if (Y < 2)
-        {
-            Y = 1;
-        }
-        if (Y > tCell::height-H-2)
-        {
-            H = tCell::height-Y;
-        }
-
-        for (int y = H; y > 0; y--)
-        {
-            for (int x = 0; x < W; x++)
-            {
-                int _x = x+X;
-                int _y = y+Y;
-                if ( tTool::Collision(_x, _y) )
-                {
-                    int index = (_y)*tCell::width+(_x);
-                    int current_cell = tCell::matrix[index];
-                    int cell_type = tTool::GetType(current_cell);
-
-                    switch (cell_type)
-                    {
-                        case tTile::SOLID    : {    tSolid::Update(_x, _y, index, current_cell); } break;
-                        case tTile::LOOSE    : {    tLoose::Update(_x, _y, index, current_cell); } break;
-                        case tTile::GRAIN    : {    tGrain::Update(_x, _y, index, current_cell); } break;
-                        case tTile::FLUID    : {    tFluid::Update(_x, _y, index, current_cell); } break;
-                        case tTile::GEL      : {      tGel::Update(_x, _y, index, current_cell); } break;
-                        case tTile::PLASMA   : {   tPlasma::Update(_x, _y, index, current_cell); } break;
-                        case tTile::GAS      : {      tGas::Update(_x, _y, index, current_cell); } break;
-                        case tTile::FUME     : {     tFume::Update(_x, _y, index, current_cell); } break;
-                        case tTile::PLANT    : {    tPlant::Update(_x, _y, index, current_cell); } break;
-                        case tTile::CRITTER  : {  tCritter::Update(_x, _y, index, current_cell); } break;
-                        case tTile::GIZMO    : {    tGizmo::Update(_x, _y, index, current_cell); } break;
-                        case tTile::PLUMBING : { tPlumbing::Update(_x, _y, index, current_cell); } break;
-                    }
-                }
-            }
-        }
-        tCell::matrix = tCell::replace;
     }
 
 };
