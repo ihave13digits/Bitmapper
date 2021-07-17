@@ -2,10 +2,12 @@
 
 int main()
 {
-	Game demo;
-	//if (demo.Construct(256, 144, 4, 4, false, false, false))
-    if (demo.Construct(core::width, core::height, core::resolution, core::resolution))
-		demo.Start();
+    Game bitmapper;
+    
+    if (bitmapper.Construct(core::width, core::height, core::resolution, core::resolution))
+    {
+        bitmapper.Start();
+    }
 
 	return 0;
 }
