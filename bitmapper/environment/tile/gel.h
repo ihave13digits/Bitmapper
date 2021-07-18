@@ -27,7 +27,7 @@ namespace tGel
         int chance = rand()%10000;
         switch (tCell::matrix[dS])
         {
-            case tTile::WATER        : { tCell::replace[index] = tTile::OBSIDIAN; tCell::replace[dS] = tTile::STEAM;        } break;
+            case tTile::WATER        : { tCell::replace[index] = tTile::OBSIDIAN; tCell::replace[dS] = tTile::STEAM; } break;
             case tTile::ICE          : {                                   tCell::replace[dS] = tTile::WATER;        } break;
             case tTile::SNOW         : {                                   tCell::replace[dS] = tTile::WATER;        } break;
             case tTile::STONE        : {               if (chance < 100)   tCell::replace[dS] = tTile::LAVA;         } break;
@@ -39,11 +39,12 @@ namespace tGel
             case tTile::WOOD         : {               if (chance < 500)   tCell::replace[dS] = tTile::CHARRED_WOOD; } break;
             case tTile::TRUNK        : {               if (chance < 500)   tCell::replace[dS] = tTile::CHARRED_WOOD; } break;
             case tTile::BRANCH       : {               if (chance < 500)   tCell::replace[dS] = tTile::CHARCOAL;     } break;
+            case tTile::STICK        : {               if (chance < 500)   tCell::replace[dS] = tTile::CHARCOAL;     } break;
             case tTile::LEAVES       : {               if (chance < 500)   tCell::replace[dS] = tTile::FIRE;         } break;
         }
         switch (tCell::matrix[dW])
         {
-            case tTile::WATER        : { tCell::replace[index] = tTile::OBSIDIAN; tCell::replace[dW] = tTile::STEAM;        } break;
+            case tTile::WATER        : { tCell::replace[index] = tTile::OBSIDIAN; tCell::replace[dW] = tTile::STEAM; } break;
             case tTile::GRAVEL       : {         if (chance < 100)  tCell::replace[dW] = tTile::LAVA;         } break;
             case tTile::SAND         : {         if (chance < 500)  tCell::replace[dW] = tTile::LAVA;         } break;
             case tTile::ASH          : {         if (chance < 1000) tCell::replace[dW] = tTile::SMOKE;        } break;
@@ -52,11 +53,12 @@ namespace tGel
             case tTile::WOOD         : {         if (chance < 500)  tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
             case tTile::TRUNK        : {         if (chance < 500)  tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
             case tTile::BRANCH       : {         if (chance < 500)  tCell::replace[dW] = tTile::CHARCOAL;     } break;
+            case tTile::STICK        : {         if (chance < 500)  tCell::replace[dW] = tTile::CHARCOAL;     } break;
             case tTile::LEAVES       : {         if (chance < 500)  tCell::replace[dW] = tTile::FIRE;         } break;
         }
         switch (tCell::matrix[dE])
         {
-            case tTile::WATER        : { tCell::replace[index] = tTile::OBSIDIAN; tCell::replace[dE] = tTile::STEAM;        } break;
+            case tTile::WATER        : { tCell::replace[index] = tTile::OBSIDIAN; tCell::replace[dE] = tTile::STEAM; } break;
             case tTile::GRAVEL       : {         if (chance < 100)  tCell::replace[dE] = tTile::LAVA;         } break;
             case tTile::SAND         : {         if (chance < 500)  tCell::replace[dE] = tTile::LAVA;         } break;
             case tTile::ASH          : {         if (chance < 1000) tCell::replace[dE] = tTile::SMOKE;        } break;
@@ -65,11 +67,12 @@ namespace tGel
             case tTile::WOOD         : {         if (chance < 500)  tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
             case tTile::TRUNK        : {         if (chance < 500)  tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
             case tTile::BRANCH       : {         if (chance < 500)  tCell::replace[dE] = tTile::CHARCOAL;     } break;
+            case tTile::STICK        : {         if (chance < 500)  tCell::replace[dE] = tTile::CHARCOAL;     } break;
             case tTile::LEAVES       : {         if (chance < 500)  tCell::replace[dE] = tTile::FIRE;         } break;
         }
         switch (tCell::matrix[dN])
         {
-            case tTile::WATER        : { tCell::replace[index] = tTile::OBSIDIAN; tCell::replace[dN] = tTile::STEAM;        } break;
+            case tTile::WATER        : { tCell::replace[index] = tTile::OBSIDIAN; tCell::replace[dN] = tTile::STEAM; } break;
             case tTile::GRAVEL       : {         if (chance < 100)  tCell::replace[dN] = tTile::LAVA;         } break;
             case tTile::SAND         : {         if (chance < 500)  tCell::replace[dN] = tTile::LAVA;         } break;
             case tTile::ASH          : {         if (chance < 1000) tCell::replace[dN] = tTile::SMOKE;        } break;
@@ -78,6 +81,7 @@ namespace tGel
             case tTile::WOOD         : {         if (chance < 500)  tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
             case tTile::TRUNK        : {         if (chance < 500)  tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
             case tTile::BRANCH       : {         if (chance < 500)  tCell::replace[dN] = tTile::CHARCOAL;     } break;
+            case tTile::STICK        : {         if (chance < 250)  tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
             case tTile::LEAVES       : {         if (chance < 500)  tCell::replace[dN] = tTile::FIRE;         } break;
         }
     }

@@ -25,7 +25,7 @@ namespace tPlant
             else if ((tCell::matrix[dSW] == tTile::DIRT || tCell::matrix[dSE] == tTile::SOIL) && !tTool::Collision(_x-1, _y)) tCell::replace[dSW] = tTile::GRASS;
         }
         if (tCell::matrix[dS] == tTile::AIR) { tCell::replace[dS] = tTile::GRASS; tCell::replace[index] = tTile::AIR; }
-        else if (tCell::matrix[dN] == tTile::DIRT) { tCell::replace[index] = tTile::DIRT; }
+        else if (tCell::matrix[dN] == tTile::DIRT || tCell::matrix[dN] == tTile::LAVA) { tCell::replace[index] = tTile::DIRT; }
     }
 
     void Moss(int _x, int _y, int index, char season)
@@ -45,6 +45,8 @@ namespace tPlant
             else if ((tCell::matrix[dSE] == tTile::STONE) && !tTool::Collision(_x+1, _y)) tCell::replace[dSE] = tTile::MOSS;
             else if ((tCell::matrix[dSW] == tTile::STONE) && !tTool::Collision(_x-1, _y)) tCell::replace[dSW] = tTile::MOSS;
         }
+        if (tCell::matrix[dS] == tTile::AIR) { tCell::replace[dS] = tTile::MOSS; tCell::replace[index] = tTile::AIR; }
+        else if (tCell::matrix[dN] == tTile::DIRT || tCell::matrix[dN] == tTile::LAVA) { tCell::replace[index] = tTile::DIRT; }
     }
    
     void Leaves(int _x, int _y, int index, char season)
@@ -158,16 +160,17 @@ namespace tPlant
             if (top != tTile::AIR)
             {
                 if (right != tTile::TRUNK)
-                { if (tCell::matrix[dW] == tTile::BRANCH)
+                { if (tCell::matrix[dW] == tTile::BRANCH || tCell::matrix[dW] == tTile::LEAVES)
                     { if (tCell::matrix[dS-1] == tTile::AIR || tCell::matrix[dS-1] == tTile::LEAVES)
                         { tCell::replace[dS-1] = tTile::STICK; } } }
                 if (left != tTile::TRUNK)
-                { if (tCell::matrix[dE] == tTile::BRANCH)
+                { if (tCell::matrix[dE] == tTile::BRANCH || tCell::matrix[dE] == tTile::LEAVES)
                     { if (tCell::matrix[dS+1] == tTile::AIR && tCell::matrix[dS+1] == tTile::LEAVES)
                         { tCell::replace[dS+1] = tTile::STICK; } } }
                 if (right != tTile::TRUNK)
                 {
-                    if (tCell::matrix[dW] == tTile::BRANCH && tCell::matrix[dW+1] == tTile::BRANCH)// || matrix[dW+2] == BRANCH)
+                    if ((tCell::matrix[dW] == tTile::BRANCH || tCell::matrix[dW] == tTile::LEAVES) &&
+                        (tCell::matrix[dW+1] == tTile::BRANCH || tCell::matrix[dW+1] == tTile::LEAVES))// || matrix[dW+2] == BRANCH)
                     {
                         if (tCell::matrix[dN] == tTile::AIR && tCell::matrix[dN-1] == tTile::AIR && tCell::matrix[dN-2] == tTile::AIR)
                         { tCell::replace[dN-2] = tTile::STICK; }
@@ -175,7 +178,8 @@ namespace tPlant
                 }
                 if (left != tTile::TRUNK)
                 {
-                    if (tCell::matrix[dE] == tTile::BRANCH && tCell::matrix[dE+1] == tTile::BRANCH)// || matrix[dE+2] == BRANCH)
+                    if ((tCell::matrix[dE] == tTile::BRANCH || tCell::matrix[dE] == tTile::LEAVES) &&
+                        (tCell::matrix[dE+1] == tTile::BRANCH || tCell::matrix[dE+1] == tTile::LEAVES))// || matrix[dE+2] == BRANCH)
                     {
                         if (tCell::matrix[dN] == tTile::AIR && tCell::matrix[dN+1] == tTile::AIR && tCell::matrix[dN+2] == tTile::AIR)
                         { tCell::replace[dN+2] = tTile::STICK; }
@@ -187,19 +191,21 @@ namespace tPlant
                 int direction = rand()%100;
                 if (left != tTile::TRUNK)
                 {
-                    if (tCell::matrix[dW] == tTile::BRANCH)
-                    { if (tCell::matrix[dS-1] == tTile::AIR && tCell::matrix[dS-1] == tTile::LEAVES)
+                    if (tCell::matrix[dW] == tTile::BRANCH || tCell::matrix[dW] == tTile::LEAVES)
+                    { if (tCell::matrix[dS-1] == tTile::AIR || tCell::matrix[dS-1] == tTile::LEAVES)
                         { tCell::replace[dS-1] = tTile::STICK; }}
                 }
                 if (left != tTile::TRUNK)
                 {
-                    if (tCell::matrix[dE] == tTile::BRANCH)
-                    { if (tCell::matrix[dS+1] == tTile::AIR && tCell::matrix[dS+1] == tTile::LEAVES)
+                    if (tCell::matrix[dE] == tTile::BRANCH || tCell::matrix[dE] == tTile::LEAVES)
+                    { if (tCell::matrix[dS+1] == tTile::AIR || tCell::matrix[dS+1] == tTile::LEAVES)
                         { tCell::replace[dS+1] = tTile::STICK; } }
                 }
                 if (farright != tTile::TRUNK)
                 {
-                    if (tCell::matrix[dW] == tTile::BRANCH && tCell::matrix[dW-1] == tTile::BRANCH && tCell::matrix[dW-2] == tTile::BRANCH)
+                    if ((tCell::matrix[dW] == tTile::BRANCH || tCell::matrix[dW] == tTile::LEAVES) &&
+                        (tCell::matrix[dW-1] == tTile::BRANCH || tCell::matrix[dW-1] == tTile::LEAVES) &&
+                        (tCell::matrix[dW-2] == tTile::BRANCH || tCell::matrix[dW-2] == tTile::LEAVES))
                     {
                         if (direction < 25)
                         {
@@ -229,7 +235,9 @@ namespace tPlant
                 }
                 if (farleft != tTile::TRUNK)
                 {
-                    if (tCell::matrix[dE] == tTile::BRANCH && tCell::matrix[dE+1] == tTile::BRANCH && tCell::matrix[dE+2] == tTile::BRANCH)
+                    if ((tCell::matrix[dE] == tTile::BRANCH || tCell::matrix[dE] == tTile::LEAVES) &&
+                        (tCell::matrix[dE+1] == tTile::BRANCH || tCell::matrix[dE+1] == tTile::LEAVES) &&
+                        (tCell::matrix[dE+2] == tTile::BRANCH || tCell::matrix[dE+2] == tTile::LEAVES))
                     {
                         if (direction < 25)
                         {

@@ -24,6 +24,7 @@ namespace tPlasma
             case tTile::WOOD: { if (chance < 100) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
             case tTile::TRUNK: { if (chance < 100) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
             case tTile::BRANCH: { if (chance < 250) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
+            case tTile::STICK: { if (chance < 250) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
             case tTile::LEAVES: { if (chance < 500) tCell::replace[dN] = tTile::FIRE; } break;
         }
         switch (tCell::matrix[dS])
@@ -33,7 +34,8 @@ namespace tPlasma
             case tTile::WOOD: { if (chance < 25) tCell::replace[dS] = tTile::CHARRED_WOOD; } break;
             case tTile::TRUNK: { if (chance < 25) tCell::replace[dS] = tTile::CHARRED_WOOD; } break;
             case tTile::BRANCH: { if (chance < 50) tCell::replace[dS] = tTile::CHARRED_WOOD; } break;
-            case tTile::LEAVES: { if (chance < 500) tCell::replace[dS] = tTile::FIRE; } break;
+            case tTile::STICK: { if (chance < 50) tCell::replace[dS] = tTile::CHARRED_WOOD; } break;
+            case tTile::LEAVES: { if (chance < 100) tCell::replace[dS] = tTile::FIRE; } break;
         }
         switch (tCell::matrix[dE])
         {
@@ -46,7 +48,8 @@ namespace tPlasma
             case tTile::WOOD: { if (chance < 25) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
             case tTile::TRUNK: { if (chance < 25) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
             case tTile::BRANCH: { if (chance < 50) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
-            case tTile::LEAVES: { if (chance < 500) tCell::replace[dE] = tTile::FIRE; } break;
+            case tTile::STICK: { if (chance < 50) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
+            case tTile::LEAVES: { if (chance < 100) tCell::replace[dE] = tTile::FIRE; } break;
         }
         switch (tCell::matrix[dW])
         {
@@ -59,7 +62,8 @@ namespace tPlasma
             case tTile::WOOD: { if (chance < 25) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
             case tTile::TRUNK: { if (chance < 25) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
             case tTile::BRANCH: { if (chance < 50) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
-            case tTile::LEAVES: { if (chance < 500) tCell::replace[dW] = tTile::FIRE; } break;
+            case tTile::STICK: { if (chance < 50) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
+            case tTile::LEAVES: { if (chance < 100) tCell::replace[dW] = tTile::FIRE; } break;
         }
     }
 
@@ -85,7 +89,8 @@ namespace tPlasma
             case tTile::WOOD: { if (chance < 100) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
             case tTile::TRUNK: { if (chance < 100) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
             case tTile::BRANCH: { if (chance < 250) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
-            case tTile::LEAVES: { if (chance < 500) tCell::replace[dN] = tTile::FIRE; } break;
+            case tTile::STICK: { if (chance < 50) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
+            case tTile::LEAVES: { if (chance < 100) tCell::replace[dN] = tTile::FIRE; } break;
         }
         switch (tCell::matrix[dE])
         {
@@ -104,7 +109,8 @@ namespace tPlasma
             case tTile::WOOD: { if (chance < 25) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
             case tTile::TRUNK: { if (chance < 25) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
             case tTile::BRANCH: { if (chance < 50) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
-            case tTile::LEAVES: { if (chance < 500) tCell::replace[dE] = tTile::FIRE; } break;
+            case tTile::STICK: { if (chance < 50) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
+            case tTile::LEAVES: { if (chance < 100) tCell::replace[dE] = tTile::FIRE; } break;
         }
         switch (tCell::matrix[dW])
         {
@@ -123,7 +129,8 @@ namespace tPlasma
             case tTile::WOOD: { if (chance < 25) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
             case tTile::TRUNK: { if (chance < 25) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
             case tTile::BRANCH: { if (chance < 50) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
-            case tTile::LEAVES: { if (chance < 500) tCell::replace[dW] = tTile::FIRE; } break;
+            case tTile::STICK: { if (chance < 50) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
+            case tTile::LEAVES: { if (chance < 100) tCell::replace[dW] = tTile::FIRE; } break;
         }
     }
 
@@ -144,6 +151,7 @@ namespace tPlasma
             case tTile::WOOD: { if (chance < 250) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
             case tTile::TRUNK: { if (chance < 250) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
             case tTile::BRANCH: { if (chance < 500) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
+            case tTile::STICK: { if (chance < 250) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
             case tTile::LEAVES: { if (chance < 500) tCell::replace[dN] = tTile::FIRE; } break;
         }
         switch (tCell::matrix[dE])
@@ -157,6 +165,7 @@ namespace tPlasma
             case tTile::WOOD: { if (chance < 100) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
             case tTile::TRUNK: { if (chance < 100) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
             case tTile::BRANCH: { if (chance < 250) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
+            case tTile::STICK: { if (chance < 250) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
             case tTile::LEAVES: { if (chance < 500) tCell::replace[dE] = tTile::FIRE; } break;
         }
         switch (tCell::matrix[dW])
@@ -170,6 +179,7 @@ namespace tPlasma
             case tTile::WOOD: { if (chance < 100) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
             case tTile::TRUNK: { if (chance < 100) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
             case tTile::BRANCH: { if (chance < 250) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
+            case tTile::STICK: { if (chance < 250) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
             case tTile::LEAVES: { if (chance < 500) tCell::replace[dW] = tTile::FIRE; } break;
         }
     }
