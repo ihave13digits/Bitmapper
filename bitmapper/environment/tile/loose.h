@@ -8,10 +8,15 @@ namespace tLoose
     void LooseDirt(int _x, int _y, int index, char season)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
-        if (tCell::matrix[dN] == tTile::DIRT)
+        if (tCell::matrix[dN] == tTile::DIRT && rand()%100 < 25)
         {
             tCell::replace[index] = tTile:: DIRT;
-            tCell::replace[dN] = tTile:: LOOSE_DIRT;
+            tCell::replace[dN] = tTile::LOOSE_DIRT;
+        }
+        if (tCell::matrix[dN] == tTile::LOOSE_DIRT && rand()%100 < 5)
+        {
+            tCell::replace[index] = tTile::LOOSE_DIRT;
+            tCell::replace[dN] = tTile::AIR;
         }
     }
 

@@ -72,6 +72,7 @@ public:
 
     olc::Pixel hud_color = olc::Pixel(64, 64, 64);
     olc::Pixel hud_select_color = olc::Pixel(255, 255, 255);
+    olc::Pixel grid_color = olc::Pixel(0, 0, 0, 64);
     olc::Pixel text_color = olc::Pixel(255, 255, 255);
     olc::Pixel panel_color = olc::Pixel(10, 10, 10);
     olc::Pixel border_color = olc::Pixel(80, 80, 80);
@@ -338,6 +339,20 @@ public:
     //
     //
 
+    void DrawChunkGrid()
+    {
+        int _x = player.x % world.chunk_size;
+        int _y = player.y % world.chunk_size;
+        for (int y = 0; y < height+world.chunk_size; y += world.chunk_size)
+        {
+            DrawLine({0-_x, y-_y}, {width-_x+world.chunk_size, y-_y}, olc::Pixel(grid_color));
+        }
+        for (int x = 0; x < width+world.chunk_size; x += world.chunk_size)
+        {
+            DrawLine({x-_x, 0-_y}, {x-_x, height-_y+world.chunk_size}, olc::Pixel(grid_color));
+        }
+    }
+
     void DrawIcon(int x, int y, int tile_type, int tile_value)
     {
         int *img;
@@ -589,6 +604,7 @@ public:
                 }
             }
         }
+        DrawChunkGrid();
         SetPixelMode(olc::Pixel::NORMAL);
     }
 
@@ -1504,8 +1520,6 @@ public:
         if (player.state == player.DEAD)
         {
             if (GetKey(olc::Key::ESCAPE).bPressed) game_state = PAUSED;
-            player.Update();
-            
             return; 
         }
 
@@ -1636,9 +1650,9 @@ public:
         }
 
         // Update Player
-        if (player.tick == player.tick_delay)
+        if (player.tick > player.tick_delay)
         {
-            player.Update();
+            //player.Update();
             if (player.hp < 1) player.state = player.DEAD;
             // Tile Effects
             switch (tCell::matrix[(player.y+1)*tCell::width+player.x])
@@ -1667,8 +1681,9 @@ public:
                 player.Move(player.vx, player.vy);
             }
         }
+        player.Update(fElapsedTime);
         DrawPlayer();
-        player.UpdateWands(fElapsedTime);
+        //player.UpdateWands(fElapsedTime);
         DrawParticles(fElapsedTime);
         DrawHUD();
 
