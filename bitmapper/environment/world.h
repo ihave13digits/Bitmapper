@@ -71,7 +71,6 @@ public:
                 tCell::matrix.push_back(tTile::AIR); tCell::replace.push_back(tTile::AIR);
             }
         }
-        std::cout << tCell::matrix.size();
     }
 
     void ClearData()

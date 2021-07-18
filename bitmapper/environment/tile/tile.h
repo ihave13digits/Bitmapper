@@ -132,9 +132,11 @@ namespace tTile
         PISTON_RIGHT,
         // Logic
         WIRE,
+        WIRE_,
         WIRE_I,
         WIRE_O,
         GOLD_WIRE,
+        GOLD_WIRE_,
         GOLD_WIRE_I,
         GOLD_WIRE_O,
         OR_GATE,
