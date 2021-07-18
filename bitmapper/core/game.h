@@ -38,6 +38,7 @@ public:
 
     bool running = true;
     bool creative_mode = true;
+    bool show_grid = false;
     bool loading = false;
 
     int game_seed = 0;
@@ -57,6 +58,7 @@ public:
     int width = core::width;
     int height = core::height;
     int pixel_size = core::resolution;
+    int grid_subdivision = 5;
 
     int world_width = 4096;//8192;
     int world_height = 2048;//4096;
@@ -347,13 +349,15 @@ public:
 
     void DrawChunkGrid()
     {
-        int _x = player.x % world.chunk_size;
-        int _y = player.y % world.chunk_size;
-        for (int y = 0; y < height+world.chunk_size; y += world.chunk_size)
+        if (!show_grid) return;
+        //grid_subdivision
+        int _x = player.x % (world.chunk_size/grid_subdivision);
+        int _y = player.y % (world.chunk_size/grid_subdivision);
+        for (int y = 0; y < height+world.chunk_size; y += world.chunk_size/grid_subdivision)
         {
             DrawLine({0-_x, y-_y}, {width-_x+world.chunk_size, y-_y}, olc::Pixel(grid_color));
         }
-        for (int x = 0; x < width+world.chunk_size; x += world.chunk_size)
+        for (int x = 0; x < width+world.chunk_size; x += world.chunk_size/grid_subdivision)
         {
             DrawLine({x-_x, 0-_y}, {x-_x, height-_y+world.chunk_size}, olc::Pixel(grid_color));
         }
@@ -1643,6 +1647,9 @@ public:
         if (GetKey(olc::Key::A).bReleased) { player.vx = 0; }
         if (GetKey(olc::Key::D).bReleased) { player.vx = 0; }
 
+        if (GetKey(olc::Key::Q).bPressed) { if (grid_subdivision > 1) grid_subdivision /= 2; }
+        if (GetKey(olc::Key::E).bPressed) { if (grid_subdivision < 8) grid_subdivision *= 2; }
+        if (GetKey(olc::Key::G).bPressed) { show_grid = !show_grid; }
 
 
         // Update World
