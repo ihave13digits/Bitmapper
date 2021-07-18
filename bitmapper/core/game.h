@@ -1,7 +1,7 @@
 #define OLC_PGE_APPLICATION
 #include "../../lib/olcPixelGameEngine.h"
 
-#include "core.h"
+#include "../included.h"
 
 class Game : public olc::PixelGameEngine
 {
@@ -42,8 +42,8 @@ public:
 
     int game_seed = 0;
 
-    int game_tick = 0;
-    int tick_delay = 2;
+    float game_tick = 0.0;
+    float tick_delay = 0.033;
 
     int game_state = 0;
     int pause_state = 0;
@@ -86,6 +86,12 @@ public:
         std::string _cmd = "mkdir " + _dir;
         const char* mkdir_cmd = _cmd.c_str();
         system(mkdir_cmd);
+    }
+
+    void InstallGame()
+    {
+        tTile::LoadTileData();
+        GenerateData();
     }
 
     void SaveWorldData()
@@ -1641,63 +1647,61 @@ public:
 
         // Update World
         sky.Update(fElapsedTime);
-        if (game_tick == tick_delay)
+        if (game_tick > tick_delay)
         {
-            game_tick = 0;
+            game_tick -= tick_delay;
             DrawSky();
             world.SettleTiles(player.x-(width), player.y-(height), width*2, height*2);
             DrawTerrain();
+            DrawHUD();
         }
 
         // Update Player
-        if (player.tick > player.tick_delay)
-        {
-            //player.Update();
-            if (player.hp < 1) player.state = player.DEAD;
-            // Tile Effects
-            switch (tCell::matrix[(player.y+1)*tCell::width+player.x])
-            {
-                case tTile::LAVA:
-                {
-                    player.status = player.BURN;
-                }
-                break;
-            }
-            switch (tCell::matrix[(player.y-player.height)*tCell::width+player.x])
-            {
-                case tTile::AIR:
-                {
-                    if (player.status == player.DROWN) player.status = player.FINE;
-                }
-                break;
-                case tTile::LAVA:
-                {
-                    player.status = player.BURN;
-                }
-                break;
-            }
-            if (!PlayerVsWorld())
-            {
-                player.Move(player.vx, player.vy);
-            }
-        }
         player.Update(fElapsedTime);
+        if (player.hp < 1) player.state = player.DEAD;
+        
+        /*
+        // Tile Effects
+        switch (tCell::matrix[(player.y+1)*tCell::width+player.x])
+        {
+            case tTile::LAVA:
+            {
+                player.status = player.BURN;
+            }
+            break;
+        }
+        switch (tCell::matrix[(player.y-player.height)*tCell::width+player.x])
+        {
+            case tTile::AIR:
+            {
+                if (player.status == player.DROWN) player.status = player.FINE;
+            }
+            break;
+            case tTile::LAVA:
+            {
+                player.status = player.BURN;
+            }
+            break;
+        }
+        */
+        if (!PlayerVsWorld())
+        {
+            player.Move(player.vx, player.vy);
+        }
         DrawPlayer();
         //player.UpdateWands(fElapsedTime);
         DrawParticles(fElapsedTime);
-        DrawHUD();
+        //DrawHUD();
 
         // End Frame
-        game_tick++;
-        player.tick++;
+        game_tick += fElapsedTime;
     }
 
 
 
 	bool OnUserCreate() override
 	{
-        GenerateData();
-        core::InstallGame();
+        InstallGame();
         for (int i = 0; i < world.generation_steps; i++)
         {
             world.generation_param[i][world.pITER] = 1;

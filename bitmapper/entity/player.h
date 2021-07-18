@@ -48,7 +48,7 @@ public:
     int status = 0;
 
     float tick = 0.0;
-    float tick_delay = 0.25;
+    float tick_delay = 0.001;
 
     int damage_tick = 0;
     int damage_delay = 10;
@@ -377,9 +377,9 @@ public:
             if (frame > 3) frame = 0;
         }
         tick += delta;
-        if (tick > 0.25)
+        if (tick > tick_delay)
         {
-            tick -= 0.25;
+            tick -= tick_delay;
         }
         // Update Counters
         if (jp < JP && state != JUMP) jp++;
@@ -411,6 +411,28 @@ public:
                 }
                 break;
             }
+        }
+        // Tile Effects
+        switch (tCell::matrix[(y+1)*tCell::width+x])
+        {
+            case tTile::LAVA:
+            {
+                status = BURN;
+            }
+            break;
+        }
+        switch (tCell::matrix[(y-core::height)*tCell::width+x])
+        {
+            case tTile::AIR:
+            {
+                if (status == DROWN) status = FINE;
+            }
+            break;
+            case tTile::LAVA:
+            {
+                status = BURN;
+            }
+            break;
         }
     }
 
