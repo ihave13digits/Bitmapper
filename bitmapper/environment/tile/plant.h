@@ -7,6 +7,8 @@ namespace tPlant
 
     void Grass(int _x, int _y, int index, char season)
     {
+        int dN  = int( (_y-1) * tCell::width + (_x  ) );
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
         int dNW = int( (_y-1) * tCell::width + (_x-1) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
@@ -22,6 +24,8 @@ namespace tPlant
             else if ((tCell::matrix[dSE] == tTile::DIRT || tCell::matrix[dSE] == tTile::SOIL) && !tTool::Collision(_x+1, _y)) tCell::replace[dSE] = tTile::GRASS;
             else if ((tCell::matrix[dSW] == tTile::DIRT || tCell::matrix[dSE] == tTile::SOIL) && !tTool::Collision(_x-1, _y)) tCell::replace[dSW] = tTile::GRASS;
         }
+        if (tCell::matrix[dS] == tTile::AIR) { tCell::replace[dS] = tTile::GRASS; tCell::replace[index] = tTile::AIR; }
+        else if (tCell::matrix[dN] == tTile::DIRT) { tCell::replace[index] = tTile::DIRT; }
     }
 
     void Moss(int _x, int _y, int index, char season)
@@ -63,7 +67,7 @@ namespace tPlant
             if (tCell::matrix[dNE] == tTile::BRANCH || tCell::matrix[dNE] == tTile::STICK) n++;
             if (tCell::matrix[dNW] == tTile::BRANCH || tCell::matrix[dNW] == tTile::STICK) n++;
 
-            if (n > 0 && n < 4)
+            if (n > 0 && n < 6)
             {
                 if (tCell::matrix[dN] == tTile::AIR)
                 {
@@ -148,7 +152,7 @@ namespace tPlant
         int farleft = tCell::matrix[dW-12];
         int right = tCell::matrix[dE+8];
         int farright = tCell::matrix[dE+12];
-        if (rand()%10000 < 5)
+        if (rand()%100 < 5)
         {
             int chance = rand()%100;
             if (top != tTile::AIR)
@@ -294,7 +298,10 @@ namespace tPlant
         if (rand()%1000 < 5)
         {
             // Grow Trunk
-            if (tCell::matrix[dT-1] != tTile::STICK && tCell::matrix[dT+1] != tTile::STICK)
+            if (tTool::GetType(tCell::matrix[dT-1]) != tTile::PLANT &&
+                tTool::GetType(tCell::matrix[dT+1]) != tTile::PLANT &&
+                tCell::matrix[dT-1] != tTile::AIR &&
+                tCell::matrix[dT+1] != tTile::AIR )
             {
                 if (up == tTile::AIR || up == tTile::ACORN || up == tTile::WATER)
                 {

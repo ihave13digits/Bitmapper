@@ -47,8 +47,8 @@ public:
     int state = 0;
     int status = 0;
 
-    int tick = 0;
-    int tick_delay = 1;
+    float tick = 0.0;
+    float tick_delay = 0.25;
 
     int damage_tick = 0;
     int damage_delay = 10;
@@ -80,7 +80,8 @@ public:
 
     char frame = 0;
     char anim = 0;
-    char anim_tick = 0;
+    float anim_tick = 0.0;
+    float anim_delay = 0.125;
 
     int hotbar[9][2] =
     {
@@ -364,23 +365,28 @@ public:
         }
     }
 
-    void Update()
+    void Update(float delta)
     {
+        UpdateWands(delta);
         UpdateState();
-        anim_tick++;
-        if (anim_tick > 8)
+        anim_tick += delta;
+        if (anim_tick > 0.25)
         {
-            anim_tick = 0;
+            anim_tick -= anim_delay;
             frame++;
             if (frame > 3) frame = 0;
         }
-        tick = 0;
+        tick += delta;
+        if (tick > 0.25)
+        {
+            tick -= 0.25;
+        }
         // Update Counters
         if (jp < JP && state != JUMP) jp++;
         if (bp < BP && state != DROWN) bp++;
+        
         // Update Tick Damage
         if (status != FINE) damage_tick++;
-        
         if (damage_tick > damage_delay)
         {
             damage_tick = 0;
@@ -394,24 +400,14 @@ public:
 
                 case BURN :
                 {
-                    TakeDamage(1);
-                    burn_tick++;
-                    if (burn_tick > 25)
-                    {
-                        burn_tick = 0;
-                        status = FINE;
-                    }
+                    { TakeDamage(1); burn_tick++; }
+                    if (burn_tick > 25) { burn_tick = 0; status = FINE; }
                 }
                 break;
                 case POISON :
                 {
-                    TakeDamage(1);
-                    toxic_tick++;
-                    if (toxic_tick > 25)
-                    {
-                        toxic_tick = 0;
-                        status = FINE;
-                    }
+                    { TakeDamage(1); toxic_tick++; }
+                    if (toxic_tick > 25) { toxic_tick = 0; status = FINE; }
                 }
                 break;
             }
