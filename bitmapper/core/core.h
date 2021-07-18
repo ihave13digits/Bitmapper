@@ -1,5 +1,3 @@
-#include "../included.h"
-
 namespace core
 {
     // RNG Presets
@@ -13,10 +11,4 @@ namespace core
     // Identity
     std::string game_title = "Bitmapper";
     std::string version = "0.0.0";
-
-    void InstallGame()
-    {
-        tTile::LoadTileData();
-    }
-
 }
