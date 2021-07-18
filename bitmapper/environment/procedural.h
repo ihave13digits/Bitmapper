@@ -1,7 +1,5 @@
-class WorldGenerator
+namespace new_world
 {
-
-public:
 
     //
     //
@@ -59,6 +57,7 @@ public:
 
     bool IsDataValid()
     {
+        bool is_data_valid = false;
         for (int i = 0; i < generation_steps; i++)
         {
             if (generation_param[i][0] != tTile::AIR) is_data_valid = true;
@@ -68,9 +67,9 @@ public:
 
     void Copy()
     {
-        for (int p = 0; p < world.total_parameters; p++)
+        for (int p = 0; p < total_parameters; p++)
         {
-            world.clipboard_param[p] = world.generation_param[world.selected_step][p];
+            clipboard_param[p] = generation_param[selected_step][p];
         }
     }
 
@@ -108,7 +107,6 @@ public:
                 tCell::matrix.push_back(tTile::AIR); tCell::replace.push_back(tTile::AIR);
             }
         }
-        std::cout << tCell::matrix.size();
     }
 
     void ClearData()
@@ -205,6 +203,94 @@ public:
     }
 
     //
+
+// Seed Methods
+    void AddLayer(int t, int density, int xmin, int xmax, int ymin, int ymax)
+    {
+        for (int y = ymin; y < ymax; y++)
+        {
+            for (int x = xmin; x < xmax; x++)
+            {
+                if (rand()%1000 < density) tCell::matrix[y*tCell::width+x] = t;
+            }
+        }
+    }
+
+    void SeedLayer(int t, int density, int xmin, int xmax, int ymin, int ymax)
+    {
+        for (int y = ymin; y < ymax; y++)
+        {
+            for (int x = xmin; x < xmax; x++)
+            {
+                int index = y*tCell::width+x;
+                if (tCell::matrix[index] != tTile::AIR && rand()%10000 < density) tCell::matrix[index] = t;
+            }
+        }
+    }
+
+    // Deposition Methods
+    void Expand(int t, int minx, int maxx, int miny, int maxy, int dn=5, int ds=5, int de=25, int dw=25)
+    {
+        tCell::replace = tCell::matrix;
+
+        minx = std::max(minx, 1);
+        maxx = std::min(maxx, tCell::width-2);
+        miny = std::max(miny, 1);
+        maxy = std::min(maxy, tCell::height-2);
+
+        for (int y = miny; y < maxy; y++)
+        {
+            for (int x = minx; x < maxx; x++)
+            {
+                if (tCell::matrix[y*tCell::width+x] != tTile::AIR)
+                {
+                    int n = (y-1)*tCell::width+x;
+                    int s = (y+1)*tCell::width+x;
+                    int e = y*tCell::width+(x+1);
+                    int w = y*tCell::width+(x-1);
+
+                    if (tCell::matrix[n] == tTile::AIR && rand()%100 < dn) tCell::replace[n] = t;
+                    if (tCell::matrix[s] == tTile::AIR && rand()%100 < ds) tCell::replace[s] = t;
+                    if (tCell::matrix[e] == tTile::AIR && rand()%100 < de) tCell::replace[e] = t;
+                    if (tCell::matrix[w] == tTile::AIR && rand()%100 < dw) tCell::replace[w] = t;
+                }
+            }
+        }
+        tCell::matrix = tCell::replace;
+    }
+
+    void Deposit(int t, int minx, int maxx, int miny, int maxy, int dn=5, int ds=5, int de=25, int dw=25)
+    {
+        tCell::replace = tCell::matrix;
+
+        minx = std::max(minx, 1);
+        maxx = std::min(maxx, tCell::width-2);
+        miny = std::max(miny, 1);
+        maxy = std::min(maxy, tCell::height-2);
+
+        for (int y = miny; y < maxy; y++)
+        {
+            for (int x = minx; x < maxx; x++)
+            {
+                if (tCell::matrix[y*tCell::width+x] == t)
+                {
+                    int n = (y-1)*tCell::width+x;
+                    int s = (y+1)*tCell::width+x;
+                    int e = y*tCell::width+(x+1);
+                    int w = y*tCell::width+(x-1);
+
+                    if (rand()%100 < dn) tCell::replace[n] = t;
+                    if (rand()%100 < ds) tCell::replace[s] = t;
+                    if (rand()%100 < de) tCell::replace[e] = t;
+                    if (rand()%100 < dw) tCell::replace[w] = t;
+                }
+            }
+        }
+        tCell::matrix = tCell::replace;
+    }
+
+
+    //
     void GeneratePreview()
     {
         int index = generation_step-1;
@@ -268,7 +354,6 @@ public:
         generation_step++;
     }
 
-    //
     std::string GenerateWorld()
     {
         std::string message = "";
