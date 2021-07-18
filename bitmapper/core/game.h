@@ -259,11 +259,11 @@ public:
         
         if (data_file.is_open())
         {
-            for (int i = 0; i < world.generation_steps; i++)
+            for (int i = 0; i < new_world::generation_steps; i++)
             {
-                for (int j = 0; j < world.total_parameters; j++)
+                for (int j = 0; j < new_world::total_parameters; j++)
                 {
-                    data_file << world.generation_param[i][j] << std::endl;
+                    data_file << new_world::generation_param[i][j] << std::endl;
                 }
             }
             data_file.close();
@@ -288,18 +288,18 @@ public:
             int j = 0;
             while (getline(data_file, line))
             {
-                if (i <= world.maximum_generation_steps && line != "")
+                if (i <= new_world::maximum_generation_steps && line != "")
                 {
-                    world.generation_param[i][j] = std::stoi(line);
+                    new_world::generation_param[i][j] = std::stoi(line);
                     j++;
-                    if (j % world.total_parameters == 0)
+                    if (j % new_world::total_parameters == 0)
                     {
                         i++;
                         j = 0;
                     }
                 }
             }
-            world.generation_steps = i;
+            new_world::generation_steps = i;
             data_file.close();
         }
     }
@@ -1032,54 +1032,54 @@ public:
 
         if (GetKey(olc::Key::ENTER).bPressed)
         {
-            switch (world.selected_param)
+            switch (new_world::selected_param)
             {
-                case world.pTILE : if (input_value > tTile::total_tiles-1) input_value = tTile::total_tiles-1; break;
-                case world.pMODE : if (input_value > 3) input_value = 3; break;
-                case world.pITER : if (input_value > 64) input_value = 64; break;
+                case new_world::pTILE : if (input_value > tTile::total_tiles-1) input_value = tTile::total_tiles-1; break;
+                case new_world::pMODE : if (input_value > 3) input_value = 3; break;
+                case new_world::pITER : if (input_value > 64) input_value = 64; break;
                 default : if (input_value > 100) input_value = 100; break;
             }
-            world.generation_param[world.selected_step][world.selected_param] = input_value;
+            new_world::generation_param[new_world::selected_step][new_world::selected_param] = input_value;
             input_value = 0;
         }
         // Update Parameters
         if (GetKey(olc::Key::S).bPressed)
         {
-            if (world.selected_step < world.generation_steps-2) world.selected_step++;
+            if (new_world::selected_step < new_world::generation_steps-2) new_world::selected_step++;
         }
         if (GetKey(olc::Key::W).bPressed)
         {
-            if (world.selected_step > 0) world.selected_step--;
+            if (new_world::selected_step > 0) new_world::selected_step--;
         }
 
         if (GetKey(olc::Key::A).bPressed)
         {
-            if (world.generation_param[world.selected_step][world.selected_param] > 0)
+            if (new_world::generation_param[new_world::selected_step][new_world::selected_param] > 0)
             {
-                world.generation_param[world.selected_step][world.selected_param]--;
+                new_world::generation_param[new_world::selected_step][new_world::selected_param]--;
             }
         }
         if (GetKey(olc::Key::D).bPressed)
         {
-            switch (world.selected_param)
+            switch (new_world::selected_param)
             {
-                case world.pTILE :
+                case new_world::pTILE :
                 {
-                    if (world.generation_param[world.selected_step][world.selected_param] < tTile::total_tiles-1)
-                    { world.generation_param[world.selected_step][world.selected_param]++; }
+                    if (new_world::generation_param[new_world::selected_step][new_world::selected_param] < tTile::total_tiles-1)
+                    { new_world::generation_param[new_world::selected_step][new_world::selected_param]++; }
                 }
                 break;
-                case  world.pMODE :
+                case  new_world::pMODE :
                 {
-                    if (world.generation_param[world.selected_step][world.selected_param] < world.total_modes-1)
-                    { world.generation_param[world.selected_step][world.selected_param]++;
+                    if (new_world::generation_param[new_world::selected_step][new_world::selected_param] < new_world::total_modes-1)
+                    { new_world::generation_param[new_world::selected_step][new_world::selected_param]++;
                     }
                 }
                 break;
                 default :
                 {
-                    if (world.generation_param[world.selected_step][world.selected_param] < 100)
-                    { world.generation_param[world.selected_step][world.selected_param]++; }
+                    if (new_world::generation_param[new_world::selected_step][new_world::selected_param] < 100)
+                    { new_world::generation_param[new_world::selected_step][new_world::selected_param]++; }
                 }
                 break;
             }
@@ -1090,17 +1090,17 @@ public:
             info_text = "Removes The Selected Generation Step From The List";
             //dtls_text = "()";
             DrawRect(bminusgs.x, bminusgs.y, bminusgs.width, bminusgs.height, select_color);
-            if (GetMouse(0).bReleased && world.generation_steps > 1)
+            if (GetMouse(0).bReleased && new_world::generation_steps > 1)
             {
-                world.generation_steps--;
-                for (int i = world.selected_step; i < world.generation_steps; i++)
+                new_world::generation_steps--;
+                for (int i = new_world::selected_step; i < new_world::generation_steps; i++)
                 {
-                    for (int p = 0; p < world.total_parameters; p++)
+                    for (int p = 0; p < new_world::total_parameters; p++)
                     {
-                        world.generation_param[i][p] = world.generation_param[i+1][p];
+                        new_world::generation_param[i][p] = new_world::generation_param[i+1][p];
                     }
                 }
-                if (world.selected_step > 0) world.selected_step--;
+                if (new_world::selected_step > 0) new_world::selected_step--;
             }
         }
         if (bplusgs.IsColliding(GetMouseX(), GetMouseY()))
@@ -1108,21 +1108,21 @@ public:
             info_text = "Inserts A Generation Step Into The List";
             //dtls_text = "()";
             DrawRect(bplusgs.x, bplusgs.y, bplusgs.width, bplusgs.height, select_color);
-            if (GetMouse(0).bReleased && world.generation_steps < world.maximum_generation_steps)
+            if (GetMouse(0).bReleased && new_world::generation_steps < new_world::maximum_generation_steps)
             {
-                world.generation_steps++;
-                for (int i = world.generation_steps-1; i > world.selected_step+1; i--)
+                new_world::generation_steps++;
+                for (int i = new_world::generation_steps-1; i > new_world::selected_step+1; i--)
                 {
-                    for (int p = 0; p < world.total_parameters; p++)
+                    for (int p = 0; p < new_world::total_parameters; p++)
                     {
-                        world.generation_param[i-1][p] = world.generation_param[i-2][p];
+                        new_world::generation_param[i-1][p] = new_world::generation_param[i-2][p];
                     }
                 }
-                for (int p = 0; p < world.total_parameters; p++)
+                for (int p = 0; p < new_world::total_parameters; p++)
                 {
-                    world.generation_param[world.selected_step][p] = 0;
+                    new_world::generation_param[new_world::selected_step][p] = 0;
                 }
-                if (world.selected_step > 0) world.selected_step--;
+                if (new_world::selected_step > 0) new_world::selected_step--;
             }
         }
         // Tile Value
@@ -1131,7 +1131,7 @@ public:
             info_text = "Material To add To World";
             //dtls_text = "()";
             DrawRect(btile.x, btile.y, btile.width, btile.height, select_color);
-            if (GetMouse(0).bReleased) world.selected_param = world.pTILE;
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pTILE;
         }
         // Density Value
         if (bdense.IsColliding(GetMouseX(), GetMouseY()))
@@ -1139,14 +1139,14 @@ public:
             info_text = "Probability A Material Will Spawn Per Cell";
             dtls_text = "(Add Layer, Seed Material)";
             DrawRect(bdense.x, bdense.y, bdense.width, bdense.height, select_color);
-            if (GetMouse(0).bReleased) world.selected_param = world.pDENSE;
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pDENSE;
         }
         if (biter.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "How Many Times to Repeat Current Step";
             //dtls_text = "()";
             DrawRect(biter.x, biter.y, biter.width, biter.height, select_color);
-            if (GetMouse(0).bReleased) world.selected_param = world.pITER;
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pITER;
         }
         // X Values
         if (bminx.IsColliding(GetMouseX(), GetMouseY()))
@@ -1154,14 +1154,14 @@ public:
             info_text = "Minimum Width Range Of Effect";
             dtls_text = "(0-100 %)";
             DrawRect(bminx.x, bminx.y, bminx.width, bminx.height, select_color);
-            if (GetMouse(0).bReleased) world.selected_param = world.pMINX;
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMINX;
         }
         if (bmaxx.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Maximum Width Range Of Effect";
             dtls_text = "(0-100 %)";
             DrawRect(bmaxx.x, bmaxx.y, bmaxx.width, bmaxx.height, select_color);
-            if (GetMouse(0).bReleased) world.selected_param = world.pMAXX;
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMAXX;
         }
         // Y values
         if (bminy.IsColliding(GetMouseX(), GetMouseY()))
@@ -1169,14 +1169,14 @@ public:
             info_text = "Minimum Height Range Of Effect";
             dtls_text = "(0-100 %)";
             DrawRect(bminy.x, bminy.y, bminy.width, bminy.height, select_color);
-            if (GetMouse(0).bReleased) world.selected_param = world.pMINY;
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMINY;
         }
         if (bmaxy.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Maximum Height Range Of Effect";
             dtls_text = "(0-100 %)";
             DrawRect(bmaxy.x, bmaxy.y, bmaxy.width, bmaxy.height, select_color);
-            if (GetMouse(0).bReleased) world.selected_param = world.pMAXY;
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMAXY;
         }
         // Neighbor Values
         if (bprobn.IsColliding(GetMouseX(), GetMouseY()))
@@ -1184,28 +1184,28 @@ public:
             info_text = "Probability That A Northern Neighbor Will Spawn";
             //dtls_text = "()";
             DrawRect(bprobn.x, bprobn.y, bprobn.width, bprobn.height, select_color);
-            if (GetMouse(0).bReleased) world.selected_param = world.pPROBN;
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBN;
         }
         if (bprobs.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Probability That A Southern Neighbor Will Spawn";
             //dtls_text = "()";
             DrawRect(bprobs.x, bprobs.y, bprobs.width, bprobs.height, select_color);
-            if (GetMouse(0).bReleased) world.selected_param = world.pPROBS;
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBS;
         }
         if (bprobe.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Probability That An Eastern Neighbor Will Spawn";
             //dtls_text = "()";
             DrawRect(bprobe.x, bprobe.y, bprobe.width, bprobe.height, select_color);
-            if (GetMouse(0).bReleased) world.selected_param = world.pPROBE;
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBE;
         }
         if (bprobw.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Probability That A Western Neighbor Will Spawn";
             //dtls_text = "()";
             DrawRect(bprobw.x, bprobw.y, bprobw.width, bprobw.height, select_color);
-            if (GetMouse(0).bReleased) world.selected_param = world.pPROBW;
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBW;
         }
         // Mode Value
         if (bmode.IsColliding(GetMouseX(), GetMouseY()))
@@ -1213,7 +1213,7 @@ public:
             info_text = "Changes Generation Mode";
             //dtls_text = "()";
             DrawRect(bmode.x, bmode.y, bmode.width, bmode.height, select_color);
-            if (GetMouse(0).bReleased) world.selected_param = world.pMODE;
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMODE;
         }
 
         // Clear Values
@@ -1223,7 +1223,7 @@ public:
             DrawRect(bclear.x, bclear.y, bclear.width, bclear.height, select_color);
             if (GetMouse(0).bReleased)
             {
-                world.ClearData();
+                new_world::ClearData();
             }
         }
         // Auto Configure
@@ -1234,7 +1234,7 @@ public:
             DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, select_color);
             if (GetMouse(0).bReleased)
             {
-                world.PresetData();
+                new_world::PresetData();
             }
         }
         // Randomize Seed
@@ -1246,13 +1246,13 @@ public:
             {
                 game_seed = rand() % 9999999999;
                 srand(game_seed);
-                world.ClearMatrix();
-                world.InitializeMatrix(100, 100);
-                for (int i = 0; i < world.generation_steps; i++)
+                new_world::ClearMatrix();
+                new_world::InitializeMatrix(100, 100);
+                for (int i = 0; i < new_world::generation_steps; i++)
                 {
-                    world.GeneratePreview();
+                    new_world::GeneratePreview();
                 }
-                world.generation_step = 1;
+                new_world::generation_step = 1;
                 can_draw = true;
             }
         }
@@ -1285,9 +1285,9 @@ public:
             DrawRect(bcopy.x, bcopy.y, bcopy.width, bcopy.height, select_color);
             if (GetMouse(0).bReleased)
             {
-                for (int p = 0; p < world.total_parameters; p++)
+                for (int p = 0; p < new_world::total_parameters; p++)
                 {
-                    world.clipboard_param[p] = world.generation_param[world.selected_step][p];
+                    new_world::clipboard_param[p] = new_world::generation_param[new_world::selected_step][p];
                 }
             }
         }
@@ -1298,19 +1298,19 @@ public:
             DrawRect(bpaste.x, bpaste.y, bpaste.width, bpaste.height, select_color);
             if (GetMouse(0).bReleased)
             {
-                world.generation_steps++;
-                for (int i = world.generation_steps-1; i > world.selected_step; i--)
+                new_world::generation_steps++;
+                for (int i = new_world::generation_steps-1; i > new_world::selected_step; i--)
                 {
-                    for (int p = 0; p < world.total_parameters; p++)
+                    for (int p = 0; p < new_world::total_parameters; p++)
                     {
-                        world.generation_param[i-1][p] = world.generation_param[i-2][p];
+                        new_world::generation_param[i-1][p] = new_world::generation_param[i-2][p];
                     }
                 }
-                for (int p = 0; p < world.total_parameters; p++)
+                for (int p = 0; p < new_world::total_parameters; p++)
                 {
-                    world.generation_param[world.selected_step][p] = world.clipboard_param[p];
+                    new_world::generation_param[new_world::selected_step][p] = new_world::clipboard_param[p];
                 }
-                if (world.selected_step > 0) world.selected_step--;
+                if (new_world::selected_step > 0) new_world::selected_step--;
             }
         }
         // Generate World
@@ -1321,12 +1321,12 @@ public:
             if (GetMouse(0).bReleased)
             {
                 bool is_data_valid = false;
-                for (int i = 0; i < world.generation_steps; i++)
+                for (int i = 0; i < new_world::generation_steps; i++)
                 {
-                    if (world.generation_param[i][0] != tTile::AIR) is_data_valid = true;
+                    if (new_world::generation_param[i][0] != tTile::AIR) is_data_valid = true;
                 }
-                if (!is_data_valid) world.PresetData();
-                world.InitializeMatrix(world_width, world_height);
+                if (!is_data_valid) new_world::PresetData();
+                new_world::InitializeMatrix(world_width, world_height);
                 srand(game_seed);
                 game_state = LOADING;
             }
@@ -1339,13 +1339,13 @@ public:
             if (GetMouse(0).bReleased)
             {
                 srand(game_seed);
-                world.ClearMatrix();
-                world.InitializeMatrix(100, 100);
-                for (int i = 0; i < world.generation_steps; i++)
+                new_world::ClearMatrix();
+                new_world::InitializeMatrix(100, 100);
+                for (int i = 0; i < new_world::generation_steps; i++)
                 {
-                    world.GeneratePreview();
+                    new_world::GeneratePreview();
                 }
-                world.generation_step = 1;
+                new_world::generation_step = 1;
                 can_draw = true;
             }
         }
@@ -1371,36 +1371,36 @@ public:
         }
         // Draw Generation Steps
         int list_height = 0;
-        int stop_list = std::min(world.selected_step+9, world.generation_steps);
+        int stop_list = std::min(new_world::selected_step+9, new_world::generation_steps);
         int start_list = std::max(stop_list-9, 0);
         for (int i = start_list; i < stop_list; i++)
         {
             std::string vlue_text;
             std::string mode_text;
             std::string tile_text;
-            try { if (world.generation_param[i][world.selected_param] < world.total_modes) mode_text = world.modes[world.generation_param[i][world.selected_param]]; }
+            try { if (new_world::generation_param[i][new_world::selected_param] < new_world::total_modes) mode_text = new_world::modes[new_world::generation_param[i][new_world::selected_param]]; }
             catch (std::bad_alloc & ba) { mode_text = "Error"; }
-            try { tile_text = tTile::NAME[world.generation_param[i][world.selected_param]]; }
+            try { tile_text = tTile::NAME[new_world::generation_param[i][new_world::selected_param]]; }
             catch (std::bad_alloc & ba) { tile_text = "Error"; }
-            try { vlue_text = std::to_string(world.generation_param[i][world.selected_param]); }
+            try { vlue_text = std::to_string(new_world::generation_param[i][new_world::selected_param]); }
             catch (std::bad_alloc & ba) { vlue_text = "Error"; }
 
-            if (i == world.selected_step)
+            if (i == new_world::selected_step)
             {
                 tile_text = ">" + tile_text;
-                switch (world.selected_param)
+                switch (new_world::selected_param)
                 {
-                    case world.pTILE : DrawStringDecal({ float(186),float((list_height*9)+10) }, tile_text, text_color, { 0.5, 0.5 }); break;
-                    case world.pMODE : DrawStringDecal({ float(186),float((list_height*9)+10) }, mode_text, text_color, { 0.5, 0.5 }); break;
+                    case new_world::pTILE : DrawStringDecal({ float(186),float((list_height*9)+10) }, tile_text, text_color, { 0.5, 0.5 }); break;
+                    case new_world::pMODE : DrawStringDecal({ float(186),float((list_height*9)+10) }, mode_text, text_color, { 0.5, 0.5 }); break;
                     default : DrawStringDecal({ float(186),float((list_height*9)+10) }, vlue_text, text_color, { 0.5, 0.5 }); break;
                 }
             }
             else
             {
-                switch (world.selected_param)
+                switch (new_world::selected_param)
                 {
-                    case world.pTILE : DrawStringDecal({ float(186),float((list_height*9)+10) }, tile_text, button_color, { 0.5, 0.5 }); break;
-                    case world.pMODE : DrawStringDecal({ float(186),float((list_height*9)+10) }, mode_text, button_color, { 0.5, 0.5 }); break;
+                    case new_world::pTILE : DrawStringDecal({ float(186),float((list_height*9)+10) }, tile_text, button_color, { 0.5, 0.5 }); break;
+                    case new_world::pMODE : DrawStringDecal({ float(186),float((list_height*9)+10) }, mode_text, button_color, { 0.5, 0.5 }); break;
                     default : DrawStringDecal({ float(186),float((list_height*9)+10) }, vlue_text, button_color, { 0.5, 0.5 }); break;
                 }
             }
@@ -1420,9 +1420,9 @@ public:
         
         if (loading)
         {
-            message = world.GenerateWorld();
+            message = new_world::GenerateWorld();
             
-            if (world.generation_step > world.generation_steps)
+            if (new_world::generation_step > new_world::generation_steps)
             {
                 sky.GenerateSky(width, height, game_seed);
                 player.x = int(tCell::width/2);
@@ -1441,7 +1441,7 @@ public:
         float msg_y = (height/2)-4;
 
         DrawStringDecal({ msg_x, msg_y }, message, text_color, { 0.5, 0.5 });
-        ProgressBar(prog_x, prog_y, world.generation_step-1, world.generation_steps, width/2);
+        ProgressBar(prog_x, prog_y, new_world::generation_step-1, new_world::generation_steps, width/2);
 
     }
 
@@ -1709,9 +1709,9 @@ public:
 	bool OnUserCreate() override
 	{
         InstallGame();
-        for (int i = 0; i < world.generation_steps; i++)
+        for (int i = 0; i < new_world::generation_steps; i++)
         {
-            world.generation_param[i][world.pITER] = 1;
+            new_world::generation_param[i][new_world::pITER] = 1;
         }
 		return true;
 	}

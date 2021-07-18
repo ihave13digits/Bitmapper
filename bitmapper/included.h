@@ -65,6 +65,7 @@
 
 // World
 #include "environment/world.h"
+#include "environment/procedural.h"
 
 
 
