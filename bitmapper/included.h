@@ -40,6 +40,7 @@
 #include "environment/tile/tools.h"
 
 // Rule References
+#include "environment/tile/boom.h"
 #include "environment/tile/critter.h"
 #include "environment/tile/fluid.h"
 #include "environment/tile/fume.h"

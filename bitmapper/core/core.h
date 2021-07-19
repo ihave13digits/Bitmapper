@@ -1,7 +1,7 @@
 namespace core
 {
     // RNG Presets
-    int seed   = 0;
+    int seed = 0;
 
     // Graphics Presets
     int width  = 256;
