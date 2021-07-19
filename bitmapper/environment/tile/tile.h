@@ -11,6 +11,7 @@ namespace tTile
         GEL,
         SOLID,
         LOOSE,
+        BOOM,
         LOGIC,
         GIZMO,
         PLATFORM,
@@ -98,6 +99,9 @@ namespace tTile
         SAPPHIRE,
         GLASS,
         MANTLE,
+        // Explosive
+        BOMB,
+        DYNAMITE,
         // Platform
         PLANKS,
         // Plumbing
@@ -241,6 +245,7 @@ namespace tTile
                                 if (string_data == "gel")      { value = GEL;      }
                                 if (string_data == "solid")    { value = SOLID;    }
                                 if (string_data == "loose")    { value = LOOSE;    }
+                                if (string_data == "boom")     { value = BOOM;     }
                                 if (string_data == "logic")    { value = LOGIC;    }
                                 if (string_data == "gizmo")    { value = GIZMO;    }
                                 if (string_data == "platform") { value = PLATFORM; }

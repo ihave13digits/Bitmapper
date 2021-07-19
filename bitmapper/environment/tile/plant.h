@@ -30,6 +30,8 @@ namespace tPlant
 
     void Moss(int _x, int _y, int index, char season)
     {
+        int dN  = int( (_y-1) * tCell::width + (_x  ) );
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
         int dNW = int( (_y-1) * tCell::width + (_x-1) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
         int dE  = int( (_y  ) * tCell::width + (_x+1) );

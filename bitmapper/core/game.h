@@ -41,8 +41,6 @@ public:
     bool show_grid = false;
     bool loading = false;
 
-    int game_seed = 0;
-
     float game_tick = 0.0;
     float tick_delay = 0.033;
 
@@ -376,6 +374,7 @@ public:
             case tTile::GEL      : { img = icon.gel;      } break;
             case tTile::SOLID    : { img = icon.solid;    } break;
             case tTile::LOOSE    : { img = icon.loose;    } break;
+            case tTile::BOOM     : { img = icon.boom;     } break;
             case tTile::LOGIC    : { img = icon.logic;    } break;
             case tTile::GIZMO    : { img = icon.gizmo;    } break;
             case tTile::PLATFORM : { img = icon.platform; } break;
@@ -1244,8 +1243,8 @@ public:
             DrawRect(brandom.x, brandom.y, brandom.width, brandom.height, select_color);
             if (GetMouse(0).bReleased)
             {
-                game_seed = rand() % 9999999999;
-                srand(game_seed);
+                core::seed = rand() % 9999999999;
+                srand(core::seed);
                 new_world::ClearMatrix();
                 new_world::InitializeMatrix(100, 100);
                 for (int i = 0; i < new_world::generation_steps; i++)
@@ -1327,7 +1326,7 @@ public:
                 }
                 if (!is_data_valid) new_world::PresetData();
                 new_world::InitializeMatrix(world_width, world_height);
-                srand(game_seed);
+                srand(core::seed);
                 game_state = LOADING;
             }
         }
@@ -1338,7 +1337,7 @@ public:
             DrawRect(bpreview.x, bpreview.y, bpreview.width, bpreview.height, select_color);
             if (GetMouse(0).bReleased)
             {
-                srand(game_seed);
+                srand(core::seed);
                 new_world::ClearMatrix();
                 new_world::InitializeMatrix(100, 100);
                 for (int i = 0; i < new_world::generation_steps; i++)
@@ -1424,7 +1423,7 @@ public:
             
             if (new_world::generation_step > new_world::generation_steps)
             {
-                sky.GenerateSky(width, height, game_seed);
+                sky.GenerateSky(width, height, core::seed);
                 player.x = int(tCell::width/2);
                 player.y = player.height+2;
                 while (!tTool::IsColliding(player.x, player.y+1)) player.Move(0, 1);
