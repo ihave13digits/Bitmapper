@@ -42,7 +42,7 @@ public:
     bool loading = false;
 
     float game_tick = 0.0;
-    float tick_delay = 0.033;
+    float tick_delay = 0.035;
 
     int game_state = 0;
     int pause_state = 0;
@@ -56,7 +56,7 @@ public:
     int width = core::width;
     int height = core::height;
     int pixel_size = core::resolution;
-    int grid_subdivision = 5;
+    int grid_subdivision = 1;
 
     int world_width = 4096;//8192;
     int world_height = 2048;//4096;
@@ -1449,6 +1449,10 @@ public:
         if (GetKey(olc::Key::ESCAPE).bPressed) game_state = PLAYING;
         if (GetKey(olc::Key::TAB).bPressed) game_state = INVENTORY;
         
+        if (GetKey(olc::Key::Q).bPressed) { if (grid_subdivision > 1) grid_subdivision /= 2; }
+        if (GetKey(olc::Key::E).bPressed) { if (grid_subdivision < 8) grid_subdivision *= 2; }
+        if (GetKey(olc::Key::G).bPressed) { show_grid = !show_grid; }
+
         if (player.state == player.DEAD) return;
 
         if (GetMouse(0).bHeld)
@@ -1646,9 +1650,8 @@ public:
         if (GetKey(olc::Key::A).bReleased) { player.vx = 0; }
         if (GetKey(olc::Key::D).bReleased) { player.vx = 0; }
 
-        if (GetKey(olc::Key::Q).bPressed) { if (grid_subdivision > 1) grid_subdivision /= 2; }
-        if (GetKey(olc::Key::E).bPressed) { if (grid_subdivision < 8) grid_subdivision *= 2; }
         if (GetKey(olc::Key::G).bPressed) { show_grid = !show_grid; }
+
 
 
         // Update World
