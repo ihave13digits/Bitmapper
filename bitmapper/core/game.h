@@ -688,15 +688,31 @@ public:
             float vx = particles[p].vx;
             float vy = particles[p].vy;
 
+            int collision_x = int(x+(vx*1.5));
+            int collision_y = int(y+(vy*1.5));
+
             particles[p].Move(vx, vy, delta, tTool::IsColliding(int(x+vx), int(y+vy)));
-            if ( particles[p].effect.destroys && tTool::IsColliding(int(x+(vx*1.5)), int(y+(vy*1.5))) )
+            if ( tTool::IsColliding(collision_x, collision_y) )
             {
-                tCell::matrix[int(y+(vy*1.5))*tCell::width+int(x+(vx*1.5))] = tTile::AIR;
-            }
-            if ( particles[p].effect.mines && tTool::IsColliding(int(x+(vx*1.5)), int(y+(vy*1.5))) )
-            {
-                player.inventory.AddItem(tCell::matrix[int(y+(vy*1.5))*tCell::width+int(x+(vx*1.5))], 1);
-                tCell::matrix[int(y+(vy*1.5))*tCell::width+int(x+(vx*1.5))] = tTile::AIR;
+                int collision_index = collision_y*tCell::width+collision_x;
+                if ( particles[p].effect.destroys )
+                {
+                    tCell::matrix[collision_index] = tTile::AIR;
+                }
+                if ( particles[p].effect.mines )
+                {
+                    player.inventory.AddItem(tCell::matrix[collision_index], 1);
+                    tCell::matrix[collision_index] = tTile::AIR;
+                }
+                if (particles[p].effect.becomes)
+                {
+                    if (tTool::GetType(particles[p].effect.tile_value) == tTile::BOOM)
+                    {
+                        particles.erase(particles.begin()+p);
+                        tCell::matrix[collision_index-tCell::width] = tTile::FIRE;
+                    }
+                    tCell::matrix[collision_index] = particles[p].effect.tile_value;
+                }
             }
             if (particles[p].duration > 0.0)
             {

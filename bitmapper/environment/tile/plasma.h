@@ -184,6 +184,22 @@ namespace tPlasma
         }
     }
 
+    void Spark(int _x, int _y, int index)
+    {
+        int dN  = int( (_y-1) * tCell::width + (_x  ) );
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
+        int dE  = int( (_y  ) * tCell::width + (_x+1) );
+        int dW  = int( (_y  ) * tCell::width + (_x-1) );
+    }
+
+    void Arc(int _x, int _y, int index)
+    {
+        int dN  = int( (_y-1) * tCell::width + (_x  ) );
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
+        int dE  = int( (_y  ) * tCell::width + (_x+1) );
+        int dW  = int( (_y  ) * tCell::width + (_x-1) );
+    }
+
 
 
     //
@@ -197,6 +213,8 @@ namespace tPlasma
                 case tTile::FIRE : { Fire(_x, _y, index, season); } break;
                 case tTile::FLAME : { Flame(_x, _y, index, season); } break;
                 case tTile::FLARE : { Flare(_x, _y, index, season); } break;
+                //case tTile::SPARK : { Spark(_x, _y, index, season); } break;
+                //case tTile::ARC : { Arc(_x, _y, index, season); } break;
             }
     }
 
