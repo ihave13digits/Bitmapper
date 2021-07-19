@@ -3,23 +3,26 @@ class Effect
 
 public:
 
-    bool sticky = false;
-    bool bouncy = false;
-    bool heavy = false;
+    bool sticky;
+    bool bouncy;
+    bool heavy;
 
-    bool destroys = false;
-    bool becomes = false;
-    bool damages = false;
-    bool poisons = false;
-    bool mines = false;
-    bool trips = false;
-    bool stuns = false;
-    bool burns = false;
+    bool destroys;
+    bool becomes;
+    bool damages;
+    bool pierces;
+    bool poisons;
+    bool trails;
+    bool mines;
+    bool trips;
+    bool stuns;
+    bool burns;
 
-    int tile_value = 0;
-    int damage = 0;
-    int drain = 0;
+    int tile_trail;
+    int tile_value;
+    int damage;
+    int drain;
 
-    std::string name = "Template";
+    std::string name;
 
 };
