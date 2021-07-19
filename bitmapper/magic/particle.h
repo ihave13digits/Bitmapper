@@ -19,6 +19,8 @@ public:
 
     Effect effect;
 
+    float drop_tick = 0.0;
+    float drop_rate = 0.25;
     float duration = 5.0;
 
     void Position(float X, float Y)
@@ -34,6 +36,14 @@ public:
         CheckSpeed();
     }
 
+    bool CanDrop(float delta)
+    {
+        bool can_drop = false;
+        drop_tick += delta;
+        if (drop_tick > drop_rate) { drop_tick -= drop_rate; can_drop = true; }
+        return can_drop;
+    }
+    
     void Move(float X, float Y, float delta, bool collision)
     {
         CheckSpeed();

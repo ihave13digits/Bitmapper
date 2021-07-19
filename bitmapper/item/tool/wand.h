@@ -24,17 +24,20 @@ public:
         //e.destroys = true;
         e.becomes = true;
         //e.damages = true;
+        //e.pierces = true;
         //e.poisons = true;
+        e.trails = true;
         //e.mines = true;
         //e.trips = true;
         //e.stuns = true;
         //e.burns = true;
         
+        e.tile_trail = tTile::FIRE;
         e.tile_value = tTile::DYNAMITE;
-        e.damage = 1.0;
-        e.drain = 1.0;
+        //e.damage = 1.0;
+        //e.drain = 1.0;
 
-        e.name = "";
+        //e.name = "";
 
         return e;
     }
