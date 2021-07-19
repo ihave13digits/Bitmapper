@@ -8,6 +8,7 @@ public:
     bool heavy = false;
 
     bool destroys = false;
+    bool becomes = false;
     bool damages = false;
     bool poisons = false;
     bool mines = false;
@@ -15,6 +16,7 @@ public:
     bool stuns = false;
     bool burns = false;
 
+    int tile_value = 0;
     int damage = 0;
     int drain = 0;
 

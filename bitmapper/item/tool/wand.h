@@ -22,6 +22,7 @@ public:
         //e.bouncy = true;
         //e.heavy = true;
         //e.destroys = true;
+        e.becomes = true;
         //e.damages = true;
         //e.poisons = true;
         //e.mines = true;
@@ -29,6 +30,7 @@ public:
         //e.stuns = true;
         //e.burns = true;
         
+        e.tile_value = tTile::DYNAMITE;
         e.damage = 1.0;
         e.drain = 1.0;
 
