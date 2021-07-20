@@ -90,6 +90,14 @@ namespace new_world
         if (selected_step > 0) selected_step--;
     }
 
+    void InitializeGenerationSteps()
+    {
+        for (int i = 0; i < new_world::generation_steps; i++)
+        {
+            new_world::generation_param[i][new_world::pITER] = 1;
+        }
+    }
+
     // Matrix
     void ClearMatrix()
     {
