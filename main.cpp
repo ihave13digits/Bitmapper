@@ -2,6 +2,7 @@
 
 int main()
 {
+
     Game bitmapper;
     
     if (bitmapper.Construct(core::width, core::height, core::resolution, core::resolution))
@@ -9,5 +10,5 @@ int main()
         bitmapper.Start();
     }
 
-	return 0;
+	return 0;//return engine::Start();
 }

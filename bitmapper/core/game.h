@@ -36,16 +36,6 @@ public:
         EXIT
     };
 
-    bool running = true;
-    bool creative_mode = true;
-    bool show_grid = false;
-    bool loading = false;
-
-    float game_tick = 0.0;
-    float tick_delay = 0.035;
-
-    int game_state = 0;
-    int pause_state = 0;
 
     char selected_hotbar = 0;
     char selected_tile = 0;
@@ -53,22 +43,14 @@ public:
     int input_value = 0;
     char save_slot = 0;
 
-    int width = core::width;
-    int height = core::height;
-    int pixel_size = core::resolution;
-    int grid_subdivision = 1;
-
-    int world_width = 4096;//8192;
-    int world_height = 2048;//4096;
+    int world_width = 4096;
+    int world_height = 2048;
 
     std::vector<Particle> particles;
 
 
 
     Icon icon = Icon();
-    Sky sky = Sky();
-    World world = World();
-    Player player = Player();
 
     olc::Pixel hud_color = olc::Pixel(64, 64, 64);
     olc::Pixel hud_select_color = olc::Pixel(255, 255, 255);
@@ -109,14 +91,14 @@ public:
         std::string _dir = os::GetCWD() + "/data/" + data_dir;
         data_file.open(_dir);
 
-        int x_ = X*world.chunk_size;
-        int y_ = Y*world.chunk_size;
+        int x_ = X*iSystem::world.chunk_size;
+        int y_ = Y*iSystem::world.chunk_size;
 
         if (data_file.is_open())
         {
-            for (int y = 0; y < world.chunk_size; y++)
+            for (int y = 0; y < iSystem::world.chunk_size; y++)
             {
-                for (int x = 0; x < world.chunk_size; x++)
+                for (int x = 0; x < iSystem::world.chunk_size; x++)
                 {
                     int index = (y_+y)*tCell::width+(x_+x);
                     int tile = tCell::matrix[index];
@@ -143,8 +125,8 @@ public:
 
         int x = 0;
         int y = 0;
-        int x_ = X*world.chunk_size;
-        int y_ = Y*world.chunk_size;
+        int x_ = X*iSystem::world.chunk_size;
+        int y_ = Y*iSystem::world.chunk_size;
 
         if (data_file.is_open())
         {
@@ -183,9 +165,9 @@ public:
         if (data_file.is_open())
         {
             data_file << "#tiles" << std::endl;
-            for (int i = 0; i < player.inventory.data.size(); i++)
+            for (int i = 0; i < iSystem::player.inventory.data.size(); i++)
             {
-                data_file << i << "=" << player.inventory.data[i] << std::endl;
+                data_file << i << "=" << iSystem::player.inventory.data[i] << std::endl;
             }
             data_file.close();
         }
@@ -240,7 +222,7 @@ public:
                     {
                         int item = std::stoi(itm);
                         int amount = std::stoi(amnt);
-                        player.inventory.AddItem(item, amount);
+                        iSystem::player.inventory.AddItem(item, amount);
                     }
                 }
             }
@@ -310,11 +292,11 @@ public:
 
     void SpawnParticle(float X, float Y, Effect e)
     {
-        float W = width/2;
-        float H = height/2;
+        float W = core::width/2;
+        float H = core::height/2;
         Particle p = Particle();
         p.SetEffect(e);
-        p.Position(player.x+(player.direction*(player.height/2)), player.y-player.height/2);
+        p.Position(iSystem::player.x+(iSystem::player.direction*(iSystem::player.height/2)), iSystem::player.y-iSystem::player.height/2);
         p.Velocity(float((X-W)*0.1), float((Y-H)*0.1));
         p.Color(tTile::R[e.tile_value], tTile::G[e.tile_value], tTile::B[e.tile_value], tTile::A[e.tile_value]);
         particles.push_back(p);
@@ -348,17 +330,17 @@ public:
 
     void DrawChunkGrid()
     {
-        if (!show_grid) return;
-        //grid_subdivision
-        int _x = player.x % (world.chunk_size/grid_subdivision);
-        int _y = player.y % (world.chunk_size/grid_subdivision);
-        for (int y = 0; y < height+world.chunk_size; y += world.chunk_size/grid_subdivision)
+        if (!core::show_grid) return;
+        //core::grid_subdivision
+        int _x = iSystem::player.x % (iSystem::world.chunk_size/core::grid_subdivision);
+        int _y = iSystem::player.y % (iSystem::world.chunk_size/core::grid_subdivision);
+        for (int y = 0; y < core::height+iSystem::world.chunk_size; y += iSystem::world.chunk_size/core::grid_subdivision)
         {
-            DrawLine({0-_x, y-_y}, {width-_x+world.chunk_size, y-_y}, olc::Pixel(grid_color));
+            DrawLine({0-_x, y-_y}, {core::width-_x+iSystem::world.chunk_size, y-_y}, olc::Pixel(grid_color));
         }
-        for (int x = 0; x < width+world.chunk_size; x += world.chunk_size/grid_subdivision)
+        for (int x = 0; x < core::width+iSystem::world.chunk_size; x += iSystem::world.chunk_size/core::grid_subdivision)
         {
-            DrawLine({x-_x, 0-_y}, {x-_x, height-_y+world.chunk_size}, olc::Pixel(grid_color));
+            DrawLine({x-_x, 0-_y}, {x-_x, core::height-_y+iSystem::world.chunk_size}, olc::Pixel(grid_color));
         }
     }
 
@@ -415,9 +397,9 @@ public:
         {
             for (int x = 0; x < cols; x++)
             {
-                if (wand_value < player.wands.size())
+                if (wand_value < iSystem::player.wands.size())
                 {
-                    int wand_color = player.wands[wand_value].material;
+                    int wand_color = iSystem::player.wands[wand_value].material;
                     float R = float(tTile::R[wand_color]);
                     float G = float(tTile::G[wand_color]);
                     float B = float(tTile::B[wand_color]);
@@ -450,8 +432,8 @@ public:
                     DrawRect(b.x, b.y, b.width, b.height, select_color);
                     if (GetMouse(0).bReleased)
                     {
-                        player.hotbar[selected_hotbar][0] = itWAND;
-                        player.hotbar[selected_hotbar][1] = std::stoi(b.text);
+                        iSystem::player.hotbar[selected_hotbar][0] = itWAND;
+                        iSystem::player.hotbar[selected_hotbar][1] = std::stoi(b.text);
                     }
                 }
             }
@@ -497,8 +479,8 @@ public:
                     DrawRect(b.x, b.y, b.width, b.height, select_color);
                     if (GetMouse(0).bReleased)
                     {
-                        player.hotbar[selected_hotbar][0] = itTILE;
-                        player.hotbar[selected_hotbar][1] = std::stoi(b.text);
+                        iSystem::player.hotbar[selected_hotbar][0] = itTILE;
+                        iSystem::player.hotbar[selected_hotbar][1] = std::stoi(b.text);
                     }
                 }
             }
@@ -507,59 +489,61 @@ public:
 
     void DrawSky()
     {
-        if (player.status != player.TRIP) Clear(olc::Pixel(sky.R, sky.G, sky.B));
+        if (iSystem::player.status != iSystem::player.TRIP) Clear(olc::Pixel(iSystem::sky.R, iSystem::sky.G, iSystem::sky.B));
         
-        if (sky.starlight >= 0)
+        if (iSystem::sky.starlight >= 0)
         {
             SetPixelMode(olc::Pixel::ALPHA);
-            for (int i = 0; i < sky.starcount; i += 4)
+            for (int i = 0; i < iSystem::sky.starcount; i += 4)
             {
                 int value = rand()%220+35;
-                Draw(sky.stars[i][0], sky.stars[i][1], olc::Pixel(value, value, value, 255-sky.starlight));
-                Draw(sky.stars[i+1][0], sky.stars[i][1], olc::Pixel(value, value, value, 255-sky.starlight));
-                Draw(sky.stars[i+2][0], sky.stars[i][1], olc::Pixel(value, value, value, 255-sky.starlight));
-                Draw(sky.stars[i+3][0], sky.stars[i][1], olc::Pixel(value, value, value, 255-sky.starlight));
+                Draw(iSystem::sky.stars[i][0], iSystem::sky.stars[i][1], olc::Pixel(value, value, value, 255-iSystem::sky.starlight));
+                Draw(iSystem::sky.stars[i+1][0], iSystem::sky.stars[i][1], olc::Pixel(value, value, value, 255-iSystem::sky.starlight));
+                Draw(iSystem::sky.stars[i+2][0], iSystem::sky.stars[i][1], olc::Pixel(value, value, value, 255-iSystem::sky.starlight));
+                Draw(iSystem::sky.stars[i+3][0], iSystem::sky.stars[i][1], olc::Pixel(value, value, value, 255-iSystem::sky.starlight));
             }
         }
 
-        if (sky.time > 0.5)
+        if (iSystem::sky.time > 0.5)
         {
-            FillCircle(sky.sunx, sky.suny, sky.sun, olc::WHITE);
-            FillCircle(sky.sunx, sky.suny, sky.sun*1.2, olc::Pixel(255, 255, 255, 24));
-            FillCircle(sky.sunx, sky.suny, sky.sun*1.3, olc::Pixel(255, 255, 255, 20));
-            FillCircle(sky.sunx, sky.suny, sky.sun*1.4, olc::Pixel(255, 255, 255, 16));
-            FillCircle(sky.sunx, sky.suny, sky.sun*1.5, olc::Pixel(255, 255, 255, 12));
+            FillCircle(iSystem::sky.sunx, iSystem::sky.suny, iSystem::sky.sun, olc::WHITE);
+            FillCircle(iSystem::sky.sunx, iSystem::sky.suny, iSystem::sky.sun*1.2, olc::Pixel(255, 255, 255, 24));
+            FillCircle(iSystem::sky.sunx, iSystem::sky.suny, iSystem::sky.sun*1.3, olc::Pixel(255, 255, 255, 20));
+            FillCircle(iSystem::sky.sunx, iSystem::sky.suny, iSystem::sky.sun*1.4, olc::Pixel(255, 255, 255, 16));
+            FillCircle(iSystem::sky.sunx, iSystem::sky.suny, iSystem::sky.sun*1.5, olc::Pixel(255, 255, 255, 12));
         }
-        else if (sky.time < 0.5)
+        else if (iSystem::sky.time < 0.5)
         {
-            FillCircle(sky.moonx, sky.moony, sky.moon, olc::WHITE);
-            FillCircle(sky.moonx, sky.moony, sky.moon*1.2, olc::Pixel(255, 255, 255, 24));
-            FillCircle(sky.moonx, sky.moony, sky.moon*1.3, olc::Pixel(255, 255, 255, 20));
-            FillCircle(sky.moonx, sky.moony, sky.moon*1.4, olc::Pixel(255, 255, 255, 16));
-            FillCircle(sky.moonx, sky.moony, sky.moon*1.5, olc::Pixel(255, 255, 255, 12));
+            FillCircle(iSystem::sky.moonx, iSystem::sky.moony, iSystem::sky.moon, olc::WHITE);
+            FillCircle(iSystem::sky.moonx, iSystem::sky.moony, iSystem::sky.moon*1.2, olc::Pixel(255, 255, 255, 24));
+            FillCircle(iSystem::sky.moonx, iSystem::sky.moony, iSystem::sky.moon*1.3, olc::Pixel(255, 255, 255, 20));
+            FillCircle(iSystem::sky.moonx, iSystem::sky.moony, iSystem::sky.moon*1.4, olc::Pixel(255, 255, 255, 16));
+            FillCircle(iSystem::sky.moonx, iSystem::sky.moony, iSystem::sky.moon*1.5, olc::Pixel(255, 255, 255, 12));
 
-            FillCircle(sky.moonx, sky.moony, sky.moon*0.95, olc::Pixel(220, 220, 220));
-            FillCircle(sky.moonx-2, sky.moony+1, sky.moon/2, olc::Pixel(195, 195, 195));
-            FillCircle(sky.moonx+3, sky.moony+3, sky.moon/2, olc::Pixel(195, 195, 195));
-            FillCircle(sky.moonx+2, sky.moony-1, sky.moon/3, olc::Pixel(170, 170, 170));
-            FillCircle(sky.moonx-3, sky.moony-4, sky.moon/3, olc::Pixel(170, 170, 170));
-            FillCircle(sky.moonx-2, sky.moony+3, sky.moon/4, olc::Pixel(145, 145, 145));
-            FillCircle(sky.moonx+3, sky.moony+4, sky.moon/4, olc::Pixel(145, 145, 145));
-            FillCircle(sky.moonx+3, sky.moony-2, sky.moon/5, olc::Pixel(120, 120, 120));
-            FillCircle(sky.moonx-4, sky.moony-3, sky.moon/5, olc::Pixel(120, 120, 120));
+            FillCircle(iSystem::sky.moonx, iSystem::sky.moony, iSystem::sky.moon*0.95, olc::Pixel(220, 220, 220));
+            FillCircle(iSystem::sky.moonx-2, iSystem::sky.moony+1, iSystem::sky.moon/2, olc::Pixel(195, 195, 195));
+            FillCircle(iSystem::sky.moonx+3, iSystem::sky.moony+3, iSystem::sky.moon/2, olc::Pixel(195, 195, 195));
+            FillCircle(iSystem::sky.moonx+2, iSystem::sky.moony-1, iSystem::sky.moon/3, olc::Pixel(170, 170, 170));
+            FillCircle(iSystem::sky.moonx-3, iSystem::sky.moony-4, iSystem::sky.moon/3, olc::Pixel(170, 170, 170));
+            FillCircle(iSystem::sky.moonx-2, iSystem::sky.moony+3, iSystem::sky.moon/4, olc::Pixel(145, 145, 145));
+            FillCircle(iSystem::sky.moonx+3, iSystem::sky.moony+4, iSystem::sky.moon/4, olc::Pixel(145, 145, 145));
+            FillCircle(iSystem::sky.moonx+3, iSystem::sky.moony-2, iSystem::sky.moon/5, olc::Pixel(120, 120, 120));
+            FillCircle(iSystem::sky.moonx-4, iSystem::sky.moony-3, iSystem::sky.moon/5, olc::Pixel(120, 120, 120));
         }
-        for (int i = 0; i < sky.humidity; i++)
+        for (int i = 0; i < iSystem::sky.humidity; i++)
         {
-            int x = sky.clouds[i][0];
-            int y = sky.clouds[i][1];
-            FillCircle(x, y, sky.clouds[i][2], olc::Pixel(sky.r, sky.g, sky.b, 4+(8*sky.time)));
+            int x = iSystem::sky.clouds[i][0];
+            int y = iSystem::sky.clouds[i][1];
+            FillCircle(x, y, iSystem::sky.clouds[i][2], olc::Pixel(iSystem::sky.r, iSystem::sky.g, iSystem::sky.b, 4+(8*iSystem::sky.time)));
         }
-        if (sky.humidity > sky.cloudcount/4)
+        if (iSystem::sky.humidity > iSystem::sky.cloudcount/4)
         {
-            if (rand()%sky.cloudcount < sky.humidity)
+            if (rand()%iSystem::sky.cloudcount < iSystem::sky.humidity)
             {
-                if (sky.day < sky.year_length*0.75) tCell::matrix[256*tCell::width+((rand()%width)+player.x-(width/2))] = tTile::WATER;
-                else if (sky.day >= sky.year_length*0.75) tCell::matrix[256*tCell::width+((rand()%width)+player.x-(width/2))] = tTile::SNOW;
+                if (iSystem::sky.day < iSystem::sky.year_length*0.75)
+                { tCell::matrix[256*tCell::width+((rand()%core::width)+iSystem::player.x-(core::width/2))] = tTile::WATER; }
+                else if (iSystem::sky.day >= iSystem::sky.year_length*0.75)
+                { tCell::matrix[256*tCell::width+((rand()%core::width)+iSystem::player.x-(core::width/2))] = tTile::SNOW; }
             }
         }
         SetPixelMode(olc::Pixel::NORMAL);
@@ -567,12 +551,12 @@ public:
 
     void DrawTerrain()
     {
-        int X = player.x - (width/2);
-        int Y = player.y - (height/2);
+        int X = iSystem::player.x - (core::width/2);
+        int Y = iSystem::player.y - (core::height/2);
         SetPixelMode(olc::Pixel::ALPHA);
-        for (int y = 0; y < height; y++)
+        for (int y = 0; y < core::height; y++)
         {
-            for (int x = 0; x < width; x += 4)
+            for (int x = 0; x < core::width; x += 4)
             {
                 if ( (x+X > 0 && x+X < tCell::width-1) && (y+Y > 1 && y+Y < tCell::height-1) )
                 {
@@ -621,17 +605,17 @@ public:
     bool PlayerVsWorld()
     {
         bool colliding = false;
-        int f = player.animations[player.anim][player.frame];
+        int f = iSystem::player.animations[iSystem::player.anim][iSystem::player.frame];
         for (int y = 0; y < 8; y++)
         {
             for (int x = 0; x < 8; x++)
             {
                 int index = y*8+x;
-                if (player.image[f][index] > 0)
+                if (iSystem::player.image[f][index] > 0)
                 {
-                    int _x = x+int(width/2)-4;
-                    int _y = y+int(height/2)-7;
-                    if ( tTool::IsColliding((player.x+player.vx)+(x-4), (player.y+player.vy)+(y-7)) )
+                    int _x = x+int(core::width/2)-4;
+                    int _y = y+int(core::height/2)-7;
+                    if ( tTool::IsColliding((iSystem::player.x+iSystem::player.vx)+(x-4), (iSystem::player.y+iSystem::player.vy)+(y-7)) )
                     {
                         Draw(_x, _y, olc::RED);
                         colliding = true;
@@ -647,34 +631,36 @@ public:
         int r = 0;
         int g = 0;
         int b = 0;
-        switch (player.status)
+        switch (iSystem::player.status)
         {
-            case player.FINE :     {r=255; g=255; b=255;} break;
-            case player.HURT :     {r=255; g=128; b=0  ;} break;
-            case player.BURN :     {r=255; g=0  ; b=0  ;} break;
-            case player.COLD :     {r=128; g=128; b=255;} break;
-            case player.STUN :     {r=255; g=255; b=0  ;} break;
-            case player.TRIP :     {r=0;   g=255; b=255;} break;
-            case player.POISON :   {r=0;   g=255; b=0  ;} break;
-            case player.CONFUSED : {r=128; g=128; b=128;} break;
+            case iSystem::player.FINE :     {r=255; g=255; b=255;} break;
+            case iSystem::player.HURT :     {r=255; g=128; b=0  ;} break;
+            case iSystem::player.BURN :     {r=255; g=0  ; b=0  ;} break;
+            case iSystem::player.COLD :     {r=128; g=128; b=255;} break;
+            case iSystem::player.STUN :     {r=255; g=255; b=0  ;} break;
+            case iSystem::player.TRIP :     {r=0;   g=255; b=255;} break;
+            case iSystem::player.POISON :   {r=0;   g=255; b=0  ;} break;
+            case iSystem::player.CONFUSED : {r=128; g=128; b=128;} break;
         }
-        int f = player.animations[player.anim][player.frame];
+        int f = iSystem::player.animations[iSystem::player.anim][iSystem::player.frame];
         for (int y = 0; y < 8; y++)
         {
             for (int x = 0; x < 8; x++)
             {
                 int index = y*8+x;
-                if (player.image[f][index] > 0)
+                if (iSystem::player.image[f][index] > 0)
                 {
-                    int v = player.image[f][index];
+                    int v = iSystem::player.image[f][index];
                     int R = std::min((((v*32)+r)/2), 255);
                     int G = std::min((((v*32)+g)/2), 255);
                     int B = std::min((((v*32)+b)/2), 255);
-                    int _x = x+int(width/2)-4;
-                    int _y = y+int(height/2)-7;
+                    int _x = x+int(core::width/2)-4;
+                    int _y = y+int(core::height/2)-7;
                     Draw(_x, _y, olc::Pixel(R, G, B));
-                    if ( tTool::IsColliding((player.x+player.vx)+(x-4), (player.y+player.vy)+(y-7)) ) { Draw(_x+player.vx, _y+player.vy, olc::YELLOW); }
-                    if ( tTool::IsColliding(player.x+(x-4), player.y+(y-7)) ) { Draw(_x, _y, olc::RED); }
+                    if ( tTool::IsColliding((iSystem::player.x+iSystem::player.vx)+(x-4), (iSystem::player.y+iSystem::player.vy)+(y-7)) )
+                    { Draw(_x+iSystem::player.vx, _y+iSystem::player.vy, olc::YELLOW); }
+                    if ( tTool::IsColliding(iSystem::player.x+(x-4), iSystem::player.y+(y-7)) )
+                    { Draw(_x, _y, olc::RED); }
                 }
             }
         }
@@ -702,7 +688,7 @@ public:
                 }
                 if ( particles[p].effect.mines )
                 {
-                    player.inventory.AddItem(tCell::matrix[collision_index], 1);
+                    iSystem::player.inventory.AddItem(tCell::matrix[collision_index], 1);
                     tCell::matrix[collision_index] = tTile::AIR;
                 }
                 if (particles[p].effect.becomes)
@@ -722,7 +708,9 @@ public:
             if (particles[p].duration > 0.0)
             {
                 particles[p].duration -= delta;
-                Draw(x-(player.x-(width/2)), y-(player.y-(height/2)), olc::Pixel(particles[p].r, particles[p].g, particles[p].b, particles[p].a));
+                Draw(x-(iSystem::player.x-(core::width/2)),
+                        y-(iSystem::player.y-(core::height/2)),
+                        olc::Pixel(particles[p].r, particles[p].g, particles[p].b, particles[p].a));
             }
             else
             {
@@ -735,38 +723,38 @@ public:
     {
         float font = 0.25;
 
-        int lookindex = (player.y-(height/2)+GetMouseY())*tCell::width+(player.x-(width/2)+GetMouseX());
+        int lookindex = (iSystem::player.y-(core::height/2)+GetMouseY())*tCell::width+(iSystem::player.x-(core::width/2)+GetMouseX());
 
-        std::string health = std::to_string(player.hp)+"/"+std::to_string(player.HP);
+        std::string health = std::to_string(iSystem::player.hp)+"/"+std::to_string(iSystem::player.HP);
         std::string lookingat = "Air";
         std::string selectedtile = tTile::NAME[selected_tile];
         std::string selectedcount = "";
-        std::string collision_at = std::to_string(tTool::Collision((player.x-(width/2)+GetMouseX()), (player.y-(height/2)+GetMouseY())));
+        std::string collision_at = std::to_string(tTool::Collision((iSystem::player.x-(core::width/2)+GetMouseX()), (iSystem::player.y-(core::height/2)+GetMouseY())));
 
         if ( ( (lookindex < tCell::width*tCell::height) && lookindex > 0) && (tCell::matrix[lookindex] < tTile::total_tiles) )
         {
             lookingat = tTile::NAME[tCell::matrix[lookindex]];
         }
-        if (player.inventory.HasItem(selected_tile))
+        if (iSystem::player.inventory.HasItem(selected_tile))
         {
-            selectedcount = std::to_string(player.inventory.data[selected_tile]);
+            selectedcount = std::to_string(iSystem::player.inventory.data[selected_tile]);
         }
 
-        ProgressBar(4, 2, player.hp, player.HP, 32, 255, 0, 0, 64, 0, 0);
-        ProgressBar(4, 4, player.jp, player.JP, 32, 0, 255, 0, 0, 64, 0);
-        ProgressBar(4, 6, player.bp, player.BP, 32, 0, 0, 255, 0, 0, 64);
+        ProgressBar(4, 2, iSystem::player.hp, iSystem::player.HP, 32, 255, 0, 0, 64, 0, 0);
+        ProgressBar(4, 4, iSystem::player.jp, iSystem::player.JP, 32, 0, 255, 0, 0, 64, 0);
+        ProgressBar(4, 6, iSystem::player.bp, iSystem::player.BP, 32, 0, 0, 255, 0, 0, 64);
         DrawStringDecal({ 4,8  }, "Looking At: " + lookingat, text_color, { font, font });
         //DrawStringDecal({ 4,12 }, "Selected Tile: " + selectedtile + " " + selectedcount, text_color, { font, font });
         DrawStringDecal({ 4,12 }, "Collision: " + collision_at, text_color, { font, font });
-        DrawStringDecal({ 4,16 }, "Day: " + std::to_string(sky.day), text_color, { font, font });
-        DrawStringDecal({ 4,20 }, "Year: " + std::to_string(sky.year), text_color, { font, font });
+        DrawStringDecal({ 4,16 }, "Day: " + std::to_string(iSystem::sky.day), text_color, { font, font });
+        DrawStringDecal({ 4,20 }, "Year: " + std::to_string(iSystem::sky.year), text_color, { font, font });
         //
         int hb_size = icon.size+1;
-        int hb_offset = (width/2) - hb_size*4.5;
+        int hb_offset = (core::width/2) - hb_size*4.5;
         std::string selected_item = "";
-        if (player.hotbar[selected_hotbar][0] == itWAND) { selected_item = "Wand"; }
-        if (player.hotbar[selected_hotbar][0] == itTILE) { selected_item = tTile::NAME[player.hotbar[selected_hotbar][1]]; }
-        float select_x = (width/2)-(selected_item.size());
+        if (iSystem::player.hotbar[selected_hotbar][0] == itWAND) { selected_item = "Wand"; }
+        if (iSystem::player.hotbar[selected_hotbar][0] == itTILE) { selected_item = tTile::NAME[iSystem::player.hotbar[selected_hotbar][1]]; }
+        float select_x = (core::width/2)-(selected_item.size());
         DrawStringDecal({ select_x,15 }, selected_item, text_color, { 0.25, 0.25 });
         SetPixelMode(olc::Pixel::ALPHA);
         for (int i = 0; i < 9; i++)
@@ -774,9 +762,9 @@ public:
             int x = i*hb_size+hb_offset;
             DrawRect(x, 2, hb_size, hb_size, hud_color);
             
-            if (player.hotbar[i][0] == itWAND)
+            if (iSystem::player.hotbar[i][0] == itWAND)
             {
-                int tile_value = player.hotbar[i][1];
+                int tile_value = iSystem::player.hotbar[i][1];
                 float R = float(tTile::R[tile_value]);
                 float G = float(tTile::G[tile_value]);
                 float B = float(tTile::B[tile_value]);
@@ -790,9 +778,9 @@ public:
                     }
                 }
             }
-            if (player.hotbar[i][0] == itTILE)
+            if (iSystem::player.hotbar[i][0] == itTILE)
             {
-                int tile_value = player.hotbar[i][1];
+                int tile_value = iSystem::player.hotbar[i][1];
                 int tile_type = tTool::GetType(tile_value);
                 DrawIcon(x+1, 3, tile_type, tile_value);
             }
@@ -805,12 +793,12 @@ public:
     {
         Clear(olc::BLACK);
 
-        float Tx = (width/2)-((sAppName.size()*16)/2);
-        float Ty = (height*0.25);
+        float Tx = (core::width/2)-((sAppName.size()*16)/2);
+        float Ty = (core::height*0.25);
 
-        float Nx = (width/2)-50;
-        float Lx = (width/2)+4;
-        float By = (height*0.75);
+        float Nx = (core::width/2)-50;
+        float Lx = (core::width/2)+4;
+        float By = (core::height*0.75);
 
         DrawStringDecal({ Tx,Ty }, sAppName, text_color, { 2.0, 2.0 });
         
@@ -830,8 +818,8 @@ public:
             if (GetMouse(0).bReleased)
             {
                 Clear(olc::BLACK);
-                game_state = CUSTOM;
-                player.Setup();
+                core::game_state = CUSTOM;
+                iSystem::player.Setup();
             }
         }
         if (bLoad.IsColliding(GetMouseX(), GetMouseY()))
@@ -842,7 +830,7 @@ public:
                 Clear(olc::BLACK);
                 LoadPlayerData();
                 //LoadWorldData();
-                game_state = PLAYING;
+                core::game_state = PLAYING;
             }
         }
     }
@@ -1348,7 +1336,7 @@ public:
                 if (!is_data_valid) new_world::PresetData();
                 new_world::InitializeMatrix(world_width, world_height);
                 srand(core::seed);
-                game_state = LOADING;
+                core::game_state = LOADING;
             }
         }
         // Generate Preview
@@ -1438,82 +1426,82 @@ public:
         
         std::string message = "Generating World, Please Wait.";
         
-        if (loading)
+        if (core::loading)
         {
             message = new_world::GenerateWorld();
             
             if (new_world::generation_step > new_world::generation_steps)
             {
-                sky.GenerateSky(width, height, core::seed);
-                player.x = int(tCell::width/2);
-                player.y = player.height+2;
-                while (!tTool::IsColliding(player.x, player.y+1)) player.Move(0, 1);
-                loading = false;
-                game_state = PLAYING;
+                iSystem::sky.GenerateSky(core::width, core::height, core::seed);
+                iSystem::player.x = int(tCell::width/2);
+                iSystem::player.y = iSystem::player.height+2;
+                while (!tTool::IsColliding(iSystem::player.x, iSystem::player.y+1)) iSystem::player.Move(0, 1);
+                core::loading = false;
+                core::game_state = PLAYING;
             }
         }
-        if (!loading) loading = true;
+        if (!core::loading) core::loading = true;
 
-        int prog_x = (width/2)-(width/4);
-        int prog_y = (height/2)+4;
+        int prog_x = (core::width/2)-(core::width/4);
+        int prog_y = (core::height/2)+4;
 
-        float msg_x = width/2-((message.size()/2)*4);
-        float msg_y = (height/2)-4;
+        float msg_x = core::width/2-((message.size()/2)*4);
+        float msg_y = (core::height/2)-4;
 
         DrawStringDecal({ msg_x, msg_y }, message, text_color, { 0.5, 0.5 });
-        ProgressBar(prog_x, prog_y, new_world::generation_step-1, new_world::generation_steps, width/2);
+        ProgressBar(prog_x, prog_y, new_world::generation_step-1, new_world::generation_steps, core::width/2);
 
     }
 
     void GamePaused()
     {
-        if (GetKey(olc::Key::ESCAPE).bPressed) game_state = PLAYING;
-        if (GetKey(olc::Key::TAB).bPressed) game_state = INVENTORY;
+        if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = PLAYING;
+        if (GetKey(olc::Key::TAB).bPressed) core::game_state = INVENTORY;
         
-        if (GetKey(olc::Key::Q).bPressed) { if (grid_subdivision > 1) grid_subdivision /= 2; }
-        if (GetKey(olc::Key::E).bPressed) { if (grid_subdivision < 8) grid_subdivision *= 2; }
-        if (GetKey(olc::Key::G).bPressed) { show_grid = !show_grid; }
+        if (GetKey(olc::Key::Q).bPressed) { if (core::grid_subdivision > 1) core::grid_subdivision /= 2; }
+        if (GetKey(olc::Key::E).bPressed) { if (core::grid_subdivision < 8) core::grid_subdivision *= 2; }
+        if (GetKey(olc::Key::G).bPressed) { core::show_grid = !core::show_grid; }
 
-        if (player.state == player.DEAD) return;
+        if (iSystem::player.state == iSystem::player.DEAD) return;
 
         if (GetMouse(0).bHeld)
         {
-            if (player.hotbar[selected_hotbar][0] == itNONE)
+            if (iSystem::player.hotbar[selected_hotbar][0] == itNONE)
             {
             }
-            if (player.hotbar[selected_hotbar][0] == itWAND)
+            if (iSystem::player.hotbar[selected_hotbar][0] == itWAND)
             {
-                if (player.wands[selected_wand].can_fire)
+                if (iSystem::player.wands[selected_wand].can_fire)
                 {
-                    player.wands[selected_wand].Cast();
-                    Effect e = player.wands[selected_wand].effects[player.wands[selected_wand].current_effect];
+                    iSystem::player.wands[selected_wand].Cast();
+                    Effect e = iSystem::player.wands[selected_wand].effects[iSystem::player.wands[selected_wand].current_effect];
                     SpawnParticle(float(GetMouseX()), float(GetMouseY()), e);
                 }
             }
-            int index = (GetMouseY()+(player.y-(height/2)))*tCell::width+(GetMouseX()+(player.x-(width/2)));
+            int index = (GetMouseY()+(iSystem::player.y-(core::height/2)))*tCell::width+(GetMouseX()+(iSystem::player.x-(core::width/2)));
             int tile = tCell::matrix[index];
             int _tile = selected_tile;
-            if (player.hotbar[selected_hotbar][0] == itTILE)
+            if (iSystem::player.hotbar[selected_hotbar][0] == itTILE)
             {
-                int index = (GetMouseY()+(player.y-(height/2)))*tCell::width+(GetMouseX()+(player.x-(width/2)));
+                int index = (GetMouseY()+(iSystem::player.y-(core::height/2)))*tCell::width+(GetMouseX()+(iSystem::player.x-(core::width/2)));
                 int tile = tCell::matrix[index];
-                int _tile = player.hotbar[selected_hotbar][1];
+                int _tile = iSystem::player.hotbar[selected_hotbar][1];
                 if (tile != tTile::MANTLE)
                 {
                     if (_tile != tTile::AIR)
                     {
-                        if (player.inventory.HasItem(_tile) || creative_mode)
+                        if (iSystem::player.inventory.HasItem(_tile) || core::creative_mode)
                         {
                             int amnt = 1;
                             if (tile == tTile::AIR) amnt = 0;
-                            player.inventory.UseItem(_tile, 1);
-                            player.inventory.AddItem(tile, amnt);
+                            iSystem::player.inventory.UseItem(_tile, 1);
+                            iSystem::player.inventory.AddItem(tile, amnt);
                             tCell::matrix[index] = _tile;
                         }
                     }
                     else if (_tile == tTile::AIR)
                     {
-                        if (tile != tTile::AIR) player.inventory.AddItem(tile, 1);
+                        if (tile != tTile::AIR) iSystem::player.inventory.AddItem(tile, 1);
                         tCell::matrix[index] = _tile;
                     }
                 }
@@ -1522,7 +1510,7 @@ public:
 
         if (GetKey(olc::Key::SPACE).bPressed)
         {
-            world.SettleTiles(player.x-(width), player.y-(height), width*2, height*2);
+            iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2);
         }
         DrawSky();
         DrawTerrain();
@@ -1533,17 +1521,17 @@ public:
 
     void GameInventory()
     {
-        if (GetKey(olc::Key::ESCAPE).bPressed) game_state = PAUSED;
-        if (GetKey(olc::Key::TAB).bPressed) game_state = PLAYING;
+        if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = PAUSED;
+        if (GetKey(olc::Key::TAB).bPressed) core::game_state = PLAYING;
 
         if (GetKey(olc::Key::Q).bPressed && selected_tile < tTile::total_tiles-1) selected_tile++;
         if (GetKey(olc::Key::E).bPressed && selected_tile > 0) selected_tile--;
 
-        if (GetKey(olc::Key::I).bPressed) pause_state = psTILES;
-        if (GetKey(olc::Key::W).bPressed) pause_state = psWANDS;
+        if (GetKey(olc::Key::I).bPressed) core::pause_state = psTILES;
+        if (GetKey(olc::Key::W).bPressed) core::pause_state = psWANDS;
         
-        if (pause_state == psWANDS) DrawWands();
-        if (pause_state == psTILES) DrawInventory();
+        if (core::pause_state == psWANDS) DrawWands();
+        if (core::pause_state == psTILES) DrawInventory();
 
         HotbarInput();
         DrawHUD();
@@ -1551,66 +1539,68 @@ public:
 
     void GameLoop(float fElapsedTime)
     {
-        if (player.state == player.DEAD)
+        if (iSystem::player.state == iSystem::player.DEAD)
         {
-            if (GetKey(olc::Key::ESCAPE).bPressed) game_state = PAUSED;
+            if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = PAUSED;
             return; 
         }
 
-        if (!tTool::IsColliding(player.x, player.y+1) && !tTool::IsColliding(player.x-1, player.y+1) && player.state != player.JUMP)
+        if (!tTool::IsColliding(iSystem::player.x, iSystem::player.y+1) &&
+            !tTool::IsColliding(iSystem::player.x-1, iSystem::player.y+1) &&
+            iSystem::player.state != iSystem::player.JUMP)
         {
-            player.vy = 1;
-            player.state = player.FALL;
+            iSystem::player.vy = 1;
+            iSystem::player.state = iSystem::player.FALL;
         }
-        if (tTool::IsColliding(player.x, player.y+1) || tTool::IsColliding(player.x-1, player.y+1))
+        if (tTool::IsColliding(iSystem::player.x, iSystem::player.y+1) || tTool::IsColliding(iSystem::player.x-1, iSystem::player.y+1))
         {
-            player.state = player.IDLE;
+            iSystem::player.state = iSystem::player.IDLE;
         }
 
-        if (GetKey(olc::Key::ESCAPE).bPressed) game_state = PAUSED;
-        if (GetKey(olc::Key::TAB).bPressed) game_state = INVENTORY;
+        if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = PAUSED;
+        if (GetKey(olc::Key::TAB).bPressed) core::game_state = INVENTORY;
         //
         HotbarInput();
         
         // Stuff
         if (GetMouse(0).bHeld)
         {
-            if (player.hotbar[selected_hotbar][0] == itNONE)
+            if (iSystem::player.hotbar[selected_hotbar][0] == itNONE)
             {
             }
-            if (player.hotbar[selected_hotbar][0] == itWAND)
+            if (iSystem::player.hotbar[selected_hotbar][0] == itWAND)
             {
-                if (player.wands[selected_wand].can_fire)
+                if (iSystem::player.wands[selected_wand].can_fire)
                 {
-                    player.wands[selected_wand].Cast();
-                    Effect e = player.wands[selected_wand].effects[player.wands[selected_wand].current_effect];
+                    iSystem::player.wands[selected_wand].Cast();
+                    Effect e = iSystem::player.wands[selected_wand].effects[iSystem::player.wands[selected_wand].current_effect];
                     SpawnParticle(float(GetMouseX()), float(GetMouseY()), e);
                 }
             }
-            int index = (GetMouseY()+(player.y-(height/2)))*tCell::width+(GetMouseX()+(player.x-(width/2)));
+            int index = (GetMouseY()+(iSystem::player.y-(core::height/2)))*tCell::width+(GetMouseX()+(iSystem::player.x-(core::width/2)));
             int tile = tCell::matrix[index];
             int _tile = selected_tile;
-            if (player.hotbar[selected_hotbar][0] == itTILE)
+            if (iSystem::player.hotbar[selected_hotbar][0] == itTILE)
             {
-                int index = (GetMouseY()+(player.y-(height/2)))*tCell::width+(GetMouseX()+(player.x-(width/2)));
+                int index = (GetMouseY()+(iSystem::player.y-(core::height/2)))*tCell::width+(GetMouseX()+(iSystem::player.x-(core::width/2)));
                 int tile = tCell::matrix[index];
-                int _tile = player.hotbar[selected_hotbar][1];
+                int _tile = iSystem::player.hotbar[selected_hotbar][1];
                 if (tile != tTile::MANTLE)
                 {
                     if (_tile != tTile::AIR)
                     {
-                        if (player.inventory.HasItem(_tile) || creative_mode)
+                        if (iSystem::player.inventory.HasItem(_tile) || core::creative_mode)
                         {
                             int amnt = 1;
                             if (tile == tTile::AIR) amnt = 0;
-                            player.inventory.UseItem(_tile, 1);
-                            player.inventory.AddItem(tile, amnt);
+                            iSystem::player.inventory.UseItem(_tile, 1);
+                            iSystem::player.inventory.AddItem(tile, amnt);
                             tCell::matrix[index] = _tile;
                         }
                     }
                     else if (_tile == tTile::AIR)
                     {
-                        if (tile != tTile::AIR) player.inventory.AddItem(tile, 1);
+                        if (tile != tTile::AIR) iSystem::player.inventory.AddItem(tile, 1);
                         tCell::matrix[index] = _tile;
                     }
                 }
@@ -1620,75 +1610,75 @@ public:
         // Vertical Movement
         if (GetKey(olc::Key::W).bHeld)
         {
-            if ((!tTool::IsColliding(player.x, player.y-player.height)) &&
-                (player.jp > 0) &&
-                (player.y > 0) )
+            if ((!tTool::IsColliding(iSystem::player.x, iSystem::player.y-iSystem::player.height)) &&
+                (iSystem::player.jp > 0) &&
+                (iSystem::player.y > 0) )
             {
-                player.jp--;
-                player.vy = -1;
-                player.state = player.JUMP;
+                iSystem::player.jp--;
+                iSystem::player.vy = -1;
+                iSystem::player.state = iSystem::player.JUMP;
             }
             else
             {
-                player.vy = 1;
+                iSystem::player.vy = 1;
             }
         }
 
-        if (GetKey(olc::Key::W).bReleased) { player.vy = 0; player.state = player.IDLE; }
+        if (GetKey(olc::Key::W).bReleased) { iSystem::player.vy = 0; iSystem::player.state = iSystem::player.IDLE; }
 
         if (GetKey(olc::Key::S).bPressed)
         {
-            int tile = tCell::matrix[(player.y+(player.height-1))*tCell::width+player.x];
-            if (tile == tTile::PLANKS) { player.Move(0, 1); }
+            int tile = tCell::matrix[(iSystem::player.y+(iSystem::player.height-1))*tCell::width+iSystem::player.x];
+            if (tile == tTile::PLANKS) { iSystem::player.Move(0, 1); }
         }
 
-        if (!tTool::IsColliding(player.x, player.y+1) && player.state != player.JUMP)
-        { player.vy = 1; player.state = player.FALL; }
+        if (!tTool::IsColliding(iSystem::player.x, iSystem::player.y+1) && iSystem::player.state != iSystem::player.JUMP)
+        { iSystem::player.vy = 1; iSystem::player.state = iSystem::player.FALL; }
 
         // Horizontal Movement
-        if (GetKey(olc::Key::A).bHeld && player.x > width/2)
+        if (GetKey(olc::Key::A).bHeld && iSystem::player.x > core::width/2)
         {
-            if (player.state != player.FALL && player.state != player.JUMP) player.vy = 0;
-            if (!tTool::IsColliding(player.x-2, player.y) ) { player.vx = -1; }
-            else if (tTool::IsColliding(player.x-2, player.y) ||
-                    tTool::IsColliding(player.x-2, player.y-1)
+            if (iSystem::player.state != iSystem::player.FALL && iSystem::player.state != iSystem::player.JUMP) iSystem::player.vy = 0;
+            if (!tTool::IsColliding(iSystem::player.x-2, iSystem::player.y) ) { iSystem::player.vx = -1; }
+            else if (tTool::IsColliding(iSystem::player.x-2, iSystem::player.y) ||
+                    tTool::IsColliding(iSystem::player.x-2, iSystem::player.y-1)
                     )
-            { player.vx = -1; player.Move(0, -1); }
-            if (!GetKey(olc::Key::W).bHeld && player.state != player.FALL) { player.state = player.WALK; }
-            player.direction = -1;
+            { iSystem::player.vx = -1; iSystem::player.Move(0, -1); }
+            if (!GetKey(olc::Key::W).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
+            iSystem::player.direction = -1;
         }
-        if (GetKey(olc::Key::D).bHeld && player.x < tCell::width-(width/2))
+        if (GetKey(olc::Key::D).bHeld && iSystem::player.x < tCell::width-(core::width/2))
         {
-            if (player.state != player.FALL && player.state != player.JUMP) player.vy = 0;
-            if (!tTool::IsColliding(player.x+1, player.y) ) { player.vx = 1; }
-            else if (tTool::IsColliding(player.x+1, player.y) ||
-                    tTool::IsColliding(player.x+1, player.y-1) )
-            { player.vx = 1; player.Move(0, -1); }
-            if (!GetKey(olc::Key::W).bHeld && player.state != player.FALL) { player.state = player.WALK; }
-            player.direction = 1;
+            if (iSystem::player.state != iSystem::player.FALL && iSystem::player.state != iSystem::player.JUMP) iSystem::player.vy = 0;
+            if (!tTool::IsColliding(iSystem::player.x+1, iSystem::player.y) ) { iSystem::player.vx = 1; }
+            else if (tTool::IsColliding(iSystem::player.x+1, iSystem::player.y) ||
+                    tTool::IsColliding(iSystem::player.x+1, iSystem::player.y-1) )
+            { iSystem::player.vx = 1; iSystem::player.Move(0, -1); }
+            if (!GetKey(olc::Key::W).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
+            iSystem::player.direction = 1;
         }
 
-        if (GetKey(olc::Key::A).bReleased) { player.vx = 0; }
-        if (GetKey(olc::Key::D).bReleased) { player.vx = 0; }
+        if (GetKey(olc::Key::A).bReleased) { iSystem::player.vx = 0; }
+        if (GetKey(olc::Key::D).bReleased) { iSystem::player.vx = 0; }
 
-        if (GetKey(olc::Key::G).bPressed) { show_grid = !show_grid; }
+        if (GetKey(olc::Key::G).bPressed) { core::show_grid = !core::show_grid; }
 
 
 
         // Update World
-        sky.Update(fElapsedTime);
-        if (game_tick > tick_delay)
+        iSystem::sky.Update(fElapsedTime);
+        if (core::game_tick > core::tick_delay)
         {
-            game_tick -= tick_delay;
+            core::game_tick -= core::tick_delay;
             DrawSky();
-            world.SettleTiles(player.x-(width), player.y-(height), width*2, height*2);
+            iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2);
             DrawTerrain();
             DrawHUD();
         }
 
         // Update Player
-        player.Update(fElapsedTime);
-        if (player.hp < 1) player.state = player.DEAD;
+        iSystem::player.Update(fElapsedTime);
+        if (iSystem::player.hp < 1) iSystem::player.state = iSystem::player.DEAD;
         
         /*
         // Tile Effects
@@ -1716,7 +1706,7 @@ public:
         */
         if (!PlayerVsWorld())
         {
-            player.Move(player.vx, player.vy);
+            iSystem::player.Move(iSystem::player.vx, iSystem::player.vy);
         }
         DrawPlayer();
         //player.UpdateWands(fElapsedTime);
@@ -1724,7 +1714,7 @@ public:
         //DrawHUD();
 
         // End Frame
-        game_tick += fElapsedTime;
+        core::game_tick += fElapsedTime;
     }
 
 
@@ -1741,7 +1731,7 @@ public:
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
-        switch (game_state)
+        switch (core::game_state)
         {
             case PLAYING : GameLoop(fElapsedTime); break;
             case PAUSED : GamePaused(); break;
@@ -1749,8 +1739,8 @@ public:
             case LOADING : DrawLoading(); break;
             case CUSTOM : DrawCustom(); break;
             case TITLE : DrawTitle(); break;
-            case EXIT : {SavePlayerData(); SaveWorldData();running = false;} break;
+            case EXIT : {SavePlayerData(); SaveWorldData();core::running = false;} break;
         }
-        return running;
+        return core::running;
 	}
 };
