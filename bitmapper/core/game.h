@@ -20,9 +20,6 @@ public:
         itWAND,
     };
 
-    char selected_hotbar = 0;
-    char selected_tile = 0;
-    char selected_wand = 0;
     int input_value = 0;
     char save_slot = 0;
 
@@ -70,15 +67,15 @@ public:
 
     void HotbarInput()
     {
-        if (GetKey(olc::Key::K1).bPressed) {selected_hotbar = 0;}
-        if (GetKey(olc::Key::K2).bPressed) {selected_hotbar = 1;}
-        if (GetKey(olc::Key::K3).bPressed) {selected_hotbar = 2;}
-        if (GetKey(olc::Key::K4).bPressed) {selected_hotbar = 3;}
-        if (GetKey(olc::Key::K5).bPressed) {selected_hotbar = 4;}
-        if (GetKey(olc::Key::K6).bPressed) {selected_hotbar = 5;}
-        if (GetKey(olc::Key::K7).bPressed) {selected_hotbar = 6;}
-        if (GetKey(olc::Key::K8).bPressed) {selected_hotbar = 7;}
-        if (GetKey(olc::Key::K9).bPressed) {selected_hotbar = 8;}
+        if (GetKey(olc::Key::K1).bPressed) {core::selected_hotbar = 0;}
+        if (GetKey(olc::Key::K2).bPressed) {core::selected_hotbar = 1;}
+        if (GetKey(olc::Key::K3).bPressed) {core::selected_hotbar = 2;}
+        if (GetKey(olc::Key::K4).bPressed) {core::selected_hotbar = 3;}
+        if (GetKey(olc::Key::K5).bPressed) {core::selected_hotbar = 4;}
+        if (GetKey(olc::Key::K6).bPressed) {core::selected_hotbar = 5;}
+        if (GetKey(olc::Key::K7).bPressed) {core::selected_hotbar = 6;}
+        if (GetKey(olc::Key::K8).bPressed) {core::selected_hotbar = 7;}
+        if (GetKey(olc::Key::K9).bPressed) {core::selected_hotbar = 8;}
     }
 
 
@@ -190,8 +187,8 @@ public:
                     DrawRect(b.x, b.y, b.width, b.height, select_color);
                     if (GetMouse(0).bReleased)
                     {
-                        iSystem::player.hotbar[selected_hotbar][0] = itWAND;
-                        iSystem::player.hotbar[selected_hotbar][1] = std::stoi(b.text);
+                        iSystem::player.hotbar[core::selected_hotbar][0] = itWAND;
+                        iSystem::player.hotbar[core::selected_hotbar][1] = std::stoi(b.text);
                     }
                 }
             }
@@ -237,8 +234,8 @@ public:
                     DrawRect(b.x, b.y, b.width, b.height, select_color);
                     if (GetMouse(0).bReleased)
                     {
-                        iSystem::player.hotbar[selected_hotbar][0] = itTILE;
-                        iSystem::player.hotbar[selected_hotbar][1] = std::stoi(b.text);
+                        iSystem::player.hotbar[core::selected_hotbar][0] = itTILE;
+                        iSystem::player.hotbar[core::selected_hotbar][1] = std::stoi(b.text);
                     }
                 }
             }
@@ -453,7 +450,7 @@ public:
 
         std::string health = std::to_string(iSystem::player.hp)+"/"+std::to_string(iSystem::player.HP);
         std::string lookingat = "Air";
-        std::string selectedtile = tTile::NAME[selected_tile];
+        std::string selectedtile = tTile::NAME[core::selected_tile];
         std::string selectedcount = "";
         std::string collision_at = std::to_string(tTool::Collision((iSystem::player.x-(core::width/2)+GetMouseX()), (iSystem::player.y-(core::height/2)+GetMouseY())));
 
@@ -461,9 +458,9 @@ public:
         {
             lookingat = tTile::NAME[tCell::matrix[lookindex]];
         }
-        if (iSystem::player.inventory.HasItem(selected_tile))
+        if (iSystem::player.inventory.HasItem(core::selected_tile))
         {
-            selectedcount = std::to_string(iSystem::player.inventory.data[selected_tile]);
+            selectedcount = std::to_string(iSystem::player.inventory.data[core::selected_tile]);
         }
 
         ProgressBar(4, 2, iSystem::player.hp, iSystem::player.HP, 32, 255, 0, 0, 64, 0, 0);
@@ -478,8 +475,8 @@ public:
         int hb_size = icon.size+1;
         int hb_offset = (core::width/2) - hb_size*4.5;
         std::string selected_item = "";
-        if (iSystem::player.hotbar[selected_hotbar][0] == itWAND) { selected_item = "Wand"; }
-        if (iSystem::player.hotbar[selected_hotbar][0] == itTILE) { selected_item = tTile::NAME[iSystem::player.hotbar[selected_hotbar][1]]; }
+        if (iSystem::player.hotbar[core::selected_hotbar][0] == itWAND) { selected_item = "Wand"; }
+        if (iSystem::player.hotbar[core::selected_hotbar][0] == itTILE) { selected_item = tTile::NAME[iSystem::player.hotbar[core::selected_hotbar][1]]; }
         float select_x = (core::width/2)-(selected_item.size());
         DrawStringDecal({ select_x,15 }, selected_item, text_color, { 0.25, 0.25 });
         SetPixelMode(olc::Pixel::ALPHA);
@@ -512,7 +509,7 @@ public:
             }
         }
         SetPixelMode(olc::Pixel::NORMAL);
-        DrawRect(selected_hotbar*hb_size+hb_offset, 2, hb_size, hb_size, hud_select_color);
+        DrawRect(core::selected_hotbar*hb_size+hb_offset, 2, hb_size, hb_size, hud_select_color);
     }
 
     void DrawTitle()
@@ -898,26 +895,26 @@ public:
 
         if (GetMouse(0).bHeld)
         {
-            if (iSystem::player.hotbar[selected_hotbar][0] == itNONE)
+            if (iSystem::player.hotbar[core::selected_hotbar][0] == itNONE)
             {
             }
-            if (iSystem::player.hotbar[selected_hotbar][0] == itWAND)
+            if (iSystem::player.hotbar[core::selected_hotbar][0] == itWAND)
             {
-                if (iSystem::player.wands[selected_wand].can_fire)
+                if (iSystem::player.wands[core::selected_wand].can_fire)
                 {
-                    iSystem::player.wands[selected_wand].Cast();
-                    Effect e = iSystem::player.wands[selected_wand].effects[iSystem::player.wands[selected_wand].current_effect];
+                    iSystem::player.wands[core::selected_wand].Cast();
+                    Effect e = iSystem::player.wands[core::selected_wand].effects[iSystem::player.wands[core::selected_wand].current_effect];
                     iSystem::SpawnParticle(float(GetMouseX()), float(GetMouseY()), e);
                 }
             }
             int index = (GetMouseY()+(iSystem::player.y-(core::height/2)))*tCell::width+(GetMouseX()+(iSystem::player.x-(core::width/2)));
             int tile = tCell::matrix[index];
-            int _tile = selected_tile;
-            if (iSystem::player.hotbar[selected_hotbar][0] == itTILE)
+            int _tile = core::selected_tile;
+            if (iSystem::player.hotbar[core::selected_hotbar][0] == itTILE)
             {
                 int index = (GetMouseY()+(iSystem::player.y-(core::height/2)))*tCell::width+(GetMouseX()+(iSystem::player.x-(core::width/2)));
                 int tile = tCell::matrix[index];
-                int _tile = iSystem::player.hotbar[selected_hotbar][1];
+                int _tile = iSystem::player.hotbar[core::selected_hotbar][1];
                 if (tile != tTile::MANTLE)
                 {
                     if (_tile != tTile::AIR)
@@ -956,8 +953,8 @@ public:
         if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = core::PAUSED;
         if (GetKey(olc::Key::TAB).bPressed) core::game_state = core::PLAYING;
 
-        if (GetKey(olc::Key::Q).bPressed && selected_tile < tTile::total_tiles-1) selected_tile++;
-        if (GetKey(olc::Key::E).bPressed && selected_tile > 0) selected_tile--;
+        if (GetKey(olc::Key::Q).bPressed && core::selected_tile < tTile::total_tiles-1) core::selected_tile++;
+        if (GetKey(olc::Key::E).bPressed && core::selected_tile > 0) core::selected_tile--;
 
         if (GetKey(olc::Key::I).bPressed) core::pause_state = core::psTILES;
         if (GetKey(olc::Key::W).bPressed) core::pause_state = core::psWANDS;
@@ -997,26 +994,26 @@ public:
         // Stuff
         if (GetMouse(0).bHeld)
         {
-            if (iSystem::player.hotbar[selected_hotbar][0] == itNONE)
+            if (iSystem::player.hotbar[core::selected_hotbar][0] == itNONE)
             {
             }
-            if (iSystem::player.hotbar[selected_hotbar][0] == itWAND)
+            if (iSystem::player.hotbar[core::selected_hotbar][0] == itWAND)
             {
-                if (iSystem::player.wands[selected_wand].can_fire)
+                if (iSystem::player.wands[core::selected_wand].can_fire)
                 {
-                    iSystem::player.wands[selected_wand].Cast();
-                    Effect e = iSystem::player.wands[selected_wand].effects[iSystem::player.wands[selected_wand].current_effect];
+                    iSystem::player.wands[core::selected_wand].Cast();
+                    Effect e = iSystem::player.wands[core::selected_wand].effects[iSystem::player.wands[core::selected_wand].current_effect];
                     iSystem::SpawnParticle(float(GetMouseX()), float(GetMouseY()), e);
                 }
             }
             int index = (GetMouseY()+(iSystem::player.y-(core::height/2)))*tCell::width+(GetMouseX()+(iSystem::player.x-(core::width/2)));
             int tile = tCell::matrix[index];
-            int _tile = selected_tile;
-            if (iSystem::player.hotbar[selected_hotbar][0] == itTILE)
+            int _tile = core::selected_tile;
+            if (iSystem::player.hotbar[core::selected_hotbar][0] == itTILE)
             {
                 int index = (GetMouseY()+(iSystem::player.y-(core::height/2)))*tCell::width+(GetMouseX()+(iSystem::player.x-(core::width/2)));
                 int tile = tCell::matrix[index];
-                int _tile = iSystem::player.hotbar[selected_hotbar][1];
+                int _tile = iSystem::player.hotbar[core::selected_hotbar][1];
                 if (tile != tTile::MANTLE)
                 {
                     if (_tile != tTile::AIR)

@@ -9,6 +9,12 @@ namespace core
     bool show_grid = false;
     bool loading = false;
 
+    // Selection
+
+    char selected_hotbar = 0;
+    char selected_tile = 0;
+    char selected_wand = 0;
+
     // State Flags
     int game_state = 0;
     int pause_state = 0;
