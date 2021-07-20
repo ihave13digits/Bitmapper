@@ -444,4 +444,78 @@ public:
         }
     }
 
+    void SaveData(std::string data_dir = "0")
+    {
+        std::fstream data_file;
+        std::string _dir = os::GetCWD() + dataTool::path_player + "player_data" + data_dir;
+        data_file.open(_dir);
+
+        if (data_file.is_open())
+        {
+            data_file << "#tiles" << std::endl;
+            for (int i = 0; i < inventory.data.size(); i++)
+            {
+                data_file << i << "=" << inventory.data[i] << std::endl;
+            }
+            data_file.close();
+        }
+        else
+        {
+            std::ofstream new_file (_dir);
+            SaveData(data_dir);
+        }
+    }
+
+    void LoadData(std::string data_dir = "0")
+    {
+        std::string line;
+        std::fstream data_file;
+        std::string _dir = os::GetCWD() + dataTool::path_player + "player_data" + data_dir;
+        data_file.open(_dir);
+
+        if (data_file.is_open())
+        {
+            std::string read_state = "";
+
+            while (getline(data_file, line))
+            {
+                if (line == "#tiles")
+                {
+                    read_state = "#tiles";
+                }
+
+                if (read_state == "#tiles")
+                {
+                    bool next = false;
+                    std::string itm = "";
+                    std::string amnt = "";
+
+                    for (int i = 0; i < line.length(); i++)
+                    {
+                        std::string c = line.substr(i, 1);
+                        if (c == "=")
+                        {
+                            next = true;
+                        }
+                        if (
+                                c == "1" || c == "2" || c == "3" || c == "4" || c == "5" ||
+                                c == "6" || c == "7" || c == "8" || c == "9" || c == "0"
+                                )
+                            {
+                            if (!next) {itm = itm + c;}
+                            if (next) {amnt = amnt + c;}
+                        }
+                    }
+                    if (line.substr(0, 1) != "#")
+                    {
+                        int item = std::stoi(itm);
+                        int amount = std::stoi(amnt);
+                        inventory.AddItem(item, amount);
+                    }
+                }
+            }
+        data_file.close();
+        }
+    }
+
 };
