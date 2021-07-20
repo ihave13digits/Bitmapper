@@ -2,13 +2,13 @@ namespace pSystem
 {
     std::vector<Particle> particles;
 
-    void SpawnParticle(float X, float Y, float off_x, float off_y, Effect e)
+    void SpawnParticle(float X, float Y, Effect e)
     {
-        float W = width/2;
-        float H = height/2;
+        float W = core::width/2;
+        float H = core::height/2;
         Particle p = Particle();
         p.SetEffect(e);
-        p.Position(player.x+(player.direction*(player.height/4)), player.y-player.height/2);
+        p.Position(iSystem::player.x+(iSystem::player.direction*(iSystem::player.height/2)), iSystem::player.y-iSystem::player.height/2);
         p.Velocity(float((X-W)*0.1), float((Y-H)*0.1));
         p.Color(tTile::R[e.tile_value], tTile::G[e.tile_value], tTile::B[e.tile_value], tTile::A[e.tile_value]);
         particles.push_back(p);
