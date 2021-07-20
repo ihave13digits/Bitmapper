@@ -55,6 +55,7 @@ namespace new_world
     //
     //
 
+
     bool IsDataValid()
     {
         bool is_data_valid = false;
@@ -65,38 +66,79 @@ namespace new_world
         return is_data_valid;
     }
 
-    void Copy()
+    void DecrementParameter()
     {
-        for (int p = 0; p < total_parameters; p++)
+        if (generation_param[selected_step][selected_param] > 0)
+        { generation_param[selected_step][selected_param]--; }
+    }
+
+    void IncrementParameter()
+    {
+        switch (selected_param)
         {
-            clipboard_param[p] = generation_param[selected_step][p];
+            case pTILE :
+            {
+                if (generation_param[selected_step][selected_param] < tTile::total_tiles-1)
+                { generation_param[selected_step][selected_param]++; }
+            } break;
+            case  pMODE :
+            {
+                if (generation_param[selected_step][selected_param] < total_modes-1)
+                { generation_param[selected_step][selected_param]++; }
+            } break;
+            default :
+            {
+                if (generation_param[selected_step][selected_param] < 100)
+                { generation_param[selected_step][selected_param]++; }
+            } break;
         }
     }
+
+    // Step Modification
+    void Copy() { for (int p = 0; p < total_parameters; p++) { clipboard_param[p] = generation_param[selected_step][p]; } }
 
     void Paste()
     {
         generation_steps++;
         for (int i = generation_steps-1; i > selected_step; i--)
-        {
-            for (int p = 0; p < total_parameters; p++)
-            {
-                generation_param[i-1][p] = generation_param[i-2][p];
-            }
-        }
-        for (int p = 0; p < total_parameters; p++)
-        {
-            generation_param[selected_step][p] = clipboard_param[p];
-        }
+        { for (int p = 0; p < total_parameters; p++)
+            { generation_param[i-1][p] = generation_param[i-2][p]; } }
+        for (int p = 0; p < total_parameters; p++) { generation_param[selected_step][p] = clipboard_param[p]; }
         if (selected_step > 0) selected_step--;
     }
 
-    void InitializeGenerationSteps()
+    void Remove()
     {
-        for (int i = 0; i < new_world::generation_steps; i++)
+        if (generation_steps > 1)
         {
-            new_world::generation_param[i][new_world::pITER] = 1;
+            generation_steps--;
+            for (int i = selected_step; i < generation_steps; i++)
+            {
+                for (int p = 0; p < total_parameters; p++)
+                { generation_param[i][p] = generation_param[i+1][p]; }
+            }
+            if (selected_step > 0) selected_step--;
         }
     }
+
+    void Insert()
+    {
+        if (generation_steps < maximum_generation_steps)
+        {
+            generation_steps++;
+            for (int i = generation_steps-1; i > selected_step+1; i--)
+            { for (int p = 0; p < total_parameters; p++)
+                { generation_param[i-1][p] = generation_param[i-2][p]; } }
+            for (int p = 0; p < total_parameters; p++)
+            { generation_param[selected_step][p] = 0; }
+            if (selected_step > 0) selected_step--;
+        }
+    }
+
+    //
+
+    void InitializeGenerationSteps()
+    { for (int i = 0; i < new_world::generation_steps; i++) { new_world::generation_param[i][new_world::pITER] = 1; } }
 
     // Matrix
     void ClearMatrix()
@@ -109,24 +151,18 @@ namespace new_world
         tCell::width = w;
         tCell::height = h;
         for (int y = 0; y < tCell::height; y++)
-        {
-            for (int x = 0; x < tCell::width; x++)
-            {
-                tCell::matrix.push_back(tTile::AIR); tCell::replace.push_back(tTile::AIR);
-            }
-        }
+        { for (int x = 0; x < tCell::width; x++)
+            { tCell::matrix.push_back(tTile::AIR); tCell::replace.push_back(tTile::AIR); } }
     }
 
     void ClearData()
     {
         for (int i = 0; i < maximum_generation_steps; i++)
-        {
-            for (int p = 0; p < total_parameters; p++)
-            {
-                generation_param[i][p] = 0;
-            }
-        }
+        { for (int p = 0; p < total_parameters; p++)
+            { generation_param[i][p] = 0; } }
     }
+
+    // Presets
 
     void PresetData()
     {
@@ -210,9 +246,7 @@ namespace new_world
         }
     }
 
-    //
-
-// Seed Methods
+    // Seed Methods
     void AddLayer(int t, int density, int xmin, int xmax, int ymin, int ymax)
     {
         for (int y = ymin; y < ymax; y++)
@@ -433,6 +467,91 @@ namespace new_world
         }
         generation_step++;
         return message;
+    }
+
+    void ReadyPreview()
+    {
+        srand(core::seed);
+        ClearMatrix();
+        InitializeMatrix(100, 100);
+        for (int i = 0; i < generation_steps; i++) { GeneratePreview(); }
+        generation_step = 1;
+    }
+
+    void ReadyWorld(int w, int h)
+    {
+        bool is_data_valid = false;
+        for (int i = 0; i < generation_steps; i++)
+        { if (generation_param[i][0] != tTile::AIR) is_data_valid = true; }
+        if (!is_data_valid) PresetData();
+        InitializeMatrix(w, h);
+        srand(core::seed);
+        core::game_state = core::LOADING;
+    }
+
+    void RandomizeData()
+    {
+        core::seed = rand() % 9999999999;
+        srand(core::seed);
+        ClearMatrix();
+        InitializeMatrix(100, 100);
+        for (int i = 0; i < generation_steps; i++)
+        { ReadyPreview(); }
+        generation_step = 1;
+    }
+
+    void SaveData(std::string data_dir)
+    {
+        std::string line;
+        std::fstream data_file;
+        std::string _dir = os::GetCWD() + "/data/" + data_dir;
+        data_file.open(_dir);
+
+        if (data_file.is_open())
+        {
+            for (int i = 0; i < generation_steps; i++)
+            {
+                for (int j = 0; j < total_parameters; j++)
+                {
+                    data_file << generation_param[i][j] << std::endl;
+                }
+            }
+            data_file.close();
+        }
+        else
+        {
+            std::ofstream new_file (_dir);
+            SaveData(data_dir);
+        }
+    }
+
+    void LoadData(std::string data_dir)
+    {
+        std::string line;
+        std::fstream data_file;
+        std::string _dir = os::GetCWD() + "/data/" + data_dir;
+        data_file.open(_dir);
+
+        if (data_file.is_open())
+        {
+            int i = 0;
+            int j = 0;
+            while (getline(data_file, line))
+            {
+                if (i <= maximum_generation_steps && line != "")
+                {
+                    generation_param[i][j] = std::stoi(line);
+                    j++;
+                    if (j % total_parameters == 0)
+                    {
+                        i++;
+                        j = 0;
+                    }
+                }
+            }
+            generation_steps = i;
+            data_file.close();
+        }
     }
 
 };

@@ -56,4 +56,84 @@ public:
         tCell::matrix = tCell::replace;
     }
 
+    void SaveData()
+    {
+    }
+
+    void LoadData()
+    {
+    }
+
+    void SaveChunkData(int X, int Y, std::string data_dir = "")
+    {
+        std::fstream data_file;
+        data_dir = std::to_string(X) + "-" + std::to_string(Y);
+        std::string _dir = os::GetCWD() + "/data/" + data_dir;
+        data_file.open(_dir);
+
+        int x_ = X*chunk_size;
+        int y_ = Y*chunk_size;
+
+        if (data_file.is_open())
+        {
+            for (int y = 0; y < chunk_size; y++)
+            {
+                for (int x = 0; x < chunk_size; x++)
+                {
+                    int index = (y_+y)*tCell::width+(x_+x);
+                    int tile = tCell::matrix[index];
+                    data_file << tile << ",\t";
+                }
+                data_file << std::endl;
+            }
+            data_file.close();
+        }
+        else
+        {
+            std::ofstream new_file (_dir);
+            SaveChunkData(X, Y, data_dir);
+        }
+    }
+
+    void LoadChunkData(int X, int Y, std::string data_dir = "")
+    {
+        std::string line;
+        data_dir = std::to_string(X) + "-" + std::to_string(Y);
+        std::fstream data_file;
+        std::string _dir = os::GetCWD() + "/data/" + data_dir;
+        data_file.open(_dir);
+
+        int x = 0;
+        int y = 0;
+        int x_ = X*chunk_size;
+        int y_ = Y*chunk_size;
+
+        if (data_file.is_open())
+        {
+            std::string v = "";
+            while (getline(data_file, line))
+            {
+                for (int i = 0; i < line.length(); i++)
+                {
+                    std::string c = line.substr(i, 1);
+                    if (c == ",") {x++;}
+                    if (
+                            c == "1" || c == "2" || c == "3" || c == "4" || c == "5" ||
+                            c == "6" || c == "7" || c == "8" || c == "9" || c == "0"
+                            )
+                    {
+                        v = v + c;
+                    }
+                }
+                int value = std::stoi(v);
+                int index = (y_+y)*tCell::width+(x_+x);
+                tCell::matrix[index] = value;
+                v = "";
+                y++;
+                x = 0;
+            }
+            data_file.close();
+        }
+    }
+
 };

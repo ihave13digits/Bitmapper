@@ -15,5 +15,9 @@ namespace dataTool
 
     void GenerateDirectoryTree()
     {
+        std::string _dir = os::GetCWD() + "/data";
+        std::string _cmd = "mkdir " + _dir;
+        const char* mkdir_cmd = _cmd.c_str();
+        system(mkdir_cmd);
     }
 }

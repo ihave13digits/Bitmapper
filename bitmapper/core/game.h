@@ -13,29 +13,12 @@ public:
 
 public:
 
-    enum PAUSE_STATES
-    {
-        psTILES,
-        psWANDS,
-    };
     enum ITEM_TYPES
     {
         itNONE,
         itTILE,
         itWAND,
     };
-
-    enum STATES
-    {
-        TITLE,
-        CUSTOM,
-        LOADING,
-        PLAYING,
-        INVENTORY,
-        PAUSED,
-        EXIT
-    };
-
 
     char selected_hotbar = 0;
     char selected_tile = 0;
@@ -57,227 +40,10 @@ public:
     olc::Pixel button_color = olc::Pixel(32, 32, 32);
     olc::Pixel select_color = olc::Pixel(64, 64, 64);
 
-
-    void GenerateData()
-    {
-        std::string _dir = os::GetCWD() + "/data";
-        std::string _cmd = "mkdir " + _dir;
-        const char* mkdir_cmd = _cmd.c_str();
-        system(mkdir_cmd);
-    }
-
     void InstallGame()
     {
         tTile::LoadTileData();
-        GenerateData();
-    }
-
-    void SaveWorldData()
-    {
-    }
-    
-    void LoadWorldData()
-    {
-    }
-
-    void SaveChunkData(int X, int Y, std::string data_dir = "")
-    {
-        std::fstream data_file;
-        data_dir = std::to_string(X) + "-" + std::to_string(Y);
-        std::string _dir = os::GetCWD() + "/data/" + data_dir;
-        data_file.open(_dir);
-
-        int x_ = X*iSystem::world.chunk_size;
-        int y_ = Y*iSystem::world.chunk_size;
-
-        if (data_file.is_open())
-        {
-            for (int y = 0; y < iSystem::world.chunk_size; y++)
-            {
-                for (int x = 0; x < iSystem::world.chunk_size; x++)
-                {
-                    int index = (y_+y)*tCell::width+(x_+x);
-                    int tile = tCell::matrix[index];
-                    data_file << tile << ",\t";
-                }
-                data_file << std::endl;
-            }
-            data_file.close();
-        }
-        else
-        {
-            std::ofstream new_file (_dir);
-            SaveChunkData(X, Y, data_dir);
-        }
-    }
-
-    void LoadChunkData(int X, int Y, std::string data_dir = "")
-    {
-        std::string line;
-        data_dir = std::to_string(X) + "-" + std::to_string(Y);
-        std::fstream data_file;
-        std::string _dir = os::GetCWD() + "/data/" + data_dir;
-        data_file.open(_dir);
-
-        int x = 0;
-        int y = 0;
-        int x_ = X*iSystem::world.chunk_size;
-        int y_ = Y*iSystem::world.chunk_size;
-
-        if (data_file.is_open())
-        {
-            std::string v = "";
-            while (getline(data_file, line))
-            {
-                for (int i = 0; i < line.length(); i++)
-                {
-                    std::string c = line.substr(i, 1);
-                    if (c == ",") {x++;}
-                    if (
-                            c == "1" || c == "2" || c == "3" || c == "4" || c == "5" ||
-                            c == "6" || c == "7" || c == "8" || c == "9" || c == "0"
-                            )
-                    {
-                        v = v + c;
-                    }
-                }
-                int value = std::stoi(v);
-                int index = (y_+y)*tCell::width+(x_+x);
-                tCell::matrix[index] = value;
-                v = "";
-                y++;
-                x = 0;
-            }
-            data_file.close();
-        }
-    }
-
-    void SavePlayerData(std::string data_dir = "player_data")
-    {
-        std::fstream data_file;
-        std::string _dir = os::GetCWD() + "/data/" + data_dir;
-        data_file.open(_dir);
-
-        if (data_file.is_open())
-        {
-            data_file << "#tiles" << std::endl;
-            for (int i = 0; i < iSystem::player.inventory.data.size(); i++)
-            {
-                data_file << i << "=" << iSystem::player.inventory.data[i] << std::endl;
-            }
-            data_file.close();
-        }
-        else
-        {
-            std::ofstream new_file (_dir);
-            SavePlayerData(data_dir);
-        }
-    }
-
-    void LoadPlayerData(std::string data_dir = "player_data")
-    {
-        std::string line;
-        std::fstream data_file;
-        std::string _dir = os::GetCWD() + "/data/" + data_dir;
-        data_file.open(_dir);
-
-        if (data_file.is_open())
-        {
-            std::string read_state = "";
-
-            while (getline(data_file, line))
-            {
-                if (line == "#tiles")
-                {
-                    read_state = "#tiles";
-                }
-
-                if (read_state == "#tiles")
-                {
-                    bool next = false;
-                    std::string itm = "";
-                    std::string amnt = "";
-
-                    for (int i = 0; i < line.length(); i++)
-                    {
-                        std::string c = line.substr(i, 1);
-                        if (c == "=")
-                        {
-                            next = true;
-                        }
-                        if (
-                                c == "1" || c == "2" || c == "3" || c == "4" || c == "5" ||
-                                c == "6" || c == "7" || c == "8" || c == "9" || c == "0"
-                                )
-                        {
-                            if (!next) {itm = itm + c;}
-                            if (next) {amnt = amnt + c;}
-                        }
-                    }
-                    if (line.substr(0, 1) != "#")
-                    {
-                        int item = std::stoi(itm);
-                        int amount = std::stoi(amnt);
-                        iSystem::player.inventory.AddItem(item, amount);
-                    }
-                }
-            }
-        data_file.close();
-        }
-    }
-
-    void SaveGenerationData(std::string data_dir)
-    {
-        std::string line;
-        std::fstream data_file;
-        std::string _dir = os::GetCWD() + "/data/" + data_dir;
-        data_file.open(_dir);
-        
-        if (data_file.is_open())
-        {
-            for (int i = 0; i < new_world::generation_steps; i++)
-            {
-                for (int j = 0; j < new_world::total_parameters; j++)
-                {
-                    data_file << new_world::generation_param[i][j] << std::endl;
-                }
-            }
-            data_file.close();
-        }
-        else
-        {
-            std::ofstream new_file (_dir);
-            SaveGenerationData(data_dir);
-        }
-    }
-
-    void LoadGenerationData(std::string data_dir)
-    {
-        std::string line;
-        std::fstream data_file;
-        std::string _dir = os::GetCWD() + "/data/" + data_dir;
-        data_file.open(_dir);
-
-        if (data_file.is_open())
-        {
-            int i = 0;
-            int j = 0;
-            while (getline(data_file, line))
-            {
-                if (i <= new_world::maximum_generation_steps && line != "")
-                {
-                    new_world::generation_param[i][j] = std::stoi(line);
-                    j++;
-                    if (j % new_world::total_parameters == 0)
-                    {
-                        i++;
-                        j = 0;
-                    }
-                }
-            }
-            new_world::generation_steps = i;
-            data_file.close();
-        }
+        dataTool::GenerateDirectoryTree();
     }
 
 
@@ -778,7 +544,7 @@ public:
             if (GetMouse(0).bReleased)
             {
                 Clear(olc::BLACK);
-                core::game_state = CUSTOM;
+                core::game_state = core::CUSTOM;
                 iSystem::player.Setup();
             }
         }
@@ -788,9 +554,9 @@ public:
             if (GetMouse(0).bReleased)
             {
                 Clear(olc::BLACK);
-                LoadPlayerData();
+                iSystem::player.LoadData();
                 //LoadWorldData();
-                core::game_state = PLAYING;
+                core::game_state = core::PLAYING;
             }
         }
     }
@@ -887,140 +653,83 @@ public:
         if (GetKey(olc::Key::S).bPressed) { if (new_world::selected_step < new_world::generation_steps-2) new_world::selected_step++; }
         if (GetKey(olc::Key::W).bPressed) { if (new_world::selected_step > 0) new_world::selected_step--; }
 
-        if (GetKey(olc::Key::A).bPressed)
-        {
-            if (new_world::generation_param[new_world::selected_step][new_world::selected_param] > 0)
-            { new_world::generation_param[new_world::selected_step][new_world::selected_param]--; }
-        }
-        if (GetKey(olc::Key::D).bPressed)
-        {
-            switch (new_world::selected_param)
-            {
-                case new_world::pTILE :
-                {
-                    if (new_world::generation_param[new_world::selected_step][new_world::selected_param] < tTile::total_tiles-1)
-                    { new_world::generation_param[new_world::selected_step][new_world::selected_param]++; }
-                } break;
-                case  new_world::pMODE :
-                {
-                    if (new_world::generation_param[new_world::selected_step][new_world::selected_param] < new_world::total_modes-1)
-                    { new_world::generation_param[new_world::selected_step][new_world::selected_param]++;
-                    }
-                } break;
-                default :
-                {
-                    if (new_world::generation_param[new_world::selected_step][new_world::selected_param] < 100)
-                    { new_world::generation_param[new_world::selected_step][new_world::selected_param]++; }
-                } break;
-            }
-        }
+        if (GetKey(olc::Key::A).bPressed) { new_world::DecrementParameter(); }
+        if (GetKey(olc::Key::D).bPressed) { new_world::IncrementParameter(); }
         // Step Value
         if (bminusgs.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Removes The Selected Generation Step From The List"; //dtls_text = "()";
-            DrawRect(bminusgs.x, bminusgs.y, bminusgs.width, bminusgs.height, select_color);
-            if (GetMouse(0).bReleased && new_world::generation_steps > 1)
-            {
-                new_world::generation_steps--;
-                for (int i = new_world::selected_step; i < new_world::generation_steps; i++)
-                {
-                    for (int p = 0; p < new_world::total_parameters; p++)
-                    { new_world::generation_param[i][p] = new_world::generation_param[i+1][p]; }
-                }
-                if (new_world::selected_step > 0) new_world::selected_step--;
-            }
+            if (GetMouse(0).bReleased) { new_world::Remove(); }
         }
         if (bplusgs.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Inserts A Generation Step Into The List"; //dtls_text = "()";
-            DrawRect(bplusgs.x, bplusgs.y, bplusgs.width, bplusgs.height, select_color);
-            if (GetMouse(0).bReleased && new_world::generation_steps < new_world::maximum_generation_steps)
-            {
-                new_world::generation_steps++;
-                for (int i = new_world::generation_steps-1; i > new_world::selected_step+1; i--)
-                { for (int p = 0; p < new_world::total_parameters; p++)
-                    { new_world::generation_param[i-1][p] = new_world::generation_param[i-2][p]; } }
-                for (int p = 0; p < new_world::total_parameters; p++)
-                { new_world::generation_param[new_world::selected_step][p] = 0; }
-                if (new_world::selected_step > 0) new_world::selected_step--;
-            }
+            if (GetMouse(0).bReleased) { new_world::Insert(); }
         }
         // Tile Value
         if (btile.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Material To add To World"; //dtls_text = "()";
-            DrawRect(btile.x, btile.y, btile.width, btile.height, select_color);
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pTILE;
         }
         // Density Value
         if (bdense.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Probability A Material Will Spawn Per Cell"; dtls_text = "(Add Layer, Seed Material)";
-            DrawRect(bdense.x, bdense.y, bdense.width, bdense.height, select_color);
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pDENSE;
         }
         if (biter.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "How Many Times to Repeat Current Step"; //dtls_text = "()";
-            DrawRect(biter.x, biter.y, biter.width, biter.height, select_color);
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pITER;
         }
         // X Values
         if (bminx.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Minimum Width Range Of Effect"; dtls_text = "(0-100 %)";
-            DrawRect(bminx.x, bminx.y, bminx.width, bminx.height, select_color);
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMINX;
         }
         if (bmaxx.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Maximum Width Range Of Effect"; dtls_text = "(0-100 %)";
-            DrawRect(bmaxx.x, bmaxx.y, bmaxx.width, bmaxx.height, select_color);
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMAXX;
         }
         // Y values
         if (bminy.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Minimum Height Range Of Effect"; dtls_text = "(0-100 %)";
-            DrawRect(bminy.x, bminy.y, bminy.width, bminy.height, select_color);
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMINY;
         }
         if (bmaxy.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Maximum Height Range Of Effect"; dtls_text = "(0-100 %)";
-            DrawRect(bmaxy.x, bmaxy.y, bmaxy.width, bmaxy.height, select_color);
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMAXY;
         }
         // Neighbor Values
         if (bprobn.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Probability That A Northern Neighbor Will Spawn"; //dtls_text = "()";
-            DrawRect(bprobn.x, bprobn.y, bprobn.width, bprobn.height, select_color);
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBN;
         }
         if (bprobs.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Probability That A Southern Neighbor Will Spawn"; //dtls_text = "()";
-            DrawRect(bprobs.x, bprobs.y, bprobs.width, bprobs.height, select_color);
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBS;
         }
         if (bprobe.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Probability That An Eastern Neighbor Will Spawn"; //dtls_text = "()";
-            DrawRect(bprobe.x, bprobe.y, bprobe.width, bprobe.height, select_color);
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBE;
         }
         if (bprobw.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Probability That A Western Neighbor Will Spawn"; //dtls_text = "()";
-            DrawRect(bprobw.x, bprobw.y, bprobw.width, bprobw.height, select_color);
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBW;
         }
         // Mode Value
         if (bmode.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Changes Generation Mode"; //dtls_text = "()";
-            DrawRect(bmode.x, bmode.y, bmode.width, bmode.height, select_color);
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMODE;
         }
 
@@ -1028,117 +737,56 @@ public:
         if (bclear.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Clears All Generation Data";
-            DrawRect(bclear.x, bclear.y, bclear.width, bclear.height, select_color);
-            if (GetMouse(0).bReleased)
-            { new_world::ClearData(); }
+            if (GetMouse(0).bReleased) { new_world::ClearData(); }
         }
         // Auto Configure
         if (bconfig.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Standard World Generation"; //dtls_text = "()";
-            DrawRect(bconfig.x, bconfig.y, bconfig.width, bconfig.height, select_color);
-            if (GetMouse(0).bReleased)
-            { new_world::PresetData(); }
+            if (GetMouse(0).bReleased) { new_world::PresetData(); }
         }
         // Randomize Seed
         if (brandom.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Randomizes Game Seed";
-            DrawRect(brandom.x, brandom.y, brandom.width, brandom.height, select_color);
-            if (GetMouse(0).bReleased)
-            {
-                core::seed = rand() % 9999999999;
-                srand(core::seed);
-                new_world::ClearMatrix();
-                new_world::InitializeMatrix(100, 100);
-                for (int i = 0; i < new_world::generation_steps; i++)
-                { new_world::GeneratePreview(); }
-                new_world::generation_step = 1;
-                can_draw = true;
-            }
+            if (GetMouse(0).bReleased) { new_world::RandomizeData(); can_draw = true; }
         }
         // Save
         if (bsave.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Saves Generation Data";
             DrawRect(bsave.x, bsave.y, bsave.width, bsave.height, select_color);
-            if (GetMouse(0).bReleased)
-            {
-                std::string data_dir = std::to_string(save_slot) + ".txt";
-                SaveGenerationData(data_dir);
-            }
+            if (GetMouse(0).bReleased) { new_world::SaveData(std::to_string(save_slot) + ".txt"); }
         }
         // Load
         if (bload.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Loads Generation Data";
-            DrawRect(bload.x, bload.y, bload.width, bload.height, select_color);
-            if (GetMouse(0).bReleased)
-            {
-                std::string data_dir = std::to_string(save_slot) + ".txt";
-                LoadGenerationData(data_dir);
-            }
+            if (GetMouse(0).bReleased) { new_world::LoadData(std::to_string(save_slot) + ".txt"); }
         }
         // Copy
         if (bcopy.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Copies Selected Generation Step";
-            DrawRect(bcopy.x, bcopy.y, bcopy.width, bcopy.height, select_color);
-            if (GetMouse(0).bReleased)
-            {
-                for (int p = 0; p < new_world::total_parameters; p++)
-                { new_world::clipboard_param[p] = new_world::generation_param[new_world::selected_step][p]; }
-            }
+            if (GetMouse(0).bReleased) { new_world::Copy(); }
         }
         // Paste
         if (bpaste.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Pastes Selected Generation Step";
-            DrawRect(bpaste.x, bpaste.y, bpaste.width, bpaste.height, select_color);
-            if (GetMouse(0).bReleased)
-            {
-                new_world::generation_steps++;
-                for (int i = new_world::generation_steps-1; i > new_world::selected_step; i--)
-                {
-                    for (int p = 0; p < new_world::total_parameters; p++)
-                    { new_world::generation_param[i-1][p] = new_world::generation_param[i-2][p]; }
-                }
-                for (int p = 0; p < new_world::total_parameters; p++)
-                { new_world::generation_param[new_world::selected_step][p] = new_world::clipboard_param[p]; }
-                if (new_world::selected_step > 0) new_world::selected_step--;
-            }
+            if (GetMouse(0).bReleased) { new_world::Paste(); }
         }
         // Generate World
         if (bgenerate.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Generates World And Starts Game";
-            DrawRect(bgenerate.x, bgenerate.y, bgenerate.width, bgenerate.height, select_color);
-            if (GetMouse(0).bReleased)
-            {
-                bool is_data_valid = false;
-                for (int i = 0; i < new_world::generation_steps; i++)
-                { if (new_world::generation_param[i][0] != tTile::AIR) is_data_valid = true; }
-                if (!is_data_valid) new_world::PresetData();
-                new_world::InitializeMatrix(world_width, world_height);
-                srand(core::seed);
-                core::game_state = LOADING;
-            }
+            if (GetMouse(0).bReleased) { new_world::ReadyWorld(world_width, world_height); }
         }
         // Generate Preview
         if (bpreview.IsColliding(GetMouseX(), GetMouseY()))
         {
             info_text = "Updates The Preview Box";
-            DrawRect(bpreview.x, bpreview.y, bpreview.width, bpreview.height, select_color);
-            if (GetMouse(0).bReleased)
-            {
-                srand(core::seed);
-                new_world::ClearMatrix();
-                new_world::InitializeMatrix(100, 100);
-                for (int i = 0; i < new_world::generation_steps; i++)
-                { new_world::GeneratePreview(); }
-                new_world::generation_step = 1;
-                can_draw = true;
-            }
+            if (GetMouse(0).bReleased) { new_world::ReadyPreview(); can_draw = true; }
         }
         // Draw Preview
         if (can_draw)
@@ -1169,7 +817,8 @@ public:
             std::string vlue_text;
             std::string mode_text;
             std::string tile_text;
-            try { if (new_world::generation_param[i][new_world::selected_param] < new_world::total_modes) mode_text = new_world::modes[new_world::generation_param[i][new_world::selected_param]]; }
+            try { if (new_world::generation_param[i][new_world::selected_param] < new_world::total_modes)
+                {mode_text = new_world::modes[new_world::generation_param[i][new_world::selected_param]]; } }
             catch (std::bad_alloc & ba) { mode_text = "Error"; }
             try { tile_text = tTile::NAME[new_world::generation_param[i][new_world::selected_param]]; }
             catch (std::bad_alloc & ba) { tile_text = "Error"; }
@@ -1220,7 +869,7 @@ public:
                 iSystem::player.y = iSystem::player.height+2;
                 while (!tTool::IsColliding(iSystem::player.x, iSystem::player.y+1)) iSystem::player.Move(0, 1);
                 core::loading = false;
-                core::game_state = PLAYING;
+                core::game_state = core::PLAYING;
             }
         }
         if (!core::loading) core::loading = true;
@@ -1238,8 +887,8 @@ public:
 
     void GamePaused()
     {
-        if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = PLAYING;
-        if (GetKey(olc::Key::TAB).bPressed) core::game_state = INVENTORY;
+        if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = core::PLAYING;
+        if (GetKey(olc::Key::TAB).bPressed) core::game_state = core::INVENTORY;
         
         if (GetKey(olc::Key::Q).bPressed) { if (core::grid_subdivision > 1) core::grid_subdivision /= 2; }
         if (GetKey(olc::Key::E).bPressed) { if (core::grid_subdivision < 8) core::grid_subdivision *= 2; }
@@ -1304,17 +953,17 @@ public:
 
     void GameInventory()
     {
-        if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = PAUSED;
-        if (GetKey(olc::Key::TAB).bPressed) core::game_state = PLAYING;
+        if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = core::PAUSED;
+        if (GetKey(olc::Key::TAB).bPressed) core::game_state = core::PLAYING;
 
         if (GetKey(olc::Key::Q).bPressed && selected_tile < tTile::total_tiles-1) selected_tile++;
         if (GetKey(olc::Key::E).bPressed && selected_tile > 0) selected_tile--;
 
-        if (GetKey(olc::Key::I).bPressed) core::pause_state = psTILES;
-        if (GetKey(olc::Key::W).bPressed) core::pause_state = psWANDS;
+        if (GetKey(olc::Key::I).bPressed) core::pause_state = core::psTILES;
+        if (GetKey(olc::Key::W).bPressed) core::pause_state = core::psWANDS;
         
-        if (core::pause_state == psWANDS) DrawWands();
-        if (core::pause_state == psTILES) DrawInventory();
+        if (core::pause_state == core::psWANDS) DrawWands();
+        if (core::pause_state == core::psTILES) DrawInventory();
 
         HotbarInput();
         DrawHUD();
@@ -1324,7 +973,7 @@ public:
     {
         if (iSystem::player.state == iSystem::player.DEAD)
         {
-            if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = PAUSED;
+            if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = core::PAUSED;
             return; 
         }
 
@@ -1340,8 +989,8 @@ public:
             iSystem::player.state = iSystem::player.IDLE;
         }
 
-        if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = PAUSED;
-        if (GetKey(olc::Key::TAB).bPressed) core::game_state = INVENTORY;
+        if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = core::PAUSED;
+        if (GetKey(olc::Key::TAB).bPressed) core::game_state = core::INVENTORY;
         //
         HotbarInput();
         
@@ -1492,13 +1141,19 @@ public:
 	{
         switch (core::game_state)
         {
-            case PLAYING : GameLoop(fElapsedTime); break;
-            case PAUSED : GamePaused(); break;
-            case INVENTORY : GameInventory(); break;
-            case LOADING : DrawLoading(); break;
-            case CUSTOM : DrawCustom(); break;
-            case TITLE : DrawTitle(); break;
-            case EXIT : {SavePlayerData(); SaveWorldData();core::running = false;} break;
+            case core::PLAYING : GameLoop(fElapsedTime); break;
+            case core::PAUSED : GamePaused(); break;
+            case core::INVENTORY : GameInventory(); break;
+            case core::LOADING : DrawLoading(); break;
+            case core::CUSTOM : DrawCustom(); break;
+            case core::TITLE : DrawTitle(); break;
+            case core::EXIT :
+                {
+                    iSystem::player.LoadData();
+                    //SaveWorldData();
+                    core::running = false;
+                }
+                break;
         }
         return core::running;
 	}

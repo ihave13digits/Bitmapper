@@ -26,4 +26,23 @@ namespace core
     // Identity
     std::string game_title = "Bitmapper";
     std::string version = "0.0.0";
+
+    // Enums
+
+    enum STATES
+    {
+        TITLE,
+        CUSTOM,
+        LOADING,
+        PLAYING,
+        INVENTORY,
+        PAUSED,
+        EXIT
+    };
+
+    enum PAUSE_STATES
+    {
+        psTILES,
+        psWANDS,
+    };
 }
