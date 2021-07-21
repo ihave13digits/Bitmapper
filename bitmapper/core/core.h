@@ -16,8 +16,8 @@ namespace core
     char selected_wand = 0;
 
     // State Flags
-    int game_state = 0;
-    int pause_state = 0;
+    char game_state = 0;
+    char pause_state = 0;
 
     // Tick Speed
     float game_tick = 0.0;
@@ -26,8 +26,8 @@ namespace core
     // Graphics Presets
     int width  = 256;
     int height = 144;
-    int resolution = 4;
-    int grid_subdivision = 1;
+    char resolution = 4;
+    char grid_subdivision = 1;
 
     // Identity
     std::string game_title = "Bitmapper";
