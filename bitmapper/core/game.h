@@ -37,6 +37,10 @@ public:
     olc::Pixel button_color = olc::Pixel(32, 32, 32);
     olc::Pixel select_color = olc::Pixel(64, 64, 64);
 
+    //
+    ///
+    //
+    
     void InstallGame()
     {
         tTile::LoadTileData();
@@ -46,7 +50,35 @@ public:
 
 
     //
+    ///
     //
+
+    bool PlayerVsWorld()
+    {
+        bool colliding = false;
+        int f = iSystem::player.animations[iSystem::player.anim][iSystem::player.frame];
+        for (int y = 0; y < 8; y++)
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                int index = y*8+x;
+                if (iSystem::player.image[f][index] > 0)
+                {
+                    int _x = x+int(core::width/2)-4;
+                    int _y = y+int(core::height/2)-7;
+                    if ( tTool::IsColliding((iSystem::player.x+iSystem::player.vx)+(x-4), (iSystem::player.y+iSystem::player.vy)+(y-7)) )
+                    {
+                        //Draw(_x, _y, olc::RED);
+                        colliding = true;
+                    }
+                }
+            }
+        }
+        return colliding;
+    }
+
+    //
+    ///
     //
 
     void DrawButton(Button b)
@@ -128,7 +160,7 @@ public:
         {
             for (int ix = 0; ix < icon.size; ix++)
             {
-                int index_value = *(img+iy*icon.size+ix);//[iy*icon.size+ix];
+                int index_value = *(img+iy*icon.size+ix);
                 float v = (0.125*float(index_value));
                 if (index_value > 0) Draw(ix+x, iy+y, olc::Pixel(int(R*v), int(G*v), int(B*v), A));
             }
@@ -325,60 +357,15 @@ public:
                     float s3 = 1.0f-std::min(std::max(tTool::Neighbors(x+X+2, y+Y), 0.0f), 1.0f);
                     float s4 = 1.0f-std::min(std::max(tTool::Neighbors(x+X+3, y+Y), 0.0f), 1.0f);
 
-                    Draw(x, y, olc::Pixel(
-                                int(tTile::R[v1]*s1),
-                                int(tTile::G[v1]*s1),
-                                int(tTile::B[v1]*s1),
-                                tTile::A[v1])
-                            );
-
-                    Draw(x+1, y, olc::Pixel(
-                                int(tTile::R[v2]*s2),
-                                int(tTile::G[v2]*s2),
-                                int(tTile::B[v2]*s2),
-                                tTile::A[v2])
-                            );
-                    Draw(x+2, y, olc::Pixel(
-                                int(tTile::R[v3]*s3),
-                                int(tTile::G[v3]*s3),
-                                int(tTile::B[v3]*s3),
-                                tTile::A[v3])
-                            );
-                    Draw(x+3, y, olc::Pixel(
-                                int(tTile::R[v4]*s4),
-                                int(tTile::G[v4]*s4),
-                                int(tTile::B[v4]*s4),
-                                tTile::A[v4])
-                            );
+                    Draw(x, y, olc::Pixel(int(tTile::R[v1]*s1), int(tTile::G[v1]*s1), int(tTile::B[v1]*s1), tTile::A[v1]));
+                    Draw(x+1, y, olc::Pixel(int(tTile::R[v2]*s2), int(tTile::G[v2]*s2), int(tTile::B[v2]*s2), tTile::A[v2]));
+                    Draw(x+2, y, olc::Pixel(int(tTile::R[v3]*s3), int(tTile::G[v3]*s3), int(tTile::B[v3]*s3), tTile::A[v3]));
+                    Draw(x+3, y, olc::Pixel(int(tTile::R[v4]*s4), int(tTile::G[v4]*s4), int(tTile::B[v4]*s4), tTile::A[v4]));
                 }
             }
         }
         DrawChunkGrid();
         SetPixelMode(olc::Pixel::NORMAL);
-    }
-
-    bool PlayerVsWorld()
-    {
-        bool colliding = false;
-        int f = iSystem::player.animations[iSystem::player.anim][iSystem::player.frame];
-        for (int y = 0; y < 8; y++)
-        {
-            for (int x = 0; x < 8; x++)
-            {
-                int index = y*8+x;
-                if (iSystem::player.image[f][index] > 0)
-                {
-                    int _x = x+int(core::width/2)-4;
-                    int _y = y+int(core::height/2)-7;
-                    if ( tTool::IsColliding((iSystem::player.x+iSystem::player.vx)+(x-4), (iSystem::player.y+iSystem::player.vy)+(y-7)) )
-                    {
-                        Draw(_x, _y, olc::RED);
-                        colliding = true;
-                    }
-                }
-            }
-        }
-        return colliding;
     }
 
     void DrawPlayer()
@@ -412,10 +399,10 @@ public:
                     int _x = x+int(core::width/2)-4;
                     int _y = y+int(core::height/2)-7;
                     Draw(_x, _y, olc::Pixel(R, G, B));
-                    if ( tTool::IsColliding((iSystem::player.x+iSystem::player.vx)+(x-4), (iSystem::player.y+iSystem::player.vy)+(y-7)) )
-                    { Draw(_x+iSystem::player.vx, _y+iSystem::player.vy, olc::YELLOW); }
-                    if ( tTool::IsColliding(iSystem::player.x+(x-4), iSystem::player.y+(y-7)) )
-                    { Draw(_x, _y, olc::RED); }
+                    //if ( tTool::IsColliding((iSystem::player.x+iSystem::player.vx)+(x-4), (iSystem::player.y+iSystem::player.vy)+(y-7)) )
+                    //{ Draw(_x+iSystem::player.vx, _y+iSystem::player.vy, olc::YELLOW); }
+                    //if ( tTool::IsColliding(iSystem::player.x+(x-4), iSystem::player.y+(y-7)) )
+                    //{ Draw(_x, _y, olc::RED); }
                 }
             }
         }
@@ -467,7 +454,6 @@ public:
         ProgressBar(4, 4, iSystem::player.jp, iSystem::player.JP, 32, 0, 255, 0, 0, 64, 0);
         ProgressBar(4, 6, iSystem::player.bp, iSystem::player.BP, 32, 0, 0, 255, 0, 0, 64);
         DrawStringDecal({ 4,8  }, "Looking At: " + lookingat, text_color, { font, font });
-        //DrawStringDecal({ 4,12 }, "Selected Tile: " + selectedtile + " " + selectedcount, text_color, { font, font });
         DrawStringDecal({ 4,12 }, "Collision: " + collision_at, text_color, { font, font });
         DrawStringDecal({ 4,16 }, "Day: " + std::to_string(iSystem::sky.day), text_color, { font, font });
         DrawStringDecal({ 4,20 }, "Year: " + std::to_string(iSystem::sky.year), text_color, { font, font });
@@ -552,7 +538,7 @@ public:
             {
                 Clear(olc::BLACK);
                 iSystem::player.LoadData();
-                //LoadWorldData();
+                iSystem::world.LoadData();
                 core::game_state = core::PLAYING;
             }
         }
@@ -1070,8 +1056,7 @@ public:
             if (iSystem::player.state != iSystem::player.FALL && iSystem::player.state != iSystem::player.JUMP) iSystem::player.vy = 0;
             if (!tTool::IsColliding(iSystem::player.x-2, iSystem::player.y) ) { iSystem::player.vx = -1; }
             else if (tTool::IsColliding(iSystem::player.x-2, iSystem::player.y) ||
-                    tTool::IsColliding(iSystem::player.x-2, iSystem::player.y-1)
-                    )
+                    tTool::IsColliding(iSystem::player.x-2, iSystem::player.y-1) )
             { iSystem::player.vx = -1; iSystem::player.Move(0, -1); }
             if (!GetKey(olc::Key::W).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
             iSystem::player.direction = -1;
@@ -1102,7 +1087,7 @@ public:
             DrawSky();
             iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2);
             DrawTerrain();
-            DrawHUD();
+            //DrawHUD();
         }
 
         // Update Player
@@ -1116,7 +1101,7 @@ public:
         DrawPlayer();
         //player.UpdateWands(fElapsedTime);
         DrawParticles(fElapsedTime);
-        //DrawHUD();
+        DrawHUD();
 
         // End Frame
         core::game_tick += fElapsedTime;
@@ -1146,8 +1131,8 @@ public:
             case core::TITLE : DrawTitle(); break;
             case core::EXIT :
                 {
-                    iSystem::player.LoadData();
-                    //SaveWorldData();
+                    iSystem::player.SaveData();
+                    iSystem::world.SaveData();
                     core::running = false;
                 }
                 break;
