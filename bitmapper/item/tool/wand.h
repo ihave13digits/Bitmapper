@@ -19,12 +19,12 @@ public:
     {
         Effect e = Effect();
         //e.sticky = true;
-        //e.bouncy = true;
+        e.bouncy = true;
         //e.heavy = true;
         //e.destroys = true;
         e.becomes = true;
         //e.damages = true;
-        //e.pierces = true;
+        e.pierces = true;
         //e.poisons = true;
         e.trails = true;
         //e.mines = true;

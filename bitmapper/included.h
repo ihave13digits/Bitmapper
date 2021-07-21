@@ -105,6 +105,7 @@
 //
 
 #include "ui/button.h"
+#include "ui/camera.h"
 #include "ui/icon.h"
 
 

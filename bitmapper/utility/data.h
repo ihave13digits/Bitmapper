@@ -4,6 +4,7 @@ namespace dataTool
     std::string path_data = "/data/";
     std::string path_player = path_data+"player/";
     std::string path_world = path_data+"world/";
+    std::string path_preset = path_data+"preset/";
     std::string path_tile = "/bitmapper/environment/tile/";
 
     //std::string file_ = "";
@@ -23,14 +24,13 @@ namespace dataTool
 
         if (data_file.is_open())
         {
-            std::cout <<"Saving Settings" <<std::endl;
-            data_file <<core::selected_hotbar <<std::endl;
-            data_file <<core::selected_tile <<std::endl;
-            data_file <<core::selected_wand <<std::endl;
-            data_file <<core::width <<std::endl;
-            data_file <<core::height <<std::endl;
-            data_file <<core::resolution <<std::endl;
-            data_file <<core::grid_subdivision <<std::endl;
+            data_file <<core::selected_hotbar <<",";
+            data_file <<core::selected_tile <<",";
+            data_file <<core::selected_wand <<",";
+            data_file <<core::width <<",";
+            data_file <<core::height <<",";
+            data_file <<core::resolution <<",";
+            data_file <<core::grid_subdivision <<",";
             data_file.close();
         }
         else
@@ -47,7 +47,6 @@ namespace dataTool
         
         if (data_file.is_open())
         {
-            std::cout <<"Loading Settings" <<std::endl;
             data_file.close();
         }
     }
@@ -60,13 +59,14 @@ namespace dataTool
 
         if (data_file.is_open())
         {
-            std::cout <<"Directory Tree Is Valid, Starting Bitmapper" <<std::endl;
             data_file.close();
         }
         else
         {
-            std::cout <<"Generating Directory Tree" <<std::endl;
             os::MakeDirectory(path_data);
+            os::MakeDirectory(path_player);
+            os::MakeDirectory(path_preset);
+            os::MakeDirectory(path_world);
             SaveSettings();
         }
     }

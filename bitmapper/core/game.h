@@ -28,6 +28,28 @@ public:
 
     Icon icon = Icon();
 
+    // Control Presets
+
+    olc::Key player_up = olc::Key::W;
+    olc::Key player_down = olc::Key::S;
+    olc::Key player_left = olc::Key::A;
+    olc::Key player_right = olc::Key::D;
+    olc::Key player_min = olc::Key::Q;
+    olc::Key player_max = olc::Key::E;
+
+    olc::Key ui_up = olc::Key::UP;
+    olc::Key ui_down = olc::Key::DOWN;
+    olc::Key ui_left = olc::Key::LEFT;
+    olc::Key ui_right = olc::Key::RIGHT;
+    olc::Key ui_select = olc::Key::ENTER;
+
+    olc::Key toggle_grid = olc::Key::G;
+
+    olc::Key menu_main = olc::Key::HOME;
+    olc::Key menu_inventory = olc::Key::TAB;
+    olc::Key menu_pause = olc::Key::ESCAPE;
+
+    // Color Presets
     olc::Pixel hud_color = olc::Pixel(64, 64, 64);
     olc::Pixel hud_select_color = olc::Pixel(255, 255, 255);
     olc::Pixel grid_color = olc::Pixel(0, 0, 0, 64);
@@ -53,6 +75,7 @@ public:
     ///
     //
 
+
     bool PlayerVsWorld()
     {
         bool colliding = false;
@@ -77,6 +100,67 @@ public:
         return colliding;
     }
 
+    void UpdateMouse()
+    {
+        int old_x = core::mouse_x;
+        int old_y = core::mouse_y;
+        core::mouse_x = GetMouseX();
+        core::mouse_y = GetMouseY();
+        if (GetKey(olc::Key::CTRL).bHeld)
+        {
+            if (GetKey(olc::Key::X).bHeld) { core::mouse_x = old_x; }
+            if (GetKey(olc::Key::Y).bHeld) { core::mouse_y = old_y; }
+        }
+    }
+
+    void UseHotbar()
+    {
+        if (GetMouse(0).bHeld)
+        {
+            if (iSystem::player.hotbar[core::selected_hotbar][0] == itNONE)
+            {
+            }
+            if (iSystem::player.hotbar[core::selected_hotbar][0] == itWAND)
+            {
+                if (iSystem::player.wands[core::selected_wand].can_fire)
+                {
+                    iSystem::player.wands[core::selected_wand].Cast();
+                    Effect e = iSystem::player.wands[core::selected_wand].effects[iSystem::player.wands[core::selected_wand].current_effect];
+                    iSystem::SpawnParticle(float(core::mouse_x), float(core::mouse_y), e);
+                }
+            }
+            int offset_x = (core::mouse_x+((iSystem::player.x-(iSystem::player.height/2))-(core::width/2)));
+            int offset_y = (core::mouse_y+((iSystem::player.y-(iSystem::player.height-1))-(core::height/2)));
+            int index = offset_y*tCell::width+offset_x;
+            int tile = tCell::matrix[index];
+            int _tile = core::selected_tile;
+            if (iSystem::player.hotbar[core::selected_hotbar][0] == itTILE)
+            {
+                int tile = tCell::matrix[index];
+                int _tile = iSystem::player.hotbar[core::selected_hotbar][1];
+                if (tile != tTile::MANTLE)
+                {
+                    if (_tile != tTile::AIR)
+                    {
+                        if (iSystem::player.inventory.HasItem(_tile) || core::creative_mode)
+                        {
+                            int amnt = 1;
+                            if (tile == tTile::AIR) amnt = 0;
+                            iSystem::player.inventory.UseItem(_tile, 1);
+                            iSystem::player.inventory.AddItem(tile, amnt);
+                            tCell::matrix[index] = _tile;
+                        }
+                    }
+                    else if (_tile == tTile::AIR)
+                    {
+                        if (tile != tTile::AIR) iSystem::player.inventory.AddItem(tile, 1);
+                        tCell::matrix[index] = _tile;
+                    }
+                }
+            }
+        }
+    }
+
     //
     ///
     //
@@ -84,7 +168,7 @@ public:
     void DrawButton(Button b)
     {
         DrawStringDecal({ b.TextX(),b.TextY() }, b.text, text_color, {b.font, b.font});
-        if (b.IsColliding(GetMouseX(), GetMouseY()))
+        if (b.IsColliding(core::mouse_x, core::mouse_y))
         { DrawRect(b.x, b.y, b.width, b.height, select_color); return; }
         DrawRect(b.x, b.y, b.width, b.height, button_color);
     }
@@ -167,6 +251,40 @@ public:
         }
     }
 
+    void DrawEffect(int x, int y, int e)
+    {
+        int tile_value;
+        int *img;
+        switch (e)
+        {
+            case effectID::STICKY   : { img = icon.sticky;   tile_value = tTile::FROG; } break;
+            case effectID::BOUNCY   : { img = icon.bouncy;   tile_value = tTile::FROG; } break;
+            case effectID::DESTROYS : { img = icon.destroys; tile_value = tTile::BOMB; } break;
+            case effectID::BECOMES  : { img = icon.becomes;  tile_value = tTile::SMOKE; } break;
+            case effectID::DAMAGES  : { img = icon.damages;  tile_value = tTile::DYNAMITE; } break;
+            case effectID::PIERCES  : { img = icon.pierces;  tile_value = tTile::HONEY; } break;
+            case effectID::POISONS  : { img = icon.poisons;  tile_value = tTile::MOSS; } break;
+            case effectID::TRAILS   : { img = icon.trails;   tile_value = tTile::THICK_SMOKE; } break;
+            case effectID::MINES    : { img = icon.mines;    tile_value = tTile::STONE; } break;
+            case effectID::TRIPS    : { img = icon.trips;    tile_value = tTile::SPIDERWORT; } break;
+            case effectID::STUNS    : { img = icon.stuns;    tile_value = tTile::HONEY; } break;
+            case effectID::BURNS    : { img = icon.burns;    tile_value = tTile::LAVA; } break;
+        }
+        float R = float(tTile::R[tile_value]);
+        float G = float(tTile::G[tile_value]);
+        float B = float(tTile::B[tile_value]);
+        int A = tTile::A[tile_value];
+        for (int iy = 0; iy < icon.size; iy++)
+        {
+            for (int ix = 0; ix < icon.size; ix++)
+            {
+                int index_value = *(img+iy*icon.size+ix);
+                float v = (0.125*float(index_value));
+                if (index_value > 0) Draw(ix+x, iy+y, olc::Pixel(int(R*v), int(G*v), int(B*v), A));
+            }
+        }
+    }
+
     void DrawWands()
     {
         int cols = 16;
@@ -214,12 +332,59 @@ public:
             for (int x = 0; x < cols; x++)
             {
                 Button b = buttons[y*cols+x];
-                if (b.IsColliding(GetMouseX(), GetMouseY()))
+                if (b.IsColliding(core::mouse_x, core::mouse_y))
                 {
                     DrawRect(b.x, b.y, b.width, b.height, select_color);
                     if (GetMouse(0).bReleased)
                     {
                         iSystem::player.hotbar[core::selected_hotbar][0] = itWAND;
+                        iSystem::player.hotbar[core::selected_hotbar][1] = std::stoi(b.text);
+                    }
+                }
+            }
+        }
+    }
+
+    void DrawEffects()
+    {
+        int cols = 16;
+        int rows = 8;
+        int x_margin = 48;
+        int y_margin = 32;
+        int tile_value = 0;
+
+        Button buttons[cols*rows];
+
+        FillRect({x_margin-3, y_margin-3}, {167, 87}, panel_color);
+        DrawRect({x_margin-4, y_margin-4}, {168, 88}, border_color);
+        SetPixelMode(olc::Pixel::ALPHA);
+        for (int y = 0; y < rows; y++)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                int tile_type = tTool::GetType(tile_value);
+                if (tile_value < tTile::total_tiles)
+                {
+                    Button b = Button();
+                    b.Setup((x*10)+x_margin, (y*10)+y_margin, 9, 9, 1.0, std::to_string(tile_value));
+                    buttons[y*cols+x] = b;
+                    DrawIcon((x*10)+x_margin+1, (y*10)+y_margin+1, tile_type, tile_value);
+                }
+                tile_value++;
+            }
+        }
+        SetPixelMode(olc::Pixel::NORMAL);
+        for (int y = 0; y < rows; y++)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                Button b = buttons[y*cols+x];
+                if (b.IsColliding(core::mouse_x, core::mouse_y))
+                {
+                    DrawRect(b.x, b.y, b.width, b.height, select_color);
+                    if (GetMouse(0).bReleased)
+                    {
+                        iSystem::player.hotbar[core::selected_hotbar][0] = itTILE;
                         iSystem::player.hotbar[core::selected_hotbar][1] = std::stoi(b.text);
                     }
                 }
@@ -261,7 +426,7 @@ public:
             for (int x = 0; x < cols; x++)
             {
                 Button b = buttons[y*cols+x];
-                if (b.IsColliding(GetMouseX(), GetMouseY()))
+                if (b.IsColliding(core::mouse_x, core::mouse_y))
                 {
                     DrawRect(b.x, b.y, b.width, b.height, select_color);
                     if (GetMouse(0).bReleased)
@@ -338,8 +503,8 @@ public:
 
     void DrawTerrain()
     {
-        int X = iSystem::player.x - (core::width/2);
-        int Y = iSystem::player.y - (core::height/2);
+        int X = iSystem::camera.x - (core::width/2);
+        int Y = iSystem::camera.y - (core::height/2);
         SetPixelMode(olc::Pixel::ALPHA);
         for (int y = 0; y < core::height; y++)
         {
@@ -396,13 +561,9 @@ public:
                     int R = std::min((((v*32)+r)/2), 255);
                     int G = std::min((((v*32)+g)/2), 255);
                     int B = std::min((((v*32)+b)/2), 255);
-                    int _x = x+int(core::width/2)-4;
-                    int _y = y+int(core::height/2)-7;
+                    int _x = x+iSystem::camera.offset_x;
+                    int _y = y+iSystem::camera.offset_y;
                     Draw(_x, _y, olc::Pixel(R, G, B));
-                    //if ( tTool::IsColliding((iSystem::player.x+iSystem::player.vx)+(x-4), (iSystem::player.y+iSystem::player.vy)+(y-7)) )
-                    //{ Draw(_x+iSystem::player.vx, _y+iSystem::player.vy, olc::YELLOW); }
-                    //if ( tTool::IsColliding(iSystem::player.x+(x-4), iSystem::player.y+(y-7)) )
-                    //{ Draw(_x, _y, olc::RED); }
                 }
             }
         }
@@ -418,9 +579,9 @@ public:
             if (iSystem::particles[p].duration > 0.0)
             {
                 iSystem::particles[p].duration -= delta;
-                Draw(x-(iSystem::player.x-(core::width/2)),
-                        y-(iSystem::player.y-(core::height/2)),
-                        olc::Pixel(iSystem::particles[p].r, iSystem::particles[p].g, iSystem::particles[p].b, iSystem::particles[p].a));
+                Draw(x-(iSystem::camera.x-(core::width/2)),
+                    y-(iSystem::camera.y-(core::height/2)),
+                    olc::Pixel(iSystem::particles[p].r, iSystem::particles[p].g, iSystem::particles[p].b, iSystem::particles[p].a));
             }
             else
             {
@@ -433,13 +594,13 @@ public:
     {
         float font = 0.25;
 
-        int lookindex = (iSystem::player.y-(core::height/2)+GetMouseY())*tCell::width+(iSystem::player.x-(core::width/2)+GetMouseX());
+        int lookindex = (iSystem::player.y-(core::height/2)+core::mouse_y)*tCell::width+(iSystem::player.x-(core::width/2)+core::mouse_x);
 
         std::string health = std::to_string(iSystem::player.hp)+"/"+std::to_string(iSystem::player.HP);
         std::string lookingat = "Air";
         std::string selectedtile = tTile::NAME[core::selected_tile];
         std::string selectedcount = "";
-        std::string collision_at = std::to_string(tTool::Collision((iSystem::player.x-(core::width/2)+GetMouseX()), (iSystem::player.y-(core::height/2)+GetMouseY())));
+        std::string collision_at = std::to_string(tTool::Collision((iSystem::player.x-(core::width/2)+core::mouse_x), (iSystem::player.y-(core::height/2)+core::mouse_y)));
 
         if ( ( (lookindex < tCell::width*tCell::height) && lookindex > 0) && (tCell::matrix[lookindex] < tTile::total_tiles) )
         {
@@ -521,7 +682,7 @@ public:
         DrawStringDecal({ bLoad.TextX(),bLoad.TextY() }, bLoad.text, text_color, { 1.0, 1.0 });
         DrawRect(bLoad.x, bLoad.y, bLoad.width, bLoad.height, button_color);
 
-        if (bNew.IsColliding(GetMouseX(), GetMouseY()))
+        if (bNew.IsColliding(core::mouse_x, core::mouse_y))
         {
             DrawRect(bNew.x, bNew.y, bNew.width, bNew.height, select_color);
             if (GetMouse(0).bReleased)
@@ -531,7 +692,7 @@ public:
                 iSystem::player.Setup();
             }
         }
-        if (bLoad.IsColliding(GetMouseX(), GetMouseY()))
+        if (bLoad.IsColliding(core::mouse_x, core::mouse_y))
         {
             DrawRect(bLoad.x, bLoad.y, bLoad.width, bLoad.height, select_color);
             if (GetMouse(0).bReleased)
@@ -620,7 +781,7 @@ public:
         if (GetKey(olc::Key::K9).bPressed)
         { std::string new_value = std::to_string(input_value)+"9"; input_value = std::stoi(new_value); }
 
-        if (GetKey(olc::Key::ENTER).bPressed)
+        if (GetKey(ui_select).bPressed)
         {
             switch (new_world::selected_param)
             {
@@ -633,140 +794,140 @@ public:
             input_value = 0;
         }
         // Update Parameters
-        if (GetKey(olc::Key::S).bPressed) { if (new_world::selected_step < new_world::generation_steps-2) new_world::selected_step++; }
-        if (GetKey(olc::Key::W).bPressed) { if (new_world::selected_step > 0) new_world::selected_step--; }
+        if (GetKey(ui_down).bPressed) { if (new_world::selected_step < new_world::generation_steps-2) new_world::selected_step++; }
+        if (GetKey(ui_up).bPressed) { if (new_world::selected_step > 0) new_world::selected_step--; }
 
-        if (GetKey(olc::Key::A).bPressed) { new_world::DecrementParameter(); }
-        if (GetKey(olc::Key::D).bPressed) { new_world::IncrementParameter(); }
+        if (GetKey(ui_left).bPressed) { new_world::DecrementParameter(); }
+        if (GetKey(ui_right).bPressed) { new_world::IncrementParameter(); }
         // Step Value
-        if (bminusgs.IsColliding(GetMouseX(), GetMouseY()))
+        if (bminusgs.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Removes The Selected Generation Step From The List"; //dtls_text = "()";
             if (GetMouse(0).bReleased) { new_world::Remove(); }
         }
-        if (bplusgs.IsColliding(GetMouseX(), GetMouseY()))
+        if (bplusgs.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Inserts A Generation Step Into The List"; //dtls_text = "()";
             if (GetMouse(0).bReleased) { new_world::Insert(); }
         }
         // Tile Value
-        if (btile.IsColliding(GetMouseX(), GetMouseY()))
+        if (btile.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Material To add To World"; //dtls_text = "()";
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pTILE;
         }
         // Density Value
-        if (bdense.IsColliding(GetMouseX(), GetMouseY()))
+        if (bdense.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Probability A Material Will Spawn Per Cell"; dtls_text = "(Add Layer, Seed Material)";
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pDENSE;
         }
-        if (biter.IsColliding(GetMouseX(), GetMouseY()))
+        if (biter.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "How Many Times to Repeat Current Step"; //dtls_text = "()";
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pITER;
         }
         // X Values
-        if (bminx.IsColliding(GetMouseX(), GetMouseY()))
+        if (bminx.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Minimum Width Range Of Effect"; dtls_text = "(0-100 %)";
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMINX;
         }
-        if (bmaxx.IsColliding(GetMouseX(), GetMouseY()))
+        if (bmaxx.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Maximum Width Range Of Effect"; dtls_text = "(0-100 %)";
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMAXX;
         }
         // Y values
-        if (bminy.IsColliding(GetMouseX(), GetMouseY()))
+        if (bminy.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Minimum Height Range Of Effect"; dtls_text = "(0-100 %)";
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMINY;
         }
-        if (bmaxy.IsColliding(GetMouseX(), GetMouseY()))
+        if (bmaxy.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Maximum Height Range Of Effect"; dtls_text = "(0-100 %)";
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMAXY;
         }
         // Neighbor Values
-        if (bprobn.IsColliding(GetMouseX(), GetMouseY()))
+        if (bprobn.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Probability That A Northern Neighbor Will Spawn"; //dtls_text = "()";
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBN;
         }
-        if (bprobs.IsColliding(GetMouseX(), GetMouseY()))
+        if (bprobs.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Probability That A Southern Neighbor Will Spawn"; //dtls_text = "()";
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBS;
         }
-        if (bprobe.IsColliding(GetMouseX(), GetMouseY()))
+        if (bprobe.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Probability That An Eastern Neighbor Will Spawn"; //dtls_text = "()";
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBE;
         }
-        if (bprobw.IsColliding(GetMouseX(), GetMouseY()))
+        if (bprobw.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Probability That A Western Neighbor Will Spawn"; //dtls_text = "()";
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBW;
         }
         // Mode Value
-        if (bmode.IsColliding(GetMouseX(), GetMouseY()))
+        if (bmode.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Changes Generation Mode"; //dtls_text = "()";
             if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMODE;
         }
 
         // Clear Values
-        if (bclear.IsColliding(GetMouseX(), GetMouseY()))
+        if (bclear.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Clears All Generation Data";
             if (GetMouse(0).bReleased) { new_world::ClearData(); }
         }
         // Auto Configure
-        if (bconfig.IsColliding(GetMouseX(), GetMouseY()))
+        if (bconfig.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Standard World Generation"; //dtls_text = "()";
             if (GetMouse(0).bReleased) { new_world::PresetData(); }
         }
         // Randomize Seed
-        if (brandom.IsColliding(GetMouseX(), GetMouseY()))
+        if (brandom.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Randomizes Game Seed";
             if (GetMouse(0).bReleased) { new_world::RandomizeData(); can_draw = true; }
         }
         // Save
-        if (bsave.IsColliding(GetMouseX(), GetMouseY()))
+        if (bsave.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Saves Generation Data";
             DrawRect(bsave.x, bsave.y, bsave.width, bsave.height, select_color);
             if (GetMouse(0).bReleased) { new_world::SaveData(std::to_string(save_slot) + ".txt"); }
         }
         // Load
-        if (bload.IsColliding(GetMouseX(), GetMouseY()))
+        if (bload.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Loads Generation Data";
             if (GetMouse(0).bReleased) { new_world::LoadData(std::to_string(save_slot) + ".txt"); }
         }
         // Copy
-        if (bcopy.IsColliding(GetMouseX(), GetMouseY()))
+        if (bcopy.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Copies Selected Generation Step";
             if (GetMouse(0).bReleased) { new_world::Copy(); }
         }
         // Paste
-        if (bpaste.IsColliding(GetMouseX(), GetMouseY()))
+        if (bpaste.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Pastes Selected Generation Step";
             if (GetMouse(0).bReleased) { new_world::Paste(); }
         }
         // Generate World
-        if (bgenerate.IsColliding(GetMouseX(), GetMouseY()))
+        if (bgenerate.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Generates World And Starts Game";
             if (GetMouse(0).bReleased) { new_world::ReadyWorld(world_width, world_height); }
         }
         // Generate Preview
-        if (bpreview.IsColliding(GetMouseX(), GetMouseY()))
+        if (bpreview.IsColliding(core::mouse_x, core::mouse_y))
         {
             info_text = "Updates The Preview Box";
             if (GetMouse(0).bReleased) { new_world::ReadyPreview(); can_draw = true; }
@@ -870,60 +1031,18 @@ public:
 
     void GamePaused()
     {
-        if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = core::PLAYING;
-        if (GetKey(olc::Key::TAB).bPressed) core::game_state = core::INVENTORY;
+        if (GetKey(menu_pause).bPressed) core::game_state = core::PLAYING;
+        if (GetKey(menu_inventory).bPressed) core::game_state = core::INVENTORY;
         
-        if (GetKey(olc::Key::Q).bPressed) { if (core::grid_subdivision > 1) core::grid_subdivision /= 2; }
-        if (GetKey(olc::Key::E).bPressed) { if (core::grid_subdivision < 8) core::grid_subdivision *= 2; }
-        if (GetKey(olc::Key::G).bPressed) { core::show_grid = !core::show_grid; }
+        if (GetKey(ui_left).bPressed) { if (core::grid_subdivision > 1) core::grid_subdivision /= 2; }
+        if (GetKey(ui_right).bPressed) { if (core::grid_subdivision < 8) core::grid_subdivision *= 2; }
+        if (GetKey(toggle_grid).bPressed) { core::show_grid = !core::show_grid; }
 
         if (iSystem::player.state == iSystem::player.DEAD) return;
 
-        if (GetMouse(0).bHeld)
-        {
-            if (iSystem::player.hotbar[core::selected_hotbar][0] == itNONE)
-            {
-            }
-            if (iSystem::player.hotbar[core::selected_hotbar][0] == itWAND)
-            {
-                if (iSystem::player.wands[core::selected_wand].can_fire)
-                {
-                    iSystem::player.wands[core::selected_wand].Cast();
-                    Effect e = iSystem::player.wands[core::selected_wand].effects[iSystem::player.wands[core::selected_wand].current_effect];
-                    iSystem::SpawnParticle(float(GetMouseX()), float(GetMouseY()), e);
-                }
-            }
-            int index = (GetMouseY()+(iSystem::player.y-(core::height/2)))*tCell::width+(GetMouseX()+(iSystem::player.x-(core::width/2)));
-            int tile = tCell::matrix[index];
-            int _tile = core::selected_tile;
-            if (iSystem::player.hotbar[core::selected_hotbar][0] == itTILE)
-            {
-                int index = (GetMouseY()+(iSystem::player.y-(core::height/2)))*tCell::width+(GetMouseX()+(iSystem::player.x-(core::width/2)));
-                int tile = tCell::matrix[index];
-                int _tile = iSystem::player.hotbar[core::selected_hotbar][1];
-                if (tile != tTile::MANTLE)
-                {
-                    if (_tile != tTile::AIR)
-                    {
-                        if (iSystem::player.inventory.HasItem(_tile) || core::creative_mode)
-                        {
-                            int amnt = 1;
-                            if (tile == tTile::AIR) amnt = 0;
-                            iSystem::player.inventory.UseItem(_tile, 1);
-                            iSystem::player.inventory.AddItem(tile, amnt);
-                            tCell::matrix[index] = _tile;
-                        }
-                    }
-                    else if (_tile == tTile::AIR)
-                    {
-                        if (tile != tTile::AIR) iSystem::player.inventory.AddItem(tile, 1);
-                        tCell::matrix[index] = _tile;
-                    }
-                }
-            }
-        }
+        UseHotbar();
 
-        if (GetKey(olc::Key::SPACE).bPressed)
+        if (GetKey(ui_select).bPressed)
         {
             iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2);
         }
@@ -936,14 +1055,14 @@ public:
 
     void GameInventory()
     {
-        if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = core::PAUSED;
-        if (GetKey(olc::Key::TAB).bPressed) core::game_state = core::PLAYING;
+        if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
+        if (GetKey(menu_inventory).bPressed) core::game_state = core::PLAYING;
 
-        if (GetKey(olc::Key::Q).bPressed && core::selected_tile < tTile::total_tiles-1) core::selected_tile++;
-        if (GetKey(olc::Key::E).bPressed && core::selected_tile > 0) core::selected_tile--;
+        //if (GetKey(player_min).bPressed && core::selected_tile < tTile::total_tiles-1) core::selected_tile++;
+        //if (GetKey(player_max).bPressed && core::selected_tile > 0) core::selected_tile--;
 
-        if (GetKey(olc::Key::I).bPressed) core::pause_state = core::psTILES;
-        if (GetKey(olc::Key::W).bPressed) core::pause_state = core::psWANDS;
+        //if (GetKey(olc::Key::I).bPressed) core::pause_state = core::psTILES;
+        //if (GetKey(olc::Key::W).bPressed) core::pause_state = core::psWANDS;
         
         if (core::pause_state == core::psWANDS) DrawWands();
         if (core::pause_state == core::psTILES) DrawInventory();
@@ -956,7 +1075,7 @@ public:
     {
         if (iSystem::player.state == iSystem::player.DEAD)
         {
-            if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = core::PAUSED;
+            if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
             return; 
         }
 
@@ -972,58 +1091,16 @@ public:
             iSystem::player.state = iSystem::player.IDLE;
         }
 
-        if (GetKey(olc::Key::ESCAPE).bPressed) core::game_state = core::PAUSED;
-        if (GetKey(olc::Key::TAB).bPressed) core::game_state = core::INVENTORY;
+        if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
+        if (GetKey(menu_inventory).bPressed) core::game_state = core::INVENTORY;
         //
         HotbarInput();
         
         // Stuff
-        if (GetMouse(0).bHeld)
-        {
-            if (iSystem::player.hotbar[core::selected_hotbar][0] == itNONE)
-            {
-            }
-            if (iSystem::player.hotbar[core::selected_hotbar][0] == itWAND)
-            {
-                if (iSystem::player.wands[core::selected_wand].can_fire)
-                {
-                    iSystem::player.wands[core::selected_wand].Cast();
-                    Effect e = iSystem::player.wands[core::selected_wand].effects[iSystem::player.wands[core::selected_wand].current_effect];
-                    iSystem::SpawnParticle(float(GetMouseX()), float(GetMouseY()), e);
-                }
-            }
-            int index = (GetMouseY()+(iSystem::player.y-(core::height/2)))*tCell::width+(GetMouseX()+(iSystem::player.x-(core::width/2)));
-            int tile = tCell::matrix[index];
-            int _tile = core::selected_tile;
-            if (iSystem::player.hotbar[core::selected_hotbar][0] == itTILE)
-            {
-                int index = (GetMouseY()+(iSystem::player.y-(core::height/2)))*tCell::width+(GetMouseX()+(iSystem::player.x-(core::width/2)));
-                int tile = tCell::matrix[index];
-                int _tile = iSystem::player.hotbar[core::selected_hotbar][1];
-                if (tile != tTile::MANTLE)
-                {
-                    if (_tile != tTile::AIR)
-                    {
-                        if (iSystem::player.inventory.HasItem(_tile) || core::creative_mode)
-                        {
-                            int amnt = 1;
-                            if (tile == tTile::AIR) amnt = 0;
-                            iSystem::player.inventory.UseItem(_tile, 1);
-                            iSystem::player.inventory.AddItem(tile, amnt);
-                            tCell::matrix[index] = _tile;
-                        }
-                    }
-                    else if (_tile == tTile::AIR)
-                    {
-                        if (tile != tTile::AIR) iSystem::player.inventory.AddItem(tile, 1);
-                        tCell::matrix[index] = _tile;
-                    }
-                }
-            }
-        }
+        UseHotbar();
 
         // Vertical Movement
-        if (GetKey(olc::Key::W).bHeld)
+        if (GetKey(player_up).bHeld)
         {
             if ((!tTool::IsColliding(iSystem::player.x, iSystem::player.y-iSystem::player.height)) &&
                 (iSystem::player.jp > 0) &&
@@ -1039,9 +1116,9 @@ public:
             }
         }
 
-        if (GetKey(olc::Key::W).bReleased) { iSystem::player.vy = 0; iSystem::player.state = iSystem::player.IDLE; }
+        if (GetKey(player_up).bReleased) { iSystem::player.vy = 0; iSystem::player.state = iSystem::player.IDLE; }
 
-        if (GetKey(olc::Key::S).bPressed)
+        if (GetKey(player_down).bPressed)
         {
             int tile = tCell::matrix[(iSystem::player.y+(iSystem::player.height-1))*tCell::width+iSystem::player.x];
             if (tile == tTile::PLANKS) { iSystem::player.Move(0, 1); }
@@ -1051,31 +1128,31 @@ public:
         { iSystem::player.vy = 1; iSystem::player.state = iSystem::player.FALL; }
 
         // Horizontal Movement
-        if (GetKey(olc::Key::A).bHeld && iSystem::player.x > core::width/2)
+        if (GetKey(player_left).bHeld && iSystem::player.x > core::width/2)
         {
             if (iSystem::player.state != iSystem::player.FALL && iSystem::player.state != iSystem::player.JUMP) iSystem::player.vy = 0;
-            if (!tTool::IsColliding(iSystem::player.x-2, iSystem::player.y) ) { iSystem::player.vx = -1; }
-            else if (tTool::IsColliding(iSystem::player.x-2, iSystem::player.y) ||
-                    tTool::IsColliding(iSystem::player.x-2, iSystem::player.y-1) )
+            if (!tTool::IsColliding(iSystem::player.x-3, iSystem::player.y) ) { iSystem::player.vx = -1; }
+            else if (tTool::IsColliding(iSystem::player.x-3, iSystem::player.y) ||
+                    tTool::IsColliding(iSystem::player.x-3, iSystem::player.y-1) )
             { iSystem::player.vx = -1; iSystem::player.Move(0, -1); }
-            if (!GetKey(olc::Key::W).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
+            if (!GetKey(player_up).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
             iSystem::player.direction = -1;
         }
-        if (GetKey(olc::Key::D).bHeld && iSystem::player.x < tCell::width-(core::width/2))
+        if (GetKey(player_right).bHeld && iSystem::player.x < tCell::width-(core::width/2))
         {
             if (iSystem::player.state != iSystem::player.FALL && iSystem::player.state != iSystem::player.JUMP) iSystem::player.vy = 0;
             if (!tTool::IsColliding(iSystem::player.x+1, iSystem::player.y) ) { iSystem::player.vx = 1; }
             else if (tTool::IsColliding(iSystem::player.x+1, iSystem::player.y) ||
                     tTool::IsColliding(iSystem::player.x+1, iSystem::player.y-1) )
             { iSystem::player.vx = 1; iSystem::player.Move(0, -1); }
-            if (!GetKey(olc::Key::W).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
+            if (!GetKey(player_up).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
             iSystem::player.direction = 1;
         }
 
-        if (GetKey(olc::Key::A).bReleased) { iSystem::player.vx = 0; }
-        if (GetKey(olc::Key::D).bReleased) { iSystem::player.vx = 0; }
+        if (GetKey(player_left).bReleased) { iSystem::player.vx = 0; }
+        if (GetKey(player_right).bReleased) { iSystem::player.vx = 0; }
 
-        if (GetKey(olc::Key::G).bPressed) { core::show_grid = !core::show_grid; }
+        if (GetKey(toggle_grid).bPressed) { core::show_grid = !core::show_grid; }
 
 
 
@@ -1102,6 +1179,10 @@ public:
         //player.UpdateWands(fElapsedTime);
         DrawParticles(fElapsedTime);
         DrawHUD();
+        // Update Camera
+        iSystem::camera.Update(
+                iSystem::player.x-(iSystem::player.height/2),
+                iSystem::player.y-(iSystem::player.height-1));
 
         // End Frame
         core::game_tick += fElapsedTime;
@@ -1121,6 +1202,7 @@ public:
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
+        UpdateMouse();
         switch (core::game_state)
         {
             case core::PLAYING : GameLoop(fElapsedTime); break;

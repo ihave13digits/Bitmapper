@@ -10,10 +10,13 @@ namespace core
     bool loading = false;
 
     // Selection
-
     char selected_hotbar = 0;
     char selected_tile = 0;
     char selected_wand = 0;
+    
+    //
+    int mouse_x;
+    int mouse_y;
 
     // State Flags
     char game_state = 0;

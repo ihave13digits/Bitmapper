@@ -1,8 +1,10 @@
 namespace iSystem
 {
+
     Sky sky = Sky();
     World world = World();
     Player player = Player();
+    Camera camera = Camera();
     std::vector<Particle> particles;
 
     void SpawnParticle(float X, float Y, Effect e)
@@ -11,8 +13,8 @@ namespace iSystem
         float H = core::height/2;
         Particle p = Particle();
         p.SetEffect(e);
-        p.Position(player.x+(player.direction*(player.height/2)), player.y-player.height/2);
-        p.Velocity(float((X-W)*0.1), float((Y-H)*0.1));
+        p.Position(player.x+(player.direction*(player.height/4)), player.y-player.height/2);
+        p.Velocity(float(((X-(player.height/2))-W)*0.1), float(((Y-(player.height-1))-H)*0.1));
         p.Color(tTile::R[e.tile_value], tTile::G[e.tile_value], tTile::B[e.tile_value], tTile::A[e.tile_value]);
         particles.push_back(p);
     }

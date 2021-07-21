@@ -26,3 +26,23 @@ public:
     std::string name;
 
 };
+
+namespace effectID
+{
+    enum EFFECTS
+    {
+        STICKY,
+        BOUNCY,
+        HEAVY,
+        DESTROYS,
+        BECOMES,
+        DAMAGES,
+        PIERCES,
+        POISONS,
+        TRAILS,
+        MINES,
+        TRIPS,
+        STUNS,
+        BURNS,
+    };
+}

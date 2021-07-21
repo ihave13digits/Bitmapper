@@ -504,7 +504,7 @@ namespace new_world
     {
         std::string line;
         std::fstream data_file;
-        std::string _dir = os::GetCWD() + "/data/" + data_dir;
+        std::string _dir = os::GetCWD() + dataTool::path_preset + data_dir;
         data_file.open(_dir);
 
         if (data_file.is_open())
@@ -529,7 +529,7 @@ namespace new_world
     {
         std::string line;
         std::fstream data_file;
-        std::string _dir = os::GetCWD() + "/data/" + data_dir;
+        std::string _dir = os::GetCWD() + dataTool::path_preset + data_dir;
         data_file.open(_dir);
 
         if (data_file.is_open())
