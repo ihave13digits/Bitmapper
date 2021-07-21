@@ -447,7 +447,7 @@ public:
     void SaveData(std::string data_dir = "0")
     {
         std::fstream data_file;
-        std::string _dir = os::GetCWD() + dataTool::path_player + "player_data" + data_dir;
+        std::string _dir = os::GetCWD() + dataTool::path_player + data_dir + "/player_data";
         data_file.open(_dir);
 
         if (data_file.is_open())
@@ -470,7 +470,7 @@ public:
     {
         std::string line;
         std::fstream data_file;
-        std::string _dir = os::GetCWD() + dataTool::path_player + "player_data" + data_dir;
+        std::string _dir = os::GetCWD() + dataTool::path_player + data_dir + "/player_data";
         data_file.open(_dir);
 
         if (data_file.is_open())
