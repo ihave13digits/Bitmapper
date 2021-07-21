@@ -41,12 +41,15 @@ namespace core
     enum STATES
     {
         TITLE,
+        SETTINGS,
         CUSTOM,
+        SAVING,
         LOADING,
         PLAYING,
+        CRAFTING,
         INVENTORY,
         PAUSED,
-        EXIT
+        EXIT,
     };
 
     enum PAUSE_STATES

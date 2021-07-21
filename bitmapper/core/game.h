@@ -76,6 +76,15 @@ public:
     //
 
 
+    int GetOffsetX()
+    {
+        return (core::mouse_x+((iSystem::player.x-(iSystem::player.height/2))-(core::width/2)));
+    }
+    int GetOffsetY()
+    {
+        return (core::mouse_y+((iSystem::player.y-(iSystem::player.height-1))-(core::height/2)));
+    }
+
     bool PlayerVsWorld()
     {
         bool colliding = false;
@@ -117,9 +126,7 @@ public:
     {
         if (GetMouse(0).bHeld)
         {
-            if (iSystem::player.hotbar[core::selected_hotbar][0] == itNONE)
-            {
-            }
+            //if (iSystem::player.hotbar[core::selected_hotbar][0] == itNONE) {}
             if (iSystem::player.hotbar[core::selected_hotbar][0] == itWAND)
             {
                 if (iSystem::player.wands[core::selected_wand].can_fire)
@@ -129,8 +136,8 @@ public:
                     iSystem::SpawnParticle(float(core::mouse_x), float(core::mouse_y), e);
                 }
             }
-            int offset_x = (core::mouse_x+((iSystem::player.x-(iSystem::player.height/2))-(core::width/2)));
-            int offset_y = (core::mouse_y+((iSystem::player.y-(iSystem::player.height-1))-(core::height/2)));
+            int offset_x = GetOffsetX();
+            int offset_y = GetOffsetY();
             int index = offset_y*tCell::width+offset_x;
             int tile = tCell::matrix[index];
             int _tile = core::selected_tile;
@@ -594,13 +601,15 @@ public:
     {
         float font = 0.25;
 
-        int lookindex = (iSystem::player.y-(core::height/2)+core::mouse_y)*tCell::width+(iSystem::player.x-(core::width/2)+core::mouse_x);
+        int offset_x = GetOffsetX();
+        int offset_y = GetOffsetY();
+        int lookindex = offset_y*tCell::width+offset_x;
 
         std::string health = std::to_string(iSystem::player.hp)+"/"+std::to_string(iSystem::player.HP);
         std::string lookingat = "Air";
         std::string selectedtile = tTile::NAME[core::selected_tile];
         std::string selectedcount = "";
-        std::string collision_at = std::to_string(tTool::Collision((iSystem::player.x-(core::width/2)+core::mouse_x), (iSystem::player.y-(core::height/2)+core::mouse_y)));
+        std::string collision_at = std::to_string(tTool::Collision(offset_x, offset_y));
 
         if ( ( (lookindex < tCell::width*tCell::height) && lookindex > 0) && (tCell::matrix[lookindex] < tTile::total_tiles) )
         {
@@ -659,7 +668,7 @@ public:
         DrawRect(core::selected_hotbar*hb_size+hb_offset, 2, hb_size, hb_size, hud_select_color);
     }
 
-    void DrawTitle()
+    void StateTitle()
     {
         Clear(olc::BLACK);
 
@@ -705,7 +714,10 @@ public:
         }
     }
 
-    void DrawCustom()
+    void StateSettings()
+    {}
+
+    void StateCustom()
     {
         //Clear(olc::BLACK);
         bool can_draw = false;
@@ -996,7 +1008,11 @@ public:
 
     }
 
-    void DrawLoading()
+    void StateSaving()
+    {
+    }
+
+    void StateLoading()
     {
         Clear(olc::BLACK);
         
@@ -1029,7 +1045,7 @@ public:
 
     }
 
-    void GamePaused()
+    void StatePaused()
     {
         if (GetKey(menu_pause).bPressed) core::game_state = core::PLAYING;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::INVENTORY;
@@ -1053,7 +1069,11 @@ public:
         DrawHUD();
     }
 
-    void GameInventory()
+    void StateCrafting()
+    {
+    }
+
+    void StateInventory()
     {
         if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::PLAYING;
@@ -1071,7 +1091,7 @@ public:
         DrawHUD();
     }
 
-    void GameLoop(float fElapsedTime)
+    void StateGameLoop(float fElapsedTime)
     {
         if (iSystem::player.state == iSystem::player.DEAD)
         {
@@ -1128,16 +1148,18 @@ public:
         { iSystem::player.vy = 1; iSystem::player.state = iSystem::player.FALL; }
 
         // Horizontal Movement
+        
         if (GetKey(player_left).bHeld && iSystem::player.x > core::width/2)
         {
             if (iSystem::player.state != iSystem::player.FALL && iSystem::player.state != iSystem::player.JUMP) iSystem::player.vy = 0;
-            if (!tTool::IsColliding(iSystem::player.x-3, iSystem::player.y) ) { iSystem::player.vx = -1; }
-            else if (tTool::IsColliding(iSystem::player.x-3, iSystem::player.y) ||
-                    tTool::IsColliding(iSystem::player.x-3, iSystem::player.y-1) )
+            if (!tTool::IsColliding(iSystem::player.x-2, iSystem::player.y) ) { iSystem::player.vx = -1; }
+            else if (tTool::IsColliding(iSystem::player.x-2, iSystem::player.y) ||
+                    tTool::IsColliding(iSystem::player.x-2, iSystem::player.y-1) )
             { iSystem::player.vx = -1; iSystem::player.Move(0, -1); }
             if (!GetKey(player_up).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
             iSystem::player.direction = -1;
         }
+        
         if (GetKey(player_right).bHeld && iSystem::player.x < tCell::width-(core::width/2))
         {
             if (iSystem::player.state != iSystem::player.FALL && iSystem::player.state != iSystem::player.JUMP) iSystem::player.vy = 0;
@@ -1205,12 +1227,15 @@ public:
         UpdateMouse();
         switch (core::game_state)
         {
-            case core::PLAYING : GameLoop(fElapsedTime); break;
-            case core::PAUSED : GamePaused(); break;
-            case core::INVENTORY : GameInventory(); break;
-            case core::LOADING : DrawLoading(); break;
-            case core::CUSTOM : DrawCustom(); break;
-            case core::TITLE : DrawTitle(); break;
+            case core::PLAYING   : StateGameLoop(fElapsedTime); break;
+            case core::PAUSED    : StatePaused(); break;
+            case core::CRAFTING  : StateCrafting(); break;
+            case core::INVENTORY : StateInventory(); break;
+            case core::SAVING    : StateSaving(); break;
+            case core::LOADING   : StateLoading(); break;
+            case core::CUSTOM    : StateCustom(); break;
+            case core::SETTINGS  : StateSettings(); break;
+            case core::TITLE     : StateTitle(); break;
             case core::EXIT :
                 {
                     iSystem::player.SaveData();
