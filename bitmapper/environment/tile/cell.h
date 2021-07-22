@@ -1,6 +1,8 @@
 namespace tCell
 {
 
+    char season;
+
     int width;
     int height;
 

@@ -694,6 +694,7 @@ public:
         DrawStringDecal({ 4,12 }, "Collision: " + collision_at, text_color, { font, font });
         DrawStringDecal({ 4,16 }, "Day: " + std::to_string(iSystem::sky.day), text_color, { font, font });
         DrawStringDecal({ 4,20 }, "Year: " + std::to_string(iSystem::sky.year), text_color, { font, font });
+        DrawStringDecal({ 4,24 }, "Season: " + std::to_string(tCell::season), text_color, { font, font });
         //
         int hb_size = icon.size+1;
         int hb_offset = (core::width/2) - hb_size*4.5;

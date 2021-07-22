@@ -48,24 +48,25 @@ public:
         width = W;
         height = H;
         srand(seed);
+        int missed_stars = 0;
         // Distribute Stars
-        for (int i = 0; i < starcount; i++)
+        for (int y = 0; y < 16; y++)
         {
-            stars[i][0] = rand() % year_length*2;
-            stars[i][1] = rand() % year_length;
-        }
-        // Redistribute Stars
-        int tol = 1;
-        for (int i = 0; i < starcount; i++)
-        {
-            for (int j = 0; j < starcount; j++)
+            for (int x = 0; x < 16; x++)
             {
-                int dx = stars[i][0]-stars[j][0];
-                int dy = stars[i][1]-stars[j][1];
-                if (dx < tol && dy < tol)
+                if (missed_stars > 0)
                 {
-                    stars[i][0] = rand() % year_length*2;
-                    stars[i][1] = rand() % year_length;
+                    int index = y*16+x;
+                    stars[index][0] = rand()%45+(x*45);
+                    stars[index][1] = rand()%23+(y*23);
+                    missed_stars--;
+                }
+                if (rand()%100 < 80)
+                {
+                    int index = y*16+x;
+                    stars[index][0] = rand()%45+(x*45);
+                    stars[index][1] = rand()%23+(y*23);
+                    missed_stars++;
                 }
             }
         }
@@ -202,6 +203,7 @@ public:
 
     void UpdateTime(float delta)
     {
+        tCell::season = day/(year_length/4);
         if (!inverted)
         {
             hue -= delta;
