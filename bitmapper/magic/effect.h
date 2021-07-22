@@ -29,6 +29,25 @@ public:
 
 namespace effectID
 {
+    int total_effects = 13;
+
+    std::string NAME[13] = 
+    {
+        "Sticky",
+        "Bouncy",
+        "Heavy",
+        "Destroys",
+        "Becomes",
+        "Damages",
+        "Pierces",
+        "Poisons",
+        "Trails",
+        "Mines",
+        "Trips",
+        "Stuns",
+        "Burns",
+    };
+
     enum EFFECTS
     {
         STICKY,

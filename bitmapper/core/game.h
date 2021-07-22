@@ -66,7 +66,7 @@ public:
     void InstallGame()
     {
         tTile::LoadTileData();
-        dataTool::GenerateDirectoryTree();
+        //dataTool::GenerateDirectoryTree();
     }
 
 
@@ -349,6 +349,7 @@ public:
         {
             case effectID::STICKY   : { img = icon.sticky;   tile_value = tTile::FROG; } break;
             case effectID::BOUNCY   : { img = icon.bouncy;   tile_value = tTile::FROG; } break;
+            case effectID::HEAVY    : { img = icon.heavy;    tile_value = tTile::LEAD; } break;
             case effectID::DESTROYS : { img = icon.destroys; tile_value = tTile::BOMB; } break;
             case effectID::BECOMES  : { img = icon.becomes;  tile_value = tTile::SMOKE; } break;
             case effectID::DAMAGES  : { img = icon.damages;  tile_value = tTile::DYNAMITE; } break;
@@ -380,12 +381,9 @@ public:
         int cols = 16;
         int rows = 8;
         int x_margin = 48;
-        int y_margin = 32;
+        int y_margin = 40;
         int wand_value = 0;
-
         Button buttons[cols*rows];
-
-        DrawPanel(44, 28, 168, 88);
         SetPixelMode(olc::Pixel::ALPHA);
         for (int y = 0; y < rows; y++)
         {
@@ -439,24 +437,20 @@ public:
         int cols = 16;
         int rows = 8;
         int x_margin = 48;
-        int y_margin = 32;
+        int y_margin = 40;
         int tile_value = 0;
-
         Button buttons[cols*rows];
-
-        DrawPanel(44, 28, 168, 88);
         SetPixelMode(olc::Pixel::ALPHA);
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < cols; x++)
             {
-                int tile_type = tTool::GetType(tile_value);
-                if (tile_value < tTile::total_tiles)
+                if (tile_value < effectID::total_effects)
                 {
                     Button b = Button();
-                    b.Setup((x*10)+x_margin, (y*10)+y_margin, 9, 9, 1.0, std::to_string(tile_value));
+                    b.Setup((x*10)+x_margin, (y*10)+y_margin, 9, 9, 1.0, "");
                     buttons[y*cols+x] = b;
-                    DrawIcon((x*10)+x_margin+1, (y*10)+y_margin+1, tile_type, tile_value);
+                    DrawEffect((x*10)+x_margin+1, (y*10)+y_margin+1, tile_value);
                 }
                 tile_value++;
             }
@@ -472,8 +466,6 @@ public:
                     DrawRect(b.x, b.y, b.width, b.height, select_color);
                     if (GetMouse(0).bReleased)
                     {
-                        iSystem::player.hotbar[core::selected_hotbar][0] = itTILE;
-                        iSystem::player.hotbar[core::selected_hotbar][1] = std::stoi(b.text);
                     }
                 }
             }
@@ -485,12 +477,9 @@ public:
         int cols = 16;
         int rows = 8;
         int x_margin = 48;
-        int y_margin = 32;
+        int y_margin = 40;
         int tile_value = 0;
-
         Button buttons[cols*rows];
-
-        DrawPanel(44, 28, 168, 88);
         SetPixelMode(olc::Pixel::ALPHA);
         for (int y = 0; y < rows; y++)
         {
@@ -1106,15 +1095,25 @@ public:
 
     void StateInventory()
     {
+        DrawPanel(44, 20, 168, 104);
         if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::PLAYING;
         if (core::pause_state == core::psWANDS) DrawWands();
         if (core::pause_state == core::psEFFECTS) DrawEffects();
         if (core::pause_state == core::psTILES) DrawInventory();
         
-        //core::pause_state = core::psWANDS;
-        //core::pause_state = core::psEFFECTS;
-        //core::pause_state = core::psTILES;
+        Button btiles = Button();     btiles.Setup(52, 24, 32, 8, 0.25, "Tiles");
+        Button bwands = Button();     bwands.Setup(92, 24, 32, 8, 0.25, "Wands");
+        Button beffects = Button(); beffects.Setup(132, 24, 32, 8, 0.25, "Effects");
+
+        DrawButton(btiles); DrawButton(bwands); DrawButton(beffects);
+
+        if (bwands.IsColliding(core::mouse_x, core::mouse_y)){
+            if (GetMouse(0).bReleased) core::pause_state = core::psWANDS;}
+        if (beffects.IsColliding(core::mouse_x, core::mouse_y)){
+            if (GetMouse(0).bReleased) core::pause_state = core::psEFFECTS;}
+        if (btiles.IsColliding(core::mouse_x, core::mouse_y)){
+            if (GetMouse(0).bReleased) core::pause_state = core::psTILES;}
 
         HotbarInput();
         DrawHUD();
