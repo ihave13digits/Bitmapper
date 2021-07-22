@@ -19,18 +19,26 @@ namespace tCritter
         int dSS = int( (_y+2) * tCell::width + (_x  ) );
 
         int chance = rand()%1000;
+        if (tTool::GetType(tCell::matrix[dS]) == tTile::SOLID || tTool::GetType(tCell::matrix[dS]) == tTile::PLANT) can_do = true;
         switch (tCell::matrix[dS])
         {
-            case tTile::GRASS     : { can_do = true; } break;
+            case tTile::FROG      : { can_do = true; } break;
+            case tTile::TOAD      : { can_do = true; } break;
             case tTile::WATER     : { can_do = true; } break;
             case tTile::AIR       :
             {
+                if (tCell::matrix[dNE+1] == tTile::FROG_LEGS) tCell::replace[dNE+1] = tTile::AIR;
+                if (tCell::matrix[dSE+1] == tTile::FROG_LEGS) tCell::replace[dSE+1] = tTile::AIR;
                 if (tCell::matrix[dNE] == tTile::FROG_LEGS) tCell::replace[dNE] = tTile::AIR;
                 if (tCell::matrix[dSE] == tTile::FROG_LEGS) tCell::replace[dSE] = tTile::AIR;
                 if (tCell::matrix[dE] == tTile::FROG_LEGS) tCell::replace[dE] = tTile::AIR;
-                if (tCell::matrix[dW] == tTile::FROG_LEGS) tCell::replace[dW] = tTile::AIR;
-                if (tCell::matrix[dSW] == tTile::FROG_LEGS) tCell::replace[dSW] = tTile::AIR;
+                if (tCell::matrix[dE+1] == tTile::FROG_LEGS) tCell::replace[dE+1] = tTile::AIR;
+                if (tCell::matrix[dNW+1] == tTile::FROG_LEGS) tCell::replace[dNW-1] = tTile::AIR;
+                if (tCell::matrix[dSW+1] == tTile::FROG_LEGS) tCell::replace[dSW-1] = tTile::AIR;
                 if (tCell::matrix[dNW] == tTile::FROG_LEGS) tCell::replace[dNW] = tTile::AIR;
+                if (tCell::matrix[dSW] == tTile::FROG_LEGS) tCell::replace[dSW] = tTile::AIR;
+                if (tCell::matrix[dW] == tTile::FROG_LEGS) tCell::replace[dW] = tTile::AIR;
+                if (tCell::matrix[dW-1] == tTile::FROG_LEGS) tCell::replace[dW-1] = tTile::AIR;
                 tCell::replace[index] = tTile::AIR;
                 tCell::replace[dS] = tTile::FROG;
                 can_do = false;
@@ -46,8 +54,27 @@ namespace tCritter
                 {
                     int direction = rand()%1000;
                     tCell::replace[index] = tTile::AIR;
-                    if (direction > 500) tCell::replace[dE] = tTile::FROG;
-                    if (direction < 500) tCell::replace[dW] = tTile::FROG;
+
+                    if (direction > 500)
+                    {
+                        if (tCell::matrix[dE+1] == tTile::AIR && tCell::matrix[dE] == tTile::AIR)
+                        {
+                            tCell::replace[dE+1] = tTile::FROG;
+                            if (tCell::matrix[dS] == tTile::FROG_LEGS) tCell::replace[dS] = tTile::AIR;
+                            if (tCell::matrix[dS+1] == tTile::AIR) tCell::replace[dS+1] = tTile::FROG_LEGS;
+                        }
+                        else if (tCell::matrix[dE] == tTile::AIR) tCell::replace[dE] = tTile::FROG;
+                    }
+                    if (direction < 500)
+                    {
+                        if (tCell::matrix[dW-1] == tTile::AIR && tCell::matrix[dW] == tTile::AIR)
+                        {
+                            tCell::replace[dW-1] = tTile::FROG;
+                            if (tCell::matrix[dS] == tTile::FROG_LEGS) tCell::replace[dS] = tTile::AIR;
+                            if (tCell::matrix[dS-1] == tTile::AIR) tCell::replace[dS-1] = tTile::FROG_LEGS;
+                        }
+                        else if (tCell::matrix[dW] == tTile::AIR) tCell::replace[dW] = tTile::FROG;
+                    }
                 }
                 can_do = false;
             } break;
@@ -76,9 +103,11 @@ namespace tCritter
         int dSS = int( (_y+2) * tCell::width + (_x  ) );
 
         int chance = rand()%1000;
+        if (tTool::GetType(tCell::matrix[dS]) == tTile::SOLID || tTool::GetType(tCell::matrix[dS]) == tTile::PLANT) can_do = true;
         switch (tCell::matrix[dS])
         {
-            case tTile::GRASS     : { can_do = true; } break;
+            case tTile::FROG      : { can_do = true; } break;
+            case tTile::TOAD     : { can_do = true; } break;
             case tTile::WATER     : { can_do = true; } break;
             case tTile::AIR       :
             {
@@ -103,8 +132,8 @@ namespace tCritter
                 {
                     int direction = rand()%1000;
                     tCell::replace[index] = tTile::AIR;
-                    if (direction > 500) tCell::replace[dE] = tTile::TOAD;
-                    if (direction < 500) tCell::replace[dW] = tTile::TOAD;
+                    if (direction > 500 && tCell::matrix[dE] == tTile::AIR) tCell::replace[dE] = tTile::TOAD;
+                    if (direction < 500 && tCell::matrix[dW] == tTile::AIR) tCell::replace[dW] = tTile::TOAD;
                 }
                 can_do = false;
             } break;
