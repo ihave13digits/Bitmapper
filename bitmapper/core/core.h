@@ -55,7 +55,9 @@ namespace core
     enum PAUSE_STATES
     {
         psTILES,
-        psWANDS,
+        psWALLS,
+        psCRAFT,
+        psTOOLS,
         psEFFECTS,
     };
 }

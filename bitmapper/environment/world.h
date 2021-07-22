@@ -35,20 +35,21 @@ public:
 
                     switch (cell_type)
                     {
-                        case tTile::SOLID    : {    tSolid::Update(_x, _y, index, current_cell); } break;
-                        case tTile::LOOSE    : {    tLoose::Update(_x, _y, index, current_cell); } break;
-                        case tTile::GRAIN    : {    tGrain::Update(_x, _y, index, current_cell); } break;
-                        case tTile::FLUID    : {    tFluid::Update(_x, _y, index, current_cell); } break;
-                        case tTile::GEL      : {      tGel::Update(_x, _y, index, current_cell); } break;
-                        case tTile::PLASMA   : {   tPlasma::Update(_x, _y, index, current_cell); } break;
-                        case tTile::GAS      : {      tGas::Update(_x, _y, index, current_cell); } break;
-                        case tTile::FUME     : {     tFume::Update(_x, _y, index, current_cell); } break;
-                        case tTile::PLANT    : {    tPlant::Update(_x, _y, index, current_cell); } break;
-                        case tTile::CRITTER  : {  tCritter::Update(_x, _y, index, current_cell); } break;
-                        case tTile::BOOM     : {     tBoom::Update(_x, _y, index, current_cell); } break;
-                        case tTile::LOGIC    : {    tLogic::Update(_x, _y, index, current_cell); } break;
-                        case tTile::GIZMO    : {    tGizmo::Update(_x, _y, index, current_cell); } break;
-                        case tTile::PLUMBING : { tPlumbing::Update(_x, _y, index, current_cell); } break;
+                        case tTile::SOLID         : {        tSolid::Update(_x, _y, index, current_cell); } break;
+                        case tTile::LOOSE         : {        tLoose::Update(_x, _y, index, current_cell); } break;
+                        case tTile::GRAIN         : {        tGrain::Update(_x, _y, index, current_cell); } break;
+                        case tTile::FLUID         : {        tFluid::Update(_x, _y, index, current_cell); } break;
+                        case tTile::GEL           : {          tGel::Update(_x, _y, index, current_cell); } break;
+                        case tTile::PLASMA        : {       tPlasma::Update(_x, _y, index, current_cell); } break;
+                        case tTile::GAS           : {          tGas::Update(_x, _y, index, current_cell); } break;
+                        case tTile::FUME          : {         tFume::Update(_x, _y, index, current_cell); } break;
+                        case tTile::PLANT         : {        tPlant::Update(_x, _y, index, current_cell); } break;
+                        case tTile::PLANT_PRODUCT : { tPlantProduct::Update(_x, _y, index, current_cell); } break;
+                        case tTile::CRITTER       : {      tCritter::Update(_x, _y, index, current_cell); } break;
+                        case tTile::BOOM          : {         tBoom::Update(_x, _y, index, current_cell); } break;
+                        case tTile::LOGIC         : {        tLogic::Update(_x, _y, index, current_cell); } break;
+                        case tTile::GIZMO         : {        tGizmo::Update(_x, _y, index, current_cell); } break;
+                        case tTile::PLUMBING      : {     tPlumbing::Update(_x, _y, index, current_cell); } break;
                     }
                 }
             }

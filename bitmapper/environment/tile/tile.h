@@ -1,6 +1,5 @@
 namespace tTile
 {
-
     enum TYPES
     {
         GAS,
@@ -17,9 +16,10 @@ namespace tTile
         PLATFORM,
         PLUMBING,
         PLANT,
+        PLANT_PRODUCT,
         CRITTER,
+        WALL,
     };
-
     enum TILES
     {
         // Gas
@@ -161,7 +161,9 @@ namespace tTile
         SPIDERWORT,
         // Critter
         FROG,
+        FROG_LEGS,
         TOAD,
+        TOAD_LEGS,
         MOUSE,
         MOLE,
         RAT,
@@ -174,25 +176,19 @@ namespace tTile
         BAT_WING,
         BAT,
     };
-
     // Tile Count
     int total_tiles;
-
     // Color Values
     std::vector<int> R;
     std::vector<int> G;
     std::vector<int> B;
     std::vector<int> A;
-    
     // Durability Values
     std::vector<float> POWER;
-    
     // Light Values
     std::vector<float> LIGHT;
-    
     // Type Values
     std::vector<int> TYPE;
-    
     // Name Values
     std::vector<std::string> NAME;
 
@@ -209,9 +205,7 @@ namespace tTile
         std::string line;
         std::fstream data_file;
         std::string _dir = os::GetCWD() + "/bitmapper/environment/tile/" + data_dir;
-        
         data_file.open(_dir);
-
         if (data_file.is_open())
         {
             while (getline(data_file, line))
@@ -237,21 +231,22 @@ namespace tTile
                             case 7 :
                             {
                                 int value;
-                                if (string_data == "gas")      { value = GAS;      }
-                                if (string_data == "plasma")   { value = PLASMA;   }
-                                if (string_data == "fume")     { value = FUME;     }
-                                if (string_data == "fluid")    { value = FLUID;    }
-                                if (string_data == "grain")    { value = GRAIN;    }
-                                if (string_data == "gel")      { value = GEL;      }
-                                if (string_data == "solid")    { value = SOLID;    }
-                                if (string_data == "loose")    { value = LOOSE;    }
-                                if (string_data == "boom")     { value = BOOM;     }
-                                if (string_data == "logic")    { value = LOGIC;    }
-                                if (string_data == "gizmo")    { value = GIZMO;    }
-                                if (string_data == "platform") { value = PLATFORM; }
-                                if (string_data == "plumbing") { value = PLUMBING; }
-                                if (string_data == "plant")    { value = PLANT;    }
-                                if (string_data == "critter")  { value = CRITTER;  }
+                                if (string_data == "gas")          { value = GAS;           }
+                                if (string_data == "plasma")       { value = PLASMA;        }
+                                if (string_data == "fume")         { value = FUME;          }
+                                if (string_data == "fluid")        { value = FLUID;         }
+                                if (string_data == "grain")        { value = GRAIN;         }
+                                if (string_data == "gel")          { value = GEL;           }
+                                if (string_data == "solid")        { value = SOLID;         }
+                                if (string_data == "loose")        { value = LOOSE;         }
+                                if (string_data == "boom")         { value = BOOM;          }
+                                if (string_data == "logic")        { value = LOGIC;         }
+                                if (string_data == "gizmo")        { value = GIZMO;         }
+                                if (string_data == "platform")     { value = PLATFORM;      }
+                                if (string_data == "plumbing")     { value = PLUMBING;      }
+                                if (string_data == "plant")        { value = PLANT;         }
+                                if (string_data == "plantproduct") { value = PLANT_PRODUCT; }
+                                if (string_data == "critter")      { value = CRITTER;       }
                                 TYPE.push_back(value);
                             }
                             break;
@@ -266,30 +261,6 @@ namespace tTile
             data_file.close();
         }
         total_tiles = NAME.size();
-
-        /*
-        for (int i = 0; i < total_tiles; i++)
-        {
-            std::cout <<R[i] <<", ";
-            std::cout <<G[i] <<", ";
-            std::cout <<B[i] <<", ";
-            std::cout <<A[i] <<", ";
-            std::cout <<POWER[i] <<"; ";
-            std::cout <<LIGHT[i] <<"; ";
-            std::cout <<TYPE[i] <<"; ";
-            std::cout <<NAME[i] <<"; ";
-            std::cout <<std::endl;
-        }
-
-        std::cout <<"R: " <<R.size() <<"/" <<total_tiles <<std::endl;
-        std::cout <<"G: " <<G.size() <<"/" <<total_tiles <<std::endl;
-        std::cout <<"B: " <<B.size() <<"/" <<total_tiles <<std::endl;
-        std::cout <<"A: " <<A.size() <<"/" <<total_tiles <<std::endl;
-        std::cout <<"P: " <<POWER.size() <<"/" <<total_tiles <<std::endl;
-        std::cout <<"L: " <<LIGHT.size() <<"/" <<total_tiles <<std::endl;
-        std::cout <<"T: " <<TYPE.size() <<"/" <<total_tiles <<std::endl;
-        std::cout <<"N: " <<NAME.size() <<"/" <<total_tiles <<std::endl;
-        */
     }
 
 
