@@ -56,5 +56,6 @@ namespace core
     {
         psTILES,
         psWANDS,
+        psEFFECTS,
     };
 }

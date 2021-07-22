@@ -190,6 +190,10 @@ public:
         }
     }
 
+    //
+    /// Helper Functinos
+    //
+
     bool PlayerVsWorld()
     {
         bool colliding = false;
@@ -262,6 +266,12 @@ public:
     //
     /// Drawing Routines
     //
+
+    void DrawPanel(int x, int y, int w, int h)
+    {
+        FillRect({x+1, y+1}, {w-1, h-1}, panel_color);
+        DrawRect({x, y}, {w, h}, border_color);
+    }
 
     void DrawButton(Button b)
     {
@@ -375,8 +385,7 @@ public:
 
         Button buttons[cols*rows];
 
-        FillRect({x_margin-3, y_margin-3}, {167, 87}, panel_color);
-        DrawRect({x_margin-4, y_margin-4}, {168, 88}, border_color);
+        DrawPanel(44, 28, 168, 88);
         SetPixelMode(olc::Pixel::ALPHA);
         for (int y = 0; y < rows; y++)
         {
@@ -435,8 +444,7 @@ public:
 
         Button buttons[cols*rows];
 
-        FillRect({x_margin-3, y_margin-3}, {167, 87}, panel_color);
-        DrawRect({x_margin-4, y_margin-4}, {168, 88}, border_color);
+        DrawPanel(44, 28, 168, 88);
         SetPixelMode(olc::Pixel::ALPHA);
         for (int y = 0; y < rows; y++)
         {
@@ -482,8 +490,7 @@ public:
 
         Button buttons[cols*rows];
 
-        FillRect({x_margin-3, y_margin-3}, {167, 87}, panel_color);
-        DrawRect({x_margin-4, y_margin-4}, {168, 88}, border_color);
+        DrawPanel(44, 28, 168, 88);
         SetPixelMode(olc::Pixel::ALPHA);
         for (int y = 0; y < rows; y++)
         {
@@ -1091,6 +1098,10 @@ public:
 
     void StateCrafting()
     {
+        if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
+        if (GetKey(menu_inventory).bPressed) core::game_state = core::PLAYING;
+        HotbarInput();
+        DrawHUD();
     }
 
     void StateInventory()
@@ -1098,7 +1109,13 @@ public:
         if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::PLAYING;
         if (core::pause_state == core::psWANDS) DrawWands();
+        if (core::pause_state == core::psEFFECTS) DrawEffects();
         if (core::pause_state == core::psTILES) DrawInventory();
+        
+        //core::pause_state = core::psWANDS;
+        //core::pause_state = core::psEFFECTS;
+        //core::pause_state = core::psTILES;
+
         HotbarInput();
         DrawHUD();
     }
