@@ -13,13 +13,6 @@ public:
 
 public:
 
-    enum ITEM_TYPES
-    {
-        itNONE,
-        itTILE,
-        itWAND,
-    };
-
     int input_value = 0;
     char save_slot = 0;
 
@@ -222,7 +215,7 @@ public:
         if (GetMouse(0).bHeld)
         {
             //if (iSystem::player.hotbar[core::selected_hotbar][0] == itNONE) {}
-            if (iSystem::player.hotbar[core::selected_hotbar][0] == itWAND)
+            if (iSystem::player.hotbar[core::selected_hotbar][0] == itemID::WAND)
             {
                 if (iSystem::player.wands[core::selected_wand].can_fire)
                 {
@@ -236,7 +229,7 @@ public:
             int index = offset_y*tCell::width+offset_x;
             int tile = tCell::matrix[index];
             int _tile = core::selected_tile;
-            if (iSystem::player.hotbar[core::selected_hotbar][0] == itTILE)
+            if (iSystem::player.hotbar[core::selected_hotbar][0] == itemID::TILE)
             {
                 int tile = tCell::matrix[index];
                 int _tile = iSystem::player.hotbar[core::selected_hotbar][1];
@@ -310,21 +303,22 @@ public:
         int *img;
         switch (tile_type)
         {
-            case tTile::GAS      : { img = icon.gas;      } break;
-            case tTile::PLASMA   : { img = icon.plasma;   } break;
-            case tTile::FUME     : { img = icon.fume;     } break;
-            case tTile::FLUID    : { img = icon.fluid;    } break;
-            case tTile::GRAIN    : { img = icon.grain;    } break;
-            case tTile::GEL      : { img = icon.gel;      } break;
-            case tTile::SOLID    : { img = icon.solid;    } break;
-            case tTile::LOOSE    : { img = icon.loose;    } break;
-            case tTile::BOOM     : { img = icon.boom;     } break;
-            case tTile::LOGIC    : { img = icon.logic;    } break;
-            case tTile::GIZMO    : { img = icon.gizmo;    } break;
-            case tTile::PLATFORM : { img = icon.platform; } break;
-            case tTile::PLUMBING : { img = icon.plumbing; } break;
-            case tTile::PLANT    : { img = icon.plant;    } break;
-            case tTile::CRITTER  : { img = icon.critter;  } break;
+            case tTile::GAS           : { img = icon.gas;      } break;
+            case tTile::PLASMA        : { img = icon.plasma;   } break;
+            case tTile::FUME          : { img = icon.fume;     } break;
+            case tTile::FLUID         : { img = icon.fluid;    } break;
+            case tTile::GRAIN         : { img = icon.grain;    } break;
+            case tTile::GEL           : { img = icon.gel;      } break;
+            case tTile::SOLID         : { img = icon.solid;    } break;
+            case tTile::LOOSE         : { img = icon.loose;    } break;
+            case tTile::BOOM          : { img = icon.boom;     } break;
+            case tTile::LOGIC         : { img = icon.logic;    } break;
+            case tTile::GIZMO         : { img = icon.gizmo;    } break;
+            case tTile::PLATFORM      : { img = icon.platform; } break;
+            case tTile::PLUMBING      : { img = icon.plumbing; } break;
+            case tTile::PLANT         : { img = icon.plant;    } break;
+            case tTile::PLANT_PRODUCT : { img = icon.solid;    } break;
+            case tTile::CRITTER       : { img = icon.critter;  } break;
         }
         float R = float(tTile::R[tile_value]);
         float G = float(tTile::G[tile_value]);
@@ -424,7 +418,7 @@ public:
                     DrawRect(b.x, b.y, b.width, b.height, select_color);
                     if (GetMouse(0).bReleased)
                     {
-                        iSystem::player.hotbar[core::selected_hotbar][0] = itWAND;
+                        iSystem::player.hotbar[core::selected_hotbar][0] = itemID::WAND;
                         iSystem::player.hotbar[core::selected_hotbar][1] = std::stoi(b.text);
                     }
                 }
@@ -472,7 +466,7 @@ public:
         }
     }
 
-    void DrawInventory()
+    void DrawTiles()
     {
         int cols = 16;
         int rows = 8;
@@ -507,12 +501,16 @@ public:
                     DrawRect(b.x, b.y, b.width, b.height, select_color);
                     if (GetMouse(0).bReleased)
                     {
-                        iSystem::player.hotbar[core::selected_hotbar][0] = itTILE;
+                        iSystem::player.hotbar[core::selected_hotbar][0] = itemID::TILE;
                         iSystem::player.hotbar[core::selected_hotbar][1] = std::stoi(b.text);
                     }
                 }
             }
         }
+    }
+
+    void DrawWalls()
+    {
     }
 
     void DrawSky()
@@ -700,8 +698,8 @@ public:
         int hb_size = icon.size+1;
         int hb_offset = (core::width/2) - hb_size*4.5;
         std::string selected_item = "";
-        if (iSystem::player.hotbar[core::selected_hotbar][0] == itWAND) { selected_item = "Wand"; }
-        if (iSystem::player.hotbar[core::selected_hotbar][0] == itTILE) { selected_item = tTile::NAME[iSystem::player.hotbar[core::selected_hotbar][1]]; }
+        if (iSystem::player.hotbar[core::selected_hotbar][0] == itemID::WAND) { selected_item = "Wand"; }
+        if (iSystem::player.hotbar[core::selected_hotbar][0] == itemID::TILE) { selected_item = tTile::NAME[iSystem::player.hotbar[core::selected_hotbar][1]]; }
         float select_x = (core::width/2)-(selected_item.size());
         DrawStringDecal({ select_x,15 }, selected_item, text_color, { 0.25, 0.25 });
         SetPixelMode(olc::Pixel::ALPHA);
@@ -710,7 +708,7 @@ public:
             int x = i*hb_size+hb_offset;
             DrawRect(x, 2, hb_size, hb_size, hud_color);
             
-            if (iSystem::player.hotbar[i][0] == itWAND)
+            if (iSystem::player.hotbar[i][0] == itemID::WAND)
             {
                 int tile_value = iSystem::player.hotbar[i][1];
                 float R = float(tTile::R[tile_value]);
@@ -726,7 +724,7 @@ public:
                     }
                 }
             }
-            if (iSystem::player.hotbar[i][0] == itTILE)
+            if (iSystem::player.hotbar[i][0] == itemID::TILE)
             {
                 int tile_value = iSystem::player.hotbar[i][1];
                 int tile_type = tTool::GetType(tile_value);
@@ -1096,24 +1094,33 @@ public:
     void StateInventory()
     {
         DrawPanel(44, 20, 168, 104);
+        DrawLine(45, 36, 211, 36, button_color);
         if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::PLAYING;
-        if (core::pause_state == core::psWANDS) DrawWands();
+        if (core::pause_state == core::psTOOLS) DrawWands();
         if (core::pause_state == core::psEFFECTS) DrawEffects();
-        if (core::pause_state == core::psTILES) DrawInventory();
+        if (core::pause_state == core::psTILES) DrawTiles();
+        if (core::pause_state == core::psWALLS) DrawWalls();
         
-        Button btiles = Button();     btiles.Setup(52, 24, 32, 8, 0.25, "Tiles");
-        Button bwands = Button();     bwands.Setup(92, 24, 32, 8, 0.25, "Wands");
-        Button beffects = Button(); beffects.Setup(132, 24, 32, 8, 0.25, "Effects");
+        Button btiles = Button();     btiles.Setup(48, 24, 28, 8, 0.25, "Tiles");
+        Button bwalls = Button();     bwalls.Setup(81, 24, 28, 8, 0.25, "Walls");
+        Button bcraft = Button();     bcraft.Setup(114, 24, 28, 8, 0.25, "Craft");
+        Button bwands = Button();     bwands.Setup(147, 24, 28, 8, 0.25, "Tools");
+        Button beffects = Button(); beffects.Setup(180, 24, 28, 8, 0.25, "Effects");
 
-        DrawButton(btiles); DrawButton(bwands); DrawButton(beffects);
+
+        DrawButton(btiles); DrawButton(bwalls); DrawButton(bwands); DrawButton(beffects); DrawButton(bcraft);
 
         if (bwands.IsColliding(core::mouse_x, core::mouse_y)){
-            if (GetMouse(0).bReleased) core::pause_state = core::psWANDS;}
+            if (GetMouse(0).bReleased) core::pause_state = core::psTOOLS;}
         if (beffects.IsColliding(core::mouse_x, core::mouse_y)){
             if (GetMouse(0).bReleased) core::pause_state = core::psEFFECTS;}
         if (btiles.IsColliding(core::mouse_x, core::mouse_y)){
             if (GetMouse(0).bReleased) core::pause_state = core::psTILES;}
+        if (bwalls.IsColliding(core::mouse_x, core::mouse_y)){
+            if (GetMouse(0).bReleased) core::pause_state = core::psWALLS;}
+        if (bcraft.IsColliding(core::mouse_x, core::mouse_y)){
+            if (GetMouse(0).bReleased) core::pause_state = core::psCRAFT;}
 
         HotbarInput();
         DrawHUD();

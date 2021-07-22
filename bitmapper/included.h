@@ -51,6 +51,7 @@
 #include "environment/tile/logic.h"
 #include "environment/tile/loose.h"
 #include "environment/tile/plant.h"
+#include "environment/tile/plant_product.h"
 #include "environment/tile/plasma.h"
 #include "environment/tile/plumbing.h"
 #include "environment/tile/solid.h"
@@ -84,11 +85,17 @@
 //
 
 // Tools
+#include "item/tool/axe.h"
+#include "item/tool/hammer.h"
+#include "item/tool/pickaxe.h"
 #include "item/tool/wand.h"
+#include "item/tool/wrench.h"
 
 // Inventory
 #include "item/inventory.h"
 
+// Item IDs
+#include "item/item.h"
 
 
 //
