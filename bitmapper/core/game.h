@@ -72,9 +72,101 @@ public:
 
 
     //
-    ///
+    /// UI Stuff
     //
 
+
+    bool ShiftKey() { return GetKey(olc::Key::SHIFT).bHeld; }
+
+    bool CtrlKey() { return GetKey(olc::Key::CTRL).bHeld; }
+
+    std::string GetCharacter()
+    {
+        std::string c;
+        if (!ShiftKey())
+        {
+            if (GetKey(olc::Key::A).bPressed) {c = "a";}
+            if (GetKey(olc::Key::B).bPressed) {c = "b";}
+            if (GetKey(olc::Key::C).bPressed) {c = "c";}
+            if (GetKey(olc::Key::D).bPressed) {c = "d";}
+            if (GetKey(olc::Key::E).bPressed) {c = "e";}
+            if (GetKey(olc::Key::F).bPressed) {c = "f";}
+            if (GetKey(olc::Key::G).bPressed) {c = "g";}
+            if (GetKey(olc::Key::H).bPressed) {c = "h";}
+            if (GetKey(olc::Key::I).bPressed) {c = "i";}
+            if (GetKey(olc::Key::J).bPressed) {c = "j";}
+            if (GetKey(olc::Key::K).bPressed) {c = "k";}
+            if (GetKey(olc::Key::L).bPressed) {c = "l";}
+            if (GetKey(olc::Key::M).bPressed) {c = "m";}
+            if (GetKey(olc::Key::N).bPressed) {c = "n";}
+            if (GetKey(olc::Key::O).bPressed) {c = "o";}
+            if (GetKey(olc::Key::P).bPressed) {c = "p";}
+            if (GetKey(olc::Key::Q).bPressed) {c = "q";}
+            if (GetKey(olc::Key::R).bPressed) {c = "r";}
+            if (GetKey(olc::Key::S).bPressed) {c = "s";}
+            if (GetKey(olc::Key::T).bPressed) {c = "t";}
+            if (GetKey(olc::Key::U).bPressed) {c = "u";}
+            if (GetKey(olc::Key::V).bPressed) {c = "v";}
+            if (GetKey(olc::Key::W).bPressed) {c = "w";}
+            if (GetKey(olc::Key::X).bPressed) {c = "x";}
+            if (GetKey(olc::Key::Y).bPressed) {c = "y";}
+            if (GetKey(olc::Key::Z).bPressed) {c = "z";}
+            if (GetKey(olc::Key::K0).bPressed) {c = "0";}
+            if (GetKey(olc::Key::K1).bPressed) {c = "1";}
+            if (GetKey(olc::Key::K2).bPressed) {c = "2";}
+            if (GetKey(olc::Key::K3).bPressed) {c = "3";}
+            if (GetKey(olc::Key::K4).bPressed) {c = "4";}
+            if (GetKey(olc::Key::K5).bPressed) {c = "5";}
+            if (GetKey(olc::Key::K6).bPressed) {c = "6";}
+            if (GetKey(olc::Key::K7).bPressed) {c = "7";}
+            if (GetKey(olc::Key::K8).bPressed) {c = "8";}
+            if (GetKey(olc::Key::K9).bPressed) {c = "9";}
+            if (GetKey(olc::Key::SPACE).bPressed) {c = " ";}
+        }
+        if (ShiftKey())
+        {
+            if (GetKey(olc::Key::A).bPressed) {c = "A";}
+            if (GetKey(olc::Key::B).bPressed) {c = "B";}
+            if (GetKey(olc::Key::C).bPressed) {c = "C";}
+            if (GetKey(olc::Key::D).bPressed) {c = "D";}
+            if (GetKey(olc::Key::E).bPressed) {c = "E";}
+            if (GetKey(olc::Key::F).bPressed) {c = "F";}
+            if (GetKey(olc::Key::G).bPressed) {c = "G";}
+            if (GetKey(olc::Key::H).bPressed) {c = "H";}
+            if (GetKey(olc::Key::I).bPressed) {c = "I";}
+            if (GetKey(olc::Key::J).bPressed) {c = "J";}
+            if (GetKey(olc::Key::K).bPressed) {c = "K";}
+            if (GetKey(olc::Key::L).bPressed) {c = "L";}
+            if (GetKey(olc::Key::M).bPressed) {c = "M";}
+            if (GetKey(olc::Key::N).bPressed) {c = "N";}
+            if (GetKey(olc::Key::O).bPressed) {c = "O";}
+            if (GetKey(olc::Key::P).bPressed) {c = "P";}
+            if (GetKey(olc::Key::Q).bPressed) {c = "Q";}
+            if (GetKey(olc::Key::R).bPressed) {c = "R";}
+            if (GetKey(olc::Key::S).bPressed) {c = "S";}
+            if (GetKey(olc::Key::T).bPressed) {c = "T";}
+            if (GetKey(olc::Key::U).bPressed) {c = "U";}
+            if (GetKey(olc::Key::V).bPressed) {c = "V";}
+            if (GetKey(olc::Key::W).bPressed) {c = "W";}
+            if (GetKey(olc::Key::X).bPressed) {c = "X";}
+            if (GetKey(olc::Key::Y).bPressed) {c = "Y";}
+            if (GetKey(olc::Key::Z).bPressed) {c = "Z";}
+        }
+        return c;
+    }
+
+    void HotbarInput()
+    {
+        if (GetKey(olc::Key::K1).bPressed) {core::selected_hotbar = 0;}
+        if (GetKey(olc::Key::K2).bPressed) {core::selected_hotbar = 1;}
+        if (GetKey(olc::Key::K3).bPressed) {core::selected_hotbar = 2;}
+        if (GetKey(olc::Key::K4).bPressed) {core::selected_hotbar = 3;}
+        if (GetKey(olc::Key::K5).bPressed) {core::selected_hotbar = 4;}
+        if (GetKey(olc::Key::K6).bPressed) {core::selected_hotbar = 5;}
+        if (GetKey(olc::Key::K7).bPressed) {core::selected_hotbar = 6;}
+        if (GetKey(olc::Key::K8).bPressed) {core::selected_hotbar = 7;}
+        if (GetKey(olc::Key::K9).bPressed) {core::selected_hotbar = 8;}
+    }
 
     int GetOffsetX()
     {
@@ -83,6 +175,19 @@ public:
     int GetOffsetY()
     {
         return (core::mouse_y+((iSystem::player.y-(iSystem::player.height-1))-(core::height/2)));
+    }
+
+    void UpdateMouse()
+    {
+        int old_x = core::mouse_x;
+        int old_y = core::mouse_y;
+        core::mouse_x = GetMouseX();
+        core::mouse_y = GetMouseY();
+        if (GetKey(olc::Key::CTRL).bHeld)
+        {
+            if (GetKey(olc::Key::X).bHeld) { core::mouse_x = old_x; }
+            if (GetKey(olc::Key::Y).bHeld) { core::mouse_y = old_y; }
+        }
     }
 
     bool PlayerVsWorld()
@@ -100,26 +205,12 @@ public:
                     int _y = y+int(core::height/2)-7;
                     if ( tTool::IsColliding((iSystem::player.x+iSystem::player.vx)+(x-4), (iSystem::player.y+iSystem::player.vy)+(y-7)) )
                     {
-                        //Draw(_x, _y, olc::RED);
                         colliding = true;
                     }
                 }
             }
         }
         return colliding;
-    }
-
-    void UpdateMouse()
-    {
-        int old_x = core::mouse_x;
-        int old_y = core::mouse_y;
-        core::mouse_x = GetMouseX();
-        core::mouse_y = GetMouseY();
-        if (GetKey(olc::Key::CTRL).bHeld)
-        {
-            if (GetKey(olc::Key::X).bHeld) { core::mouse_x = old_x; }
-            if (GetKey(olc::Key::Y).bHeld) { core::mouse_y = old_y; }
-        }
     }
 
     void UseHotbar()
@@ -169,7 +260,7 @@ public:
     }
 
     //
-    ///
+    /// Drawing Routines
     //
 
     void DrawButton(Button b)
@@ -187,25 +278,7 @@ public:
         DrawLine(x, y, x+W, y, olc::Pixel(r, g, b));
         DrawLine(x, y, x+x2, y, olc::Pixel(R, G, B));
     }
-
-    void HotbarInput()
-    {
-        if (GetKey(olc::Key::K1).bPressed) {core::selected_hotbar = 0;}
-        if (GetKey(olc::Key::K2).bPressed) {core::selected_hotbar = 1;}
-        if (GetKey(olc::Key::K3).bPressed) {core::selected_hotbar = 2;}
-        if (GetKey(olc::Key::K4).bPressed) {core::selected_hotbar = 3;}
-        if (GetKey(olc::Key::K5).bPressed) {core::selected_hotbar = 4;}
-        if (GetKey(olc::Key::K6).bPressed) {core::selected_hotbar = 5;}
-        if (GetKey(olc::Key::K7).bPressed) {core::selected_hotbar = 6;}
-        if (GetKey(olc::Key::K8).bPressed) {core::selected_hotbar = 7;}
-        if (GetKey(olc::Key::K9).bPressed) {core::selected_hotbar = 8;}
-    }
-
-
-    //
-    //
-    //
-
+    
     void DrawChunkGrid()
     {
         if (!core::show_grid) return;
@@ -668,6 +741,10 @@ public:
         DrawRect(core::selected_hotbar*hb_size+hb_offset, 2, hb_size, hb_size, hud_select_color);
     }
 
+    //
+    /// Game States
+    //
+    
     void StateTitle()
     {
         Clear(olc::BLACK);
@@ -812,156 +889,100 @@ public:
         if (GetKey(ui_left).bPressed) { new_world::DecrementParameter(); }
         if (GetKey(ui_right).bPressed) { new_world::IncrementParameter(); }
         // Step Value
-        if (bminusgs.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (bminusgs.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Removes The Selected Generation Step From The List"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) { new_world::Remove(); }
-        }
-        if (bplusgs.IsColliding(core::mouse_x, core::mouse_y))
-        {
+            if (GetMouse(0).bReleased) { new_world::Remove(); }}
+        if (bplusgs.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Inserts A Generation Step Into The List"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) { new_world::Insert(); }
-        }
+            if (GetMouse(0).bReleased) { new_world::Insert(); }}
         // Tile Value
-        if (btile.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (btile.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Material To add To World"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pTILE;
-        }
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pTILE;}
         // Density Value
-        if (bdense.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (bdense.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Probability A Material Will Spawn Per Cell"; dtls_text = "(Add Layer, Seed Material)";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pDENSE;
-        }
-        if (biter.IsColliding(core::mouse_x, core::mouse_y))
-        {
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pDENSE;}
+        if (biter.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "How Many Times to Repeat Current Step"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pITER;
-        }
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pITER;}
         // X Values
-        if (bminx.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (bminx.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Minimum Width Range Of Effect"; dtls_text = "(0-100 %)";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMINX;
-        }
-        if (bmaxx.IsColliding(core::mouse_x, core::mouse_y))
-        {
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMINX;}
+        if (bmaxx.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Maximum Width Range Of Effect"; dtls_text = "(0-100 %)";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMAXX;
-        }
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMAXX;}
         // Y values
-        if (bminy.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (bminy.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Minimum Height Range Of Effect"; dtls_text = "(0-100 %)";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMINY;
-        }
-        if (bmaxy.IsColliding(core::mouse_x, core::mouse_y))
-        {
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMINY;}
+        if (bmaxy.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Maximum Height Range Of Effect"; dtls_text = "(0-100 %)";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMAXY;
-        }
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMAXY;}
         // Neighbor Values
-        if (bprobn.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (bprobn.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Probability That A Northern Neighbor Will Spawn"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBN;
-        }
-        if (bprobs.IsColliding(core::mouse_x, core::mouse_y))
-        {
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBN;}
+        if (bprobs.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Probability That A Southern Neighbor Will Spawn"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBS;
-        }
-        if (bprobe.IsColliding(core::mouse_x, core::mouse_y))
-        {
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBS;}
+        if (bprobe.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Probability That An Eastern Neighbor Will Spawn"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBE;
-        }
-        if (bprobw.IsColliding(core::mouse_x, core::mouse_y))
-        {
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBE;}
+        if (bprobw.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Probability That A Western Neighbor Will Spawn"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBW;
-        }
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBW;}
         // Mode Value
-        if (bmode.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (bmode.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Changes Generation Mode"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMODE;
-        }
-
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMODE;}
         // Clear Values
-        if (bclear.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (bclear.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Clears All Generation Data";
-            if (GetMouse(0).bReleased) { new_world::ClearData(); }
-        }
+            if (GetMouse(0).bReleased) { new_world::ClearData(); }}
         // Auto Configure
-        if (bconfig.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (bconfig.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Standard World Generation"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) { new_world::PresetData(); }
-        }
+            if (GetMouse(0).bReleased) { new_world::PresetData(); }}
         // Randomize Seed
-        if (brandom.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (brandom.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Randomizes Game Seed";
-            if (GetMouse(0).bReleased) { new_world::RandomizeData(); can_draw = true; }
-        }
+            if (GetMouse(0).bReleased) { new_world::RandomizeData(); can_draw = true; }}
         // Save
-        if (bsave.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (bsave.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Saves Generation Data";
             DrawRect(bsave.x, bsave.y, bsave.width, bsave.height, select_color);
-            if (GetMouse(0).bReleased) { new_world::SaveData(std::to_string(save_slot) + ".txt"); }
-        }
+            if (GetMouse(0).bReleased) { new_world::SaveData(std::to_string(save_slot) + ".txt"); }}
         // Load
-        if (bload.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (bload.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Loads Generation Data";
-            if (GetMouse(0).bReleased) { new_world::LoadData(std::to_string(save_slot) + ".txt"); }
-        }
+            if (GetMouse(0).bReleased) { new_world::LoadData(std::to_string(save_slot) + ".txt"); }}
         // Copy
-        if (bcopy.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (bcopy.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Copies Selected Generation Step";
-            if (GetMouse(0).bReleased) { new_world::Copy(); }
-        }
+            if (GetMouse(0).bReleased) { new_world::Copy(); }}
         // Paste
-        if (bpaste.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (bpaste.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Pastes Selected Generation Step";
-            if (GetMouse(0).bReleased) { new_world::Paste(); }
-        }
+            if (GetMouse(0).bReleased) { new_world::Paste(); }}
         // Generate World
-        if (bgenerate.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (bgenerate.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Generates World And Starts Game";
-            if (GetMouse(0).bReleased) { new_world::ReadyWorld(world_width, world_height); }
-        }
+            if (GetMouse(0).bReleased) { new_world::ReadyWorld(world_width, world_height); }}
         // Generate Preview
-        if (bpreview.IsColliding(core::mouse_x, core::mouse_y))
-        {
+        if (bpreview.IsColliding(core::mouse_x, core::mouse_y)){
             info_text = "Updates The Preview Box";
-            if (GetMouse(0).bReleased) { new_world::ReadyPreview(); can_draw = true; }
-        }
+            if (GetMouse(0).bReleased) { new_world::ReadyPreview(); can_draw = true; }}
         // Draw Preview
         if (can_draw)
         {
             FillRect(3, 3, 99, 99, olc::Pixel(128, 128, 255));
             SetPixelMode(olc::Pixel::ALPHA);
-            for (int y = 0; y < 100; y++)
-            {
-                for (int x = 0; x < 100; x++)
-                {
+            for (int y = 0; y < 100; y++){
+                for (int x = 0; x < 100; x++){
                     int v = tCell::matrix[y*tCell::width+x];
-                    Draw(x+3, y+3, olc::Pixel(
-                        tTile::R[v],
-                        tTile::G[v],
-                        tTile::B[v],
-                        tTile::A[v])
-                        );
-                }
-            }
+                    Draw(x+3, y+3, olc::Pixel(tTile::R[v], tTile::G[v], tTile::B[v], tTile::A[v])); } }
             SetPixelMode(olc::Pixel::NORMAL);
         }
         // Draw Generation Steps
@@ -1056,8 +1077,6 @@ public:
 
         if (iSystem::player.state == iSystem::player.DEAD) return;
 
-        UseHotbar();
-
         if (GetKey(ui_select).bPressed)
         {
             iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2);
@@ -1066,6 +1085,7 @@ public:
         DrawTerrain();
         DrawPlayer();
         HotbarInput();
+        UseHotbar();
         DrawHUD();
     }
 
@@ -1077,16 +1097,8 @@ public:
     {
         if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::PLAYING;
-
-        //if (GetKey(player_min).bPressed && core::selected_tile < tTile::total_tiles-1) core::selected_tile++;
-        //if (GetKey(player_max).bPressed && core::selected_tile > 0) core::selected_tile--;
-
-        //if (GetKey(olc::Key::I).bPressed) core::pause_state = core::psTILES;
-        //if (GetKey(olc::Key::W).bPressed) core::pause_state = core::psWANDS;
-        
         if (core::pause_state == core::psWANDS) DrawWands();
         if (core::pause_state == core::psTILES) DrawInventory();
-
         HotbarInput();
         DrawHUD();
     }
@@ -1098,7 +1110,6 @@ public:
             if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
             return; 
         }
-
         if (!tTool::IsColliding(iSystem::player.x, iSystem::player.y+1) &&
             !tTool::IsColliding(iSystem::player.x-1, iSystem::player.y+1) &&
             iSystem::player.state != iSystem::player.JUMP)
@@ -1110,15 +1121,11 @@ public:
         {
             iSystem::player.state = iSystem::player.IDLE;
         }
-
         if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::INVENTORY;
-        //
+        // Hotbar Stuff
         HotbarInput();
-        
-        // Stuff
         UseHotbar();
-
         // Vertical Movement
         if (GetKey(player_up).bHeld)
         {
@@ -1135,20 +1142,15 @@ public:
                 iSystem::player.vy = 1;
             }
         }
-
         if (GetKey(player_up).bReleased) { iSystem::player.vy = 0; iSystem::player.state = iSystem::player.IDLE; }
-
         if (GetKey(player_down).bPressed)
         {
             int tile = tCell::matrix[(iSystem::player.y+(iSystem::player.height-1))*tCell::width+iSystem::player.x];
             if (tile == tTile::PLANKS) { iSystem::player.Move(0, 1); }
         }
-
         if (!tTool::IsColliding(iSystem::player.x, iSystem::player.y+1) && iSystem::player.state != iSystem::player.JUMP)
         { iSystem::player.vy = 1; iSystem::player.state = iSystem::player.FALL; }
-
         // Horizontal Movement
-        
         if (GetKey(player_left).bHeld && iSystem::player.x > core::width/2)
         {
             if (iSystem::player.state != iSystem::player.FALL && iSystem::player.state != iSystem::player.JUMP) iSystem::player.vy = 0;
@@ -1159,7 +1161,6 @@ public:
             if (!GetKey(player_up).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
             iSystem::player.direction = -1;
         }
-        
         if (GetKey(player_right).bHeld && iSystem::player.x < tCell::width-(core::width/2))
         {
             if (iSystem::player.state != iSystem::player.FALL && iSystem::player.state != iSystem::player.JUMP) iSystem::player.vy = 0;
@@ -1170,14 +1171,9 @@ public:
             if (!GetKey(player_up).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
             iSystem::player.direction = 1;
         }
-
         if (GetKey(player_left).bReleased) { iSystem::player.vx = 0; }
         if (GetKey(player_right).bReleased) { iSystem::player.vx = 0; }
-
         if (GetKey(toggle_grid).bPressed) { core::show_grid = !core::show_grid; }
-
-
-
         // Update World
         iSystem::sky.Update(fElapsedTime);
         if (core::game_tick > core::tick_delay)
@@ -1186,9 +1182,7 @@ public:
             DrawSky();
             iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2);
             DrawTerrain();
-            //DrawHUD();
         }
-
         // Update Player
         iSystem::player.Update(fElapsedTime);
         if (iSystem::player.hp < 1) iSystem::player.state = iSystem::player.DEAD;
@@ -1198,28 +1192,25 @@ public:
             iSystem::player.Move(iSystem::player.vx, iSystem::player.vy);
         }
         DrawPlayer();
-        //player.UpdateWands(fElapsedTime);
         DrawParticles(fElapsedTime);
         DrawHUD();
         // Update Camera
         iSystem::camera.Update(
                 iSystem::player.x-(iSystem::player.height/2),
                 iSystem::player.y-(iSystem::player.height-1));
-
         // End Frame
         core::game_tick += fElapsedTime;
     }
 
-
+    //
+    /// PGE Hooks
+    //
 
 	bool OnUserCreate() override
 	{
         InstallGame();
-        for (int i = 0; i < new_world::generation_steps; i++)
-        {
-            new_world::generation_param[i][new_world::pITER] = 1;
-        }
-		return true;
+        new_world::InitializeGenerationSteps();
+        return true;
 	}
 
 	bool OnUserUpdate(float fElapsedTime) override
