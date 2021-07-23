@@ -30,6 +30,9 @@
 ///  Cellular Automata
 //
 
+// Seasons
+#include "environment/season.h"
+
 // Cell Matrices And Dimensions
 #include "environment/tile/cell.h"
 

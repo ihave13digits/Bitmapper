@@ -61,7 +61,7 @@ namespace tPlant
         int dNW = int( (_y-1) * tCell::width + (_x-1) );
         int n;
         int chance = 1000;
-        if (rand()%100 < 25)
+        if (rand()%1000 < 25)
         {
             n = 0;
             if (tCell::matrix[dN] == tTile::BRANCH || tCell::matrix[dN] == tTile::STICK) n++;
@@ -383,7 +383,7 @@ namespace tPlant
     // Generic
     //
 
-    void Update(int _x, int _y, int index, int current_cell, char season=0)
+    void Update(int _x, int _y, int index, int current_cell, char season=tCell::season)
     {
         switch (current_cell)
         {

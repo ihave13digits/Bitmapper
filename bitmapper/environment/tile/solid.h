@@ -28,7 +28,18 @@ namespace tSolid
             (tCell::matrix[dE] == tTile::FLAME) ||
             (tCell::matrix[dW] == tTile::FLAME)) { tCell::replace[index] = tTile::WATER; }
         if (tCell::matrix[dS] == tTile::GRASS) { tCell::replace[index] = tTile::WATER; }
-        if (rand()%1000 < 5) { tCell::replace[index] = tTile::WATER; }
+        if (tCell::matrix[dN] == tTile::AIR ||
+            tCell::matrix[dS] == tTile::AIR ||
+            tCell::matrix[dE] == tTile::AIR ||
+            tCell::matrix[dW] == tTile::AIR)
+        {
+            switch (season)
+            {
+                case seasonID::SPRING : { if (rand()%10000 < 5) tCell::replace[index] = tTile::WATER; } break;
+                case seasonID::SUMMER : { if (rand()%1000 < 5) tCell::replace[index] = tTile::WATER; } break;
+                case seasonID::AUTUMN : { if (rand()%100000 < 5) tCell::replace[index] = tTile::WATER; } break;
+            }
+        }
     }
 
 
@@ -37,7 +48,7 @@ namespace tSolid
     // Generic
     //
 
-    void Update(int _x, int _y, int index, int current_cell, char season=0)
+    void Update(int _x, int _y, int index, int current_cell, char season=tCell::season)
     {
         switch (current_cell)
         {
