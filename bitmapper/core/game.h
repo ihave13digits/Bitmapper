@@ -344,7 +344,7 @@ public:
             case effectID::STICKY   : { img = icon.sticky;   tile_value = tTile::FROG; } break;
             case effectID::BOUNCY   : { img = icon.bouncy;   tile_value = tTile::FROG; } break;
             case effectID::HEAVY    : { img = icon.heavy;    tile_value = tTile::LEAD; } break;
-            case effectID::DESTROYS : { img = icon.destroys; tile_value = tTile::BOMB; } break;
+            case effectID::DESTROYS : { img = icon.destroys; tile_value = tTile::MILK; } break;
             case effectID::BECOMES  : { img = icon.becomes;  tile_value = tTile::SMOKE; } break;
             case effectID::DAMAGES  : { img = icon.damages;  tile_value = tTile::DYNAMITE; } break;
             case effectID::PIERCES  : { img = icon.pierces;  tile_value = tTile::HONEY; } break;
