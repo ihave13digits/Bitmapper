@@ -260,6 +260,12 @@ public:
     /// Drawing Routines
     //
 
+    void DrawTileName(float x, float y, int tile)
+    {
+        std::string text = tTile::NAME[tile];
+        DrawStringDecal({ x,y }, text, text_color, {0.25, 0.25});
+    }
+
     void DrawPanel(int x, int y, int w, int h)
     {
         FillRect({x+1, y+1}, {w-1, h-1}, panel_color);
@@ -370,7 +376,7 @@ public:
         }
     }
 
-    void DrawWands()
+    void DrawTools()
     {
         int cols = 16;
         int rows = 8;
@@ -491,6 +497,7 @@ public:
             }
         }
         SetPixelMode(olc::Pixel::NORMAL);
+        int hovered_value = -1;
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < cols; x++)
@@ -498,6 +505,7 @@ public:
                 Button b = buttons[y*cols+x];
                 if (b.IsColliding(core::mouse_x, core::mouse_y))
                 {
+                    hovered_value = y*cols+x;
                     DrawRect(b.x, b.y, b.width, b.height, select_color);
                     if (GetMouse(0).bReleased)
                     {
@@ -507,9 +515,14 @@ public:
                 }
             }
         }
+        if (hovered_value >= 0) DrawTileName(GetMouseX()+4, GetMouseY(), hovered_value);
     }
 
     void DrawWalls()
+    {
+    }
+
+    void DrawCrafting()
     {
     }
 
@@ -1043,7 +1056,7 @@ public:
                 iSystem::sky.GenerateSky(core::width, core::height, core::seed);
                 iSystem::player.x = int(tCell::width/2);
                 iSystem::player.y = iSystem::player.height+2;
-                while (!tTool::IsColliding(iSystem::player.x, iSystem::player.y+1)) iSystem::player.Move(0, 1);
+                while (!tTool::IsColliding(iSystem::player.x, iSystem::player.y+1)) { iSystem::player.Move(0, 1); iSystem::player.can_move = true;}
                 core::loading = false;
                 core::game_state = core::PLAYING;
             }
@@ -1098,11 +1111,12 @@ public:
         DrawLine(45, 36, 211, 36, button_color);
         if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::PLAYING;
-        if (core::pause_state == core::psTOOLS) DrawWands();
-        if (core::pause_state == core::psEFFECTS) DrawEffects();
-        if (core::pause_state == core::psTILES) DrawTiles();
-        if (core::pause_state == core::psWALLS) DrawWalls();
-        
+        if (core::pause_state == core::psTILES)   { DrawTiles();      DrawLine(48,  34, 76,  34, button_color); }
+        if (core::pause_state == core::psWALLS)   { DrawWalls();      DrawLine(81,  34, 109, 34, button_color); }
+        if (core::pause_state == core::psCRAFT)   { DrawCrafting();   DrawLine(114, 34, 142, 34, button_color); }
+        if (core::pause_state == core::psTOOLS)   { DrawTools();      DrawLine(147, 34, 175, 34, button_color); }
+        if (core::pause_state == core::psEFFECTS) { DrawEffects();    DrawLine(180, 34, 208, 34, button_color); }
+
         Button btiles = Button();     btiles.Setup(48, 24, 28, 8, 0.25, "Tiles");
         Button bwalls = Button();     bwalls.Setup(81, 24, 28, 8, 0.25, "Walls");
         Button bcraft = Button();     bcraft.Setup(114, 24, 28, 8, 0.25, "Craft");

@@ -43,12 +43,14 @@ public:
         DEAD,
     };
 
+    bool can_move;
+
     int direction = 1;
     int state = 0;
     int status = 0;
 
     float tick = 0.0;
-    float tick_delay = 0.001;
+    float tick_delay = 0.0125;
 
     int damage_tick = 0;
     int damage_delay = 10;
@@ -85,7 +87,7 @@ public:
 
     int hotbar[9][2] =
     {
-        { 2,   0 },
+        { 0,   0 },
         { 0,   0 },
         { 0,   0 },
         { 0,   0 },
@@ -312,8 +314,12 @@ public:
 
     void Move(int X, int Y)
     {
-        x += X;
-        y += Y;
+        if (can_move)
+        {
+            x += X;
+            y += Y;
+        }
+        can_move = false;
     }
 
     void TakeDamage(int damage)
@@ -377,10 +383,7 @@ public:
             if (frame > 3) frame = 0;
         }
         tick += delta;
-        if (tick > tick_delay)
-        {
-            tick -= tick_delay;
-        }
+        if (tick > tick_delay) { tick -= tick_delay; can_move = true; }
         // Update Counters
         if (jp < JP && state != JUMP) jp++;
         if (bp < BP && state != DROWN) bp++;
@@ -392,56 +395,30 @@ public:
             damage_tick = 0;
             switch (status)
             {
-                case DROWN :
-                {
-                    TakeDamage(1);
-                }
-                break;
-
-                case BURN :
-                {
-                    { TakeDamage(1); burn_tick++; }
-                    if (burn_tick > 25) { burn_tick = 0; status = FINE; }
-                }
-                break;
-                case POISON :
-                {
-                    { TakeDamage(1); toxic_tick++; }
-                    if (toxic_tick > 25) { toxic_tick = 0; status = FINE; }
-                }
-                break;
+                case DROWN : { TakeDamage(1); } break;
+                case BURN : {
+                    TakeDamage(1); burn_tick++;
+                    if (burn_tick > 25) { burn_tick = 0; status = FINE; } } break;
+                case POISON : {
+                    TakeDamage(1); toxic_tick++;
+                    if (toxic_tick > 25) { toxic_tick = 0; status = FINE; } } break;
             }
         }
         // Tile Effects
         switch (tCell::matrix[(y+1)*tCell::width+x])
         {
-            case tTile::LAVA:
-            {
-                status = BURN;
-            }
-            break;
+            case tTile::LAVA: { status = BURN; } break;
         }
         switch (tCell::matrix[(y-core::height)*tCell::width+x])
         {
-            case tTile::AIR:
-            {
-                if (status == DROWN) status = FINE;
-            }
-            break;
-            case tTile::LAVA:
-            {
-                status = BURN;
-            }
-            break;
+            case tTile::AIR: { if (status == DROWN) status = FINE; } break;
+            case tTile::LAVA: { status = BURN; } break;
         }
     }
 
     void UpdateWands(float delta)
     {
-        for (int i = 0; i < wands.size(); i++)
-        {
-            wands[i].Update(delta);
-        }
+        for (int i = 0; i < wands.size(); i++) { wands[i].Update(delta); }
     }
 
     void SaveData(std::string data_dir = "0")
@@ -453,10 +430,7 @@ public:
         if (data_file.is_open())
         {
             data_file << "#tiles" << std::endl;
-            for (int i = 0; i < inventory.data.size(); i++)
-            {
-                data_file << i << "=" << inventory.data[i] << std::endl;
-            }
+            for (int i = 0; i < inventory.data.size(); i++) { data_file << i << "=" << inventory.data[i] << std::endl; }
             data_file.close();
         }
         else
@@ -479,10 +453,7 @@ public:
 
             while (getline(data_file, line))
             {
-                if (line == "#tiles")
-                {
-                    read_state = "#tiles";
-                }
+                if (line == "#tiles") { read_state = "#tiles"; }
 
                 if (read_state == "#tiles")
                 {
@@ -493,15 +464,12 @@ public:
                     for (int i = 0; i < line.length(); i++)
                     {
                         std::string c = line.substr(i, 1);
-                        if (c == "=")
-                        {
-                            next = true;
-                        }
+                        if (c == "=") { next = true; }
                         if (
                                 c == "1" || c == "2" || c == "3" || c == "4" || c == "5" ||
                                 c == "6" || c == "7" || c == "8" || c == "9" || c == "0"
                                 )
-                            {
+                        {
                             if (!next) {itm = itm + c;}
                             if (next) {amnt = amnt + c;}
                         }
