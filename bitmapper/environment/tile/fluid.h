@@ -4,7 +4,7 @@ namespace tFluid
     // 
     // Special
     //
-    
+
     void Water(int _x, int _y, int index, char season)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
@@ -54,6 +54,20 @@ namespace tFluid
             if (tTool::GetType(tCell::matrix[dN]) == tTile::SOLID) { tCell::replace[index] = tTile::WATER; tCell::replace[dN] = tTile::SALT; }
             else if (tTool::GetType(tCell::matrix[dNW]) == tTile::SOLID) { tCell::replace[index] = tTile::WATER; tCell::replace[dNW] = tTile::SALT; }
             else if (tTool::GetType(tCell::matrix[dNE]) == tTile::SOLID) { tCell::replace[index] = tTile::WATER; tCell::replace[dNE] = tTile::SALT; }
+        }
+    }
+
+    void Oil(int _x, int _y, int index, char season)
+    {
+        int dN  = int( (_y-1) * tCell::width + (_x  ) );
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
+        int dE = int( (_y) * tCell::width + (_x+1) );
+        int dW = int( (_y) * tCell::width + (_x-1) );
+        if (tCell::matrix[dN] == tTile::AIR && tCell::matrix[dS] == tTile::OIL &&
+            tCell::matrix[dE] == tTile::OIL && tCell::matrix[dW] == tTile::OIL)
+        {
+            if (rand()%1000 < 25) tCell::replace[dN] = tTile::OIL_FUMES;
+            if (rand()%1000 < 5) tCell::replace[index] = tTile::OIL_FUMES;
         }
     }
 
@@ -177,6 +191,7 @@ namespace tFluid
         {
             case tTile::WATER : {Water(_x, _y, index, season);} break;
             case tTile::BRINE : {Brine(_x, _y, index, season);} break;
+            case tTile::OIL   : {Oil(_x, _y, index, season);  } break;
         }
     }
 

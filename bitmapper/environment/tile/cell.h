@@ -1,13 +1,13 @@
 namespace tCell
 {
 
-    char season;
+    int16_t season;
 
     int width;
     int height;
 
-    //std::vector<int8_t> walls;
-    std::vector<int8_t> matrix;
-    std::vector<int8_t> replace;
+    //std::vector<uint8_t> walls;
+    std::vector<uint8_t> matrix;
+    std::vector<uint8_t> replace;
 
 }

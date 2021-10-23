@@ -16,10 +16,13 @@ namespace tTool
     {
         int t = tCell::matrix[y*tCell::width+x];
         float value;
-        if (t == tTile::LAVA ||
-            t == tTile::FIRE ||
+        if (t == tTile::FIRE ||
             t == tTile::FLAME ||
-            t == tTile::FLARE)
+            t == tTile::FLARE ||
+            t == tTile::MAGMA ||
+            t == tTile::LAVA ||
+            t == tTile::SPARK ||
+            t == tTile::ARC)
         {
             value = (((rand()%100) * tTile::LIGHT[t]) * 0.01);
         }

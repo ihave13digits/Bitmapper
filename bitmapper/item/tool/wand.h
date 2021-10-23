@@ -18,24 +18,25 @@ public:
     Effect GenerateSpell()
     {
         Effect e = Effect();
-        //e.sticky = true;
-        e.bouncy = true;
-        //e.heavy = true;
-        //e.destroys = true;
-        e.becomes = true;
-        //e.damages = true;
-        e.pierces = true;
-        //e.poisons = true;
-        e.trails = true;
-        //e.mines = true;
-        //e.trips = true;
-        //e.stuns = true;
-        //e.burns = true;
+        if (rand()%1000 < 100) e.sticky = true;
+        if (rand()%1000 < 100) e.bouncy = true;
+        if (rand()%1000 < 100) e.heavy = true;
+        if (rand()%1000 < 200) e.destroys = true;
+        if (rand()%1000 < 200) e.becomes = true;
+        if (rand()%1000 < 200) e.damages = true;
+        if (rand()%1000 < 100) e.pierces = true;
+        if (rand()%1000 < 100) e.poisons = true;
+        if (rand()%1000 < 200) e.trails = true;
+        if (rand()%1000 < 200) e.mines = true;
+        if (rand()%1000 < 100) e.trips = true;
+        if (rand()%1000 < 100) e.stuns = true;
+        if (rand()%1000 < 100) e.burns = true;
         
-        e.tile_trail = tTile::FIRE;
-        e.tile_value = tTile::DYNAMITE;
-        //e.damage = 1.0;
-        //e.drain = 1.0;
+        if (e.trails) e.tile_trail = rand()%tTile::total_tiles-1;
+        if (e.becomes) e.tile_value = rand()%tTile::total_tiles-1;
+        
+        e.damage = 1.0;
+        e.drain = 1.0;
 
         //e.name = "";
 
@@ -45,14 +46,17 @@ public:
     void GenerateWand()
     {
         GenerateStats();
-        Effect e = GenerateSpell();
-        effects.push_back(e);
+        for (int i = 0; i < capacity; i++)
+        {
+            Effect e = GenerateSpell();
+            effects.push_back(e);
+        }
     }
 
     void GenerateStats()
     {
         shuffle = bool(rand()%2);
-        capacity = 1;
+        capacity = rand()%6 + 2;
         fire_rate = 0.1;
     }
 

@@ -8,6 +8,11 @@ namespace tGas
 
     void Steam(int _x, int _y, int index, char season)
     {
+        int dN  = int( (_y-1) * tCell::width + (_x  ) );
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
+
+        if (tTile::TYPE[tCell::matrix[dN]] == tTile::SOLID && tCell::matrix[dS] == tTile::STEAM)
+        { if (rand()%1000 < 10) tCell::replace[index] = tTile::WATER; }
     }
 
     void ThinSmoke(int _x, int _y, int index, char season)
@@ -32,7 +37,7 @@ namespace tGas
                 case tTile::THICK_SMOKE : { tCell::replace[dE] = tTile::THIN_SMOKE; tCell::replace[index] = tTile::THICK_SMOKE; } break;
             }
         }
-        if (chance > 75)
+        else if (chance > 75)
         {
             switch (tCell::matrix[dW])
             {
@@ -65,7 +70,7 @@ namespace tGas
                 case tTile::THICK_SMOKE : { tCell::replace[dE] = tTile::SMOKE; tCell::replace[index] = tTile::THICK_SMOKE; } break;
             }
         }
-        if (chance > 75)
+        else if (chance > 75)
         {
             switch (tCell::matrix[dW])
             {
@@ -98,7 +103,7 @@ namespace tGas
                 case tTile::SMOKE      : { tCell::replace[dE] = tTile::THICK_SMOKE; tCell::replace[index] = tTile::SMOKE;      } break;
             }
         }
-        if (chance > 75)
+        else if (chance > 75)
         {
             switch (tCell::matrix[dW])
             {

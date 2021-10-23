@@ -18,6 +18,7 @@ namespace tTile
         PLANT,
         PLANT_PRODUCT,
         CRITTER,
+        EGG,
         WALL,
     };
     enum TILES
@@ -32,19 +33,29 @@ namespace tTile
         FLARE,
         FLAME,
         FIRE,
+        ARC,
+        SPARK,
         // Fume
         FOG,
+        OIL_FUMES,
         // Fluid
         MILK,
-        SLAG,
+        MERCURY,
         OIL,
+        ACID,
         WATER,
         BRINE,
+        WINE,
         BLOOD,
+        // Gel
+        GUTS,
+        ALGAE,
         HONEY,
+        MAGMA,
         LAVA,
-        MUCK,
         MUD,
+        MUCK,
+        SLAG,
         // Grain
         BROKEN_GLASS,
         ASH,
@@ -59,6 +70,8 @@ namespace tTile
         CHARCOAL,
         // Loose
         LOOSE_DIRT,
+        // Plant Product
+        WOOD,
         // Solid
         CHARRED_WOOD,
         ICE,
@@ -73,8 +86,20 @@ namespace tTile
         STONE,
         GRANITE,
         LIMESTONE,
+        MARBLE,
         SANDSTONE,
-        WOOD,
+        // Ore
+        PLATINUM_ORE,
+        GOLD_ORE,
+        SILVER_ORE,
+        COPPER_ORE,
+        LEAD_ORE,
+        TIN_ORE,
+        IRON_ORE,
+        COBALT_ORE,
+        NICKEL_ORE,
+        TITANIUM_ORE,
+        TUNGSTEN_ORE,
         // Metal
         PLATINUM,
         GOLD,
@@ -98,6 +123,9 @@ namespace tTile
         AMETHYST,
         SAPPHIRE,
         GLASS,
+        // Geological
+        VOLCANIC_ROCK,
+        CALDERA,
         MANTLE,
         // Explosive
         BOMB,
@@ -143,6 +171,7 @@ namespace tTile
         GOLD_WIRE_,
         GOLD_WIRE_I,
         GOLD_WIRE_O,
+        SENSOR,
         OR_GATE,
         XOR_GATE,
         XNOR_GATE,
@@ -156,6 +185,9 @@ namespace tTile
         BRANCH,
         STICK,
         LEAVES,
+        OLD_LEAVES,
+        DRY_LEAVES,
+        DEAD_LEAVES,
         GRASS,
         MOSS,
         SPIDERWORT,
@@ -164,10 +196,10 @@ namespace tTile
         FROG_LEGS,
         TOAD,
         TOAD_LEGS,
-        MOUSE,
         MOLE,
-        RAT,
         HEDGEHOG,
+        MOUSE,
+        RAT,
         SNAKE_HEAD,
         SNAKE,
         SNAKE_TAIL,
@@ -175,14 +207,34 @@ namespace tTile
         BIRD,
         BAT_WING,
         BAT,
+        // Egg
+        FROG_EGG,
+        TOAD_EGG,
+        SNAKE_EGG,
+        BIRD_EGG,
+        // Wall
+        ICE_WALL,
+        DIRT_WALL,
+        SOIL_WALL,
+        CLAY_WALL,
+        BONE_WALL,
+        FOSSIL_WALL,
+        SLATE_WALL,
+        ASBESTOS_WALL,
+        OBSIDIAN_WALL,
+        STONE_WALL,
+        GRANITE_WALL,
+        LIMESTONE_WALL,
+        SANDSTONE_WALL,
+        WOOD_WALL,
     };
     // Tile Count
     int total_tiles;
     // Color Values
-    std::vector<int> R;
-    std::vector<int> G;
-    std::vector<int> B;
-    std::vector<int> A;
+    std::vector<uint8_t> R;
+    std::vector<uint8_t> G;
+    std::vector<uint8_t> B;
+    std::vector<uint8_t> A;
     // Durability Values
     std::vector<float> POWER;
     // Light Values
@@ -247,6 +299,8 @@ namespace tTile
                                 if (string_data == "plant")        { value = PLANT;         }
                                 if (string_data == "plantproduct") { value = PLANT_PRODUCT; }
                                 if (string_data == "critter")      { value = CRITTER;       }
+                                if (string_data == "wall")         { value = WALL;          }
+                                if (string_data == "egg")          { value = EGG;           }
                                 TYPE.push_back(value);
                             }
                             break;

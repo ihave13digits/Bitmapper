@@ -8,7 +8,10 @@ public:
     float hue = -0.5;
     float time = 1.0;
     float move = 1.0;
-    float speed = 0.001; // ~24 Minute Day/Night Cycle
+    float speed = 0.0001; // ~24 Minute Day/Night Cycle
+
+    float tick = 0.0;
+    float tick_speed = 0.032;
 
     int width = 0;
     int height = 0;
@@ -19,7 +22,7 @@ public:
 
     int day = 0;
     int year = 0;
-    int year_length = 365;
+    int year_length = 360;
 
     int R = 0;
     int G = 0;
@@ -203,7 +206,6 @@ public:
 
     void UpdateTime(float delta)
     {
-        tCell::season = day/(year_length/4);
         if (!inverted)
         {
             hue -= delta;
@@ -212,8 +214,7 @@ public:
             move -= delta;
             if (time > duration)
             {
-                MoveStars(-1, -1);
-                MoveStars(-1, 0);
+                MoveStars(-2, -1);
                 inverted = true;
                 time = duration;
             }
@@ -239,6 +240,8 @@ public:
                     day = 0;
                     year++;
                 }
+                tCell::season = day/(year_length/12);
+                if (tCell::season > 11) { tCell::season = 11; }
             }
             if (hue > 0.5)
             {
@@ -267,8 +270,13 @@ public:
     void Update(float delta)
     {
         UpdateTime(delta*speed);
-        UpdateBodies();
         UpdateColor();
+        tick += delta;
+        if (tick >= tick_speed)
+        {
+            tick -= tick_speed;
+            UpdateBodies();
+        }
     }
 
 };
