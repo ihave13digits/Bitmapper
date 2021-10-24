@@ -7,7 +7,11 @@ namespace tTile
         FUME,
         FLUID,
         GRAIN,
+        GEM,
         GEL,
+        GEO,
+        ORE,
+        METAL,
         SOLID,
         LOOSE,
         BOOM,
@@ -68,6 +72,17 @@ namespace tTile
         GRAVEL,
         ACORN,
         CHARCOAL,
+        // Gem
+        JADE,
+        RUBY,
+        AMBER,
+        LAPIS,
+        TOPAZ,
+        DIAMOND,
+        EMERALD,
+        AMETHYST,
+        SAPPHIRE,
+        GLASS,
         // Loose
         LOOSE_DIRT,
         // Plant Product
@@ -112,17 +127,6 @@ namespace tTile
         NICKEL,
         TITANIUM,
         TUNGSTEN,
-        // Gem
-        JADE,
-        RUBY,
-        AMBER,
-        LAPIS,
-        TOPAZ,
-        DIAMOND,
-        EMERALD,
-        AMETHYST,
-        SAPPHIRE,
-        GLASS,
         // Geological
         VOLCANIC_ROCK,
         CALDERA,
@@ -288,7 +292,11 @@ namespace tTile
                                 if (string_data == "fume")         { value = FUME;          }
                                 if (string_data == "fluid")        { value = FLUID;         }
                                 if (string_data == "grain")        { value = GRAIN;         }
+                                if (string_data == "gem")          { value = GEM;           }
                                 if (string_data == "gel")          { value = GEL;           }
+                                if (string_data == "geo")          { value = GEO;           }
+                                if (string_data == "ore")          { value = ORE;           }
+                                if (string_data == "metal")        { value = METAL;         }
                                 if (string_data == "solid")        { value = SOLID;         }
                                 if (string_data == "loose")        { value = LOOSE;         }
                                 if (string_data == "boom")         { value = BOOM;          }

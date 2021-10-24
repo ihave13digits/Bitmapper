@@ -258,24 +258,22 @@ namespace tPlasma
         int dWW  = int( (_y  ) * tCell::width + (_x-2) );
         switch (tCell::matrix[dN])
         {
-            case tTile::AIR : { tCell::replace[index] = tTile::AIR; if (rand()%1000 < 200) tCell::replace[dN] = tTile::ARC; } break;
-            //case tTile::WATER : { tCell::replace[index] = tTile::WATER; if (rand()%1000 < 800) tCell::replace[dN] = tTile::ARC; } break;
+            case tTile::AIR : { if (rand()%10 < 1) tCell::replace[dN] = tTile::ARC; } break;
         }
         switch (tCell::matrix[dS])
         {
-            case tTile::AIR : { tCell::replace[index] = tTile::AIR; if (rand()%1000 < 200) tCell::replace[dS] = tTile::ARC; } break;
-            //case tTile::WATER : { tCell::replace[index] = tTile::WATER; if (rand()%1000 < 800) tCell::replace[dS] = tTile::ARC; } break;
+            case tTile::AIR : { if (rand()%10 < 1) tCell::replace[dS] = tTile::ARC; } break;
         }
         switch (tCell::matrix[dE])
         {
-            case tTile::AIR : { tCell::replace[index] = tTile::AIR; if (rand()%1000 < 200) tCell::replace[dE] = tTile::ARC; } break;
-            //case tTile::WATER : { tCell::replace[index] = tTile::WATER; if (rand()%1000 < 800) tCell::replace[dE] = tTile::ARC; } break;
+            case tTile::AIR : { if (rand()%10 < 2) tCell::replace[dE] = tTile::ARC; } break;
         }
         switch (tCell::matrix[dW])
         {
-            case tTile::AIR : { tCell::replace[index] = tTile::AIR; if (rand()%1000 < 210) tCell::replace[dW] = tTile::ARC; } break;
-            //case tTile::WATER : { tCell::replace[index] = tTile::WATER; if (rand()%1000 < 800) tCell::replace[dW] = tTile::ARC; } break;
+            case tTile::AIR : { if (rand()%10 < 2) tCell::replace[dW] = tTile::ARC; } break;
         }
+        if (rand()%1000 < 750) { tCell::replace[index] = tTile::AIR; }
+        if (tCell::matrix[dS] == tTile::AIR && rand()%1000 < 25) { tCell::replace[dS] = tTile::SPARK; }
     }
 
 

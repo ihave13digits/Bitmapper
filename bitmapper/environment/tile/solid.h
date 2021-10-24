@@ -27,18 +27,26 @@ namespace tSolid
             (tCell::matrix[dS] == tTile::FLAME) ||
             (tCell::matrix[dE] == tTile::FLAME) ||
             (tCell::matrix[dW] == tTile::FLAME)) { tCell::replace[index] = tTile::WATER; }
-        if (tCell::matrix[dS] == tTile::GRASS) { tCell::replace[index] = tTile::WATER; }
-        if (tCell::matrix[dN] == tTile::AIR ||
+        else if (tCell::matrix[dS] == tTile::GRASS) { tCell::replace[index] = tTile::WATER; }
+        else if (tCell::matrix[dN] == tTile::AIR ||
             tCell::matrix[dS] == tTile::AIR ||
             tCell::matrix[dE] == tTile::AIR ||
             tCell::matrix[dW] == tTile::AIR)
         {
+            int melt = 0;
             switch (season)
             {
-                case seasonID::SPRING : { if (rand()%10000 < 5) tCell::replace[index] = tTile::WATER; } break;
-                case seasonID::SUMMER : { if (rand()%1000 < 5) tCell::replace[index] = tTile::WATER; } break;
-                case seasonID::AUTUMN : { if (rand()%100000 < 5) tCell::replace[index] = tTile::WATER; } break;
+                case seasonID::EARLY_SPRING : { melt = 10; } break;
+                case seasonID::SPRING       : { melt = 20; } break;
+                case seasonID::LATE_SPRING  : { melt = 30; } break;
+                case seasonID::EARLY_SUMMER : { melt = 40; } break;
+                case seasonID::SUMMER       : { melt = 50; } break;
+                case seasonID::LATE_SUMMER  : { melt = 40; } break;
+                case seasonID::EARLY_AUTUMN : { melt = 30; } break;
+                case seasonID::AUTUMN       : { melt = 20; } break;
+                case seasonID::LATE_AUTUMN  : { melt = 10; } break;
             }
+            if (rand()%1000 < melt) tCell::replace[index] = tTile::WATER;
         }
     }
 

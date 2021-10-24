@@ -332,6 +332,10 @@ public:
             case tTile::FLUID         : { img = icon.fluid;    } break;
             case tTile::GRAIN         : { img = icon.grain;    } break;
             case tTile::GEL           : { img = icon.gel;      } break;
+            case tTile::GEM           : { img = icon.gem;      } break;
+            case tTile::GEO           : { img = icon.geo;      } break;
+            case tTile::ORE           : { img = icon.ore;      } break;
+            case tTile::METAL         : { img = icon.metal;    } break;
             case tTile::SOLID         : { img = icon.solid;    } break;
             case tTile::LOOSE         : { img = icon.loose;    } break;
             case tTile::BOOM          : { img = icon.boom;     } break;
