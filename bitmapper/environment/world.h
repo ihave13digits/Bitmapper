@@ -36,10 +36,14 @@ public:
                     switch (cell_type)
                     {
                         case tTile::SOLID         : {        tSolid::Update(_x, _y, index, current_cell); } break;
+                        case tTile::METAL         : {        tMetal::Update(_x, _y, index, current_cell); } break;
                         case tTile::LOOSE         : {        tLoose::Update(_x, _y, index, current_cell); } break;
                         case tTile::GRAIN         : {        tGrain::Update(_x, _y, index, current_cell); } break;
                         case tTile::FLUID         : {        tFluid::Update(_x, _y, index, current_cell); } break;
                         case tTile::GEL           : {          tGel::Update(_x, _y, index, current_cell); } break;
+                        case tTile::GEM           : {          tGem::Update(_x, _y, index, current_cell); } break;
+                        case tTile::GEO           : {          tGeo::Update(_x, _y, index, current_cell); } break;
+                        case tTile::EGG           : {          tEgg::Update(_x, _y, index, current_cell); } break;
                         case tTile::PLASMA        : {       tPlasma::Update(_x, _y, index, current_cell); } break;
                         case tTile::GAS           : {          tGas::Update(_x, _y, index, current_cell); } break;
                         case tTile::FUME          : {         tFume::Update(_x, _y, index, current_cell); } break;
