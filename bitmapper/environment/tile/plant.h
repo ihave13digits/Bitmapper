@@ -8,6 +8,7 @@ namespace tPlant
     void Grass(int _x, int _y, int index, char season)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
+        int dNN = int( (_y-2) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
         int dNW = int( (_y-1) * tCell::width + (_x-1) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
@@ -15,8 +16,14 @@ namespace tPlant
         int dSE = int( (_y+1) * tCell::width + (_x+1) );
         int dSW = int( (_y+1) * tCell::width + (_x-1) );
         int dW  = int( (_y  ) * tCell::width + (_x-1) );
-        if (rand()%1000 < 5)
+        if (rand()%1000 < 5 && season < seasonID::LATE_SUMMER)
         {
+            if (tCell::matrix[dN] == tTile::DEAD_LEAVES)
+            {
+                if (tCell::matrix[dNN] == tTile::DEAD_LEAVES) { tCell::replace[dN] = tTile::SOIL; tCell::replace[dNN] = tTile::AIR; }
+                else { tCell::replace[dN] = tTile::AIR; }
+            }
+            if (tCell::matrix[dN] == tTile::GRASS) { tCell::replace[index] = tTile::DIRT; }
             if ((tCell::matrix[dE] == tTile::DIRT || tCell::matrix[dE] == tTile::SOIL) && !tTool::Collision(_x+1, _y-1)) tCell::replace[dE] = tTile::GRASS;
             else if ((tCell::matrix[dW] == tTile::DIRT || tCell::matrix[dW] == tTile::SOIL) && !tTool::Collision(_x-1, _y-1)) tCell::replace[dW] = tTile::GRASS;
             else if ((tCell::matrix[dNE] == tTile::DIRT || tCell::matrix[dNE] == tTile::SOIL) && !tTool::Collision(_x+1, _y-2)) tCell::replace[dNE] = tTile::GRASS;
@@ -56,53 +63,88 @@ namespace tPlant
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
-        int dNE = int( (_y-1) * tCell::width + (_x+1) );
         int dW  = int( (_y  ) * tCell::width + (_x-1) );
+        int dNE = int( (_y-1) * tCell::width + (_x+1) );
         int dNW = int( (_y-1) * tCell::width + (_x-1) );
+        int dSE = int( (_y+1) * tCell::width + (_x+1) );
+        int dSW = int( (_y+1) * tCell::width + (_x-1) );
+
+        int16_t mI = tCell::matrix[index];
+        int16_t mN = tCell::matrix[dN];
+        int16_t mS = tCell::matrix[dS];
+        int16_t mE = tCell::matrix[dE];
+        int16_t mW = tCell::matrix[dW];
+        int16_t mNE = tCell::matrix[dNE];
+        int16_t mNW = tCell::matrix[dNW];
+        int16_t mSE = tCell::matrix[dSE];
+        int16_t mSW = tCell::matrix[dSW];
+
         int n;
-        int chance = 1000;
-        if (rand()%1000 < 25)
+        int drop = rand()%100;
+        int chance = rand()%1000;
+        int16_t LEAVES = tTile::LEAVES;
+        
+        if (season > seasonID::LATE_SUMMER)
+        {
+            int despawn;
+            switch (season)
+            {
+                case seasonID::EARLY_AUTUMN : { LEAVES = tTile::OLD_LEAVES; despawn = 5; } break;
+                case seasonID::AUTUMN :       { LEAVES = tTile::DRY_LEAVES; despawn = 10; } break;
+                case seasonID::LATE_AUTUMN :  { LEAVES = tTile::DEAD_LEAVES; despawn = 15; } break;
+                case seasonID::EARLY_WINTER : { LEAVES = tTile::AIR; despawn = 20; } break;
+                case seasonID::WINTER :       { LEAVES = tTile::AIR; despawn = 25; } break;
+                case seasonID::LATE_WINTER :  { LEAVES = tTile::AIR; despawn = 30; } break;
+            }
+            if (rand()%1000 < 5) { tCell::replace[index] = LEAVES; }
+            if (season > seasonID::AUTUMN) { if (rand()%1000 < despawn) tCell::replace[index] = tTile::AIR; }
+
+        }
+        int proceed = 0;
+        switch (season)
+        {
+            case seasonID::EARLY_SPRING : { proceed =  5; } break;
+            case seasonID::SPRING       : { proceed = 15; } break;
+            case seasonID::LATE_SPRING  : { proceed = 25; } break;
+            case seasonID::EARLY_SUMMER : { proceed = 30; } break;
+            case seasonID::SUMMER       : { proceed = 25; } break;
+            case seasonID::LATE_SUMMER  : { proceed = 20; } break;
+            case seasonID::EARLY_AUTUMN : { proceed = 15; } break;
+            case seasonID::AUTUMN       : { proceed = 10; } break;
+            case seasonID::LATE_AUTUMN  : { proceed =  5; } break;
+        }
+        if (rand()%1000 < proceed && season < seasonID::EARLY_AUTUMN)
         {
             n = 0;
-            if (tCell::matrix[dN] == tTile::BRANCH || tCell::matrix[dN] == tTile::STICK) n++;
-            if (tCell::matrix[dS] == tTile::BRANCH || tCell::matrix[dS] == tTile::STICK) n++;
-            if (tCell::matrix[dE] == tTile::BRANCH || tCell::matrix[dE] == tTile::STICK) n++;
-            if (tCell::matrix[dW] == tTile::BRANCH || tCell::matrix[dW] == tTile::STICK) n++;
-            if (tCell::matrix[dNE] == tTile::BRANCH || tCell::matrix[dNE] == tTile::STICK) n++;
-            if (tCell::matrix[dNW] == tTile::BRANCH || tCell::matrix[dNW] == tTile::STICK) n++;
-
-            if (n > 0 && n < 6)
+            if (mN == tTile::BRANCH || mN == tTile::STICK) n++;
+            if (mS == tTile::BRANCH || mS == tTile::STICK) n++;
+            if (mE == tTile::BRANCH || mE == tTile::STICK) n++;
+            if (mW == tTile::BRANCH || mW == tTile::STICK) n++;
+            if (mNE == tTile::BRANCH || mNE == tTile::STICK) n++;
+            if (mNW == tTile::BRANCH || mNW == tTile::STICK) n++;
+            if (mSE == tTile::BRANCH || mSE == tTile::STICK) n++;
+            if (mSW == tTile::BRANCH || mSW == tTile::STICK) n++;
+            if (n > 2 && n < 6)
             {
-                if (tCell::matrix[dS] == tTile::AIR)
+                if (mN == tTile::AIR || mN == tTile::DEAD_LEAVES)
                 {
-                        if (chance > 100 && chance < 900) {tCell::replace[dS] = tTile::LEAVES;}
-                        if (chance > 5 && chance < 995) {tCell::replace[dS] = tTile::ACORN;}
+                        if (chance > 250 && chance < 750) {tCell::replace[dN] = LEAVES;}
+                        if (drop < 5 || drop > 95) {tCell::replace[dN] = tTile::ACORN;}
                 }
-                if (tCell::matrix[dN] == tTile::AIR)
-                {
-                        if (chance > 250 && chance < 750) {tCell::replace[dN] = tTile::LEAVES;}
-                        if (chance > 5 && chance < 995) {tCell::replace[dN] = tTile::ACORN;}
-                }
-                else if (tCell::matrix[dNE] == tTile::AIR)
-                {
-                        if (chance > 750) {tCell::replace[dNE] = tTile::LEAVES;}
-                        if (chance < 250) {tCell::replace[dNE] = tTile::ACORN;}
-                }
-                else if (tCell::matrix[dNW] == tTile::AIR)
-                {
-                        if (chance > 750) {tCell::replace[dNW] = tTile::LEAVES;}
-                        if (chance < 250) {tCell::replace[dNW] = tTile::ACORN;}
-                }
-                else if (tCell::matrix[dE] == tTile::AIR)
-                {
-                        if (chance > 750) {tCell::replace[dE] = tTile::LEAVES;}
-                        if (chance < 50) {tCell::replace[dE] = tTile::ACORN;}
-                }
-                else if (tCell::matrix[dW] == tTile::AIR)
-                {
-                        if (chance > 750) {tCell::replace[dW] = tTile::LEAVES;}
-                        if (chance < 50) {tCell::replace[dW] = tTile::ACORN;}
-                }
+                else if (mS == tTile::AIR || mS == tTile::DEAD_LEAVES)
+                { if (chance > 100 && chance < 900) {tCell::replace[dS] = LEAVES;} }
+                if (mE == tTile::AIR || mE == tTile::DEAD_LEAVES)
+                { if (chance > 750) {tCell::replace[dE] = LEAVES;} }
+                else if (mW == tTile::AIR || mW == tTile::DEAD_LEAVES)
+                { if (chance > 750) {tCell::replace[dW] = LEAVES;} }
+                if (mNE == tTile::AIR || mNE == tTile::DEAD_LEAVES)
+                { if (chance > 750) {tCell::replace[dNE] = LEAVES;} }
+                else if (mNW == tTile::AIR || mNW == tTile::DEAD_LEAVES)
+                { if (chance > 750) {tCell::replace[dNW] = LEAVES;} }
+                if (mSE == tTile::AIR || mSE == tTile::DEAD_LEAVES)
+                { if (chance > 750) {tCell::replace[dSE] = LEAVES;} }
+                else if (mSW == tTile::AIR || mSW == tTile::DEAD_LEAVES)
+                { if (chance > 750) {tCell::replace[dSW] = LEAVES;} }
             }
         }
     }
@@ -119,7 +161,20 @@ namespace tPlant
         int dNW = int( (_y-1) * tCell::width + (_x-1) );
         int n;
         int chance = 100;
-        if (rand()%250 < 25)
+        int proceed = 0;
+        switch (season)
+        {
+            case seasonID::EARLY_SPRING : { proceed =  5; } break;
+            case seasonID::SPRING       : { proceed = 15; } break;
+            case seasonID::LATE_SPRING  : { proceed = 25; } break;
+            case seasonID::EARLY_SUMMER : { proceed = 30; } break;
+            case seasonID::SUMMER       : { proceed = 25; } break;
+            case seasonID::LATE_SUMMER  : { proceed = 20; } break;
+            case seasonID::EARLY_AUTUMN : { proceed = 15; } break;
+            case seasonID::AUTUMN       : { proceed = 10; } break;
+            case seasonID::LATE_AUTUMN  : { proceed =  5; } break;
+        }
+        if (rand()%250 < proceed)
         {
             if (tCell::matrix[dN] == tTile::AIR) n++;
             if (tCell::matrix[dS] == tTile::AIR) n++;
@@ -132,9 +187,7 @@ namespace tPlant
             {
                 int growth = rand()%250;
                 if (tCell::matrix[dN] == tTile::AIR) { if (tCell::matrix[dNN] == tTile::AIR) tCell::replace[dNN] = tTile::LEAVES; }
-
                 if (tCell::matrix[dS] == tTile::AIR) { if (tCell::matrix[dN] == tTile::AIR) tCell::replace[dN] = tTile::LEAVES; }
-                
                 if (tCell::matrix[dS] == tTile::BRANCH)
                 {
                     if (tCell::matrix[dN] == tTile::AIR) tCell::replace[dN] = tTile::STICK;
@@ -155,18 +208,35 @@ namespace tPlant
 
     void Branch(int _x, int _y, int index, char season)
     {
-        int dT = int( (_y+22) * tCell::width + (_x  ) );
+        int dM = int( (_y+32) * tCell::width + (_x  ) );
+        int dT = int( (_y+64) * tCell::width + (_x  ) );
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
         int dW  = int( (_y  ) * tCell::width + (_x-1) );
         int top = tCell::matrix[dT];
+        int mid = tCell::matrix[dM];
         int left = tCell::matrix[dW-6];
         int farleft = tCell::matrix[dW-8];
+        int shortleft = tCell::matrix[dW-4];
         int right = tCell::matrix[dE+6];
         int farright = tCell::matrix[dE+8];
+        int shortright = tCell::matrix[dE+4];
         int direction = rand()%100;
-        if (rand()%500 < 25)
+        int proceed = 0;
+        switch (season)
+        {
+            case seasonID::EARLY_SPRING : { proceed =  5; } break;
+            case seasonID::SPRING       : { proceed = 15; } break;
+            case seasonID::LATE_SPRING  : { proceed = 25; } break;
+            case seasonID::EARLY_SUMMER : { proceed = 30; } break;
+            case seasonID::SUMMER       : { proceed = 25; } break;
+            case seasonID::LATE_SUMMER  : { proceed = 20; } break;
+            case seasonID::EARLY_AUTUMN : { proceed = 15; } break;
+            case seasonID::AUTUMN       : { proceed = 10; } break;
+            case seasonID::LATE_AUTUMN  : { proceed =  5; } break;
+        }
+        if (rand()%500 < proceed)
         {
             int chance = rand()%100;
             if (top != tTile::AIR)
@@ -212,20 +282,56 @@ namespace tPlant
                         }
                     }
                 }
-                // Extend Branch
+            }
+            // Extend Branch
+            if (top != tTile::AIR)
+            {
                 if (farleft != tTile::TRUNK)
                 {
-                    if ((tCell::matrix[dW] == tTile::BRANCH || tCell::matrix[dW] == tTile::LEAVES) &&
-                        (tCell::matrix[dW+1] == tTile::BRANCH || tCell::matrix[dW+1] == tTile::LEAVES))
+                    int c1 = tCell::matrix[dW];
+                    int c2 = tCell::matrix[dW+1];
+
+                    if ((c1 == tTile::BRANCH || c1 == tTile::LEAVES) &&
+                        (c2 == tTile::BRANCH || c2 == tTile::LEAVES))
                     {
-                        if (tCell::matrix[dN] == tTile::AIR && tCell::matrix[dN+1] == tTile::AIR)
+                        if (tCell::matrix[dN] == tTile::AIR)// && tCell::matrix[dN+1] == tTile::AIR)
                         { if (tCell::matrix[dE] == tTile::AIR) tCell::replace[dE] = tTile::BRANCH; }
                     }
                 }
                 if (farright != tTile::TRUNK)
                 {
-                    if ((tCell::matrix[dE] == tTile::BRANCH || tCell::matrix[dE] == tTile::LEAVES) &&
-                        (tCell::matrix[dE-1] == tTile::BRANCH || tCell::matrix[dE-1] == tTile::LEAVES))
+                    int c1 = tCell::matrix[dE];
+                    int c2 = tCell::matrix[dE-1];
+
+                    if ((c1 == tTile::BRANCH || c1 == tTile::LEAVES) &&
+                        (c2 == tTile::BRANCH || c2 == tTile::LEAVES))
+                    {
+                        if (tCell::matrix[dN] == tTile::AIR && tCell::matrix[dN-1] == tTile::AIR)
+                        { if (tCell::matrix[dW] == tTile::AIR) tCell::replace[dW] = tTile::BRANCH; }
+                    }
+                }
+            }
+            else if (mid != tTile::AIR && top == tTile::AIR)
+            {
+                if (shortleft != tTile::TRUNK)
+                {
+                    int c1 = tCell::matrix[dW];
+                    int c2 = tCell::matrix[dW+1];
+
+                    if ((c1 == tTile::BRANCH || c1 == tTile::LEAVES) &&
+                        (c2 == tTile::BRANCH || c2 == tTile::LEAVES))
+                    {
+                        if (tCell::matrix[dN] == tTile::AIR)// && tCell::matrix[dN+1] == tTile::AIR)
+                        { if (tCell::matrix[dE] == tTile::AIR) tCell::replace[dE] = tTile::BRANCH; }
+                    }
+                }
+                if (shortright != tTile::TRUNK)
+                {
+                    int c1 = tCell::matrix[dE];
+                    int c2 = tCell::matrix[dE-1];
+
+                    if ((c1 == tTile::BRANCH || c1 == tTile::LEAVES) &&
+                        (c2 == tTile::BRANCH || c2 == tTile::LEAVES))
                     {
                         if (tCell::matrix[dN] == tTile::AIR && tCell::matrix[dN-1] == tTile::AIR)
                         { if (tCell::matrix[dW] == tTile::AIR) tCell::replace[dW] = tTile::BRANCH; }
@@ -248,7 +354,20 @@ namespace tPlant
         int top = tCell::matrix[dT];
         int bottom = tCell::matrix[dB];
         int direction = rand()%1000;
-        if (rand()%1000 < 25)
+        int proceed = 0;
+        switch (season)
+        {
+            case seasonID::EARLY_SPRING : { proceed =  5; } break;
+            case seasonID::SPRING       : { proceed = 15; } break;
+            case seasonID::LATE_SPRING  : { proceed = 25; } break;
+            case seasonID::EARLY_SUMMER : { proceed = 30; } break;
+            case seasonID::SUMMER       : { proceed = 25; } break;
+            case seasonID::LATE_SUMMER  : { proceed = 20; } break;
+            case seasonID::EARLY_AUTUMN : { proceed = 15; } break;
+            case seasonID::AUTUMN       : { proceed = 10; } break;
+            case seasonID::LATE_AUTUMN  : { proceed =  5; } break;
+        }
+        if (rand()%1000 < proceed && season < seasonID::LATE_SPRING)
         {
             // Grow Trunk
             if (tTool::GetType(tCell::matrix[dT-1]) != tTile::PLANT &&
@@ -318,8 +437,21 @@ namespace tPlant
     {
         int dT =  int( (_y-24) * tCell::width + (_x  ) );
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
-        if (rand()%2500 < 25 && tCell::matrix[dN] != tTile::TRUNK) { tCell::replace[index] = tTile::MUD; }
-        if ((tCell::matrix[dT] == tTile::TRUNK || tCell::matrix[dT] == tTile::BRANCH) && rand()%10000 < 25)
+        //if (rand()%1000 < 25 && tCell::matrix[dN] != tTile::TRUNK) { tCell::replace[index] = tTile::MUD; }
+        int proceed = 0;
+        switch (season)
+        {
+            case seasonID::EARLY_SPRING : { proceed =  5; } break;
+            case seasonID::SPRING       : { proceed = 15; } break;
+            case seasonID::LATE_SPRING  : { proceed = 25; } break;
+            case seasonID::EARLY_SUMMER : { proceed = 30; } break;
+            case seasonID::SUMMER       : { proceed = 25; } break;
+            case seasonID::LATE_SUMMER  : { proceed = 20; } break;
+            case seasonID::EARLY_AUTUMN : { proceed = 15; } break;
+            case seasonID::AUTUMN       : { proceed = 10; } break;
+            case seasonID::LATE_AUTUMN  : { proceed =  5; } break;
+        }
+        if ((tCell::matrix[dT] == tTile::TRUNK || tCell::matrix[dT] == tTile::BRANCH) && rand()%10000 < proceed)
         {
             int dS  = int( (_y+1) * tCell::width + (_x  ) );
             int dSW = int( (_y+1  ) * tCell::width + (_x-1) );
@@ -349,8 +481,21 @@ namespace tPlant
     {
         int dT =  int( (_y-12) * tCell::width + (_x  ) );
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
-        if (rand()%5000 < 25 && tCell::matrix[dN] != tTile::TAPROOT) { tCell::replace[index] = tTile::SOIL; }
-        if ((tCell::matrix[dT] == tTile::AIR || tCell::matrix[dT] == tTile::TAPROOT) && rand()%10000 < 25)
+        int proceed = 0;
+        switch (season)
+        {
+            case seasonID::EARLY_SPRING : { proceed =  5; } break;
+            case seasonID::SPRING       : { proceed = 15; } break;
+            case seasonID::LATE_SPRING  : { proceed = 25; } break;
+            case seasonID::EARLY_SUMMER : { proceed = 30; } break;
+            case seasonID::SUMMER       : { proceed = 25; } break;
+            case seasonID::LATE_SUMMER  : { proceed = 20; } break;
+            case seasonID::EARLY_AUTUMN : { proceed = 15; } break;
+            case seasonID::AUTUMN       : { proceed = 10; } break;
+            case seasonID::LATE_AUTUMN  : { proceed =  5; } break;
+        }
+        if (rand()%1000 < 25 && tCell::matrix[dN] != tTile::TAPROOT) { tCell::replace[index] = tTile::SOIL; }
+        if ((tCell::matrix[dT] == tTile::AIR || tCell::matrix[dT] == tTile::TAPROOT) && rand()%10000 < proceed)
         {
             int dS  = int( (_y+1) * tCell::width + (_x  ) );
             int dSW = int( (_y+1  ) * tCell::width + (_x-1) );
@@ -395,6 +540,9 @@ namespace tPlant
             case tTile::BRANCH : { Branch(_x, _y, index, season); } break;
             case tTile::STICK : { Stick(_x, _y, index, season); } break;
             case tTile::LEAVES : { Leaves(_x, _y, index, season); } break;
+            case tTile::OLD_LEAVES : { Leaves(_x, _y, index, season); } break;
+            case tTile::DRY_LEAVES : { Leaves(_x, _y, index, season); } break;
+            case tTile::DEAD_LEAVES : { Leaves(_x, _y, index, season); } break;
         }
     }
 

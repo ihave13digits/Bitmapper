@@ -16,6 +16,11 @@ public:
     int input_value = 0;
     char save_slot = 0;
 
+    char tile_y = 0;
+    char wall_y = 0;
+    char tool_y = 0;
+    char effect_y = 0;
+
     int world_width = 4096;
     int world_height = 2048;
 
@@ -150,15 +155,15 @@ public:
 
     void HotbarInput()
     {
-        if (GetKey(olc::Key::K1).bPressed) {core::selected_hotbar = 0;}
-        if (GetKey(olc::Key::K2).bPressed) {core::selected_hotbar = 1;}
-        if (GetKey(olc::Key::K3).bPressed) {core::selected_hotbar = 2;}
-        if (GetKey(olc::Key::K4).bPressed) {core::selected_hotbar = 3;}
-        if (GetKey(olc::Key::K5).bPressed) {core::selected_hotbar = 4;}
-        if (GetKey(olc::Key::K6).bPressed) {core::selected_hotbar = 5;}
-        if (GetKey(olc::Key::K7).bPressed) {core::selected_hotbar = 6;}
-        if (GetKey(olc::Key::K8).bPressed) {core::selected_hotbar = 7;}
-        if (GetKey(olc::Key::K9).bPressed) {core::selected_hotbar = 8;}
+        if (GetKey(olc::Key::K1).bPressed) { core::selected_hotbar = 0; }
+        if (GetKey(olc::Key::K2).bPressed) { core::selected_hotbar = 1; }
+        if (GetKey(olc::Key::K3).bPressed) { core::selected_hotbar = 2; }
+        if (GetKey(olc::Key::K4).bPressed) { core::selected_hotbar = 3; }
+        if (GetKey(olc::Key::K5).bPressed) { core::selected_hotbar = 4; }
+        if (GetKey(olc::Key::K6).bPressed) { core::selected_hotbar = 5; }
+        if (GetKey(olc::Key::K7).bPressed) { core::selected_hotbar = 6; }
+        if (GetKey(olc::Key::K8).bPressed) { core::selected_hotbar = 7; }
+        if (GetKey(olc::Key::K9).bPressed) { core::selected_hotbar = 8; }
     }
 
     int GetOffsetX()
@@ -186,6 +191,18 @@ public:
     //
     /// Helper Functinos
     //
+
+    bool AutoJump(int d)
+    {
+        int x = iSystem::player.x;
+        int y = iSystem::player.y;
+
+        bool can_jump = false;
+
+        if (d == 1)  { if (tTool::IsColliding(x+1, y) && !tTool::IsColliding(x+1, y-1)) { can_jump = true; } }
+        if (d == -1) { if (tTool::IsColliding(x-2, y) && !tTool::IsColliding(x-2, y-1)) { can_jump = true; } }
+        return can_jump;
+    }
 
     bool PlayerVsWorld()
     {
@@ -325,6 +342,8 @@ public:
             case tTile::PLANT         : { img = icon.plant;    } break;
             case tTile::PLANT_PRODUCT : { img = icon.solid;    } break;
             case tTile::CRITTER       : { img = icon.critter;  } break;
+            case tTile::EGG           : { img = icon.egg;      } break;
+            case tTile::WALL          : { img = icon.wall;     } break;
         }
         float R = float(tTile::R[tile_value]);
         float G = float(tTile::G[tile_value]);
@@ -379,13 +398,13 @@ public:
     void DrawTools()
     {
         int cols = 16;
-        int rows = 8;
+        int rows = 8+tool_y;
         int x_margin = 48;
         int y_margin = 40;
-        int wand_value = 0;
+        int wand_value = tool_y*16;
         Button buttons[cols*rows];
         SetPixelMode(olc::Pixel::ALPHA);
-        for (int y = 0; y < rows; y++)
+        for (int y = tool_y; y < rows; y++)
         {
             for (int x = 0; x < cols; x++)
             {
@@ -438,7 +457,7 @@ public:
         int rows = 8;
         int x_margin = 48;
         int y_margin = 40;
-        int tile_value = 0;
+        int tile_value = effect_y*16;
         Button buttons[cols*rows];
         SetPixelMode(olc::Pixel::ALPHA);
         for (int y = 0; y < rows; y++)
@@ -478,7 +497,7 @@ public:
         int rows = 8;
         int x_margin = 48;
         int y_margin = 40;
-        int tile_value = 0;
+        int tile_value = tile_y*16;
         Button buttons[cols*rows];
         SetPixelMode(olc::Pixel::ALPHA);
         for (int y = 0; y < rows; y++)
@@ -505,7 +524,7 @@ public:
                 Button b = buttons[y*cols+x];
                 if (b.IsColliding(core::mouse_x, core::mouse_y))
                 {
-                    hovered_value = y*cols+x;
+                    hovered_value = y*cols+x+(tile_y*16);
                     DrawRect(b.x, b.y, b.width, b.height, select_color);
                     if (GetMouse(0).bReleased)
                     {
@@ -535,7 +554,7 @@ public:
             SetPixelMode(olc::Pixel::ALPHA);
             for (int i = 0; i < iSystem::sky.starcount; i += 4)
             {
-                int value = rand()%220+35;
+                uint8_t value = rand()%220+35;
                 Draw(iSystem::sky.stars[i][0], iSystem::sky.stars[i][1], olc::Pixel(value, value, value, 255-iSystem::sky.starlight));
                 Draw(iSystem::sky.stars[i+1][0], iSystem::sky.stars[i][1], olc::Pixel(value, value, value, 255-iSystem::sky.starlight));
                 Draw(iSystem::sky.stars[i+2][0], iSystem::sky.stars[i][1], olc::Pixel(value, value, value, 255-iSystem::sky.starlight));
@@ -609,10 +628,10 @@ public:
                     float s3 = 1.0f-std::min(std::max(tTool::Neighbors(x+X+2, y+Y), 0.0f), 1.0f);
                     float s4 = 1.0f-std::min(std::max(tTool::Neighbors(x+X+3, y+Y), 0.0f), 1.0f);
 
-                    Draw(x, y, olc::Pixel(int(tTile::R[v1]*s1), int(tTile::G[v1]*s1), int(tTile::B[v1]*s1), tTile::A[v1]));
-                    Draw(x+1, y, olc::Pixel(int(tTile::R[v2]*s2), int(tTile::G[v2]*s2), int(tTile::B[v2]*s2), tTile::A[v2]));
-                    Draw(x+2, y, olc::Pixel(int(tTile::R[v3]*s3), int(tTile::G[v3]*s3), int(tTile::B[v3]*s3), tTile::A[v3]));
-                    Draw(x+3, y, olc::Pixel(int(tTile::R[v4]*s4), int(tTile::G[v4]*s4), int(tTile::B[v4]*s4), tTile::A[v4]));
+                    Draw(x, y,   olc::Pixel(uint8_t(tTile::R[v1]*s1), uint8_t(tTile::G[v1]*s1), uint8_t(tTile::B[v1]*s1), tTile::A[v1]));
+                    Draw(x+1, y, olc::Pixel(uint8_t(tTile::R[v2]*s2), uint8_t(tTile::G[v2]*s2), uint8_t(tTile::B[v2]*s2), tTile::A[v2]));
+                    Draw(x+2, y, olc::Pixel(uint8_t(tTile::R[v3]*s3), uint8_t(tTile::G[v3]*s3), uint8_t(tTile::B[v3]*s3), tTile::A[v3]));
+                    Draw(x+3, y, olc::Pixel(uint8_t(tTile::R[v4]*s4), uint8_t(tTile::G[v4]*s4), uint8_t(tTile::B[v4]*s4), tTile::A[v4]));
                 }
             }
         }
@@ -645,9 +664,9 @@ public:
                 if (iSystem::player.image[f][index] > 0)
                 {
                     int v = iSystem::player.image[f][index];
-                    int R = std::min((((v*32)+r)/2), 255);
-                    int G = std::min((((v*32)+g)/2), 255);
-                    int B = std::min((((v*32)+b)/2), 255);
+                    uint8_t R = std::min((((v*32)+r)/2), 255);
+                    uint8_t G = std::min((((v*32)+g)/2), 255);
+                    uint8_t B = std::min((((v*32)+b)/2), 255);
                     int _x = x+iSystem::camera.offset_x;
                     int _y = y+iSystem::camera.offset_y;
                     Draw(_x, _y, olc::Pixel(R, G, B));
@@ -707,7 +726,7 @@ public:
         DrawStringDecal({ 4,12 }, "Collision: " + collision_at, text_color, { font, font });
         DrawStringDecal({ 4,16 }, "Day: " + std::to_string(iSystem::sky.day), text_color, { font, font });
         DrawStringDecal({ 4,20 }, "Year: " + std::to_string(iSystem::sky.year), text_color, { font, font });
-        DrawStringDecal({ 4,24 }, "Season: " + std::to_string(tCell::season), text_color, { font, font });
+        DrawStringDecal({ 4,24 }, "Season: " + seasonID::seasons[tCell::season], text_color, { font, font });
         //
         int hb_size = icon.size+1;
         int hb_offset = (core::width/2) - hb_size*4.5;
@@ -1117,12 +1136,20 @@ public:
         if (core::pause_state == core::psTOOLS)   { DrawTools();      DrawLine(147, 34, 175, 34, button_color); }
         if (core::pause_state == core::psEFFECTS) { DrawEffects();    DrawLine(180, 34, 208, 34, button_color); }
 
+        if (GetKey(player_up).bReleased)
+        {
+            if (core::pause_state == core::psTILES && tile_y > 0) tile_y--;
+        }
+        if (GetKey(player_down).bReleased)
+        {
+            if (core::pause_state == core::psTILES && tile_y < tTile::total_tiles) tile_y++;
+        }
+
         Button btiles = Button();     btiles.Setup(48, 24, 28, 8, 0.25, "Tiles");
         Button bwalls = Button();     bwalls.Setup(81, 24, 28, 8, 0.25, "Walls");
         Button bcraft = Button();     bcraft.Setup(114, 24, 28, 8, 0.25, "Craft");
         Button bwands = Button();     bwands.Setup(147, 24, 28, 8, 0.25, "Tools");
         Button beffects = Button(); beffects.Setup(180, 24, 28, 8, 0.25, "Effects");
-
 
         DrawButton(btiles); DrawButton(bwalls); DrawButton(bwands); DrawButton(beffects); DrawButton(bcraft);
 
@@ -1148,8 +1175,8 @@ public:
             if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
             return; 
         }
-        if (!tTool::IsColliding(iSystem::player.x, iSystem::player.y+1) &&
-            !tTool::IsColliding(iSystem::player.x-1, iSystem::player.y+1) &&
+        if ((!tTool::IsColliding(iSystem::player.x, iSystem::player.y+1) &&
+            !tTool::IsColliding(iSystem::player.x-1, iSystem::player.y+1)) &&
             iSystem::player.state != iSystem::player.JUMP)
         {
             iSystem::player.vy = 1;
@@ -1167,9 +1194,10 @@ public:
         // Vertical Movement
         if (GetKey(player_up).bHeld)
         {
-            if ((!tTool::IsColliding(iSystem::player.x, iSystem::player.y-iSystem::player.height)) &&
-                (iSystem::player.jp > 0) &&
-                (iSystem::player.y > 0) )
+            int x = iSystem::player.x;
+            int y = iSystem::player.y;
+            if ((!tTool::IsColliding(x, y-iSystem::player.height) && !tTool::IsColliding(x-1, y-iSystem::player.height)) &&
+                (iSystem::player.jp > 0) && (iSystem::player.y > iSystem::player.height) )
             {
                 iSystem::player.jp--;
                 iSystem::player.vy = -1;
@@ -1191,21 +1219,25 @@ public:
         // Horizontal Movement
         if (GetKey(player_left).bHeld && iSystem::player.x > core::width/2)
         {
+            int _x = core::width/2+4;
+            int _y = core::height/2+8;
+            int x = iSystem::player.x;
+            int y = iSystem::player.y;
             if (iSystem::player.state != iSystem::player.FALL && iSystem::player.state != iSystem::player.JUMP) iSystem::player.vy = 0;
-            if (!tTool::IsColliding(iSystem::player.x-2, iSystem::player.y) ) { iSystem::player.vx = -1; }
-            else if (tTool::IsColliding(iSystem::player.x-2, iSystem::player.y) ||
-                    tTool::IsColliding(iSystem::player.x-2, iSystem::player.y-1) )
-            { iSystem::player.vx = -1; iSystem::player.Move(0, -1); }
+            if (!tTool::IsColliding(x-3, y) ) { iSystem::player.vx = -1; }
+            if (AutoJump(-1)) { iSystem::player.vx = -1; iSystem::player.Move(0, -1); }
             if (!GetKey(player_up).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
             iSystem::player.direction = -1;
         }
         if (GetKey(player_right).bHeld && iSystem::player.x < tCell::width-(core::width/2))
         {
+            int _x = core::width/2+4;
+            int _y = core::height/2+8;
+            int x = iSystem::player.x;
+            int y = iSystem::player.y;
             if (iSystem::player.state != iSystem::player.FALL && iSystem::player.state != iSystem::player.JUMP) iSystem::player.vy = 0;
-            if (!tTool::IsColliding(iSystem::player.x+1, iSystem::player.y) ) { iSystem::player.vx = 1; }
-            else if (tTool::IsColliding(iSystem::player.x+1, iSystem::player.y) ||
-                    tTool::IsColliding(iSystem::player.x+1, iSystem::player.y-1) )
-            { iSystem::player.vx = 1; iSystem::player.Move(0, -1); }
+            if (!tTool::IsColliding(x+1, y) ) { iSystem::player.vx = 1; }
+            if (AutoJump(1)) { iSystem::player.vx = 1; iSystem::player.Move(0, -1); }
             if (!GetKey(player_up).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
             iSystem::player.direction = 1;
         }

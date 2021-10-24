@@ -83,7 +83,7 @@ public:
                 {
                     int index = (y_+y)*tCell::width+(x_+x);
                     int tile = tCell::matrix[index];
-                    data_file << tile << ",\t";
+                    data_file << tile << ",";
                 }
                 data_file << std::endl;
             }

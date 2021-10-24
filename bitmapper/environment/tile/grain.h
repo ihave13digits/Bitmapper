@@ -27,7 +27,9 @@ namespace tGrain
             case tTile::WATER : { tCell::replace[index] = tTile::CHARCOAL; } break;
             case tTile::AIR: { tCell::replace[dN] = tTile::FIRE; } break;
             case tTile::ASH : { tCell::replace[index] = tTile::CHARCOAL; } break;
-            case tTile::SMOKE : { tCell::replace[index] = tTile::CHARCOAL; } break;
+            case tTile::THIN_SMOKE : { tCell::replace[index] = tTile::ASH; } break;
+            case tTile::SMOKE : { tCell::replace[index] = tTile::ASH; } break;
+            case tTile::THICK_SMOKE : { tCell::replace[index] = tTile::ASH; } break;
             case tTile::CHARCOAL : { if (chance < 1000) tCell::replace[dN] = tTile::EMBER; } break;
             case tTile::CHARRED_WOOD: { if (chance < 1000) tCell::replace[dN] = tTile::CHARCOAL; } break;
             case tTile::WOOD: { if (chance < 500) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
@@ -98,6 +100,7 @@ namespace tGrain
                 tCell::replace[dW] = tTile::TRUNK;
                 if (tCell::matrix[dS] == tTile::GRASS) {tCell::replace[dN] = tTile::TRUNK; tCell::replace[index] = tTile::TRUNK; }
             }
+            if (tCell::matrix[dN] == tTile::FIRE) { tCell::replace[index] = tTile::BOMB; }
         }
     }
 
