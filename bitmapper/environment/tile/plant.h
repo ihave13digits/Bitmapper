@@ -149,6 +149,30 @@ namespace tPlant
         }
     }
 
+    void DeadLeaves(int _x, int _y, int index, char season)
+    {
+        if (!tTool::DualCollision(_x, _y+1))
+        {
+            int rplc = (_y+1)*tCell::width+(_x);            // ░░░░░░
+            tCell::replace[rplc] = tCell::matrix[index];    // ░░▓▓░░
+            tCell::replace[index] = tTile::AIR;             // ░░██░░
+        }
+        else if (!tTool::DualCollision(_x-1, _y+1))
+        {
+            int rplc = (_y+1)*tCell::width+(_x-1);          // ░░░░░░
+            tCell::replace[rplc] = tCell::matrix[index];    // ░░▓▓░░
+            tCell::replace[index] = tTile::AIR;             // ██░░░░
+        }
+        else if (!tTool::DualCollision(_x+1, _y+1))
+        {
+            int rplc = (_y+1)*tCell::width+(_x+1);          // ░░░░░░
+            tCell::replace[rplc] = tCell::matrix[index];    // ░░▓▓░░
+            tCell::replace[index] = tTile::AIR;             // ░░░░██
+        }
+        else if (tCell::matrix[(_y+1)*tCell::width+(_x)] == tTile::SOIL)
+        { if (rand()%1000 < 25) tCell::replace[index] = tTile::SOIL; }
+    }
+
     void Stick(int _x, int _y, int index, char season)
     {
         int dNN = int( (_y-2) * tCell::width + (_x  ) );
@@ -367,7 +391,7 @@ namespace tPlant
             case seasonID::AUTUMN       : { proceed = 10; } break;
             case seasonID::LATE_AUTUMN  : { proceed =  5; } break;
         }
-        if (rand()%1000 < proceed && season < seasonID::LATE_SPRING)
+        if (rand()%1000 < proceed)
         {
             // Grow Trunk
             if (tTool::GetType(tCell::matrix[dT-1]) != tTile::PLANT &&
@@ -542,7 +566,7 @@ namespace tPlant
             case tTile::LEAVES : { Leaves(_x, _y, index, season); } break;
             case tTile::OLD_LEAVES : { Leaves(_x, _y, index, season); } break;
             case tTile::DRY_LEAVES : { Leaves(_x, _y, index, season); } break;
-            case tTile::DEAD_LEAVES : { Leaves(_x, _y, index, season); } break;
+            case tTile::DEAD_LEAVES : { DeadLeaves(_x, _y, index, season); } break;
         }
     }
 

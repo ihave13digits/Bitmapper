@@ -1,5 +1,5 @@
 # Bitmapper
-A Noita inspired game written in C++ with OLC PixelGameEngine
+A Noita and Terraria inspired game written in C++ with OLC PixelGameEngine
 
 ## Wiki
 

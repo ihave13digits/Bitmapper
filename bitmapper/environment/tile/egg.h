@@ -8,34 +8,34 @@ namespace tEgg
     void FrogEgg(int _x, int _y, int index, char season)
     {
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
-        if (tCell::matrix[dS] == tTile::AIR) { tCell::replace[index] = tTile::AIR; tCell::replace[dS] = tTile::MOLE; }
-        if (rand()%10000 < 5 && season == seasonID::SPRING) { tCell::replace[index] = tTile::FROG; } }
-
+        if (tCell::matrix[dS] == tTile::AIR) { tCell::replace[index] = tTile::AIR; tCell::replace[dS] = tTile::FROG_EGG; }
+        if (season > seasonID::EARLY_SPRING && season < seasonID::LATE_SUMMER)
+        { if (rand()%10000 < 5) { tCell::replace[index] = tTile::FROG; } }
+    }
     void ToadEgg(int _x, int _y, int index, char season)
     {
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
-        if (tCell::matrix[dS] == tTile::AIR) { tCell::replace[index] = tTile::AIR; tCell::replace[dS] = tTile::MOLE; }
-        if (rand()%10000 < 5 && season == seasonID::SPRING) { tCell::replace[index] = tTile::TOAD; } }
-
+        if (tCell::matrix[dS] == tTile::AIR) { tCell::replace[index] = tTile::AIR; tCell::replace[dS] = tTile::TOAD_EGG; }
+        if (season > seasonID::LATE_SPRING && season < seasonID::EARLY_AUTUMN)
+        { if (rand()%10000 < 5) { tCell::replace[index] = tTile::TOAD; } }
+    }
     void BirdEgg(int _x, int _y, int index, char season)
     {
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
-        if (tCell::matrix[dS] == tTile::AIR) { tCell::replace[index] = tTile::AIR; tCell::replace[dS] = tTile::MOLE; }
-        if (rand()%10000 < 5 && season == seasonID::LATE_SPRING) { tCell::replace[index] = tTile::BIRD; } }
-
+        if (tCell::matrix[dS] == tTile::AIR) { tCell::replace[index] = tTile::AIR; tCell::replace[dS] = tTile::BIRD_EGG; }
+        if (season > seasonID::EARLY_SPRING && season < seasonID::LATE_SUMMER)
+        { if (rand()%10000 < 5) { tCell::replace[index] = tTile::BIRD; } }
+    }
     void SnakeEgg(int _x, int _y, int index, char season)
     {
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
         int dW  = int( (_y  ) * tCell::width + (_x-1) );
-        if (tCell::matrix[dS] == tTile::AIR) { tCell::replace[index] = tTile::AIR; tCell::replace[dS] = tTile::MOLE; }
-        if (rand()%10000 < 5 && season == seasonID::LATE_SPRING &&
+        if (tCell::matrix[dS] == tTile::AIR) { tCell::replace[index] = tTile::AIR; tCell::replace[dS] = tTile::SNAKE_EGG; }
+        if (season > seasonID::SPRING && season < seasonID::SUMMER)
+        {if (rand()%10000 < 5 &&
             tCell::matrix[dE] == tTile::AIR && tCell::matrix[dW] == tTile::AIR)
-        {
-            tCell::replace[dE] = tTile::SNAKE_HEAD;
-            tCell::replace[index] = tTile::SNAKE;
-            tCell::replace[dW] = tTile::SNAKE_TAIL;
-        }
+        { tCell::replace[dE] = tTile::SNAKE_HEAD; tCell::replace[index] = tTile::SNAKE; tCell::replace[dW] = tTile::SNAKE_TAIL; } }
     }
 
 

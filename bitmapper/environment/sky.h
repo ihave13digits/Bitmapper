@@ -8,7 +8,7 @@ public:
     float hue = -0.5;
     float time = 1.0;
     float move = 1.0;
-    float speed = 0.0001; // ~24 Minute Day/Night Cycle
+    float speed = 1.0001; // ~24 Minute Day/Night Cycle
 
     float tick = 0.0;
     float tick_speed = 0.032;

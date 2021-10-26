@@ -226,10 +226,6 @@ namespace tPlasma
 
     void Spark(int _x, int _y, int index, char season)
     {
-        int dN  = int( (_y-1) * tCell::width + (_x  ) );
-        int dS  = int( (_y+1) * tCell::width + (_x  ) );
-        int dE  = int( (_y  ) * tCell::width + (_x+1) );
-        int dW  = int( (_y  ) * tCell::width + (_x-1) );
         if (!tTool::FluidCollision(_x, _y+2) && !tTool::FluidCollision(_x, _y+1))
         {
             int rplc = (_y+2)*tCell::width+(_x);            // ░░░░░░
@@ -248,10 +244,10 @@ namespace tPlasma
 
     void Arc(int _x, int _y, int index, char season)
     {
-        int dN  = int( (_y-1) * tCell::width + (_x  ) );
-        int dS  = int( (_y+1) * tCell::width + (_x  ) );
-        int dE  = int( (_y  ) * tCell::width + (_x+1) );
-        int dW  = int( (_y  ) * tCell::width + (_x-1) );
+        int dN   = int( (_y-1) * tCell::width + (_x  ) );
+        int dS   = int( (_y+1) * tCell::width + (_x  ) );
+        int dE   = int( (_y  ) * tCell::width + (_x+1) );
+        int dW   = int( (_y  ) * tCell::width + (_x-1) );
         int dNN  = int( (_y-2) * tCell::width + (_x  ) );
         int dSS  = int( (_y+2) * tCell::width + (_x  ) );
         int dEE  = int( (_y  ) * tCell::width + (_x+2) );

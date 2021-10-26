@@ -50,6 +50,19 @@ namespace tSolid
         }
     }
 
+    void LavaRock(int _x, int _y, int index, char season)
+    {
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
+        int dE  = int( (_y  ) * tCell::width + (_x+1) );
+        int dW  = int( (_y  ) * tCell::width + (_x-1) );
+        if (tCell::matrix[dS] == tTile::AIR) { tCell::replace[index] = tTile::AIR; tCell::replace[dS] = tTile::LAVA_ROCK; }
+        if (tCell::matrix[dS] == tTile::CALDERA) { if (rand()%1000 <   5) tCell::replace[index] = tTile::CALDERA; }
+        if (tCell::matrix[dE] == tTile::CALDERA) { if (rand()%10000 < 25) tCell::replace[index] = tTile::LAVA; }
+        if (tCell::matrix[dW] == tTile::CALDERA) { if (rand()%10000 < 25) tCell::replace[index] = tTile::LAVA; }
+        if (tCell::matrix[dS] == tTile::LAVA && tCell::matrix[dE] == tTile::LAVA && tCell::matrix[dW] == tTile::LAVA)
+        { if (rand()%10000 < 25) tCell::replace[index] = tTile::LAVA; }
+    }
+
 
 
     //
@@ -60,7 +73,8 @@ namespace tSolid
     {
         switch (current_cell)
         {
-            case tTile::ICE : { Ice(_x, _y, index, season); } break;
+            case tTile::ICE       : {      Ice(_x, _y, index, season); } break;
+            case tTile::LAVA_ROCK : { LavaRock(_x, _y, index, season); } break;
         }
     }
 
