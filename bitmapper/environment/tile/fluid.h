@@ -13,13 +13,14 @@ namespace tFluid
         int dW  = int( (_y  ) * tCell::width + (_x-1) );
         switch (tCell::matrix[dS])
         {
-            case tTile::GRASS  : { tCell::replace[index] = tTile::AIR;   tCell::replace[dS] = tTile::GRASS;    } break;
-            case tTile::DIRT   : { tCell::replace[index] = tTile::AIR;   tCell::replace[dS] = tTile::MUD;      } break;
-            case tTile::SOIL   : { tCell::replace[index] = tTile::AIR;   tCell::replace[dS] = tTile::MUCK;     } break;
-            case tTile::SNOW   : { tCell::replace[index] = tTile::AIR;   tCell::replace[dS] = tTile::ICE;      } break;
-            case tTile::SALT   : { tCell::replace[index] = tTile::AIR;   tCell::replace[dS] = tTile::BRINE;    } break;
-            case tTile::LAVA   : { tCell::replace[index] = tTile::STEAM; tCell::replace[dS] = tTile::OBSIDIAN; } break;
-            case tTile::MANTLE : { tCell::replace[index] = tTile::STEAM;                                } break;
+            case tTile::GRASS   : { tCell::replace[index] = tTile::AIR;   tCell::replace[dS] = tTile::GRASS;    } break;
+            case tTile::DIRT    : { tCell::replace[index] = tTile::AIR;   tCell::replace[dS] = tTile::MUD;      } break;
+            case tTile::SOIL    : { tCell::replace[index] = tTile::AIR;   tCell::replace[dS] = tTile::MUCK;     } break;
+            case tTile::SNOW    : { tCell::replace[index] = tTile::AIR;   tCell::replace[dS] = tTile::ICE;      } break;
+            case tTile::SALT    : { tCell::replace[index] = tTile::AIR;   tCell::replace[dS] = tTile::BRINE;    } break;
+            case tTile::LAVA    : { tCell::replace[index] = tTile::STEAM; tCell::replace[dS] = tTile::OBSIDIAN; } break;
+            case tTile::CALDERA : { tCell::replace[index] = tTile::STEAM;                                } break;
+            case tTile::MANTLE  : { tCell::replace[index] = tTile::STEAM;                                } break;
         }
         switch (tCell::matrix[dW])
         {
@@ -51,9 +52,8 @@ namespace tFluid
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
         if (tCell::matrix[dN] == tTile::AIR) if (rand()%10000 < 5)
         {
-            if (tTool::GetType(tCell::matrix[dN]) == tTile::SOLID) { tCell::replace[index] = tTile::WATER; tCell::replace[dN] = tTile::SALT; }
-            else if (tTool::GetType(tCell::matrix[dNW]) == tTile::SOLID) { tCell::replace[index] = tTile::WATER; tCell::replace[dNW] = tTile::SALT; }
-            else if (tTool::GetType(tCell::matrix[dNE]) == tTile::SOLID) { tCell::replace[index] = tTile::WATER; tCell::replace[dNE] = tTile::SALT; }
+            if (tTool::GetType(tCell::matrix[dNW]) == tTile::SOLID) { tCell::replace[index] = tTile::AIR; tCell::replace[dN] = tTile::SALT; }
+            else if (tTool::GetType(tCell::matrix[dNE]) == tTile::SOLID) { tCell::replace[index] = tTile::AIR; tCell::replace[dN] = tTile::SALT; }
         }
     }
 

@@ -332,42 +332,12 @@ public:
     {
         switch (state)
         {
-            case IDLE :
-            {
-                if (direction == 1) {anim = aIDLE_RIGHT; }
-                if (direction == -1) {anim = aIDLE_LEFT; }
-            }
-            break;
-            case WALK :
-            {
-                if (direction == 1) {anim = aWALK_RIGHT; }
-                if (direction == -1) {anim = aWALK_LEFT; }
-            }
-            break;
-            case JUMP :
-            {
-                if (direction == 1) {anim = aJUMP_RIGHT; }
-                if (direction == -1) {anim = aJUMP_LEFT; }
-            }
-            break;
-            case FALL :
-            {
-                if (direction == 1) {anim = aFALL_RIGHT; }
-                if (direction == -1) {anim = aFALL_LEFT; }
-            }
-            break;
-            case SWIM :
-            {
-                if (direction == 1) {anim = aSWIM_RIGHT; }
-                if (direction == -1) {anim = aSWIM_LEFT; }
-            }
-            break;
-            case DEAD :
-            {
-                if (direction == 1) {anim = aDEAD_RIGHT; }
-                if (direction == -1) {anim = aDEAD_LEFT; }
-            }
-            break;
+            case IDLE : { if (direction == 1) {anim = aIDLE_RIGHT; } else if (direction == -1) {anim = aIDLE_LEFT; } } break;
+            case WALK : { if (direction == 1) {anim = aWALK_RIGHT; } else if (direction == -1) {anim = aWALK_LEFT; } } break;
+            case JUMP : { if (direction == 1) {anim = aJUMP_RIGHT; } else if (direction == -1) {anim = aJUMP_LEFT; } } break;
+            case FALL : { if (direction == 1) {anim = aFALL_RIGHT; } else if (direction == -1) {anim = aFALL_LEFT; } } break;
+            case SWIM : { if (direction == 1) {anim = aSWIM_RIGHT; } else if (direction == -1) {anim = aSWIM_LEFT; } } break;
+            case DEAD : { if (direction == 1) {anim = aDEAD_RIGHT; } else if (direction == -1) {anim = aDEAD_LEFT; } } break;
         }
     }
 
@@ -407,19 +377,17 @@ public:
         // Tile Effects
         switch (tCell::matrix[(y+1)*tCell::width+x])
         {
-            case tTile::LAVA: { status = BURN; } break;
+            case tTile::LAVA :  { status = BURN; } break;
+            case tTile::MAGMA : { status = BURN; } break;
         }
         switch (tCell::matrix[(y-core::height)*tCell::width+x])
         {
-            case tTile::AIR: { if (status == DROWN) status = FINE; } break;
-            case tTile::LAVA: { status = BURN; } break;
+            case tTile::AIR  : { if (status == DROWN) status = FINE; } break;
+            case tTile::LAVA : { status = BURN; } break;
         }
     }
 
-    void UpdateWands(float delta)
-    {
-        for (int i = 0; i < wands.size(); i++) { wands[i].Update(delta); }
-    }
+    void UpdateWands(float delta) { for (int i = 0; i < wands.size(); i++) { wands[i].Update(delta); } }
 
     void SaveData(std::string data_dir = "0")
     {
@@ -434,10 +402,7 @@ public:
             data_file.close();
         }
         else
-        {
-            std::ofstream new_file (_dir);
-            SaveData(data_dir);
-        }
+        { std::ofstream new_file (_dir); SaveData(data_dir); }
     }
 
     void LoadData(std::string data_dir = "0")
@@ -454,24 +419,19 @@ public:
             while (getline(data_file, line))
             {
                 if (line == "#tiles") { read_state = "#tiles"; }
-
                 if (read_state == "#tiles")
                 {
                     bool next = false;
                     std::string itm = "";
                     std::string amnt = "";
-
                     for (int i = 0; i < line.length(); i++)
                     {
                         std::string c = line.substr(i, 1);
                         if (c == "=") { next = true; }
-                        if (
-                                c == "1" || c == "2" || c == "3" || c == "4" || c == "5" ||
-                                c == "6" || c == "7" || c == "8" || c == "9" || c == "0"
-                                )
+                        if (textTool::IsNumber(c))
                         {
-                            if (!next) {itm = itm + c;}
-                            if (next) {amnt = amnt + c;}
+                            if (!next) {  itm = itm + c; }
+                            else       { amnt = amnt + c; }
                         }
                     }
                     if (line.substr(0, 1) != "#")
