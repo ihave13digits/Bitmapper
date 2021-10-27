@@ -5,7 +5,21 @@ namespace iSystem
     World world = World();
     Player player = Player();
     Camera camera = Camera();
+    std::vector<uint8_t> blueprint_matrix;
+    std::vector<World> dimensions;
     std::vector<Particle> particles;
+
+    int PlayerChunkX() { return (player.x%tCell::width)/world.chunk_size; }
+    int PlayerChunkY() { return (player.y%tCell::height/world.chunk_size); }
+
+    void InitializeBlueprints() { for (int i = 0; i < 128*128; i++) { blueprint_matrix.push_back(0); } }
+    void ClearBlueprints() { for (int i = 0; i < 128*128; i++) { blueprint_matrix[i] = 0; } }
+
+    void SpawnDimension()
+    {}
+
+    void UpdateDimension()
+    {}
 
     void SpawnParticle(float X, float Y, Effect e)
     {

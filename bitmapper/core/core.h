@@ -48,6 +48,7 @@ namespace core
         PLAYING,
         CRAFTING,
         INVENTORY,
+        BLUEPRINT,
         PAUSED,
         EXIT,
     };
