@@ -1,10 +1,7 @@
 namespace tTool
 {
 
-    int GetType(int current_cell)
-    {
-        return tTile::TYPE[current_cell];
-    }
+    int GetType(int tile_index) { return tTile::TYPE[tile_index]; }
 
 
 
@@ -37,7 +34,7 @@ namespace tTool
     {
         float value = 0.0;
 
-        value += GetLightValue(  x, y-4);
+        value += GetLightValue(  x, y-3);
         value += GetLightValue(  x, y-2);
         value += GetLightValue(x-1, y-1);
         value += GetLightValue(x+1, y-1);
@@ -61,7 +58,7 @@ namespace tTool
 
     bool FluidCollision(int x, int y)
     {
-        return (tCell::replace[y*tCell::width+x] > tTile::FOG);
+        return (tCell::replace[y*tCell::width+x] > tTile::OIL_FUMES);
     }
 
     bool DualCollision(int x, int y)
@@ -77,7 +74,7 @@ namespace tTool
 
     bool IsColliding(int x, int y)
     {
-        return tCell::matrix[y*tCell::width+x] > tTile::MUD;
+        return tCell::matrix[y*tCell::width+x] > tTile::MOLTEN_SLAG;
     }
 
 

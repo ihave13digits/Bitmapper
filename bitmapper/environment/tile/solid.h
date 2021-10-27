@@ -28,10 +28,10 @@ namespace tSolid
             (tCell::matrix[dE] == tTile::FLAME) ||
             (tCell::matrix[dW] == tTile::FLAME)) { tCell::replace[index] = tTile::WATER; }
         else if (tCell::matrix[dS] == tTile::GRASS) { tCell::replace[index] = tTile::WATER; }
-        else if (tCell::matrix[dN] == tTile::AIR ||
-            tCell::matrix[dS] == tTile::AIR ||
-            tCell::matrix[dE] == tTile::AIR ||
-            tCell::matrix[dW] == tTile::AIR)
+        else if (tCell::matrix[dN] != tTile::ICE ||
+            tCell::matrix[dS] != tTile::ICE ||
+            tCell::matrix[dE] != tTile::ICE ||
+            tCell::matrix[dW] != tTile::ICE)
         {
             int melt = 0;
             switch (season)

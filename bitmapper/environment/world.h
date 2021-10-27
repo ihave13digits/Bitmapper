@@ -3,7 +3,7 @@ class World
 public:
 
     // Class Attributes //
-
+    std::string name;
     // World Dimensions
     int chunk_size = 32;
 
