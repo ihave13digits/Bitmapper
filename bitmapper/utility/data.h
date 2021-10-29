@@ -10,6 +10,7 @@ namespace dataTool
     //std::string file_ = "";
     std::string file_tile =     "tile.data";
     std::string file_settings = "settings.data";
+    std::string file_blueprints = "blueprints.data";
 
     std::string GetPath(std::string extension)
     {

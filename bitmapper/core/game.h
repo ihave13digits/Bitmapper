@@ -14,6 +14,7 @@ public:
 public:
 
     int input_value = 0;
+    std::string input_string;
     char save_slot = 0;
 
     char tile_y = 0;
@@ -63,10 +64,17 @@ public:
     ///
     //
     
-    void InstallGame()
+    void InitializeGame()
     {
+        //
+        dataTool::GenerateDirectoryTree();
+        //
         tTile::LoadTileData();
-        //dataTool::GenerateDirectoryTree();
+        //
+        new_world::InitializeGenerationSteps();
+        //
+        iSystem::blueprints.InitializeMatrix();
+        iSystem::blueprints.LoadData();
     }
 
 
@@ -191,7 +199,7 @@ public:
     }
 
     //
-    /// Helper Functinos
+    /// Helper Functions
     //
 
     bool AutoJump(int d)
@@ -248,6 +256,7 @@ public:
             if (GetMouseX() < core::width/2-limit || GetMouseX() > core::width/2+limit ||
                 GetMouseY() < core::height/2-limit || GetMouseY() > core::height/2+limit)
             { return; }
+            // Replace Tile
             int offset_x = GetOffsetX();
             int offset_y = GetOffsetY();
             int index = offset_y*tCell::width+offset_x;
@@ -315,7 +324,6 @@ public:
     void DrawChunkGrid()
     {
         if (!core::show_grid) return;
-        //core::grid_subdivision
         int size = iSystem::world.chunk_size;
         int sub = size/core::grid_subdivision;
         int _x = iSystem::player.x % (sub);
@@ -1114,12 +1122,13 @@ public:
         if (GetKey(menu_inventory).bPressed) core::game_state = core::INVENTORY;
         if (GetKey(menu_blueprint).bPressed) core::game_state = core::BLUEPRINT;
         
-        if (GetKey(ui_left).bPressed) { if (core::grid_subdivision > 1) core::grid_subdivision /= 2; }
-        if (GetKey(ui_right).bPressed) { if (core::grid_subdivision < 8) core::grid_subdivision *= 2; }
+        if (GetKey(ui_left).bPressed || GetKey(player_left).bPressed) { if (core::grid_subdivision > 1) core::grid_subdivision /= 2; }
+        if (GetKey(ui_right).bPressed || GetKey(player_right).bPressed) { if (core::grid_subdivision < 8) core::grid_subdivision *= 2; }
         if (GetKey(toggle_grid).bPressed) { core::show_grid = !core::show_grid; }
 
         if (iSystem::player.state == iSystem::player.DEAD) return;
 
+        if (CtrlKey() && GetKey(olc::Key::V).bPressed) { iSystem::PasteBlueprints(GetOffsetX(), GetOffsetY()); }
         if (GetKey(ui_select).bPressed)
         {
             iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2);
@@ -1136,13 +1145,13 @@ public:
     {
         int cols = 11;
         int rows = 11;
-        int x_margin = 8;
+        int x_margin = 6;
         int y_margin = 26;
         int tile_value = tile_y*11;
 
         // Background
         Clear(blueprint_color);
-        DrawPanel(x_margin-4, y_margin-6, 116, 120);
+        DrawPanel(x_margin-4, y_margin-6, 114, 120);
         // Buttons
         Button clear_print = Button();
         Button name_print = Button();
@@ -1197,10 +1206,7 @@ public:
         for (int i = 0; i < 9; i++)
         {
             int x = i*(icon_size+3)+4;
-            if (i > 3) { x++; }
-            if (i > 4) { x++; }
             DrawRect(x, 4, icon_size, icon_size, hud_color);
-
             if (iSystem::player.hotbar[i][0] == itemID::TILE)
             {
                 int tile_value = iSystem::player.hotbar[i][1];
@@ -1215,22 +1221,22 @@ public:
         if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
         if (GetKey(player_up).bReleased) { if (tile_y > 0) tile_y--; }
         if (GetKey(player_down).bReleased) { if (tile_y < tTile::total_tiles) tile_y++; }
-        if (GetKey(player_left).bPressed) { if (core::grid_subdivision > 1) core::grid_subdivision /= 2; }
-        if (GetKey(player_right).bPressed) { if (core::grid_subdivision < 8) core::grid_subdivision *= 2; }
+        if (GetKey(ui_left).bPressed || GetKey(player_left).bPressed) { if (core::grid_subdivision > 1) core::grid_subdivision /= 2; }
+        if (GetKey(ui_right).bPressed || GetKey(player_right).bPressed) { if (core::grid_subdivision < 8) core::grid_subdivision *= 2; }
         if (GetKey(toggle_grid).bPressed) { core::show_grid = !core::show_grid; }
         // Place Tiles
         if (GetMouse(0).bHeld)
         {
-            if (GetMouseX() > 124 && GetMouseX() < 252 &&
-                GetMouseY() > 4 && GetMouseY() < 132)
+            if (GetMouseX() > 122 && GetMouseX() < 251 &&
+                GetMouseY() > 3 && GetMouseY() < 131)
             {
-                int _x = GetMouseX() - 124;
+                int _x = GetMouseX() - 123;
                 int _y = GetMouseY() - 4;
-                iSystem::blueprint_matrix[_y*128+_x] = iSystem::player.hotbar[core::selected_hotbar][1];
+                iSystem::blueprints.matrix[_y*128+_x] = iSystem::player.hotbar[core::selected_hotbar][1];
             }
-            else if (clear_print.IsColliding(core::mouse_x, core::mouse_y)) { iSystem::ClearBlueprints(); }
-            else if (name_print.IsColliding(core::mouse_x, core::mouse_y)) { std::cout << "Sorry, not yet." << std::endl; }
-            else if (save_print.IsColliding(core::mouse_x, core::mouse_y)) { std::cout << "Sorry, not yet." << std::endl; }
+            else if (clear_print.IsColliding(core::mouse_x, core::mouse_y)) { iSystem::blueprints.ClearMatrix(); }
+            else if (name_print.IsColliding(core::mouse_x, core::mouse_y)) { core::game_state = core::NAME_BLUEPRINT; }
+            else if (save_print.IsColliding(core::mouse_x, core::mouse_y)) { iSystem::blueprints.SaveData(); }
         }
         // Draw Blueprint
         SetPixelMode(olc::Pixel::ALPHA);
@@ -1238,31 +1244,39 @@ public:
         {
             for (int x = 0; x < 128; x += 4)
             {
-                    int v1 = iSystem::blueprint_matrix[y*128+x];
-                    int v2 = iSystem::blueprint_matrix[y*128+(x+1)];
-                    int v3 = iSystem::blueprint_matrix[y*128+(x+2)];
-                    int v4 = iSystem::blueprint_matrix[y*128+(x+3)];
-                    Draw(x+124, y+4,   olc::Pixel(uint8_t(tTile::R[v1]), uint8_t(tTile::G[v1]), uint8_t(tTile::B[v1]), tTile::A[v1]));
-                    Draw(x+125, y+4, olc::Pixel(uint8_t(tTile::R[v2]), uint8_t(tTile::G[v2]), uint8_t(tTile::B[v2]), tTile::A[v2]));
-                    Draw(x+126, y+4, olc::Pixel(uint8_t(tTile::R[v3]), uint8_t(tTile::G[v3]), uint8_t(tTile::B[v3]), tTile::A[v3]));
-                    Draw(x+127, y+4, olc::Pixel(uint8_t(tTile::R[v4]), uint8_t(tTile::G[v4]), uint8_t(tTile::B[v4]), tTile::A[v4]));
+                    int v1 = iSystem::blueprints.matrix[y*128+x];
+                    int v2 = iSystem::blueprints.matrix[y*128+(x+1)];
+                    int v3 = iSystem::blueprints.matrix[y*128+(x+2)];
+                    int v4 = iSystem::blueprints.matrix[y*128+(x+3)];
+                    Draw(x+123, y+4,   olc::Pixel(uint8_t(tTile::R[v1]), uint8_t(tTile::G[v1]), uint8_t(tTile::B[v1]), tTile::A[v1]));
+                    Draw(x+124, y+4, olc::Pixel(uint8_t(tTile::R[v2]), uint8_t(tTile::G[v2]), uint8_t(tTile::B[v2]), tTile::A[v2]));
+                    Draw(x+125, y+4, olc::Pixel(uint8_t(tTile::R[v3]), uint8_t(tTile::G[v3]), uint8_t(tTile::B[v3]), tTile::A[v3]));
+                    Draw(x+126, y+4, olc::Pixel(uint8_t(tTile::R[v4]), uint8_t(tTile::G[v4]), uint8_t(tTile::B[v4]), tTile::A[v4]));
             }
         }
         // Grid
-        int size = iSystem::world.chunk_size;
-        int sub = size/core::grid_subdivision;
-        for (int y = 1; y < 128; y += sub)
+        if (core::show_grid)
         {
-            DrawLine({125, y+3}, {251, y+3}, olc::Pixel(grid_color));
+            int size = iSystem::world.chunk_size;
+            int sub = size/core::grid_subdivision;
+            for (int y = 0; y < 128; y += sub) { DrawLine({123, y+4}, {251, y+4}, olc::Pixel(grid_color)); }
+            for (int x = 0; x < 128; x += sub) { DrawLine({x+123, 4}, {x+123, 131}, olc::Pixel(grid_color)); }
+            SetPixelMode(olc::Pixel::NORMAL);
         }
-        for (int x = 1; x < 128; x += sub)
-        {
-            DrawLine({x+123, 5}, {x+123, 131}, olc::Pixel(grid_color));
-        }
-        DrawRect(124, 4, 128, 128, olc::Pixel(255, 255, 255, 64));
-        SetPixelMode(olc::Pixel::NORMAL);
-        // Draw Chunk Grid
         HotbarInput();
+    }
+
+    void StateNameBlueprint()
+    {
+        input_string = input_string + GetCharacter();
+        Button label = Button(); label.Setup(114, 24, 28, 8, 0.25, input_string); DrawButton(label);
+        if (GetKey(ui_select).bPressed)
+        {
+            iSystem::blueprints.selected = input_string;
+            input_string = "";
+            core::game_state = core::BLUEPRINT;
+        }
+        
     }
 
     void StateCrafting()
@@ -1337,6 +1351,7 @@ public:
         }
         if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::INVENTORY;
+        if (CtrlKey() && GetKey(olc::Key::V).bPressed) { iSystem::PasteBlueprints(GetOffsetX(), GetOffsetY()); }
         // Hotbar Stuff
         HotbarInput();
         UseHotbar();
@@ -1427,9 +1442,7 @@ public:
 
 	bool OnUserCreate() override
 	{
-        InstallGame();
-        new_world::InitializeGenerationSteps();
-        iSystem::InitializeBlueprints();
+        InitializeGame();
         return true;
 	}
 
@@ -1438,16 +1451,17 @@ public:
         UpdateMouse();
         switch (core::game_state)
         {
-            case core::PLAYING   : StateGameLoop(fElapsedTime); break;
-            case core::PAUSED    : StatePaused(); break;
-            case core::BLUEPRINT : StateBlueprint(); break;
-            case core::CRAFTING  : StateCrafting(); break;
-            case core::INVENTORY : StateInventory(); break;
-            case core::SAVING    : StateSaving(); break;
-            case core::LOADING   : StateLoading(); break;
-            case core::CUSTOM    : StateCustom(); break;
-            case core::SETTINGS  : StateSettings(); break;
-            case core::TITLE     : StateTitle(); break;
+            case core::PLAYING        : StateGameLoop(fElapsedTime); break;
+            case core::PAUSED         : StatePaused(); break;
+            case core::BLUEPRINT      : StateBlueprint(); break;
+            case core::NAME_BLUEPRINT : StateNameBlueprint(); break;
+            case core::CRAFTING       : StateCrafting(); break;
+            case core::INVENTORY      : StateInventory(); break;
+            case core::SAVING         : StateSaving(); break;
+            case core::LOADING        : StateLoading(); break;
+            case core::CUSTOM         : StateCustom(); break;
+            case core::SETTINGS       : StateSettings(); break;
+            case core::TITLE          : StateTitle(); break;
             case core::EXIT :
                 {
                     iSystem::player.SaveData();

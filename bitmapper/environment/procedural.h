@@ -501,7 +501,7 @@ namespace new_world
         generation_step = 1;
     }
 
-    void SaveData(std::string data_dir)
+    void SaveData(std::string data_dir="0")
     {
         std::string line;
         std::fstream data_file;
@@ -526,7 +526,7 @@ namespace new_world
         }
     }
 
-    void LoadData(std::string data_dir)
+    void LoadData(std::string data_dir="0")
     {
         std::string line;
         std::fstream data_file;
