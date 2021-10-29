@@ -49,6 +49,7 @@ namespace core
         CRAFTING,
         INVENTORY,
         BLUEPRINT,
+        NAME_BLUEPRINT,
         PAUSED,
         EXIT,
     };

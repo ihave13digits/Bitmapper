@@ -118,6 +118,7 @@
 ///  User Interface
 //
 
+#include "ui/blueprints.h"
 #include "ui/button.h"
 #include "ui/camera.h"
 #include "ui/icon.h"
