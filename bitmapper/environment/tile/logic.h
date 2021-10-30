@@ -143,10 +143,10 @@ namespace tLogic
         bool b = false;
         bool o = false;
 
-        if      (tCell::matrix[dN] == tTile::WIRE_O || tCell::matrix[dN] == tTile::GOLD_WIRE_O) { a = false; }
-        if      (tCell::matrix[dN] == tTile::WIRE_I || tCell::matrix[dN] == tTile::GOLD_WIRE_I) { a = true;  }
-        if      (tCell::matrix[dS] == tTile::WIRE_O || tCell::matrix[dS] == tTile::GOLD_WIRE_O) { b = false; }
-        if      (tCell::matrix[dS] == tTile::WIRE_I || tCell::matrix[dS] == tTile::GOLD_WIRE_I) { b = true;  }
+        if (tCell::matrix[dN] == tTile::WIRE_O || tCell::matrix[dN] == tTile::GOLD_WIRE_O) { a = false; }
+        if (tCell::matrix[dN] == tTile::WIRE_I || tCell::matrix[dN] == tTile::GOLD_WIRE_I) { a = true;  }
+        if (tCell::matrix[dS] == tTile::WIRE_O || tCell::matrix[dS] == tTile::GOLD_WIRE_O) { b = false; }
+        if (tCell::matrix[dS] == tTile::WIRE_I || tCell::matrix[dS] == tTile::GOLD_WIRE_I) { b = true;  }
 
         if (a==false && b==false) { o = false; }
         if (a==true  && b==false) { o = true;  }
@@ -184,10 +184,10 @@ namespace tLogic
         bool b = false;
         bool o = false;
 
-        if      (tCell::matrix[dN] == tTile::WIRE_O || tCell::matrix[dN] == tTile::GOLD_WIRE_O) { a = false; }
-        if      (tCell::matrix[dN] == tTile::WIRE_I || tCell::matrix[dN] == tTile::GOLD_WIRE_I) { a = true;  }
-        if      (tCell::matrix[dS] == tTile::WIRE_O || tCell::matrix[dS] == tTile::GOLD_WIRE_O) { b = false; }
-        if      (tCell::matrix[dS] == tTile::WIRE_I || tCell::matrix[dS] == tTile::GOLD_WIRE_I) { b = true;  }
+        if (tCell::matrix[dN] == tTile::WIRE_O || tCell::matrix[dN] == tTile::GOLD_WIRE_O) { a = false; }
+        if (tCell::matrix[dN] == tTile::WIRE_I || tCell::matrix[dN] == tTile::GOLD_WIRE_I) { a = true;  }
+        if (tCell::matrix[dS] == tTile::WIRE_O || tCell::matrix[dS] == tTile::GOLD_WIRE_O) { b = false; }
+        if (tCell::matrix[dS] == tTile::WIRE_I || tCell::matrix[dS] == tTile::GOLD_WIRE_I) { b = true;  }
 
         if (a==false && b==false) { o = false; }
         if (a==true  && b==false) { o = true;  }
@@ -225,10 +225,10 @@ namespace tLogic
         bool b = false;
         bool o = false;
 
-        if      (tCell::matrix[dN] == tTile::WIRE_O || tCell::matrix[dN] == tTile::GOLD_WIRE_O) { a = false; }
-        if      (tCell::matrix[dN] == tTile::WIRE_I || tCell::matrix[dN] == tTile::GOLD_WIRE_I) { a = true;  }
-        if      (tCell::matrix[dS] == tTile::WIRE_O || tCell::matrix[dS] == tTile::GOLD_WIRE_O) { b = false; }
-        if      (tCell::matrix[dS] == tTile::WIRE_I || tCell::matrix[dS] == tTile::GOLD_WIRE_I) { b = true;  }
+        if (tCell::matrix[dN] == tTile::WIRE_O || tCell::matrix[dN] == tTile::GOLD_WIRE_O) { a = false; }
+        if (tCell::matrix[dN] == tTile::WIRE_I || tCell::matrix[dN] == tTile::GOLD_WIRE_I) { a = true;  }
+        if (tCell::matrix[dS] == tTile::WIRE_O || tCell::matrix[dS] == tTile::GOLD_WIRE_O) { b = false; }
+        if (tCell::matrix[dS] == tTile::WIRE_I || tCell::matrix[dS] == tTile::GOLD_WIRE_I) { b = true;  }
 
         if (a==false && b==false) { o = true;  }
         if (a==true  && b==false) { o = false; }
@@ -266,10 +266,10 @@ namespace tLogic
         bool b = false;
         bool o = false;
 
-        if      (tCell::matrix[dN] == tTile::WIRE_O || tCell::matrix[dN] == tTile::GOLD_WIRE_O) { a = false; }
-        if      (tCell::matrix[dN] == tTile::WIRE_I || tCell::matrix[dN] == tTile::GOLD_WIRE_I) { a = true;  }
-        if      (tCell::matrix[dS] == tTile::WIRE_O || tCell::matrix[dS] == tTile::GOLD_WIRE_O) { b = false; }
-        if      (tCell::matrix[dS] == tTile::WIRE_I || tCell::matrix[dS] == tTile::GOLD_WIRE_I) { b = true;  }
+        if (tCell::matrix[dN] == tTile::WIRE_O || tCell::matrix[dN] == tTile::GOLD_WIRE_O) { a = false; }
+        if (tCell::matrix[dN] == tTile::WIRE_I || tCell::matrix[dN] == tTile::GOLD_WIRE_I) { a = true;  }
+        if (tCell::matrix[dS] == tTile::WIRE_O || tCell::matrix[dS] == tTile::GOLD_WIRE_O) { b = false; }
+        if (tCell::matrix[dS] == tTile::WIRE_I || tCell::matrix[dS] == tTile::GOLD_WIRE_I) { b = true;  }
 
         if (a==false && b==false) { o = true;  }
         if (a==true  && b==false) { o = false; }
@@ -307,10 +307,10 @@ namespace tLogic
         bool b = false;
         bool o = false;
 
-        if      (tCell::matrix[dN] == tTile::WIRE_O || tCell::matrix[dN] == tTile::GOLD_WIRE_O) { a = false; }
-        if      (tCell::matrix[dN] == tTile::WIRE_I || tCell::matrix[dN] == tTile::GOLD_WIRE_I) { a = true;  }
-        if      (tCell::matrix[dS] == tTile::WIRE_O || tCell::matrix[dS] == tTile::GOLD_WIRE_O) { b = false; }
-        if      (tCell::matrix[dS] == tTile::WIRE_I || tCell::matrix[dS] == tTile::GOLD_WIRE_I) { b = true;  }
+        if (tCell::matrix[dN] == tTile::WIRE_O || tCell::matrix[dN] == tTile::GOLD_WIRE_O) { a = false; }
+        if (tCell::matrix[dN] == tTile::WIRE_I || tCell::matrix[dN] == tTile::GOLD_WIRE_I) { a = true;  }
+        if (tCell::matrix[dS] == tTile::WIRE_O || tCell::matrix[dS] == tTile::GOLD_WIRE_O) { b = false; }
+        if (tCell::matrix[dS] == tTile::WIRE_I || tCell::matrix[dS] == tTile::GOLD_WIRE_I) { b = true;  }
 
         if (a==false && b==false) { o = false; }
         if (a==true  && b==false) { o = false; }
@@ -348,10 +348,10 @@ namespace tLogic
         bool b = false;
         bool o = false;
 
-        if      (tCell::matrix[dN] == tTile::WIRE_O || tCell::matrix[dN] == tTile::GOLD_WIRE_O) { a = false; }
-        if      (tCell::matrix[dN] == tTile::WIRE_I || tCell::matrix[dN] == tTile::GOLD_WIRE_I) { a = true;  }
-        if      (tCell::matrix[dS] == tTile::WIRE_O || tCell::matrix[dS] == tTile::GOLD_WIRE_O) { b = false; }
-        if      (tCell::matrix[dS] == tTile::WIRE_I || tCell::matrix[dS] == tTile::GOLD_WIRE_I) { b = true;  }
+        if (tCell::matrix[dN] == tTile::WIRE_O || tCell::matrix[dN] == tTile::GOLD_WIRE_O) { a = false; }
+        if (tCell::matrix[dN] == tTile::WIRE_I || tCell::matrix[dN] == tTile::GOLD_WIRE_I) { a = true;  }
+        if (tCell::matrix[dS] == tTile::WIRE_O || tCell::matrix[dS] == tTile::GOLD_WIRE_O) { b = false; }
+        if (tCell::matrix[dS] == tTile::WIRE_I || tCell::matrix[dS] == tTile::GOLD_WIRE_I) { b = true;  }
 
         if (a==false && b==false) { o = true;  }
         if (a==true  && b==false) { o = true;  }
