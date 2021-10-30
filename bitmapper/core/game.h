@@ -21,6 +21,7 @@ public:
     char wall_y = 0;
     char tool_y = 0;
     char effect_y = 0;
+    char blueprint_y;
 
     int world_width = 4096;
     int world_height = 2048;
@@ -93,73 +94,74 @@ public:
         std::string c;
         if (!ShiftKey())
         {
-            if (GetKey(olc::Key::A).bPressed) {c = "a";}
-            if (GetKey(olc::Key::B).bPressed) {c = "b";}
-            if (GetKey(olc::Key::C).bPressed) {c = "c";}
-            if (GetKey(olc::Key::D).bPressed) {c = "d";}
-            if (GetKey(olc::Key::E).bPressed) {c = "e";}
-            if (GetKey(olc::Key::F).bPressed) {c = "f";}
-            if (GetKey(olc::Key::G).bPressed) {c = "g";}
-            if (GetKey(olc::Key::H).bPressed) {c = "h";}
-            if (GetKey(olc::Key::I).bPressed) {c = "i";}
-            if (GetKey(olc::Key::J).bPressed) {c = "j";}
-            if (GetKey(olc::Key::K).bPressed) {c = "k";}
-            if (GetKey(olc::Key::L).bPressed) {c = "l";}
-            if (GetKey(olc::Key::M).bPressed) {c = "m";}
-            if (GetKey(olc::Key::N).bPressed) {c = "n";}
-            if (GetKey(olc::Key::O).bPressed) {c = "o";}
-            if (GetKey(olc::Key::P).bPressed) {c = "p";}
-            if (GetKey(olc::Key::Q).bPressed) {c = "q";}
-            if (GetKey(olc::Key::R).bPressed) {c = "r";}
-            if (GetKey(olc::Key::S).bPressed) {c = "s";}
-            if (GetKey(olc::Key::T).bPressed) {c = "t";}
-            if (GetKey(olc::Key::U).bPressed) {c = "u";}
-            if (GetKey(olc::Key::V).bPressed) {c = "v";}
-            if (GetKey(olc::Key::W).bPressed) {c = "w";}
-            if (GetKey(olc::Key::X).bPressed) {c = "x";}
-            if (GetKey(olc::Key::Y).bPressed) {c = "y";}
-            if (GetKey(olc::Key::Z).bPressed) {c = "z";}
-            if (GetKey(olc::Key::K0).bPressed) {c = "0";}
-            if (GetKey(olc::Key::K1).bPressed) {c = "1";}
-            if (GetKey(olc::Key::K2).bPressed) {c = "2";}
-            if (GetKey(olc::Key::K3).bPressed) {c = "3";}
-            if (GetKey(olc::Key::K4).bPressed) {c = "4";}
-            if (GetKey(olc::Key::K5).bPressed) {c = "5";}
-            if (GetKey(olc::Key::K6).bPressed) {c = "6";}
-            if (GetKey(olc::Key::K7).bPressed) {c = "7";}
-            if (GetKey(olc::Key::K8).bPressed) {c = "8";}
-            if (GetKey(olc::Key::K9).bPressed) {c = "9";}
-            if (GetKey(olc::Key::SPACE).bPressed) {c = " ";}
+            if (GetKey(olc::Key::A).bPressed) { c = "a"; }
+            else if (GetKey(olc::Key::B).bPressed) { c = "b"; }
+            else if (GetKey(olc::Key::C).bPressed) { c = "c"; }
+            else if (GetKey(olc::Key::D).bPressed) { c = "d"; }
+            else if (GetKey(olc::Key::E).bPressed) { c = "e"; }
+            else if (GetKey(olc::Key::F).bPressed) { c = "f"; }
+            else if (GetKey(olc::Key::G).bPressed) { c = "g"; }
+            else if (GetKey(olc::Key::H).bPressed) { c = "h"; }
+            else if (GetKey(olc::Key::I).bPressed) { c = "i"; }
+            else if (GetKey(olc::Key::J).bPressed) { c = "j"; }
+            else if (GetKey(olc::Key::K).bPressed) { c = "k"; }
+            else if (GetKey(olc::Key::L).bPressed) { c = "l"; }
+            else if (GetKey(olc::Key::M).bPressed) { c = "m"; }
+            else if (GetKey(olc::Key::N).bPressed) { c = "n"; }
+            else if (GetKey(olc::Key::O).bPressed) { c = "o"; }
+            else if (GetKey(olc::Key::P).bPressed) { c = "p"; }
+            else if (GetKey(olc::Key::Q).bPressed) { c = "q"; }
+            else if (GetKey(olc::Key::R).bPressed) { c = "r"; }
+            else if (GetKey(olc::Key::S).bPressed) { c = "s"; }
+            else if (GetKey(olc::Key::T).bPressed) { c = "t"; }
+            else if (GetKey(olc::Key::U).bPressed) { c = "u"; }
+            else if (GetKey(olc::Key::V).bPressed) { c = "v"; }
+            else if (GetKey(olc::Key::W).bPressed) { c = "w"; }
+            else if (GetKey(olc::Key::X).bPressed) { c = "x"; }
+            else if (GetKey(olc::Key::Y).bPressed) { c = "y"; }
+            else if (GetKey(olc::Key::Z).bPressed) { c = "z"; }
+            else if (GetKey(olc::Key::K0).bPressed) { c = "0"; }
+            else if (GetKey(olc::Key::K1).bPressed) { c = "1"; }
+            else if (GetKey(olc::Key::K2).bPressed) { c = "2"; }
+            else if (GetKey(olc::Key::K3).bPressed) { c = "3"; }
+            else if (GetKey(olc::Key::K4).bPressed) { c = "4"; }
+            else if (GetKey(olc::Key::K5).bPressed) { c = "5"; }
+            else if (GetKey(olc::Key::K6).bPressed) { c = "6"; }
+            else if (GetKey(olc::Key::K7).bPressed) { c = "7"; }
+            else if (GetKey(olc::Key::K8).bPressed) { c = "8"; }
+            else if (GetKey(olc::Key::K9).bPressed) { c = "9"; }
+            else if (GetKey(olc::Key::SPACE).bPressed) { c = " "; }
         }
-        if (ShiftKey())
+        else if (ShiftKey())
         {
-            if (GetKey(olc::Key::A).bPressed) {c = "A";}
-            if (GetKey(olc::Key::B).bPressed) {c = "B";}
-            if (GetKey(olc::Key::C).bPressed) {c = "C";}
-            if (GetKey(olc::Key::D).bPressed) {c = "D";}
-            if (GetKey(olc::Key::E).bPressed) {c = "E";}
-            if (GetKey(olc::Key::F).bPressed) {c = "F";}
-            if (GetKey(olc::Key::G).bPressed) {c = "G";}
-            if (GetKey(olc::Key::H).bPressed) {c = "H";}
-            if (GetKey(olc::Key::I).bPressed) {c = "I";}
-            if (GetKey(olc::Key::J).bPressed) {c = "J";}
-            if (GetKey(olc::Key::K).bPressed) {c = "K";}
-            if (GetKey(olc::Key::L).bPressed) {c = "L";}
-            if (GetKey(olc::Key::M).bPressed) {c = "M";}
-            if (GetKey(olc::Key::N).bPressed) {c = "N";}
-            if (GetKey(olc::Key::O).bPressed) {c = "O";}
-            if (GetKey(olc::Key::P).bPressed) {c = "P";}
-            if (GetKey(olc::Key::Q).bPressed) {c = "Q";}
-            if (GetKey(olc::Key::R).bPressed) {c = "R";}
-            if (GetKey(olc::Key::S).bPressed) {c = "S";}
-            if (GetKey(olc::Key::T).bPressed) {c = "T";}
-            if (GetKey(olc::Key::U).bPressed) {c = "U";}
-            if (GetKey(olc::Key::V).bPressed) {c = "V";}
-            if (GetKey(olc::Key::W).bPressed) {c = "W";}
-            if (GetKey(olc::Key::X).bPressed) {c = "X";}
-            if (GetKey(olc::Key::Y).bPressed) {c = "Y";}
-            if (GetKey(olc::Key::Z).bPressed) {c = "Z";}
+            if (GetKey(olc::Key::A).bPressed) { c = "A"; }
+            else if (GetKey(olc::Key::B).bPressed) { c = "B"; }
+            else if (GetKey(olc::Key::C).bPressed) { c = "C"; }
+            else if (GetKey(olc::Key::D).bPressed) { c = "D"; }
+            else if (GetKey(olc::Key::E).bPressed) { c = "E"; }
+            else if (GetKey(olc::Key::F).bPressed) { c = "F"; }
+            else if (GetKey(olc::Key::G).bPressed) { c = "G"; }
+            else if (GetKey(olc::Key::H).bPressed) { c = "H"; }
+            else if (GetKey(olc::Key::I).bPressed) { c = "I"; }
+            else if (GetKey(olc::Key::J).bPressed) { c = "J"; }
+            else if (GetKey(olc::Key::K).bPressed) { c = "K"; }
+            else if (GetKey(olc::Key::L).bPressed) { c = "L"; }
+            else if (GetKey(olc::Key::M).bPressed) { c = "M"; }
+            else if (GetKey(olc::Key::N).bPressed) { c = "N"; }
+            else if (GetKey(olc::Key::O).bPressed) { c = "O"; }
+            else if (GetKey(olc::Key::P).bPressed) { c = "P"; }
+            else if (GetKey(olc::Key::Q).bPressed) { c = "Q"; }
+            else if (GetKey(olc::Key::R).bPressed) { c = "R"; }
+            else if (GetKey(olc::Key::S).bPressed) { c = "S"; }
+            else if (GetKey(olc::Key::T).bPressed) { c = "T"; }
+            else if (GetKey(olc::Key::U).bPressed) { c = "U"; }
+            else if (GetKey(olc::Key::V).bPressed) { c = "V"; }
+            else if (GetKey(olc::Key::W).bPressed) { c = "W"; }
+            else if (GetKey(olc::Key::X).bPressed) { c = "X"; }
+            else if (GetKey(olc::Key::Y).bPressed) { c = "Y"; }
+            else if (GetKey(olc::Key::Z).bPressed) { c = "Z"; }
         }
+        if (GetKey(olc::Key::BACK).bPressed) { input_string = input_string.substr(0, input_string.length()-1); }
         return c;
     }
 
@@ -1151,17 +1153,12 @@ public:
 
         // Background
         Clear(blueprint_color);
-        DrawPanel(x_margin-4, y_margin-6, 114, 120);
+        DrawPanel(x_margin-2, y_margin-6, 114, 120);
         // Buttons
-        Button clear_print = Button();
-        Button name_print = Button();
-        Button save_print = Button();
-        clear_print.Setup(124, 134, 40, 6, 0.5, "Clear");
-        name_print.Setup(168, 134, 40, 6, 0.5, "Name");
-        save_print.Setup(212, 134, 40, 6, 0.5, "Save");
-        DrawButton(clear_print);
-        DrawButton(name_print);
-        DrawButton(save_print);
+        Button clear_print = Button(); clear_print.Setup(124, 134, 32, 6, 0.5, "Clear"); DrawButton(clear_print);
+        Button name_print = Button();   name_print.Setup(156, 134, 32, 6, 0.5, "Name"); DrawButton(name_print);
+        Button save_print = Button();   save_print.Setup(188, 134, 32, 6, 0.5, "Save"); DrawButton(save_print);
+        Button load_print = Button();   load_print.Setup(220, 134, 32, 6, 0.5, "Load"); DrawButton(load_print);
         // Tiles
         Button buttons[cols*rows];
         SetPixelMode(olc::Pixel::ALPHA);
@@ -1227,16 +1224,17 @@ public:
         // Place Tiles
         if (GetMouse(0).bHeld)
         {
-            if (GetMouseX() > 122 && GetMouseX() < 251 &&
+            if (GetMouseX() > 124 && GetMouseX() < 253 &&
                 GetMouseY() > 3 && GetMouseY() < 131)
             {
-                int _x = GetMouseX() - 123;
+                int _x = GetMouseX() - 125;
                 int _y = GetMouseY() - 4;
                 iSystem::blueprints.matrix[_y*128+_x] = iSystem::player.hotbar[core::selected_hotbar][1];
             }
-            else if (clear_print.IsColliding(core::mouse_x, core::mouse_y)) { iSystem::blueprints.ClearMatrix(); }
-            else if (name_print.IsColliding(core::mouse_x, core::mouse_y)) { core::game_state = core::NAME_BLUEPRINT; }
-            else if (save_print.IsColliding(core::mouse_x, core::mouse_y)) { iSystem::blueprints.SaveData(); }
+            if (clear_print.IsColliding(core::mouse_x, core::mouse_y)) { iSystem::blueprints.ClearMatrix(); }
+            if (name_print.IsColliding(core::mouse_x, core::mouse_y)) { core::game_state = core::NAME_BLUEPRINT; }
+            if (save_print.IsColliding(core::mouse_x, core::mouse_y)) { iSystem::blueprints.SaveData(); }
+            if (load_print.IsColliding(core::mouse_x, core::mouse_y)) { core::game_state = core::LOAD_BLUEPRINT; }
         }
         // Draw Blueprint
         SetPixelMode(olc::Pixel::ALPHA);
@@ -1248,10 +1246,10 @@ public:
                     int v2 = iSystem::blueprints.matrix[y*128+(x+1)];
                     int v3 = iSystem::blueprints.matrix[y*128+(x+2)];
                     int v4 = iSystem::blueprints.matrix[y*128+(x+3)];
-                    Draw(x+123, y+4,   olc::Pixel(uint8_t(tTile::R[v1]), uint8_t(tTile::G[v1]), uint8_t(tTile::B[v1]), tTile::A[v1]));
-                    Draw(x+124, y+4, olc::Pixel(uint8_t(tTile::R[v2]), uint8_t(tTile::G[v2]), uint8_t(tTile::B[v2]), tTile::A[v2]));
-                    Draw(x+125, y+4, olc::Pixel(uint8_t(tTile::R[v3]), uint8_t(tTile::G[v3]), uint8_t(tTile::B[v3]), tTile::A[v3]));
-                    Draw(x+126, y+4, olc::Pixel(uint8_t(tTile::R[v4]), uint8_t(tTile::G[v4]), uint8_t(tTile::B[v4]), tTile::A[v4]));
+                    Draw(x+125, y+4,   olc::Pixel(uint8_t(tTile::R[v1]), uint8_t(tTile::G[v1]), uint8_t(tTile::B[v1]), tTile::A[v1]));
+                    Draw(x+126, y+4, olc::Pixel(uint8_t(tTile::R[v2]), uint8_t(tTile::G[v2]), uint8_t(tTile::B[v2]), tTile::A[v2]));
+                    Draw(x+127, y+4, olc::Pixel(uint8_t(tTile::R[v3]), uint8_t(tTile::G[v3]), uint8_t(tTile::B[v3]), tTile::A[v3]));
+                    Draw(x+128, y+4, olc::Pixel(uint8_t(tTile::R[v4]), uint8_t(tTile::G[v4]), uint8_t(tTile::B[v4]), tTile::A[v4]));
             }
         }
         // Grid
@@ -1259,24 +1257,45 @@ public:
         {
             int size = iSystem::world.chunk_size;
             int sub = size/core::grid_subdivision;
-            for (int y = 0; y < 128; y += sub) { DrawLine({123, y+4}, {251, y+4}, olc::Pixel(grid_color)); }
-            for (int x = 0; x < 128; x += sub) { DrawLine({x+123, 4}, {x+123, 131}, olc::Pixel(grid_color)); }
+            for (int y = 0; y < 128; y += sub) { DrawLine({125, y+4}, {252, y+4}, olc::Pixel(grid_color)); }
+            for (int x = 0; x < 128; x += sub) { DrawLine({x+125, 4}, {x+125, 131}, olc::Pixel(grid_color)); }
             SetPixelMode(olc::Pixel::NORMAL);
         }
         HotbarInput();
     }
 
+    void StateLoadBlueprint()
+    {
+        std::vector<Button> buttons;
+        int _y = core::height/2-64;
+        int name_size = iSystem::blueprints.names.size();
+        int limit = std::min(name_size, 8);
+        DrawPanel(core::width/2-34, _y-2, 68, 132);
+        for (int i = 0; i < limit; i++)
+        { Button b = Button(); b.Setup(core::width/2-32, i*16+_y, 64, 16, 0.5, iSystem::blueprints.names[i+blueprint_y]); buttons.push_back(b); }
+        for (int i = 0; i < limit; i++)
+        {
+            DrawButton(buttons[i]);
+            if (buttons[i].IsColliding(core::mouse_x, core::mouse_y))
+            {
+                if (GetMouse(0).bPressed) { iSystem::blueprints.selected = buttons[i].text; iSystem::blueprints.LoadData(); core::game_state = core::BLUEPRINT; }
+            }
+        }
+        if (GetKey(player_up).bReleased) { if (blueprint_y > 0) blueprint_y--; }
+        if (GetKey(player_down).bReleased) { if (blueprint_y < std::max(name_size-8, 0)) blueprint_y++; }
+    }
+
     void StateNameBlueprint()
     {
         input_string = input_string + GetCharacter();
-        Button label = Button(); label.Setup(114, 24, 28, 8, 0.25, input_string); DrawButton(label);
+        DrawPanel(core::width/2-36, core::height/2-10, 72, 20);
+        Button label = Button(); label.Setup(core::width/2-32, core::height/2-8, 64, 16, 0.5, input_string); DrawButton(label);
         if (GetKey(ui_select).bPressed)
         {
             iSystem::blueprints.selected = input_string;
             input_string = "";
             core::game_state = core::BLUEPRINT;
         }
-        
     }
 
     void StateCrafting()
@@ -1455,6 +1474,7 @@ public:
             case core::PAUSED         : StatePaused(); break;
             case core::BLUEPRINT      : StateBlueprint(); break;
             case core::NAME_BLUEPRINT : StateNameBlueprint(); break;
+            case core::LOAD_BLUEPRINT : StateLoadBlueprint(); break;
             case core::CRAFTING       : StateCrafting(); break;
             case core::INVENTORY      : StateInventory(); break;
             case core::SAVING         : StateSaving(); break;

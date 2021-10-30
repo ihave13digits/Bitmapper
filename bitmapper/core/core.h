@@ -50,6 +50,7 @@ namespace core
         INVENTORY,
         BLUEPRINT,
         NAME_BLUEPRINT,
+        LOAD_BLUEPRINT,
         PAUSED,
         EXIT,
     };
