@@ -282,6 +282,25 @@ namespace tCritter
         }
     }
 
+    /*
+    void Snake()
+    {
+        int dN  = int( (_y-1) * tCell::width + (_x  ) );
+        int dNE = int( (_y-1) * tCell::width + (_x+1) );
+        int dNW = int( (_y-1) * tCell::width + (_x-1) );
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
+        int dSE = int( (_y+1) * tCell::width + (_x+1) );
+        int dSW = int( (_y+1) * tCell::width + (_x-1) );
+        int dE  = int( (_y  ) * tCell::width + (_x+1) );
+        int dW  = int( (_y  ) * tCell::width + (_x-1) );
+        int chance = rand()%1000;
+        if (tCell::matrix[dS] == tTile::AIR) { tCell::replace[index] = tTile::AIR; tCell::replace[dS] = tTile::SNAKE; }
+        if (chance < 25)
+        {
+        }
+    }
+    */
+
 
 
     //

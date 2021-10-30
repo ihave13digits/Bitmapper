@@ -111,6 +111,23 @@ namespace tLogic
         }
     }
 
+    void Sensor(int _x, int _y, int index)
+    {
+        int dN  = int( (_y-1) * tCell::width + (_x  ) );
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
+        int dE  = int( (_y  ) * tCell::width + (_x+1) );
+        int dW  = int( (_y  ) * tCell::width + (_x-1) );
+
+        if (tCell::matrix[dN] == tTile::WIRE) { if (tCell::matrix[dS] != tTile::AIR) { tCell::replace[dN] = tTile::WIRE_I; } }
+        if (tCell::matrix[dS] == tTile::WIRE) { if (tCell::matrix[dN] != tTile::AIR) { tCell::replace[dS] = tTile::WIRE_I; } }
+        if (tCell::matrix[dE] == tTile::WIRE) { if (tCell::matrix[dW] != tTile::AIR) { tCell::replace[dE] = tTile::WIRE_I; } }
+        if (tCell::matrix[dW] == tTile::WIRE) { if (tCell::matrix[dE] != tTile::AIR) { tCell::replace[dW] = tTile::WIRE_I; } }
+        if (tCell::matrix[dN] == tTile::GOLD_WIRE) { if (tCell::matrix[dS] != tTile::AIR) { tCell::replace[dN] = tTile::GOLD_WIRE_I; } }
+        if (tCell::matrix[dS] == tTile::GOLD_WIRE) { if (tCell::matrix[dN] != tTile::AIR) { tCell::replace[dS] = tTile::GOLD_WIRE_I; } }
+        if (tCell::matrix[dE] == tTile::GOLD_WIRE) { if (tCell::matrix[dW] != tTile::AIR) { tCell::replace[dE] = tTile::GOLD_WIRE_I; } }
+        if (tCell::matrix[dW] == tTile::GOLD_WIRE) { if (tCell::matrix[dE] != tTile::AIR) { tCell::replace[dW] = tTile::GOLD_WIRE_I; } }
+    }
+
     void OR(int _x, int _y, int index)
     {
         // a   b   o
@@ -375,6 +392,7 @@ namespace tLogic
             case tTile::GOLD_WIRE_  : { GoldWire(_x, _y, index); } break;
             case tTile::GOLD_WIRE_O : { GoldWire(_x, _y, index); } break;
             case tTile::GOLD_WIRE_I : { GoldWire(_x, _y, index); } break;
+            case tTile::SENSOR      : { Sensor(_x, _y, index);   } break;
             case tTile::OR_GATE     : { OR(_x, _y, index);       } break;
             case tTile::AND_GATE    : { AND(_x, _y, index);      } break;
             case tTile::NOT_GATE    : { NOT(_x, _y, index);      } break;
