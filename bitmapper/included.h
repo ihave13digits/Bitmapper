@@ -73,6 +73,7 @@
 #include "environment/sky.h"
 
 // World
+#include "environment/biome.h"
 #include "environment/world.h"
 #include "environment/procedural.h"
 
