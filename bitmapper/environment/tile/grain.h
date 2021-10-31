@@ -116,45 +116,21 @@ namespace tGrain
         int direction = rand() % 100;
         if (direction < 50)
         {
-            if (!tTool::DualCollision(_x, _y+1))
-            {
-                int rplc = (_y+1)*tCell::width+(_x);            // ░░░░░░
-                tCell::replace[rplc] = tCell::matrix[index];    // ░░▓▓░░
-                tCell::replace[index] = tTile::AIR;             // ░░██░░
-            }
-            else if (!tTool::DualCollision(_x-1, _y+1))
-            {
-                int rplc = (_y+1)*tCell::width+(_x-1);          // ░░░░░░
-                tCell::replace[rplc] = tCell::matrix[index];    // ░░▓▓░░
-                tCell::replace[index] = tTile::AIR;             // ██░░░░
-            }
-            else if (!tTool::DualCollision(_x+1, _y+1))
-            {
-                int rplc = (_y+1)*tCell::width+(_x+1);          // ░░░░░░
-                tCell::replace[rplc] = tCell::matrix[index];    // ░░▓▓░░
-                tCell::replace[index] = tTile::AIR;             // ░░░░██
-            }
+            if (!tTool::GrainCollision(_x, _y+1))
+            { int rplc = (_y+1)*tCell::width+(_x); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
+            else if (!tTool::GrainCollision(_x-1, _y+1))
+            { int rplc = (_y+1)*tCell::width+(_x-1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
+            else if (!tTool::GrainCollision(_x+1, _y+1))
+            { int rplc = (_y+1)*tCell::width+(_x+1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
         }
         else
         {
-            if (!tTool::DualCollision(_x, _y+1))
-            {
-                int rplc = (_y+1)*tCell::width+(_x);            // ░░░░░░
-                tCell::replace[rplc] = tCell::matrix[index];    // ░░▓▓░░
-                tCell::replace[index] = tTile::AIR;             // ░░██░░
-            }
-            else if (!tTool::DualCollision(_x+1, _y+1))
-            {
-                int rplc = (_y+1)*tCell::width+(_x+1);          // ░░░░░░
-                tCell::replace[rplc] = tCell::matrix[index];    // ░░▓▓░░
-                tCell::replace[index] = tTile::AIR;             // ░░░░██
-            }
-            else if (!tTool::DualCollision(_x-1, _y+1))
-            {
-                int rplc = (_y+1)*tCell::width+(_x-1);          // ░░░░░░
-                tCell::replace[rplc] = tCell::matrix[index];    // ░░▓▓░░
-                tCell::replace[index] = tTile::AIR;             // ██░░░░
-            }
+            if (!tTool::GrainCollision(_x, _y+1))
+            { int rplc = (_y+1)*tCell::width+(_x); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
+            else if (!tTool::GrainCollision(_x+1, _y+1))
+            { int rplc = (_y+1)*tCell::width+(_x+1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
+            else if (!tTool::GrainCollision(_x-1, _y+1))
+            { int rplc = (_y+1)*tCell::width+(_x-1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
         }
 
         switch (current_cell)

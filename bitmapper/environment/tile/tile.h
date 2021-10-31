@@ -182,10 +182,6 @@ namespace tTile
         CONVEYOR_LEFT,
         CONVEYOR_RIGHT,
         PISTON,
-        //PISTON_UP,
-        //PISTON_DOWN,
-        //PISTON_LEFT,
-        //PISTON_RIGHT,
         // Logic
         WIRE,
         WIRE_,
@@ -263,6 +259,8 @@ namespace tTile
     std::vector<float> POWER;
     // Light Values
     std::vector<float> LIGHT;
+    // Density Values
+    std::vector<float> DENSE;
     // Type Values
     std::vector<int> TYPE;
     // Name Values
@@ -304,7 +302,8 @@ namespace tTile
                             case 4 : {             int value = std::stoi(string_data);     A.push_back(value); } break;
                             case 5 : {           float value = std::stof(string_data); LIGHT.push_back(value); } break;
                             case 6 : {           float value = std::stof(string_data); POWER.push_back(value); } break;
-                            case 7 :
+                            case 7 : {           float value = std::stof(string_data); DENSE.push_back(value); } break;
+                            case 8 :
                             {
                                 int value;
                                 if (string_data == "gas")          { value = GAS;           }
@@ -332,8 +331,8 @@ namespace tTile
                                 TYPE.push_back(value);
                             }
                             break;
-                            case 8 : { NAME.push_back(string_data); } break;
-                            case 9 : { state = 0; tile_count++;     } break;
+                            case  9 : { NAME.push_back(string_data); } break;
+                            case 10 : { state = 0; tile_count++;     } break;
                         }
                         string_data = "";
                         state++;

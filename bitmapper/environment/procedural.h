@@ -6,7 +6,7 @@ namespace new_world
     //
 
     // Terrain Tiles
-    int total_parameters = 12;
+    int total_parameters = 13;
     int total_modes = 4;
 
     // Procedural Generation
@@ -16,8 +16,8 @@ namespace new_world
     int generation_steps = 1;
     int maximum_generation_steps = 128;
 
-    int clipboard_param[12];
-    int generation_param[128][12];
+    int clipboard_param[13];
+    int generation_param[128][13];
 
     enum MODES
     {
@@ -38,6 +38,7 @@ namespace new_world
     {
         pTILE,
         pMODE,
+        pBIOME,
         pDENSE,
         pITER,
         pMINX,
@@ -167,75 +168,75 @@ namespace new_world
     void PresetData()
     {
         generation_steps = 62;
-        int preset_data[62][12] = {
-            // tile,             mode, dense, itr,  x,     X,   y,   Y,  n,   s,   e,   w
-            { tTile::STONE,         mADD,  8,   1,  0,   100,  20,  75,  0,   0,   0,   0   },
-            { tTile::STONE,         mADD,  4,   1,  0,   100,  30,  76,  0,   0,   0,   0   },
-            { tTile::STONE,         mADD,  2,   1,  0,   100,  40,  77,  0,   0,   0,   0   },
-            { tTile::STONE,         mADD,  1,   1,  0,   100,  50,  78,  0,   0,   0,   0   },
-            { tTile::STONE,         mADD,  1,   1,  0,   100,  60,  79,  0,   0,   0,   0   },
-            { tTile::MANTLE,        mADD,  8,   1,  0,   100,  95,  100, 0,   0,   0,   0   },
-            { tTile::MANTLE,        mADD, 16,   1,  0,   100,  97,  100, 0,   0,   0,   0   },
+        int preset_data[62][13] = {
+            // tile,                mode,bio,dns,itr,  x,     X,   y,   Y,  n,   s,   e,   w
+            { tTile::STONE,         mADD,  0,  8,  1,  0,   100,  20,  75,  0,   0,   0,   0   },
+            { tTile::STONE,         mADD,  0,  4,  1,  0,   100,  30,  76,  0,   0,   0,   0   },
+            { tTile::STONE,         mADD,  0,  2,  1,  0,   100,  40,  77,  0,   0,   0,   0   },
+            { tTile::STONE,         mADD,  0,  1,  1,  0,   100,  50,  78,  0,   0,   0,   0   },
+            { tTile::STONE,         mADD,  0,  1,  1,  0,   100,  60,  79,  0,   0,   0,   0   },
+            { tTile::MANTLE,        mADD,  0,  8,  1,  0,   100,  95,  100, 0,   0,   0,   0   },
+            { tTile::MANTLE,        mADD,  0, 16,  1,  0,   100,  97,  100, 0,   0,   0,   0   },
 
-            { tTile::STONE,      mEXPAND,  0,   1,  0,   100,  15,  85,  25,  50,  100, 100 },
-            { tTile::STONE,      mEXPAND,  0,   1,  0,   100,  25,  85,  25,  50,  100, 100 },
-            { tTile::STONE,      mEXPAND,  0,   1,  0,   100,  35,  85,  50,  25,  100, 100 },
-            { tTile::STONE,      mEXPAND,  0,   2,  0,   100,  45,  85,  25,  5,   100, 100 },
-            { tTile::STONE,      mEXPAND,  0,   1,  0,   100,  55,  85,  25,  50,  100, 100 },
-            { tTile::STONE,      mEXPAND,  0,   4,  0,   100,  65,  85,  25,  50,  100, 100 },
-            { tTile::STONE,      mEXPAND,  0,   2,  0,   100,  75,  85,  50,  25,  100, 100 },
-            { tTile::STONE,      mEXPAND,  0,   1,  0,   100,  80,  85,  25,  5,   100, 100 },
+            { tTile::STONE,      mEXPAND,  0,  0,  1,  0,   100,  15,  85,  25,  50,  100, 100 },
+            { tTile::STONE,      mEXPAND,  0,  0,  1,  0,   100,  25,  85,  25,  50,  100, 100 },
+            { tTile::STONE,      mEXPAND,  0,  0,  1,  0,   100,  35,  85,  50,  25,  100, 100 },
+            { tTile::STONE,      mEXPAND,  0,  0,  2,  0,   100,  45,  85,  25,  5,   100, 100 },
+            { tTile::STONE,      mEXPAND,  0,  0,  1,  0,   100,  55,  85,  25,  50,  100, 100 },
+            { tTile::STONE,      mEXPAND,  0,  0,  4,  0,   100,  65,  85,  25,  50,  100, 100 },
+            { tTile::STONE,      mEXPAND,  0,  0,  2,  0,   100,  75,  85,  50,  25,  100, 100 },
+            { tTile::STONE,      mEXPAND,  0,  0,  1,  0,   100,  80,  85,  25,  5,   100, 100 },
 
-            { tTile::SOIL,       mEXPAND,  0,   4,  0,   100,  8,   30,  50,  25,  90,  90  },
-            { tTile::MUD,        mEXPAND,  0,   1,  0,   100,  10,  40,  50,  25,  75,  75  },
-            { tTile::SOIL,       mEXPAND,  0,   1,  0,   100,  8,   30,  50,  25,  90,  90  },
-            { tTile::MUD,        mEXPAND,  0,   2,  0,   100,  10,  40,  50,  25,  75,  75  },
-            { tTile::DIRT,       mEXPAND,  0,   1,  0,   100,  10,  40,  50,  25,  90,  90  },
-            { tTile::MUD,        mEXPAND,  0,   1,  0,   100,  15,  50,  25,  12,  37,  37  },
-            { tTile::DIRT,       mEXPAND,  0,   2,  0,   100,  15,  60,  50,  25,  90,  90  },
-            { tTile::MUD,        mEXPAND,  0,   1,  0,   100,  15,  70,  25,  12,  37,  37  },
-            { tTile::DIRT,       mEXPAND,  0,   4,  0,   100,  12,  80,  50,  25,  90,  90  },
-            { tTile::DIRT,       mEXPAND,  0,   4,  0,   100,  6,   20,  50,  25,  100, 100 },
+            { tTile::SOIL,       mEXPAND,  0,  0,  4,  0,   100,  8,   30,  50,  25,  90,  90  },
+            { tTile::MUD,        mEXPAND,  0,  0,  1,  0,   100,  10,  40,  50,  25,  75,  75  },
+            { tTile::SOIL,       mEXPAND,  0,  0,  1,  0,   100,  8,   30,  50,  25,  90,  90  },
+            { tTile::MUD,        mEXPAND,  0,  0,  2,  0,   100,  10,  40,  50,  25,  75,  75  },
+            { tTile::DIRT,       mEXPAND,  0,  0,  1,  0,   100,  10,  40,  50,  25,  90,  90  },
+            { tTile::MUD,        mEXPAND,  0,  0,  1,  0,   100,  15,  50,  25,  12,  37,  37  },
+            { tTile::DIRT,       mEXPAND,  0,  0,  2,  0,   100,  15,  60,  50,  25,  90,  90  },
+            { tTile::MUD,        mEXPAND,  0,  0,  1,  0,   100,  15,  70,  25,  12,  37,  37  },
+            { tTile::DIRT,       mEXPAND,  0,  0,  4,  0,   100,  12,  80,  50,  25,  90,  90  },
+            { tTile::DIRT,       mEXPAND,  0,  0,  4,  0,   100,  6,   20,  50,  25,  100, 100 },
 
-            { tTile::GRAVEL,     mEXPAND,  0,   4,  0,   100,  30,  80,  50,  0,   0,   0   },
-            { tTile::GRAVEL,     mEXPAND,  0,   4,  0,   100,  50,  60,  50,  0,   0,   0   },
-            { tTile::GRASS,      mEXPAND,  0,   1,  0,   100,  8,   25,  100, 0,   5,   5   },
-            { tTile::MANTLE,     mEXPAND,  0,  16,  0,   100,  85,  100, 10,  10,  100, 100 },
-            { tTile::LAVA,       mEXPAND,  0,  16,  0,   100,  90,  100, 100, 100, 100, 100 },
+            { tTile::GRAVEL,     mEXPAND,  0,  0,  4,  0,   100,  30,  80,  50,  0,   0,   0   },
+            { tTile::GRAVEL,     mEXPAND,  0,  0,  4,  0,   100,  50,  60,  50,  0,   0,   0   },
+            { tTile::GRASS,      mEXPAND,  0,  0,  1,  0,   100,  8,   25,  100, 0,   5,   5   },
+            { tTile::MANTLE,     mEXPAND,  0,  0, 16,  0,   100,  85,  100, 10,  10,  100, 100 },
+            { tTile::LAVA,       mEXPAND,  0,  0, 16,  0,   100,  90,  100, 100, 100, 100, 100 },
 
-            { tTile::PLATINUM,     mSEED,  2,   1,  0,   100,  50,  70,  0,   0,   0,   0   },
-            { tTile::GOLD,         mSEED,  2,   1,  0,   100,  60,  80,  0,   0,   0,   0   },
-            { tTile::SILVER,       mSEED,  3,   1,  0,   100,  50,  70,  0,   0,   0,   0   },
-            { tTile::COPPER,       mSEED,  4,   1,  0,   100,  30,  50,  0,   0,   0,   0   },
-            { tTile::LEAD,         mSEED,  3,   1,  0,   100,  70,  80,  0,   0,   0,   0   },
-            { tTile::TIN,          mSEED,  3,   1,  0,   100,  50,  70,  0,   0,   0,   0   },
-            { tTile::IRON,         mSEED,  4,   1,  0,   100,  25,  50,  0,   0,   0,   0   },
-            { tTile::COBALT,       mSEED,  3,   1,  0,   100,  25,  40,  0,   0,   0,   0   },
-            { tTile::NICKEL,       mSEED,  3,   1,  0,   100,  25,  30,  0,   0,   0,   0   },
-            { tTile::TITANIUM,     mSEED,  2,   1,  0,   100,  40,  60,  0,   0,   0,   0   },
-            { tTile::TUNGSTEN,     mSEED,  2,   1,  0,   100,  70,  80,  0,   0,   0,   0   },
+            { tTile::PLATINUM,     mSEED,  0,  2,  1,  0,   100,  50,  70,  0,   0,   0,   0   },
+            { tTile::GOLD,         mSEED,  0,  2,  1,  0,   100,  60,  80,  0,   0,   0,   0   },
+            { tTile::SILVER,       mSEED,  0,  3,  1,  0,   100,  50,  70,  0,   0,   0,   0   },
+            { tTile::COPPER,       mSEED,  0,  4,  1,  0,   100,  30,  50,  0,   0,   0,   0   },
+            { tTile::LEAD,         mSEED,  0,  3,  1,  0,   100,  70,  80,  0,   0,   0,   0   },
+            { tTile::TIN,          mSEED,  0,  3,  1,  0,   100,  50,  70,  0,   0,   0,   0   },
+            { tTile::IRON,         mSEED,  0,  4,  1,  0,   100,  25,  50,  0,   0,   0,   0   },
+            { tTile::COBALT,       mSEED,  0,  3,  1,  0,   100,  25,  40,  0,   0,   0,   0   },
+            { tTile::NICKEL,       mSEED,  0,  3,  1,  0,   100,  25,  30,  0,   0,   0,   0   },
+            { tTile::TITANIUM,     mSEED,  0,  2,  1,  0,   100,  40,  60,  0,   0,   0,   0   },
+            { tTile::TUNGSTEN,     mSEED,  0,  2,  1,  0,   100,  70,  80,  0,   0,   0,   0   },
 
-            { tTile::PLATINUM,   mDEPOSIT, 0,   4,  0,   100,  60,  80,  25,  25,  25,  25  },
-            { tTile::GOLD,       mDEPOSIT, 0,   4,  0,   100,  60,  80,  25,  25,  25,  25  },
-            { tTile::SILVER,     mDEPOSIT, 0,   6,  0,   100,  50,  70,  25,  25,  25,  25  },
-            { tTile::COPPER,     mDEPOSIT, 0,   8,  0,   100,  30,  50,  25,  25,  25,  25  },
-            { tTile::LEAD,       mDEPOSIT, 0,   8,  0,   100,  70,  80,  25,  25,  25,  25  },
-            { tTile::TIN,        mDEPOSIT, 0,   8,  0,   100,  50,  70,  25,  25,  25,  25  },
-            { tTile::IRON,       mDEPOSIT, 0,   8,  0,   100,  25,  50,  25,  25,  25,  25  },
-            { tTile::COBALT,     mDEPOSIT, 0,   6,  0,   100,  25,  40,  25,  25,  25,  25  },
-            { tTile::NICKEL,     mDEPOSIT, 0,   6,  0,   100,  25,  30,  25,  25,  25,  25  },
-            { tTile::TITANIUM,   mDEPOSIT, 0,   6,  0,   100,  40,  60,  25,  25,  25,  25  },
-            { tTile::TUNGSTEN,   mDEPOSIT, 0,   4,  0,   100,  70,  80,  25,  25,  25,  25  },
+            { tTile::PLATINUM,   mDEPOSIT,  0, 0,  4,  0,   100,  60,  80,  25,  25,  25,  25  },
+            { tTile::GOLD,       mDEPOSIT,  0, 0,  4,  0,   100,  60,  80,  25,  25,  25,  25  },
+            { tTile::SILVER,     mDEPOSIT,  0, 0,  6,  0,   100,  50,  70,  25,  25,  25,  25  },
+            { tTile::COPPER,     mDEPOSIT,  0, 0,  8,  0,   100,  30,  50,  25,  25,  25,  25  },
+            { tTile::LEAD,       mDEPOSIT,  0, 0,  8,  0,   100,  70,  80,  25,  25,  25,  25  },
+            { tTile::TIN,        mDEPOSIT,  0, 0,  8,  0,   100,  50,  70,  25,  25,  25,  25  },
+            { tTile::IRON,       mDEPOSIT,  0, 0,  8,  0,   100,  25,  50,  25,  25,  25,  25  },
+            { tTile::COBALT,     mDEPOSIT,  0, 0,  6,  0,   100,  25,  40,  25,  25,  25,  25  },
+            { tTile::NICKEL,     mDEPOSIT,  0, 0,  6,  0,   100,  25,  30,  25,  25,  25,  25  },
+            { tTile::TITANIUM,   mDEPOSIT,  0, 0,  6,  0,   100,  40,  60,  25,  25,  25,  25  },
+            { tTile::TUNGSTEN,   mDEPOSIT,  0, 0,  4,  0,   100,  70,  80,  25,  25,  25,  25  },
 
-            { tTile::JADE,         mSEED,  2,   1,  0,   100,  40,  60,  0,   0,   0,   0   },
-            { tTile::RUBY,         mSEED,  2,   1,  0,   100,  40,  60,  0,   0,   0,   0   },
-            { tTile::AMBER,        mSEED,  2,   1,  0,   100,  40,  60,  0,   0,   0,   0   },
-            { tTile::LAPIS,        mSEED,  2,   1,  0,   100,  50,  70,  0,   0,   0,   0   },
-            { tTile::TOPAZ,        mSEED,  2,   1,  0,   100,  50,  70,  0,   0,   0,   0   },
-            { tTile::DIAMOND,      mSEED,  2,   1,  0,   100,  70,  90,  0,   0,   0,   0   },
-            { tTile::EMERALD,      mSEED,  2,   1,  0,   100,  70,  90,  0,   0,   0,   0   },
-            { tTile::AMETHYST,     mSEED,  2,   1,  0,   100,  60,  80,  0,   0,   0,   0   },
-            { tTile::SAPPHIRE,     mSEED,  2,   1,  0,   100,  60,  80,  0,   0,   0,   0   },
+            { tTile::JADE,         mSEED,  0,  2,  1,  0,   100,  40,  60,  0,   0,   0,   0   },
+            { tTile::RUBY,         mSEED,  0,  2,  1,  0,   100,  40,  60,  0,   0,   0,   0   },
+            { tTile::AMBER,        mSEED,  0,  2,  1,  0,   100,  40,  60,  0,   0,   0,   0   },
+            { tTile::LAPIS,        mSEED,  0,  2,  1,  0,   100,  50,  70,  0,   0,   0,   0   },
+            { tTile::TOPAZ,        mSEED,  0,  2,  1,  0,   100,  50,  70,  0,   0,   0,   0   },
+            { tTile::DIAMOND,      mSEED,  0,  2,  1,  0,   100,  70,  90,  0,   0,   0,   0   },
+            { tTile::EMERALD,      mSEED,  0,  2,  1,  0,   100,  70,  90,  0,   0,   0,   0   },
+            { tTile::AMETHYST,     mSEED,  0,  2,  1,  0,   100,  60,  80,  0,   0,   0,   0   },
+            { tTile::SAPPHIRE,     mSEED,  0,  2,  1,  0,   100,  60,  80,  0,   0,   0,   0   },
         };
 
         for (int i = 0; i < generation_steps; i++)

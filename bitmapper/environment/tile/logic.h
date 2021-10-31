@@ -21,7 +21,7 @@ namespace tLogic
             case tTile::WIRE_       : { tCell::replace[dN] = tTile::WIRE;       tCell::replace[index] = tTile::WIRE  ; } break;
             case tTile::WIRE_O      : { tCell::replace[dN] = tTile::WIRE_;      tCell::replace[index] = tTile::WIRE_O; } break;
             case tTile::WIRE_I      : { tCell::replace[dN] = tTile::WIRE_;      tCell::replace[index] = tTile::WIRE_I; } break;
-            case tTile::GOLD_WIRE_  : { tCell::replace[dN] = tTile::GOLD_WIRE;   tCell::replace[index] = tTile::WIRE ; } break;
+            case tTile::GOLD_WIRE_  : { tCell::replace[dN] = tTile::GOLD_WIRE;  tCell::replace[index] = tTile::WIRE  ; } break;
             case tTile::GOLD_WIRE_O : { tCell::replace[dN] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::WIRE_O; } break;
             case tTile::GOLD_WIRE_I : { tCell::replace[dN] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::WIRE_I; } break;
             //case tTile::ARC         : { if (rand()%1000 < 10) tCell::replace[dN] = tTile::AIR; tCell::replace[index] = tTile::WIRE_I; } break;
@@ -33,7 +33,7 @@ namespace tLogic
             case tTile::WIRE_       : { tCell::replace[dS] = tTile::WIRE;       tCell::replace[index] = tTile::WIRE  ; } break;
             case tTile::WIRE_O      : { tCell::replace[dS] = tTile::WIRE_;      tCell::replace[index] = tTile::WIRE_O; } break;
             case tTile::WIRE_I      : { tCell::replace[dS] = tTile::WIRE_;      tCell::replace[index] = tTile::WIRE_I; } break;
-            case tTile::GOLD_WIRE_  : { tCell::replace[dS] = tTile::GOLD_WIRE;   tCell::replace[index] = tTile::WIRE ; } break;
+            case tTile::GOLD_WIRE_  : { tCell::replace[dS] = tTile::GOLD_WIRE;  tCell::replace[index] = tTile::WIRE  ; } break;
             case tTile::GOLD_WIRE_O : { tCell::replace[dS] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::WIRE_O; } break;
             case tTile::GOLD_WIRE_I : { tCell::replace[dS] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::WIRE_I; } break;
             //case tTile::ARC         : { if (rand()%1000 < 10) tCell::replace[dS] = tTile::AIR; tCell::replace[index] = tTile::WIRE_I; } break;
@@ -45,7 +45,7 @@ namespace tLogic
             case tTile::WIRE_       : { tCell::replace[dE] = tTile::WIRE;       tCell::replace[index] = tTile::WIRE  ; } break;
             case tTile::WIRE_O      : { tCell::replace[dE] = tTile::WIRE_;      tCell::replace[index] = tTile::WIRE_O; } break;
             case tTile::WIRE_I      : { tCell::replace[dE] = tTile::WIRE_;      tCell::replace[index] = tTile::WIRE_I; } break;
-            case tTile::GOLD_WIRE_  : { tCell::replace[dE] = tTile::GOLD_WIRE;   tCell::replace[index] = tTile::WIRE ; } break;
+            case tTile::GOLD_WIRE_  : { tCell::replace[dE] = tTile::GOLD_WIRE;  tCell::replace[index] = tTile::WIRE  ; } break;
             case tTile::GOLD_WIRE_O : { tCell::replace[dE] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::WIRE_O; } break;
             case tTile::GOLD_WIRE_I : { tCell::replace[dE] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::WIRE_I; } break;
             //case tTile::ARC         : { if (rand()%1000 < 10) tCell::replace[dE] = tTile::AIR; tCell::replace[index] = tTile::WIRE_I; } break;
@@ -57,7 +57,7 @@ namespace tLogic
             case tTile::WIRE_       : { tCell::replace[dW] = tTile::WIRE;       tCell::replace[index] = tTile::WIRE  ; } break;
             case tTile::WIRE_O      : { tCell::replace[dW] = tTile::WIRE_;      tCell::replace[index] = tTile::WIRE_O; } break;
             case tTile::WIRE_I      : { tCell::replace[dW] = tTile::WIRE_;      tCell::replace[index] = tTile::WIRE_I; } break;
-            case tTile::GOLD_WIRE_  : { tCell::replace[dW] = tTile::GOLD_WIRE;   tCell::replace[index] = tTile::WIRE ; } break;
+            case tTile::GOLD_WIRE_  : { tCell::replace[dW] = tTile::GOLD_WIRE;  tCell::replace[index] = tTile::WIRE  ; } break;
             case tTile::GOLD_WIRE_O : { tCell::replace[dW] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::WIRE_O; } break;
             case tTile::GOLD_WIRE_I : { tCell::replace[dW] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::WIRE_I; } break;
             //case tTile::ARC         : { if (rand()%1000 < 10) tCell::replace[dW] = tTile::AIR; tCell::replace[index] = tTile::WIRE_I; } break;
@@ -75,39 +75,39 @@ namespace tLogic
 
         switch (tCell::matrix[dN])
         {
-            case tTile::WIRE_       : { tCell::replace[dN] = tTile::WIRE;       tCell::replace[index] = tTile::GOLD_WIRE    ; } break;
-            case tTile::WIRE_O      : { tCell::replace[dN] = tTile::WIRE_;        tCell::replace[index] = tTile::GOLD_WIRE_O; } break;
-            case tTile::WIRE_I      : { tCell::replace[dN] = tTile::WIRE_;      tCell::replace[index] = tTile::GOLD_WIRE_I  ; } break;
-            case tTile::GOLD_WIRE_  : { tCell::replace[dN] = tTile::GOLD_WIRE;   tCell::replace[index] = tTile::GOLD_WIRE   ; } break;
-            case tTile::GOLD_WIRE_O : { tCell::replace[dN] = tTile::GOLD_WIRE_;   tCell::replace[index] = tTile::GOLD_WIRE_O; } break;
-            case tTile::GOLD_WIRE_I : { tCell::replace[dN] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::GOLD_WIRE_I  ; } break;
+            case tTile::WIRE_       : { tCell::replace[dN] = tTile::WIRE;       tCell::replace[index] = tTile::GOLD_WIRE   ; } break;
+            case tTile::WIRE_O      : { tCell::replace[dN] = tTile::WIRE_;      tCell::replace[index] = tTile::GOLD_WIRE_O ; } break;
+            case tTile::WIRE_I      : { tCell::replace[dN] = tTile::WIRE_;      tCell::replace[index] = tTile::GOLD_WIRE_I ; } break;
+            case tTile::GOLD_WIRE_  : { tCell::replace[dN] = tTile::GOLD_WIRE;  tCell::replace[index] = tTile::GOLD_WIRE   ; } break;
+            case tTile::GOLD_WIRE_O : { tCell::replace[dN] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::GOLD_WIRE_O ; } break;
+            case tTile::GOLD_WIRE_I : { tCell::replace[dN] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::GOLD_WIRE_I ; } break;
         }
         switch (tCell::matrix[dS])
         {
-            case tTile::WIRE_       : { tCell::replace[dS] = tTile::WIRE;       tCell::replace[index] = tTile::GOLD_WIRE    ; } break;
-            case tTile::WIRE_O      : { tCell::replace[dS] = tTile::WIRE_;        tCell::replace[index] = tTile::WIRE_O     ; } break;
-            case tTile::WIRE_I      : { tCell::replace[dS] = tTile::WIRE_;      tCell::replace[index] = tTile::WIRE_I       ; } break;
-            case tTile::GOLD_WIRE_  : { tCell::replace[dS] = tTile::GOLD_WIRE;   tCell::replace[index] = tTile::GOLD_WIRE   ; } break;
-            case tTile::GOLD_WIRE_O : { tCell::replace[dS] = tTile::GOLD_WIRE_;   tCell::replace[index] = tTile::GOLD_WIRE_O; } break;
-            case tTile::GOLD_WIRE_I : { tCell::replace[dS] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::GOLD_WIRE_I  ; } break;
+            case tTile::WIRE_       : { tCell::replace[dS] = tTile::WIRE;       tCell::replace[index] = tTile::GOLD_WIRE   ; } break;
+            case tTile::WIRE_O      : { tCell::replace[dS] = tTile::WIRE_;      tCell::replace[index] = tTile::GOLD_WIRE_O ; } break;
+            case tTile::WIRE_I      : { tCell::replace[dS] = tTile::WIRE_;      tCell::replace[index] = tTile::GOLD_WIRE_I ; } break;
+            case tTile::GOLD_WIRE_  : { tCell::replace[dS] = tTile::GOLD_WIRE;  tCell::replace[index] = tTile::GOLD_WIRE   ; } break;
+            case tTile::GOLD_WIRE_O : { tCell::replace[dS] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::GOLD_WIRE_O ; } break;
+            case tTile::GOLD_WIRE_I : { tCell::replace[dS] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::GOLD_WIRE_I ; } break;
         }
         switch (tCell::matrix[dE])
         {
-            case tTile::WIRE_       : { tCell::replace[dE] = tTile::WIRE;       tCell::replace[index] = tTile::GOLD_WIRE    ; } break;
-            case tTile::WIRE_O      : { tCell::replace[dE] = tTile::WIRE_;        tCell::replace[index] = tTile::GOLD_WIRE_O; } break;
-            case tTile::WIRE_I      : { tCell::replace[dE] = tTile::WIRE_;      tCell::replace[index] = tTile::GOLD_WIRE_I  ; } break;
-            case tTile::GOLD_WIRE_  : { tCell::replace[dE] = tTile::GOLD_WIRE;   tCell::replace[index] = tTile::GOLD_WIRE   ; } break;
-            case tTile::GOLD_WIRE_O : { tCell::replace[dE] = tTile::GOLD_WIRE_;   tCell::replace[index] = tTile::GOLD_WIRE_O; } break;
-            case tTile::GOLD_WIRE_I : { tCell::replace[dE] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::GOLD_WIRE_I  ; } break;
+            case tTile::WIRE_       : { tCell::replace[dE] = tTile::WIRE;       tCell::replace[index] = tTile::GOLD_WIRE   ; } break;
+            case tTile::WIRE_O      : { tCell::replace[dE] = tTile::WIRE_;      tCell::replace[index] = tTile::GOLD_WIRE_O ; } break;
+            case tTile::WIRE_I      : { tCell::replace[dE] = tTile::WIRE_;      tCell::replace[index] = tTile::GOLD_WIRE_I ; } break;
+            case tTile::GOLD_WIRE_  : { tCell::replace[dE] = tTile::GOLD_WIRE;  tCell::replace[index] = tTile::GOLD_WIRE   ; } break;
+            case tTile::GOLD_WIRE_O : { tCell::replace[dE] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::GOLD_WIRE_O ; } break;
+            case tTile::GOLD_WIRE_I : { tCell::replace[dE] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::GOLD_WIRE_I ; } break;
         }
         switch (tCell::matrix[dW])
         {
-            case tTile::WIRE_       : { tCell::replace[dW] = tTile::WIRE;       tCell::replace[index] = tTile::GOLD_WIRE    ; } break;
-            case tTile::WIRE_O      : { tCell::replace[dW] = tTile::WIRE_;        tCell::replace[index] = tTile::GOLD_WIRE_O; } break;
-            case tTile::WIRE_I      : { tCell::replace[dW] = tTile::WIRE_;      tCell::replace[index] = tTile::GOLD_WIRE_I  ; } break;
-            case tTile::GOLD_WIRE_  : { tCell::replace[dW] = tTile::GOLD_WIRE;   tCell::replace[index] = tTile::GOLD_WIRE   ; } break;
-            case tTile::GOLD_WIRE_O : { tCell::replace[dW] = tTile::GOLD_WIRE_;   tCell::replace[index] = tTile::GOLD_WIRE_O; } break;
-            case tTile::GOLD_WIRE_I : { tCell::replace[dW] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::GOLD_WIRE_I  ; } break;
+            case tTile::WIRE_       : { tCell::replace[dW] = tTile::WIRE;       tCell::replace[index] = tTile::GOLD_WIRE   ; } break;
+            case tTile::WIRE_O      : { tCell::replace[dW] = tTile::WIRE_;      tCell::replace[index] = tTile::GOLD_WIRE_O ; } break;
+            case tTile::WIRE_I      : { tCell::replace[dW] = tTile::WIRE_;      tCell::replace[index] = tTile::GOLD_WIRE_I ; } break;
+            case tTile::GOLD_WIRE_  : { tCell::replace[dW] = tTile::GOLD_WIRE;  tCell::replace[index] = tTile::GOLD_WIRE   ; } break;
+            case tTile::GOLD_WIRE_O : { tCell::replace[dW] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::GOLD_WIRE_O ; } break;
+            case tTile::GOLD_WIRE_I : { tCell::replace[dW] = tTile::GOLD_WIRE_; tCell::replace[index] = tTile::GOLD_WIRE_I ; } break;
         }
     }
 
