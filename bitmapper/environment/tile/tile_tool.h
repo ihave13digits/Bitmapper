@@ -62,6 +62,11 @@ namespace tTool
     // Matrix Functions
     //
 
+    void Set(int i, uint8_t r)
+    {
+        tCell::matrix[i] = r; tCell::replace[i] = r;
+    }
+
     void Swap(int i, int r)
     {
         tCell::replace[r] = tCell::matrix[i]; tCell::replace[i] = tCell::matrix[r];

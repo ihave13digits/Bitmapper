@@ -362,6 +362,8 @@ public:
             case tTile::GIZMO         : { img = icon.gizmo;    } break;
             case tTile::PLATFORM      : { img = icon.platform; } break;
             case tTile::PLUMBING      : { img = icon.plumbing; } break;
+            case tTile::PIPES         : { img = icon.pipes;    } break;
+            case tTile::GUTTERS       : { img = icon.gutters;  } break;
             case tTile::PLANT         : { img = icon.plant;    } break;
             case tTile::PLANT_PRODUCT : { img = icon.solid;    } break;
             case tTile::CRITTER       : { img = icon.critter;  } break;

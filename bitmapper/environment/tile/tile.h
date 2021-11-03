@@ -19,6 +19,8 @@ namespace tTile
         GIZMO,
         PLATFORM,
         PLUMBING,
+        PIPES,
+        GUTTERS,
         PLANT,
         PLANT_PRODUCT,
         CRITTER,
@@ -144,7 +146,10 @@ namespace tTile
         VALVE_CLOSED,
         VALVE_OPEN,
         PUMP,
+        DRAIN,
         PIPE,
+        GUTTER,
+        // Pipe
         PIPE_MILK,
         PIPE_MERCURY,
         PIPE_OIL,
@@ -155,14 +160,15 @@ namespace tTile
         PIPE_BLOOD,
         PIPE_GUTS,
         PIPE_ALGAE,
+        PIPE_SLIME,
         PIPE_HONEY,
         PIPE_MAGMA,
         PIPE_LAVA,
         PIPE_MUD,
         PIPE_MUCK,
+        PIPE_QUICKSAND,
         PIPE_MOLTEN_SLAG,
-        DRAIN,
-        GUTTER,
+        // Gutter
         GUTTER_MILK,
         GUTTER_MERCURY,
         GUTTER_OIL,
@@ -173,11 +179,13 @@ namespace tTile
         GUTTER_BLOOD,
         GUTTER_GUTS,
         GUTTER_ALGAE,
+        GUTTER_SLIME,
         GUTTER_HONEY,
         GUTTER_MAGMA,
         GUTTER_LAVA,
         GUTTER_MUD,
         GUTTER_MUCK,
+        GUTTER_QUICKSAND,
         GUTTER_MOLTEN_SLAG,
         // Gizmo
         AXLE_LEFT,
@@ -316,27 +324,29 @@ namespace tTile
                             {
                                 int value;
                                 if (string_data == "gas")          { value = GAS;           }
-                                if (string_data == "plasma")       { value = PLASMA;        }
-                                if (string_data == "fume")         { value = FUME;          }
-                                if (string_data == "fluid")        { value = FLUID;         }
-                                if (string_data == "grain")        { value = GRAIN;         }
-                                if (string_data == "gem")          { value = GEM;           }
-                                if (string_data == "gel")          { value = GEL;           }
-                                if (string_data == "geo")          { value = GEO;           }
-                                if (string_data == "ore")          { value = ORE;           }
-                                if (string_data == "metal")        { value = METAL;         }
-                                if (string_data == "solid")        { value = SOLID;         }
-                                if (string_data == "loose")        { value = LOOSE;         }
-                                if (string_data == "boom")         { value = BOOM;          }
-                                if (string_data == "logic")        { value = LOGIC;         }
-                                if (string_data == "gizmo")        { value = GIZMO;         }
-                                if (string_data == "platform")     { value = PLATFORM;      }
-                                if (string_data == "plumbing")     { value = PLUMBING;      }
-                                if (string_data == "plant")        { value = PLANT;         }
-                                if (string_data == "plantproduct") { value = PLANT_PRODUCT; }
-                                if (string_data == "critter")      { value = CRITTER;       }
-                                if (string_data == "wall")         { value = WALL;          }
-                                if (string_data == "egg")          { value = EGG;           }
+                                else if (string_data == "plasma")       { value = PLASMA;        }
+                                else if (string_data == "fume")         { value = FUME;          }
+                                else if (string_data == "fluid")        { value = FLUID;         }
+                                else if (string_data == "grain")        { value = GRAIN;         }
+                                else if (string_data == "gem")          { value = GEM;           }
+                                else if (string_data == "gel")          { value = GEL;           }
+                                else if (string_data == "geo")          { value = GEO;           }
+                                else if (string_data == "ore")          { value = ORE;           }
+                                else if (string_data == "metal")        { value = METAL;         }
+                                else if (string_data == "solid")        { value = SOLID;         }
+                                else if (string_data == "loose")        { value = LOOSE;         }
+                                else if (string_data == "boom")         { value = BOOM;          }
+                                else if (string_data == "logic")        { value = LOGIC;         }
+                                else if (string_data == "gizmo")        { value = GIZMO;         }
+                                else if (string_data == "platform")     { value = PLATFORM;      }
+                                else if (string_data == "plumbing")     { value = PLUMBING;      }
+                                else if (string_data == "pipes")        { value = PIPES;         }
+                                else if (string_data == "gutters")      { value = GUTTERS;       }
+                                else if (string_data == "plant")        { value = PLANT;         }
+                                else if (string_data == "plantproduct") { value = PLANT_PRODUCT; }
+                                else if (string_data == "critter")      { value = CRITTER;       }
+                                else if (string_data == "wall")         { value = WALL;          }
+                                else if (string_data == "egg")          { value = EGG;           }
                                 TYPE.push_back(value);
                             }
                             break;
