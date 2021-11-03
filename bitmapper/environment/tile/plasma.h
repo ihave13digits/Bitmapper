@@ -16,8 +16,8 @@ namespace tPlasma
         {
             case tTile::WATER : { tCell::replace[index] = tTile::AIR; } break;
             case tTile::AIR: { tCell::replace[dN] = tTile::FLAME; } break;
-            case tTile::ASH : { tCell::replace[index] = tTile::AIR; } break;
-            case tTile::SMOKE : { tCell::replace[index] = tTile::AIR; } break;
+            case tTile::ASH : { tCell::replace[index] = tTile::SMOKE; } break;
+            case tTile::SMOKE : { tCell::replace[index] = tTile::THICK_SMOKE; } break;
             case tTile::FIRE : { tCell::replace[index] = tTile::AIR; } break;
             case tTile::CHARCOAL : { if (chance < 250) tCell::replace[dN] = tTile::EMBER; } break;
             case tTile::CHARRED_WOOD: { if (chance < 250) tCell::replace[dN] = tTile::CHARCOAL; } break;
@@ -49,8 +49,8 @@ namespace tPlasma
         {
             case tTile::WATER : { tCell::replace[index] = tTile::AIR; } break;
             case tTile::AIR: { tCell::replace[index] = tTile::FLAME; } break;
-            case tTile::ASH : { tCell::replace[index] = tTile::AIR; } break;
-            case tTile::SMOKE : { tCell::replace[index] = tTile::AIR; } break;
+            case tTile::ASH : { tCell::replace[index] = tTile::SMOKE; } break;
+            case tTile::SMOKE : { tCell::replace[index] = tTile::THICK_SMOKE; } break;
             case tTile::CHARCOAL : { if (chance < 50) tCell::replace[dE] = tTile::EMBER; } break;
             case tTile::CHARRED_WOOD: { if (chance < 50) tCell::replace[dE] = tTile::CHARCOAL; } break;
             case tTile::OIL_FUMES: { if (chance < 250) tCell::replace[dE] = tTile::FIRE; } break;
@@ -67,8 +67,8 @@ namespace tPlasma
         {
             case tTile::WATER : { tCell::replace[index] = tTile::AIR; } break;
             case tTile::AIR: { tCell::replace[index] = tTile::FLAME; } break;
-            case tTile::ASH : { tCell::replace[index] = tTile::AIR; } break;
-            case tTile::SMOKE : { tCell::replace[index] = tTile::AIR; } break;
+            case tTile::ASH : { tCell::replace[index] = tTile::SMOKE; } break;
+            case tTile::SMOKE : { tCell::replace[index] = tTile::THICK_SMOKE; } break;
             case tTile::CHARCOAL : { if (chance < 50) tCell::replace[dW] = tTile::EMBER; } break;
             case tTile::CHARRED_WOOD: { if (chance < 50) tCell::replace[dW] = tTile::CHARCOAL; } break;
             case tTile::OIL_FUMES: { if (chance < 250) tCell::replace[dW] = tTile::FIRE; } break;
@@ -95,11 +95,11 @@ namespace tPlasma
             case tTile::AIR:
                 {
                     if (chance < 100) tCell::replace[dN] = tTile::FLARE;
-                    if (chance < 2) tCell::replace[index] = tTile::THICK_SMOKE;
-                    if (chance > 500) tCell::replace[index] = tTile::AIR;
+                    if (chance < 5) tCell::replace[index] = tTile::THICK_SMOKE;
+                    if (chance > 500) tCell::replace[index] = tTile::SMOKE;
                 } break;
-            case tTile::ASH : { tCell::replace[index] = tTile::AIR; } break;
-            case tTile::SMOKE : { tCell::replace[index] = tTile::AIR; } break;
+            case tTile::ASH : { tCell::replace[index] = tTile::THICK_SMOKE; } break;
+            case tTile::SMOKE : { tCell::replace[index] = tTile::THIN_SMOKE; } break;
             case tTile::CHARCOAL: { if (chance < 250) tCell::replace[dN] = tTile::EMBER; } break;
             case tTile::CHARRED_WOOD: { if (chance < 250) tCell::replace[dN] = tTile::CHARCOAL; } break;
             case tTile::OIL_FUMES: { if (chance < 250) tCell::replace[dN] = tTile::FIRE; } break;
@@ -120,10 +120,10 @@ namespace tPlasma
                     if (chance < 100) tCell::replace[dE] = tTile::FLARE;
                     if (chance < 5) tCell::replace[index] = tTile::SMOKE;
                     if (chance < 3) tCell::replace[index] = tTile::SPARK;
-                    if (chance > 500) tCell::replace[index] = tTile::AIR;
+                    if (chance > 500) tCell::replace[index] = tTile::THIN_SMOKE;
                 } break;
-            case tTile::ASH : { tCell::replace[index] = tTile::AIR; } break;
-            case tTile::SMOKE : { tCell::replace[index] = tTile::AIR; } break;
+            case tTile::ASH : { tCell::replace[index] = tTile::THICK_SMOKE; } break;
+            case tTile::SMOKE : { tCell::replace[index] = tTile::THIN_SMOKE; } break;
             case tTile::CHARCOAL: { if (chance < 50) tCell::replace[dE] = tTile::EMBER; } break;
             case tTile::CHARRED_WOOD: { if (chance < 50) tCell::replace[dE] = tTile::CHARCOAL; } break;
             case tTile::OIL_FUMES: { if (chance < 250) tCell::replace[dE] = tTile::FIRE; } break;
@@ -144,10 +144,10 @@ namespace tPlasma
                     if (chance < 100) tCell::replace[dW] = tTile::FLARE;
                     if (chance < 5) tCell::replace[index] = tTile::SMOKE;
                     if (chance < 3) tCell::replace[index] = tTile::SPARK;
-                    if (chance > 500) tCell::replace[index] = tTile::AIR;
+                    if (chance > 500) tCell::replace[index] = tTile::THIN_SMOKE;
                 } break;
-            case tTile::ASH : { tCell::replace[index] = tTile::AIR; } break;
-            case tTile::SMOKE : { tCell::replace[index] = tTile::AIR; } break;
+            case tTile::ASH : { tCell::replace[index] = tTile::THICK_SMOKE; } break;
+            case tTile::SMOKE : { tCell::replace[index] = tTile::THIN_SMOKE; } break;
             case tTile::CHARCOAL: { if (chance < 50) tCell::replace[dW] = tTile::EMBER; } break;
             case tTile::CHARRED_WOOD: { if (chance < 50) tCell::replace[dW] = tTile::CHARCOAL; } break;
             case tTile::OIL_FUMES: { if (chance < 250) tCell::replace[dW] = tTile::FIRE; } break;
@@ -172,8 +172,8 @@ namespace tPlasma
         {
             case tTile::WATER : { tCell::replace[index] = tTile::AIR; } break;
             case tTile::AIR: { tCell::replace[dN] = tTile::FIRE; } break;
-            case tTile::ASH : { tCell::replace[index] = tTile::AIR; } break;
-            case tTile::SMOKE : { tCell::replace[index] = tTile::AIR; } break;
+            case tTile::ASH : { tCell::replace[index] = tTile::THICK_SMOKE; } break;
+            case tTile::SMOKE : { tCell::replace[index] = tTile::THIN_SMOKE; } break;
             case tTile::CHARCOAL : { if (chance < 500) tCell::replace[dN] = tTile::EMBER; } break;
             case tTile::CHARRED_WOOD: { if (chance < 250) tCell::replace[dN] = tTile::CHARCOAL; } break;
             case tTile::OIL_FUMES: { if (chance < 250) tCell::replace[dN] = tTile::FIRE; } break;
@@ -190,8 +190,8 @@ namespace tPlasma
         {
             case tTile::WATER : { tCell::replace[index] = tTile::AIR; } break;
             case tTile::AIR: { tCell::replace[index] = tTile::FIRE; } break;
-            case tTile::ASH : { tCell::replace[index] = tTile::AIR; } break;
-            case tTile::SMOKE : { tCell::replace[index] = tTile::AIR; } break;
+            case tTile::ASH : { tCell::replace[index] = tTile::THICK_SMOKE; } break;
+            case tTile::SMOKE : { tCell::replace[index] = tTile::THIN_SMOKE; } break;
             case tTile::CHARCOAL : { if (chance < 250) tCell::replace[dE] = tTile::EMBER; } break;
             case tTile::CHARRED_WOOD: { if (chance < 250) tCell::replace[dE] = tTile::CHARCOAL; } break;
             case tTile::OIL_FUMES: { if (chance < 250) tCell::replace[dE] = tTile::FIRE; } break;
@@ -208,8 +208,8 @@ namespace tPlasma
         {
             case tTile::WATER : { tCell::replace[index] = tTile::AIR; } break;
             case tTile::AIR: { tCell::replace[index] = tTile::FIRE; } break;
-            case tTile::ASH : { tCell::replace[index] = tTile::AIR; } break;
-            case tTile::SMOKE : { tCell::replace[index] = tTile::AIR; } break;
+            case tTile::ASH : { tCell::replace[index] = tTile::THICK_SMOKE; } break;
+            case tTile::SMOKE : { tCell::replace[index] = tTile::THIN_SMOKE; } break;
             case tTile::CHARCOAL : { if (chance < 250) tCell::replace[dW] = tTile::EMBER; } break;
             case tTile::CHARRED_WOOD: { if (chance < 250) tCell::replace[dW] = tTile::CHARCOAL; } break;
             case tTile::OIL_FUMES: { if (chance < 250) tCell::replace[dW] = tTile::FIRE; } break;

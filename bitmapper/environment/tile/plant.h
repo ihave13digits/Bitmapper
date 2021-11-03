@@ -151,26 +151,10 @@ namespace tPlant
 
     void DeadLeaves(int _x, int _y, int index, char season)
     {
-        if (!tTool::DualCollision(_x, _y+1))
-        {
-            int rplc = (_y+1)*tCell::width+(_x);            // ░░░░░░
-            tCell::replace[rplc] = tCell::matrix[index];    // ░░▓▓░░
-            tCell::replace[index] = tTile::AIR;             // ░░██░░
-        }
-        else if (!tTool::DualCollision(_x-1, _y+1))
-        {
-            int rplc = (_y+1)*tCell::width+(_x-1);          // ░░░░░░
-            tCell::replace[rplc] = tCell::matrix[index];    // ░░▓▓░░
-            tCell::replace[index] = tTile::AIR;             // ██░░░░
-        }
-        else if (!tTool::DualCollision(_x+1, _y+1))
-        {
-            int rplc = (_y+1)*tCell::width+(_x+1);          // ░░░░░░
-            tCell::replace[rplc] = tCell::matrix[index];    // ░░▓▓░░
-            tCell::replace[index] = tTile::AIR;             // ░░░░██
-        }
-        else if (tCell::matrix[(_y+1)*tCell::width+(_x)] == tTile::SOIL)
-        { if (rand()%1000 < 25) tCell::replace[index] = tTile::SOIL; }
+        if (!tTool::DualCollision(_x, _y+1)) { int rplc = (_y+1)*tCell::width+(_x); tTool::Swap(index, rplc); }
+        else if (!tTool::DualCollision(_x-1, _y+1)) { int rplc = (_y+1)*tCell::width+(_x-1); tTool::Swap(index, rplc); }
+        else if (!tTool::DualCollision(_x+1, _y+1)) { int rplc = (_y+1)*tCell::width+(_x+1); tTool::Swap(index, rplc); }
+        else if (tCell::matrix[(_y+1)*tCell::width+(_x)] == tTile::SOIL) { if (rand()%1000 < 25) tCell::replace[index] = tTile::SOIL; }
     }
 
     void Stick(int _x, int _y, int index, char season)
@@ -461,7 +445,7 @@ namespace tPlant
     {
         int dT =  int( (_y-24) * tCell::width + (_x  ) );
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
-        //if (rand()%1000 < 25 && tCell::matrix[dN] != tTile::TRUNK) { tCell::replace[index] = tTile::MUD; }
+        //if (rand()%1000 < 25 && tCell::matrix[dT] != tTile::TRUNK) { tCell::replace[index] = tTile::MUD; }
         int proceed = 0;
         switch (season)
         {

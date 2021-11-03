@@ -10,5 +10,5 @@ int main()
         bitmapper.Start();
     }
 
-	return 0;//return engine::Start();
+	return 0;
 }

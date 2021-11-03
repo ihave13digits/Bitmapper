@@ -475,6 +475,7 @@ namespace new_world
     {
         srand(core::seed);
         ClearMatrix();
+        chaotic::GenerateNoise(core::seed);
         InitializeMatrix(100, 100);
         for (int i = 0; i < generation_steps; i++) { GeneratePreview(); }
         generation_step = 1;
@@ -486,6 +487,7 @@ namespace new_world
         for (int i = 0; i < generation_steps; i++)
         { if (generation_param[i][0] != tTile::AIR) is_data_valid = true; }
         if (!is_data_valid) PresetData();
+        chaotic::GenerateNoise(core::seed);
         InitializeMatrix(w, h);
         srand(core::seed);
         core::game_state = core::LOADING;

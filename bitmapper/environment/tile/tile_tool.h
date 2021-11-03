@@ -68,4 +68,7 @@ namespace tTool
         tCell::matrix[r] = tCell::replace[r]; tCell::matrix[i] = tCell::replace[i];
     }
 
+    void SoftSwap(int i, int r)
+    { tCell::replace[r] = tCell::matrix[i]; tCell::replace[i] = tCell::matrix[r]; }
+
 }

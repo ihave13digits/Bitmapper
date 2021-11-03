@@ -24,51 +24,51 @@ namespace tGrain
         int chance = rand()%10000;
         switch (tCell::matrix[dN])
         {
-            case tTile::WATER : { tCell::replace[index] = tTile::CHARCOAL; } break;
-            case tTile::AIR: { tCell::replace[dN] = tTile::FIRE; } break;
-            case tTile::ASH : { tCell::replace[index] = tTile::CHARCOAL; } break;
-            case tTile::THIN_SMOKE : { tCell::replace[index] = tTile::ASH; } break;
-            case tTile::SMOKE : { tCell::replace[index] = tTile::ASH; } break;
-            case tTile::THICK_SMOKE : { tCell::replace[index] = tTile::ASH; } break;
-            case tTile::CHARCOAL : { if (chance < 1000) tCell::replace[dN] = tTile::EMBER; } break;
-            case tTile::CHARRED_WOOD: { if (chance < 1000) tCell::replace[dN] = tTile::CHARCOAL; } break;
-            case tTile::WOOD: { if (chance < 500) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
-            case tTile::TRUNK: { if (chance < 500) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
-            case tTile::BRANCH: { if (chance < 500) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
-            case tTile::LEAVES: { if (chance < 500) tCell::replace[dN] = tTile::FIRE; } break;
+            case tTile::WATER        : { tCell::replace[index] = tTile::CHARCOAL; } break;
+            case tTile::AIR          : { tCell::replace[dN] = tTile::FIRE; } break;
+            case tTile::ASH          : { tCell::replace[index] = tTile::CHARCOAL; } break;
+            case tTile::THIN_SMOKE   : { if (chance < 10) tCell::replace[index] = tTile::ASH; } break;
+            case tTile::SMOKE        : { if (chance < 50) tCell::replace[index] = tTile::ASH; } break;
+            case tTile::THICK_SMOKE  : { if (chance < 250) tCell::replace[index] = tTile::ASH; } break;
+            case tTile::CHARCOAL     : { if (chance < 1000) tCell::replace[dN] = tTile::EMBER; } break;
+            case tTile::CHARRED_WOOD : { if (chance < 1000) tCell::replace[dN] = tTile::CHARCOAL; } break;
+            case tTile::WOOD         : { if (chance < 500) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
+            case tTile::TRUNK        : { if (chance < 500) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
+            case tTile::BRANCH       : { if (chance < 500) tCell::replace[dN] = tTile::CHARRED_WOOD; } break;
+            case tTile::LEAVES       : { if (chance < 500) tCell::replace[dN] = tTile::FIRE; } break;
         }
         switch (tCell::matrix[dS])
         {
-            case tTile::SMOKE : { tCell::replace[dS] = tTile::EMBER; } break;
-            case tTile::WATER : { tCell::replace[index] = tTile::AIR; } break;
-            case tTile::CHARCOAL : { if (chance < 500) tCell::replace[dS] = tTile::EMBER; } break;
-            case tTile::CHARRED_WOOD: { if (chance < 500) tCell::replace[dS] = tTile::CHARCOAL; } break;
-            case tTile::WOOD: { if (chance < 250) tCell::replace[dS] = tTile::CHARRED_WOOD; } break;
-            case tTile::TRUNK: { if (chance < 250) tCell::replace[dS] = tTile::CHARRED_WOOD; } break;
-            case tTile::BRANCH: { if (chance < 250) tCell::replace[dS] = tTile::CHARRED_WOOD; } break;
-            case tTile::LEAVES: { if (chance < 500) tCell::replace[dS] = tTile::FIRE; } break;
+            case tTile::SMOKE        : { tCell::replace[dS] = tTile::EMBER; } break;
+            case tTile::WATER        : { tCell::replace[index] = tTile::AIR; } break;
+            case tTile::CHARCOAL     : { if (chance < 500) tCell::replace[dS] = tTile::EMBER; } break;
+            case tTile::CHARRED_WOOD : { if (chance < 500) tCell::replace[dS] = tTile::CHARCOAL; } break;
+            case tTile::WOOD         : { if (chance < 250) tCell::replace[dS] = tTile::CHARRED_WOOD; } break;
+            case tTile::TRUNK        : { if (chance < 250) tCell::replace[dS] = tTile::CHARRED_WOOD; } break;
+            case tTile::BRANCH       : { if (chance < 250) tCell::replace[dS] = tTile::CHARRED_WOOD; } break;
+            case tTile::LEAVES       : { if (chance < 500) tCell::replace[dS] = tTile::FIRE; } break;
         }
         switch (tCell::matrix[dE])
         {
-            case tTile::WATER : { tCell::replace[index] = tTile::AIR; } break;
-            case tTile::AIR: { tCell::replace[dE] = tTile::FIRE; } break;
-            case tTile::CHARCOAL : { if (chance < 500) tCell::replace[dE] = tTile::EMBER; } break;
-            case tTile::CHARRED_WOOD: { if (chance < 500) tCell::replace[dE] = tTile::CHARCOAL; } break;
-            case tTile::WOOD: { if (chance < 250) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
-            case tTile::TRUNK: { if (chance < 250) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
-            case tTile::BRANCH: { if (chance < 250) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
-            case tTile::LEAVES: { if (chance < 500) tCell::replace[dE] = tTile::FIRE; } break;
+            case tTile::WATER        : { tCell::replace[index] = tTile::AIR; } break;
+            case tTile::AIR          : { tCell::replace[dE] = tTile::FIRE; } break;
+            case tTile::CHARCOAL     : { if (chance < 500) tCell::replace[dE] = tTile::EMBER; } break;
+            case tTile::CHARRED_WOOD : { if (chance < 500) tCell::replace[dE] = tTile::CHARCOAL; } break;
+            case tTile::WOOD         : { if (chance < 250) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
+            case tTile::TRUNK        : { if (chance < 250) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
+            case tTile::BRANCH       : { if (chance < 250) tCell::replace[dE] = tTile::CHARRED_WOOD; } break;
+            case tTile::LEAVES       : { if (chance < 500) tCell::replace[dE] = tTile::FIRE; } break;
         }
         switch (tCell::matrix[dW])
         {
-            case tTile::WATER : { tCell::replace[index] = tTile::AIR; } break;
-            case tTile::AIR: { tCell::replace[dW] = tTile::FIRE; } break;
-            case tTile::CHARCOAL : { if (chance < 500) tCell::replace[dW] = tTile::EMBER; } break;
-            case tTile::CHARRED_WOOD: { if (chance < 500) tCell::replace[dW] = tTile::CHARCOAL; } break;
-            case tTile::WOOD: { if (chance < 250) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
-            case tTile::TRUNK: { if (chance < 250) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
-            case tTile::BRANCH: { if (chance < 250) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
-            case tTile::LEAVES: { if (chance < 500) tCell::replace[dW] = tTile::FIRE; } break;
+            case tTile::WATER        : { tCell::replace[index] = tTile::AIR; } break;
+            case tTile::AIR          : { tCell::replace[dW] = tTile::FIRE; } break;
+            case tTile::CHARCOAL     : { if (chance < 500) tCell::replace[dW] = tTile::EMBER; } break;
+            case tTile::CHARRED_WOOD : { if (chance < 500) tCell::replace[dW] = tTile::CHARCOAL; } break;
+            case tTile::WOOD         : { if (chance < 250) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
+            case tTile::TRUNK        : { if (chance < 250) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
+            case tTile::BRANCH       : { if (chance < 250) tCell::replace[dW] = tTile::CHARRED_WOOD; } break;
+            case tTile::LEAVES       : { if (chance < 500) tCell::replace[dW] = tTile::FIRE; } break;
         }
 
         if (chance < 50) tCell::replace[index] = tTile::FIRE;
