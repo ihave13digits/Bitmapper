@@ -23,6 +23,7 @@
 #include "utility/platform.h"
 #include "utility/utility.h"
 #include "utility/data.h"
+#include "utility/rng.h"
 
 
 
@@ -99,12 +100,13 @@
 #include "item/tool/wand.h"
 #include "item/tool/wrench.h"
 
-// Inventory
-#include "item/inventory.h"
-
 // Item IDs
 #include "item/item.h"
 
+// Inventory
+#include "item/inventory.h"
+// Crafting
+#include "item/crafting.h"
 
 //
 ///  Entities

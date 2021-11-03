@@ -67,13 +67,13 @@ public:
     
     void InitializeGame()
     {
-        //
+        // Filesystem
         dataTool::GenerateDirectoryTree();
-        //
+        // Load Tiles
         tTile::LoadTileData();
-        //
+        // Init World Gen
         new_world::InitializeGenerationSteps();
-        //
+        // Init Blueprints
         iSystem::blueprints.InitializeMatrix();
         iSystem::blueprints.LoadData();
     }
@@ -254,7 +254,7 @@ public:
                 }
             }
             // Handle Range
-            int limit = 64;
+            int limit = 72;
             if (GetMouseX() < core::width/2-limit || GetMouseX() > core::width/2+limit ||
                 GetMouseY() < core::height/2-limit || GetMouseY() > core::height/2+limit)
             { return; }

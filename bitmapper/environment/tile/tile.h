@@ -46,6 +46,7 @@ namespace tTile
         MILK,
         MERCURY,
         OIL,
+        MAGMA,
         ACID,
         WATER,
         BRINE,
@@ -54,11 +55,12 @@ namespace tTile
         // Gel
         GUTS,
         ALGAE,
+        SLIME,
         HONEY,
-        MAGMA,
         LAVA,
         MUD,
         MUCK,
+        QUICKSAND,
         MOLTEN_SLAG,
         // Grain
         BROKEN_GLASS,
@@ -71,6 +73,7 @@ namespace tTile
         SILT,
         GRAVEL,
         ACORN,
+        PRICKLY_PEAR,
         CHARCOAL,
         // Gem
         JADE,
@@ -208,8 +211,11 @@ namespace tTile
         OLD_LEAVES,
         DRY_LEAVES,
         DEAD_LEAVES,
+        CACTUS,
+        CACTUS_ARM,
         GRASS,
         MOSS,
+        SEAWEED,
         SPIDERWORT,
         // Critter
         FROG,
@@ -220,6 +226,8 @@ namespace tTile
         HEDGEHOG,
         MOUSE,
         RAT,
+        FISH,
+        FISH_TAIL,
         SNAKE_HEAD,
         SNAKE,
         SNAKE_TAIL,
@@ -230,6 +238,7 @@ namespace tTile
         // Egg
         FROG_EGG,
         TOAD_EGG,
+        FISH_EGG,
         SNAKE_EGG,
         BIRD_EGG,
         // Wall

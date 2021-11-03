@@ -19,99 +19,33 @@ namespace tGas
     {
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
         int dW  = int( (_y  ) * tCell::width + (_x-1) );
-        int dS  = int( (_y+1) * tCell::width + (_x  ) );
-
         int chance = rand()%100;
-        switch (tCell::matrix[dS])
-        {
-            case tTile::AIR         : {                            tCell::matrix[index] = tTile::AIR; tCell::replace[index] = tTile::AIR;        } break;
-            case tTile::SMOKE       : { if (rand()%10 < 6)  { tCell::replace[dS] = tTile::THIN_SMOKE; tCell::replace[index] = tTile::AIR;        } } break;
-            case tTile::THICK_SMOKE : { if (rand()%100 < 4) { tCell::replace[dS] = tTile::THIN_SMOKE; tCell::replace[index] = tTile::THIN_SMOKE; } } break;
-        }
-        if (chance < 25)
-        {
-            switch (tCell::matrix[dE])
-            {
-                case tTile::AIR         : { tCell::replace[dE] = tTile::THIN_SMOKE; tCell::replace[index] = tTile::AIR;         } break;
-                case tTile::SMOKE       : { tCell::replace[dE] = tTile::THIN_SMOKE; tCell::replace[index] = tTile::SMOKE;       } break;
-                case tTile::THICK_SMOKE : { tCell::replace[dE] = tTile::THIN_SMOKE; tCell::replace[index] = tTile::THICK_SMOKE; } break;
-            }
-        }
-        else if (chance > 75)
-        {
-            switch (tCell::matrix[dW])
-            {
-                case tTile::AIR         : { tCell::replace[dW] = tTile::THIN_SMOKE; tCell::replace[index] = tTile::AIR;         } break;
-                case tTile::SMOKE       : { tCell::replace[dW] = tTile::THIN_SMOKE; tCell::replace[index] = tTile::SMOKE;       } break;
-                case tTile::THICK_SMOKE : { tCell::replace[dW] = tTile::THIN_SMOKE; tCell::replace[index] = tTile::THICK_SMOKE; } break;
-            }
-        }
+        if (chance < 20) { tCell::replace[index] = tTile::AIR; }
+        else if (chance < 40) { if (tCell::matrix[dE] == tTile::AIR) tTool::Swap(index, dE); }
+        else if (chance > 60) { if (tCell::matrix[dW] == tTile::AIR) tTool::Swap(index, dW); }
+        else if (chance > 80) { tCell::replace[index] = tTile::AIR; }
     }
 
     void Smoke(int _x, int _y, int index, char season)
     {
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
         int dW  = int( (_y  ) * tCell::width + (_x-1) );
-        int dS  = int( (_y+1) * tCell::width + (_x  ) );
-
         int chance = rand()%100;
-        switch (tCell::matrix[dS])
-        {
-            case tTile::AIR         : {                tCell::matrix[index] = tTile::THIN_SMOKE; tCell::replace[index] = tTile::THIN_SMOKE; } break;
-            case tTile::THIN_SMOKE  : { if (rand()%10 < 6)  { tCell::replace[dS] = tTile::SMOKE; tCell::replace[index] = tTile::THIN_SMOKE; } } break;
-            case tTile::THICK_SMOKE : { if (rand()%100 < 4) { tCell::replace[dS] = tTile::SMOKE; tCell::replace[index] = tTile::SMOKE;      } } break;
-        }
-        if (chance < 25)
-        {
-            switch (tCell::matrix[dE])
-            {
-                case tTile::AIR         : { tCell::replace[dE] = tTile::SMOKE; tCell::replace[index] = tTile::AIR;         } break;
-                case tTile::THIN_SMOKE  : { tCell::replace[dE] = tTile::SMOKE; tCell::replace[index] = tTile::THIN_SMOKE;  } break;
-                case tTile::THICK_SMOKE : { tCell::replace[dE] = tTile::SMOKE; tCell::replace[index] = tTile::THICK_SMOKE; } break;
-            }
-        }
-        else if (chance > 75)
-        {
-            switch (tCell::matrix[dW])
-            {
-                case tTile::AIR         : { tCell::replace[dW] = tTile::SMOKE; tCell::replace[index] = tTile::AIR;         } break;
-                case tTile::THIN_SMOKE  : { tCell::replace[dW] = tTile::SMOKE; tCell::replace[index] = tTile::THIN_SMOKE;  } break;
-                case tTile::THICK_SMOKE : { tCell::replace[dW] = tTile::SMOKE; tCell::replace[index] = tTile::THICK_SMOKE; } break;
-            }
-        }
+        if (chance < 20) { tCell::replace[index] = tTile::THIN_SMOKE; }
+        else if (chance < 40) { if (tCell::matrix[dE] == tTile::AIR) tTool::Swap(index, dE); }
+        else if (chance > 60) { if (tCell::matrix[dW] == tTile::AIR) tTool::Swap(index, dW); }
+        else if (chance > 80) { tCell::replace[index] = tTile::THIN_SMOKE; }
     }
 
     void ThickSmoke(int _x, int _y, int index, char season)
     {
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
         int dW  = int( (_y  ) * tCell::width + (_x-1) );
-        int dS  = int( (_y+1) * tCell::width + (_x  ) );
-
         int chance = rand()%100;
-        switch (tCell::matrix[dS])
-        {
-            case tTile::AIR        : {                     tCell::matrix[index] = tTile::THIN_SMOKE;  tCell::replace[index] = tTile::THIN_SMOKE; } break;
-            case tTile::THIN_SMOKE : { if (rand()%10 < 6)  { tCell::replace[dS] = tTile::THICK_SMOKE; tCell::replace[index] = tTile::THIN_SMOKE; } } break;
-            case tTile::SMOKE      : { if (rand()%100 < 4) { tCell::replace[dS] = tTile::THICK_SMOKE; tCell::replace[index] = tTile::SMOKE;      } } break;
-        }
-        if (chance < 25)
-        {
-            switch (tCell::matrix[dE])
-            {
-                case tTile::AIR        : { tCell::replace[dE] = tTile::THICK_SMOKE; tCell::replace[index] = tTile::AIR;        } break;
-                case tTile::THIN_SMOKE : { tCell::replace[dE] = tTile::THICK_SMOKE; tCell::replace[index] = tTile::THIN_SMOKE; } break;
-                case tTile::SMOKE      : { tCell::replace[dE] = tTile::THICK_SMOKE; tCell::replace[index] = tTile::SMOKE;      } break;
-            }
-        }
-        else if (chance > 75)
-        {
-            switch (tCell::matrix[dW])
-            {
-                case tTile::AIR        : { tCell::replace[dW] = tTile::THICK_SMOKE; tCell::replace[index] = tTile::AIR;        } break;
-                case tTile::THIN_SMOKE : { tCell::replace[dW] = tTile::THICK_SMOKE; tCell::replace[index] = tTile::THIN_SMOKE; } break;
-                case tTile::SMOKE      : { tCell::replace[dW] = tTile::THICK_SMOKE; tCell::replace[index] = tTile::SMOKE;      } break;
-            }
-        }
+        if (chance < 20) { tCell::replace[index] = tTile::SMOKE; }
+        else if (chance < 40) { if (tCell::matrix[dE] == tTile::AIR) tTool::Swap(index, dE); }
+        else if (chance > 60) { if (tCell::matrix[dW] == tTile::AIR) tTool::Swap(index, dW); }
+        else if (chance > 80) { tCell::replace[index] = tTile::SMOKE; }
     }
 
 
@@ -126,28 +60,28 @@ namespace tGas
         if (direction < 50)
         {
             if (!tTool::GasCollision(_x, _y-1))
-            { int rplc = (_y-1)*tCell::width+(_x); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
+            { int rplc = (_y-1)*tCell::width+(_x); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::SoftSwap(index, rplc); } }
             else if (!tTool::GasCollision(_x-1, _y-1))
-            { int rplc = (_y-1)*tCell::width+(_x-1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
+            { int rplc = (_y-1)*tCell::width+(_x-1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::SoftSwap(index, rplc); } }
             else if (!tTool::GasCollision(_x+1, _y-1))
-            { int rplc = (_y-1)*tCell::width+(_x+1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
+            { int rplc = (_y-1)*tCell::width+(_x+1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::SoftSwap(index, rplc); } }
             else if (!tTool::GasCollision(_x-1, _y) && tTool::GasCollision(_x+1, _y))
-            { int rplc = (_y)*tCell::width+(_x-1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
+            { int rplc = (_y)*tCell::width+(_x-1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::SoftSwap(index, rplc); } }
             else if (!tTool::GasCollision(_x+1, _y) && tTool::GasCollision(_x-1, _y))
-            { int rplc = (_y)*tCell::width+(_x+1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
+            { int rplc = (_y)*tCell::width+(_x+1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::SoftSwap(index, rplc); } }
         }
         else
         {
             if (!tTool::GasCollision(_x, _y-1))
-            { int rplc = (_y-1)*tCell::width+(_x); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
+            { int rplc = (_y-1)*tCell::width+(_x); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::SoftSwap(index, rplc); } }
             else if (!tTool::GasCollision(_x+1, _y-1))
-            { int rplc = (_y-1)*tCell::width+(_x+1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
+            { int rplc = (_y-1)*tCell::width+(_x+1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::SoftSwap(index, rplc); } }
             else if (!tTool::GasCollision(_x-1, _y-1))
-            { int rplc = (_y-1)*tCell::width+(_x-1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
+            { int rplc = (_y-1)*tCell::width+(_x-1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::SoftSwap(index, rplc); } }
             else if (!tTool::GasCollision(_x+1, _y) && tTool::GasCollision(_x-1, _y))
-            { int rplc = (_y)*tCell::width+(_x+1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
+            { int rplc = (_y)*tCell::width+(_x+1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::SoftSwap(index, rplc); } }
             else if (!tTool::GasCollision(_x-1, _y) && tTool::GasCollision(_x+1, _y))
-            { int rplc = (_y)*tCell::width+(_x-1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::Swap(index, rplc); } }
+            { int rplc = (_y)*tCell::width+(_x-1); if (tCell::matrix[index] != tCell::matrix[rplc]){ tTool::SoftSwap(index, rplc); } }
         }
 
         switch (current_cell)
