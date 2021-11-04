@@ -17,16 +17,13 @@ namespace tPlumbing
             if (tCell::matrix[dW] == tTile::PIPE) { tTool::Set(dW, tCell::matrix[dE]); tTool::Set(dE, tTile::PIPE); }
             if (tCell::matrix[dN] == tTile::PIPE) { tTool::Set(dW, tCell::matrix[dN]); tTool::Set(dN, tTile::PIPE); }
         }
-        
         else if (tTool::GetType(tCell::matrix[dW]) == tTile::PIPES)
         {
             if (tCell::matrix[dE] == tTile::PIPE) { tTool::Set(dE, tCell::matrix[dW]); tTool::Set(dW, tTile::PIPE); }
             if (tCell::matrix[dN] == tTile::PIPE) { tTool::Set(dE, tCell::matrix[dN]); tTool::Set(dN, tTile::PIPE); }
         }
-        
         else if (tTool::GetType(tCell::matrix[dS]) == tTile::PIPES)
-        { if (tCell::matrix[dN] == tTile::PIPE || tCell::matrix[dN] == tTile::PUMP || tCell::matrix[dN] == tTile::VALVE_OPEN)
-            { tTool::Set(dN, tCell::matrix[dS]); tTool::Set(dS, tTile::PIPE); } }
+        { if (tCell::matrix[dN] == tTile::PIPE) { tTool::Set(dN, tCell::matrix[dS]); tTool::Set(dS, tTile::PIPE); } }
         else if (tTool::GetType(tCell::matrix[dS]) == tTile::FLUID || tTool::GetType(tCell::matrix[dS]) == tTile::GEL)
         {
             switch (tCell::matrix[dS])
@@ -91,9 +88,15 @@ namespace tPlumbing
         int dW  = int( (_y  ) * tCell::width + (_x-1) );
 
         if (tTool::GetType(tCell::matrix[dE]) == tTile::GUTTERS)
-        { if (tCell::matrix[dW] == tTile::GUTTER) { tTool::Set(dW, tCell::matrix[dE]); tTool::Set(dE, tTile::GUTTER); } }
+        {
+            if (tCell::matrix[dW] == tTile::GUTTER) { tTool::Set(dW, tCell::matrix[dE]); tTool::Set(dE, tTile::GUTTER); }
+            if (tCell::matrix[dS] == tTile::GUTTER) { tTool::Set(dS, tCell::matrix[dE]); tTool::Set(dE, tTile::GUTTER); }
+        }
         else if (tTool::GetType(tCell::matrix[dW]) == tTile::GUTTERS)
-        { if (tCell::matrix[dE] == tTile::GUTTER) { tTool::Set(dE, tCell::matrix[dW]); tTool::Set(dW, tTile::GUTTER); } }
+        {
+            if (tCell::matrix[dE] == tTile::GUTTER) { tTool::Set(dE, tCell::matrix[dW]); tTool::Set(dW, tTile::GUTTER); }
+            if (tCell::matrix[dS] == tTile::GUTTER) { tTool::Set(dS, tCell::matrix[dW]); tTool::Set(dW, tTile::GUTTER); }
+        }
         else if (tTool::GetType(tCell::matrix[dN]) == tTile::GUTTERS)
         { if (tCell::matrix[dS] == tTile::GUTTER) { tTool::Set(dS, tCell::matrix[dN]); tTool::Set(dN, tTile::GUTTER); } }
         else if (tTool::GetType(tCell::matrix[dN]) == tTile::FLUID || tTool::GetType(tCell::matrix[dN]) == tTile::GEL)

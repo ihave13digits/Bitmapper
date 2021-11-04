@@ -282,8 +282,107 @@ namespace tCritter
         }
     }
 
+    void Fish(int _x, int _y, int index, char season)
+    {
+        int dN  = int( (_y-1) * tCell::width + (_x  ) );
+        int dNE = int( (_y-1) * tCell::width + (_x+1) );
+        int dNW = int( (_y-1) * tCell::width + (_x-1) );
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
+        int dSE = int( (_y+1) * tCell::width + (_x+1) );
+        int dSW = int( (_y+1) * tCell::width + (_x-1) );
+        int dE  = int( (_y  ) * tCell::width + (_x+1) );
+        int dW  = int( (_y  ) * tCell::width + (_x-1) );
+        int dSS = int( (_y+2) * tCell::width + (_x  ) );
+
+        int chance = rand()%1000;
+        int direction = rand()%100;
+
+        if (tCell::matrix[dS] == tTile::AIR)
+        {
+            tCell::replace[index] = tTile::AIR; tCell::replace[dS] = tTile::FISH;
+            if (tCell::matrix[dE] == tTile::FISH_TAIL) { tCell::replace[dE] = tTile::AIR; tCell::replace[dSE] = tTile::FISH_TAIL; }
+            if (tCell::matrix[dW] == tTile::FISH_TAIL) { tCell::replace[dW] = tTile::AIR; tCell::replace[dSW] = tTile::FISH_TAIL; }
+        }
+        if (chance < 750)
+        {
+            if (direction < 50)
+            {
+                if (rand()%1000 < 25 && tCell::matrix[dE] == tTile::FISH_TAIL && tCell::matrix[dW] == tTile::WATER)
+                { if (tCell::matrix[dE+1] != tTile::FISH && tCell::matrix[dE+1] != tTile::FISH_TAIL) tTool::Swap(index, dW); tTool::Swap(index, dE); }
+                else if (tCell::matrix[dE] == tTile::FISH_TAIL && tCell::matrix[dW] != tTile::WATER)
+                {
+                    if (tCell::matrix[dNE] == tTile::WATER) tTool::Swap(index, dNE);
+                    else if (tCell::matrix[dSE] == tTile::WATER) tTool::Swap(index, dSE);
+                }
+                else if (tCell::matrix[dS] == tTile::FISH_TAIL && tCell::matrix[dE] == tTile::WATER)
+                { if (tCell::matrix[dE+1] != tTile::FISH && tCell::matrix[dE+1] != tTile::FISH_TAIL) tTool::Swap(index, dE); }
+                else if (tCell::matrix[dN] == tTile::FISH_TAIL && tCell::matrix[dE] == tTile::WATER)
+                { if (tCell::matrix[dE+1] != tTile::FISH && tCell::matrix[dE+1] != tTile::FISH_TAIL) tTool::Swap(index, dE); }
+                else if (tCell::matrix[dE] == tTile::FISH_TAIL && tCell::matrix[dSW] == tTile::WATER && rand()%1000 < 500)
+                { if (tCell::matrix[dSW-1] != tTile::FISH && tCell::matrix[dSW-1] != tTile::FISH_TAIL) tTool::Swap(index, dSW); tTool::Swap(index, dE); }
+                else if (tCell::matrix[dE] == tTile::FISH_TAIL && tCell::matrix[dNW] == tTile::WATER)
+                { if (tCell::matrix[dNW-1] != tTile::FISH && tCell::matrix[dNW-1] != tTile::FISH_TAIL) tTool::Swap(index, dNW); tTool::Swap(index, dE); }
+                else if (tCell::matrix[dNE] == tTile::FISH_TAIL && tCell::matrix[dE] == tTile::WATER)
+                { if (tCell::matrix[dE+1] != tTile::FISH && tCell::matrix[dNE+1] != tTile::FISH) tTool::Swap(dE, dNE); }
+                else if (tCell::matrix[dSE] == tTile::FISH_TAIL && tCell::matrix[dE] == tTile::WATER)
+                { if (tCell::matrix[dE+1] != tTile::FISH && tCell::matrix[dSE+1] != tTile::FISH) tTool::Swap(dE, dSE); }
+                if (tCell::matrix[dW] == tTile::GUTS || tCell::matrix[dW] == tTile:: BLOOD) { tTool::Set(dW, tTile::FISH_EGG); }
+                if (tCell::matrix[dNW] == tTile::GUTS || tCell::matrix[dNW] == tTile:: BLOOD) { tTool::Set(dNW, tTile::FISH_EGG); }
+                if (tCell::matrix[dSW] == tTile::GUTS || tCell::matrix[dSW] == tTile:: BLOOD) { tTool::Set(dSW, tTile::FISH_EGG); }
+            }
+            else
+            {
+                if (rand()%1000 < 25 && tCell::matrix[dW] == tTile::FISH_TAIL && tCell::matrix[dE] == tTile::WATER)
+                { if (tCell::matrix[dW-1] != tTile::FISH && tCell::matrix[dW-1] != tTile::FISH_TAIL) tTool::Swap(index, dE); tTool::Swap(index, dW); }
+                else if (tCell::matrix[dW] == tTile::FISH_TAIL && tCell::matrix[dE] != tTile::WATER)
+                {
+                    if (tCell::matrix[dNW] == tTile::WATER) tTool::Swap(index, dNW);
+                    else if (tCell::matrix[dSW] == tTile::WATER) tTool::Swap(index, dSW);
+                }
+                else if (tCell::matrix[dS] == tTile::FISH_TAIL && tCell::matrix[dW] == tTile::WATER)
+                { if (tCell::matrix[dW-1] != tTile::FISH && tCell::matrix[dW-1] != tTile::FISH_TAIL) tTool::Swap(index, dW); }
+                else if (tCell::matrix[dN] == tTile::FISH_TAIL && tCell::matrix[dW] == tTile::WATER)
+                { if (tCell::matrix[dW-1] != tTile::FISH && tCell::matrix[dW-1] != tTile::FISH_TAIL) tTool::Swap(index, dW); }
+                else if (tCell::matrix[dW] == tTile::FISH_TAIL && tCell::matrix[dSE] == tTile::WATER && rand()%1000 < 500)
+                { if (tCell::matrix[dSE+1] != tTile::FISH && tCell::matrix[dSE+1] != tTile::FISH_TAIL) tTool::Swap(index, dSE); tTool::Swap(index, dW); }
+                else if (tCell::matrix[dW] == tTile::FISH_TAIL && tCell::matrix[dNE] == tTile::WATER)
+                { if (tCell::matrix[dNE+1] != tTile::FISH && tCell::matrix[dNE+1] != tTile::FISH_TAIL) tTool::Swap(index, dNE); tTool::Swap(index, dW); }
+                else if (tCell::matrix[dNW] == tTile::FISH_TAIL && tCell::matrix[dW] == tTile::WATER)
+                { if (tCell::matrix[dW-1] != tTile::FISH && tCell::matrix[dNW-1] != tTile::FISH) tTool::Swap(dW, dNW); }
+                else if (tCell::matrix[dSW] == tTile::FISH_TAIL && tCell::matrix[dW] == tTile::WATER)
+                { if (tCell::matrix[dW-1] != tTile::FISH && tCell::matrix[dSW-1] != tTile::FISH) tTool::Swap(dW, dSW); }
+                if (tCell::matrix[dE] == tTile::GUTS || tCell::matrix[dE] == tTile:: BLOOD) { tTool::Set(dE, tTile::FISH_EGG); }
+                if (tCell::matrix[dNE] == tTile::GUTS || tCell::matrix[dNE] == tTile:: BLOOD) { tTool::Set(dNE, tTile::FISH_EGG); }
+                if (tCell::matrix[dSE] == tTile::GUTS || tCell::matrix[dSE] == tTile:: BLOOD) { tTool::Set(dSE, tTile::FISH_EGG); }
+            }
+        }
+        if (tCell::matrix[dN] == tTile::WATER && tCell::matrix[dS] == tTile::WATER &&
+            tCell::matrix[dE] == tTile::WATER && tCell::matrix[dW] == tTile::WATER &&
+            tCell::matrix[dNE] == tTile::WATER && tCell::matrix[dNW] == tTile::WATER &&
+            tCell::matrix[dSE] == tTile::WATER && tCell::matrix[dSW] == tTile::WATER)
+        { tTool::Set(index, tTile::GUTS); }
+    }
+
+    void FishTail(int _x, int _y, int index, char season)
+    {
+        int dN  = int( (_y-1) * tCell::width + (_x  ) );
+        int dNE = int( (_y-1) * tCell::width + (_x+1) );
+        int dNW = int( (_y-1) * tCell::width + (_x-1) );
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
+        int dSE = int( (_y+1) * tCell::width + (_x+1) );
+        int dSW = int( (_y+1) * tCell::width + (_x-1) );
+        int dE  = int( (_y  ) * tCell::width + (_x+1) );
+        int dW  = int( (_y  ) * tCell::width + (_x-1) );
+
+        if (tCell::matrix[dN] == tTile::WATER && tCell::matrix[dS] == tTile::WATER &&
+            tCell::matrix[dE] == tTile::WATER && tCell::matrix[dW] == tTile::WATER &&
+            tCell::matrix[dNE] == tTile::WATER && tCell::matrix[dNW] == tTile::WATER &&
+            tCell::matrix[dSE] == tTile::WATER && tCell::matrix[dSW] == tTile::WATER)
+        { tTool::Set(index, tTile::BLOOD); }
+    }
+
     /*
-    void Snake()
+    void Snake(int _x, int _y, int index, char season)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
@@ -311,12 +410,14 @@ namespace tCritter
     {
         switch (current_cell)
         {
-            case tTile::TOAD :     {     Toad(_x, _y, index, season); } break;
-            case tTile::FROG :     {     Frog(_x, _y, index, season); } break;
-            case tTile::RAT :      {      Rat(_x, _y, index, season); } break;
-            case tTile::MOLE :     {     Mole(_x, _y, index, season); } break;
-            case tTile::MOUSE :    {    Mouse(_x, _y, index, season); } break;
-            case tTile::HEDGEHOG : { Hedgehog(_x, _y, index, season); } break;
+            case tTile::TOAD      : {     Toad(_x, _y, index, season); } break;
+            case tTile::FROG      : {     Frog(_x, _y, index, season); } break;
+            case tTile::FISH      : {     Fish(_x, _y, index, season); } break;
+            case tTile::FISH_TAIL : { FishTail(_x, _y, index, season); } break;
+            case tTile::RAT       : {      Rat(_x, _y, index, season); } break;
+            case tTile::MOLE      : {     Mole(_x, _y, index, season); } break;
+            case tTile::MOUSE     : {    Mouse(_x, _y, index, season); } break;
+            case tTile::HEDGEHOG  : { Hedgehog(_x, _y, index, season); } break;
         }
     }
 

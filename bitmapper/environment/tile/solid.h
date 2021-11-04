@@ -61,6 +61,7 @@ namespace tSolid
         if (tCell::matrix[dW] == tTile::CALDERA) { if (rand()%10000 < 25) tCell::replace[index] = tTile::LAVA; }
         if (tCell::matrix[dS] == tTile::LAVA && tCell::matrix[dE] == tTile::LAVA && tCell::matrix[dW] == tTile::LAVA)
         { if (rand()%10000 < 25) tCell::replace[index] = tTile::LAVA; }
+        if (tCell::matrix[dS] == tTile::MAGMA) { if (rand()%10000 < 50) tCell::replace[index] = tTile::LAVA; }
     }
 
 

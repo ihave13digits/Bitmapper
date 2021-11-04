@@ -20,6 +20,7 @@ namespace tGel
 
     void Lava(int _x, int _y, int index, char season)
     {
+        int dNN = int( (_y-2) * tCell::width + (_x  ) );
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
@@ -91,12 +92,13 @@ namespace tGel
         if (tCell::matrix[dSS] != tTile::LAVA || tCell::matrix[dE+1] != tTile::LAVA || tCell::matrix[dW-1] != tTile::LAVA)
         {
             int n = 0;
-            if (tCell::matrix[dN] != tTile::LAVA) n++;
-            if (tCell::matrix[dS] != tTile::LAVA) n++;
-            if (tCell::matrix[dE] != tTile::LAVA) n++;
-            if (tCell::matrix[dW] != tTile::LAVA) n++;
+            if (tCell::matrix[dN] != tTile::LAVA && tCell::matrix[dN] != tTile::MAGMA) n++;
+            if (tCell::matrix[dS] != tTile::LAVA && tCell::matrix[dS] != tTile::MAGMA) n++;
+            if (tCell::matrix[dE] != tTile::LAVA && tCell::matrix[dE] != tTile::MAGMA) n++;
+            if (tCell::matrix[dW] != tTile::LAVA && tCell::matrix[dW] != tTile::MAGMA) n++;
             { if (n > 2 && rand()%1000 < 15) tCell::replace[index] = tTile::LAVA_ROCK; }
         }
+        if (tCell::matrix[dNN] == tTile::MAGMA) { if (rand()%1000 < 5) tCell::replace[index] = tTile::MAGMA; }
     }
 
 
