@@ -226,6 +226,7 @@ namespace tTile
         SEAWEED,
         SPIDERWORT,
         // Critter
+        CRAB,
         FROG,
         FROG_LEGS,
         TOAD,
@@ -244,6 +245,7 @@ namespace tTile
         BAT_WING,
         BAT,
         // Egg
+        CRAB_EGG,
         FROG_EGG,
         TOAD_EGG,
         FISH_EGG,
