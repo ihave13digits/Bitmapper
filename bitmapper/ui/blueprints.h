@@ -3,14 +3,15 @@ class Blueprints
 
 public:
 
+    uint8_t size = 128;
     std::vector<uint8_t> matrix;
     std::vector<std::string> names;
     std::string selected = "";
 
 
 
-    void InitializeMatrix() { for (int i = 0; i < 128*128; i++) { matrix.push_back(0); } }
-    void ClearMatrix() { for (int i = 0; i < 128*128; i++) { matrix[i] = 0; } }
+    void InitializeMatrix() { for (int i = 0; i < size*size; i++) { matrix.push_back(0); } }
+    void ClearMatrix() { for (int i = 0; i < size*size; i++) { matrix[i] = 0; } }
     bool UpdateNames(std::string n) { for (int i = 0; i < names.size(); i++) { if (names[i] == n) { return true;} } names.push_back(n); return false; }
 
     void SaveData(std::string data_dir="0")
@@ -23,7 +24,7 @@ public:
             if (data_file.is_open())
             {
                 data_file << selected;
-                for (int i = 0; i < 128*128; i++)
+                for (int i = 0; i < size*size; i++)
                 { data_file << "," << std::to_string(matrix[i]); }
                 data_file << "\n";
                 data_file.close();
