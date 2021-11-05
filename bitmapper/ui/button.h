@@ -2,13 +2,13 @@ class Button
 {
 public:
 
-    int x = 0;
-    int y = 0;
+    float x;
+    float y;
 
-    int width = 0;
-    int height = 0;
+    float width;
+    float height;
 
-    float font = 0.0;
+    float font;
     std::string text = "";
 
     void Setup(int X, int Y, int W, int H, float fnt, std::string txt)
@@ -28,12 +28,12 @@ public:
 
     float TextX()
     {
-        return float( (x + ((width/2)) - ((text.size())*(4*font))) );
+        return float( (x + ((width/2.0)) - (float(text.size())*(4.0*font))) );
     }
 
     float TextY()
     {
-        return float( y + (height/2) - (4*font) );
+        return float( y + (height/2.0) - (4.0*font) );
     }
     
     bool IsColliding(int X, int Y)

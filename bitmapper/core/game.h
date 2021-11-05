@@ -619,7 +619,7 @@ public:
             int y = iSystem::sky.clouds[i][1];
             FillCircle(x, y, iSystem::sky.clouds[i][2], olc::Pixel(iSystem::sky.r, iSystem::sky.g, iSystem::sky.b, 4+(8*iSystem::sky.time)));
         }
-        if (iSystem::sky.humidity > iSystem::sky.cloudcount/4)
+        if (iSystem::sky.humidity > iSystem::sky.cloudcount/4 && core::game_state == core::PLAYING)
         {
             if (rand()%iSystem::sky.cloudcount < iSystem::sky.humidity)
             {
@@ -1120,7 +1120,7 @@ public:
 
     }
 
-    void StatePaused()
+    void StatePaused()//float fElapsedTime)
     {
         if (GetKey(menu_pause).bPressed) core::game_state = core::PLAYING;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::INVENTORY;
@@ -1137,8 +1137,8 @@ public:
         {
             iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2);
         }
-        DrawSky();
-        DrawTerrain();
+        //core::game_tick += fElapsedTime;
+        //if (core::game_tick > core::tick_delay) { DrawSky(); DrawTerrain(); }
         DrawPlayer();
         HotbarInput();
         UseHotbar();
@@ -1216,18 +1216,28 @@ public:
         }
         SetPixelMode(olc::Pixel::NORMAL);
         //
+        UpdateMouse();
         if (hovered_value >= 0) DrawTileName(GetMouseX()+4, GetMouseY(), hovered_value);
-        if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
+        if (GetKey(menu_pause).bReleased) { core::game_state = core::PAUSED; }
         if (GetKey(player_up).bReleased) { if (tile_y > 0) tile_y--; }
         if (GetKey(player_down).bReleased) { if (tile_y < tTile::total_tiles) tile_y++; }
         if (GetKey(ui_left).bPressed || GetKey(player_left).bPressed) { if (core::grid_subdivision > 1) core::grid_subdivision /= 2; }
         if (GetKey(ui_right).bPressed || GetKey(player_right).bPressed) { if (core::grid_subdivision < 8) core::grid_subdivision *= 2; }
         if (GetKey(toggle_grid).bPressed) { core::show_grid = !core::show_grid; }
-        // Place Tiles
-        if (GetMouse(0).bHeld)
+        // Flood Fill
+        if (ShiftKey() && GetMouse(0).bPressed)
         {
+            int _x = GetMouseX() - 125;
+            int _y = GetMouseY() - 4;
             if (GetMouseX() > 124 && GetMouseX() < 253 &&
                 GetMouseY() > 3 && GetMouseY() < 131)
+            { iSystem::blueprints.FloodFill(_x, _y, iSystem::player.hotbar[core::selected_hotbar][1]);}
+        }
+        // Place Tiles
+        else if (GetMouse(0).bHeld && !ShiftKey())
+        {
+            if (GetMouseX() > 124 && GetMouseX() < 253 &&
+                GetMouseY() > 3 && GetMouseY() < 132)
             {
                 int _x = GetMouseX() - 125;
                 int _y = GetMouseY() - 4;
@@ -1285,6 +1295,7 @@ public:
         }
         if (GetKey(player_up).bReleased) { if (blueprint_y > 0) blueprint_y--; }
         if (GetKey(player_down).bReleased) { if (blueprint_y < std::max(name_size-8, 0)) blueprint_y++; }
+        if (GetKey(menu_pause).bReleased) { core::game_state = core::BLUEPRINT; }
     }
 
     void StateNameBlueprint()
@@ -1298,6 +1309,7 @@ public:
             input_string = "";
             core::game_state = core::BLUEPRINT;
         }
+        if (GetKey(menu_pause).bReleased) { core::game_state = core::BLUEPRINT; }
     }
 
     void StateCrafting()
