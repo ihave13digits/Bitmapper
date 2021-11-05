@@ -167,6 +167,9 @@ namespace new_world
 
     void PresetData()
     {
+        //struct Preset { public: int data[13];};
+        //std::vector<Preset> preset_data;
+
         generation_steps = 62;
         int preset_data[62][13] = {
             // tile,                mode,bio,dns,itr,  x,     X,   y,   Y,  n,   s,   e,   w

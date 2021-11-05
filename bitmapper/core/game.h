@@ -1122,23 +1122,23 @@ public:
 
     void StatePaused()//float fElapsedTime)
     {
+        bool needs_update = false;
         if (GetKey(menu_pause).bPressed) core::game_state = core::PLAYING;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::INVENTORY;
         if (GetKey(menu_blueprint).bPressed) core::game_state = core::BLUEPRINT;
         
-        if (GetKey(ui_left).bPressed || GetKey(player_left).bPressed) { if (core::grid_subdivision > 1) core::grid_subdivision /= 2; }
-        if (GetKey(ui_right).bPressed || GetKey(player_right).bPressed) { if (core::grid_subdivision < 8) core::grid_subdivision *= 2; }
-        if (GetKey(toggle_grid).bPressed) { core::show_grid = !core::show_grid; }
+        if (GetKey(ui_left).bPressed || GetKey(player_left).bPressed) { if (core::grid_subdivision > 1) core::grid_subdivision /= 2; needs_update = true; }
+        if (GetKey(ui_right).bPressed || GetKey(player_right).bPressed) { if (core::grid_subdivision < 8) core::grid_subdivision *= 2; needs_update = true; }
+        if (GetKey(toggle_grid).bPressed) { core::show_grid = !core::show_grid; needs_update = true; }
 
         if (iSystem::player.state == iSystem::player.DEAD) return;
 
-        if (CtrlKey() && GetKey(olc::Key::V).bPressed) { iSystem::PasteBlueprints(GetOffsetX(), GetOffsetY()); }
+        if (CtrlKey() && GetKey(olc::Key::V).bPressed) { iSystem::PasteBlueprints(GetOffsetX(), GetOffsetY()); needs_update = true; }
         if (GetKey(ui_select).bPressed)
         {
-            iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2);
+            iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2); needs_update = true;
         }
-        //core::game_tick += fElapsedTime;
-        //if (core::game_tick > core::tick_delay) { DrawSky(); DrawTerrain(); }
+        if (needs_update) { DrawSky(); DrawTerrain(); }
         DrawPlayer();
         HotbarInput();
         UseHotbar();
@@ -1216,11 +1216,10 @@ public:
         }
         SetPixelMode(olc::Pixel::NORMAL);
         //
-        UpdateMouse();
         if (hovered_value >= 0) DrawTileName(GetMouseX()+4, GetMouseY(), hovered_value);
         if (GetKey(menu_pause).bReleased) { core::game_state = core::PAUSED; }
-        if (GetKey(player_up).bReleased) { if (tile_y > 0) tile_y--; }
-        if (GetKey(player_down).bReleased) { if (tile_y < tTile::total_tiles) tile_y++; }
+        if (GetKey(player_up).bReleased || GetMouseWheel() > 0) { if (tile_y > 0) tile_y--; }
+        if (GetKey(player_down).bReleased || GetMouseWheel() < 0) { if (tile_y < tTile::total_tiles/cols) tile_y++; }
         if (GetKey(ui_left).bPressed || GetKey(player_left).bPressed) { if (core::grid_subdivision > 1) core::grid_subdivision /= 2; }
         if (GetKey(ui_right).bPressed || GetKey(player_right).bPressed) { if (core::grid_subdivision < 8) core::grid_subdivision *= 2; }
         if (GetKey(toggle_grid).bPressed) { core::show_grid = !core::show_grid; }
@@ -1239,8 +1238,8 @@ public:
             if (GetMouseX() > 124 && GetMouseX() < 253 &&
                 GetMouseY() > 3 && GetMouseY() < 132)
             {
-                int _x = GetMouseX() - 125;
-                int _y = GetMouseY() - 4;
+                int _x = core::mouse_x - 125;
+                int _y = core::mouse_y - 4;
                 iSystem::blueprints.matrix[_y*128+_x] = iSystem::player.hotbar[core::selected_hotbar][1];
             }
             if (clear_print.IsColliding(core::mouse_x, core::mouse_y)) { iSystem::blueprints.ClearMatrix(); }
@@ -1332,13 +1331,13 @@ public:
         if (core::pause_state == core::psTOOLS)   { DrawTools();      DrawLine(147, 34, 175, 34, button_color); }
         if (core::pause_state == core::psEFFECTS) { DrawEffects();    DrawLine(180, 34, 208, 34, button_color); }
 
-        if (GetKey(player_up).bReleased)
+        if (GetKey(player_up).bReleased || GetMouseWheel() > 0)
         {
             if (core::pause_state == core::psTILES && tile_y > 0) tile_y--;
         }
-        if (GetKey(player_down).bReleased)
+        if (GetKey(player_down).bReleased || GetMouseWheel() < 0)
         {
-            if (core::pause_state == core::psTILES && tile_y < tTile::total_tiles) tile_y++;
+            if (core::pause_state == core::psTILES && tile_y < tTile::total_tiles/16) tile_y++;
         }
 
         Button btiles = Button();     btiles.Setup(48, 24, 28, 8, 0.25, "Tiles");
