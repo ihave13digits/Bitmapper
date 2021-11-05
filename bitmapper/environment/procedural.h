@@ -493,7 +493,7 @@ namespace new_world
         chaotic::GenerateNoise(core::seed);
         InitializeMatrix(w, h);
         srand(core::seed);
-        core::game_state = core::LOADING;
+        core::game_state = core::MAKE_WORLD;
     }
 
     void RandomizeData()

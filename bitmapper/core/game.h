@@ -16,40 +16,31 @@ public:
     int input_value = 0;
     std::string input_string;
     char save_slot = 0;
-
     char tile_y = 0;
     char wall_y = 0;
     char tool_y = 0;
     char effect_y = 0;
     char blueprint_y;
-
     int world_width = 4096;
     int world_height = 2048;
-
     Icon icon = Icon();
-
     // Control Presets
-
     olc::Key player_up = olc::Key::W;
     olc::Key player_down = olc::Key::S;
     olc::Key player_left = olc::Key::A;
     olc::Key player_right = olc::Key::D;
     olc::Key player_min = olc::Key::Q;
     olc::Key player_max = olc::Key::E;
-
     olc::Key ui_up = olc::Key::UP;
     olc::Key ui_down = olc::Key::DOWN;
     olc::Key ui_left = olc::Key::LEFT;
     olc::Key ui_right = olc::Key::RIGHT;
     olc::Key ui_select = olc::Key::ENTER;
-
     olc::Key toggle_grid = olc::Key::G;
-
     olc::Key menu_main = olc::Key::HOME;
     olc::Key menu_inventory = olc::Key::TAB;
     olc::Key menu_blueprint = olc::Key::B;
     olc::Key menu_pause = olc::Key::ESCAPE;
-
     // Color Presets
     olc::Pixel hud_color = olc::Pixel(64, 64, 64);
     olc::Pixel hud_select_color = olc::Pixel(255, 255, 255);
@@ -178,21 +169,19 @@ public:
         if (GetKey(olc::Key::K9).bPressed) { core::selected_hotbar = 8; }
     }
 
-    int GetOffsetX()
+    void HotbarScroll()
     {
-        return (core::mouse_x+((iSystem::player.x-(iSystem::player.height/2))-(core::width/2)));
+        if (GetMouseWheel() < 0) { if (core::selected_hotbar < 8) core::selected_hotbar++; }
+        if (GetMouseWheel() > 0) { if (core::selected_hotbar > 0) core::selected_hotbar--;}
     }
-    int GetOffsetY()
-    {
-        return (core::mouse_y+((iSystem::player.y-(iSystem::player.height-1))-(core::height/2)));
-    }
+
+    int GetOffsetX() { return (core::mouse_x+((iSystem::player.x-(iSystem::player.height/2))-(core::width/2))); }
+    int GetOffsetY() { return (core::mouse_y+((iSystem::player.y-(iSystem::player.height-1))-(core::height/2))); }
 
     void UpdateMouse()
     {
-        int old_x = core::mouse_x;
-        int old_y = core::mouse_y;
-        core::mouse_x = GetMouseX();
-        core::mouse_y = GetMouseY();
+        int old_x = core::mouse_x; int old_y = core::mouse_y;
+        core::mouse_x = GetMouseX(); core::mouse_y = GetMouseY();
         if (GetKey(olc::Key::CTRL).bHeld)
         {
             if (GetKey(olc::Key::X).bHeld) { core::mouse_x = old_x; }
@@ -206,11 +195,7 @@ public:
 
     bool AutoJump(int d)
     {
-        int x = iSystem::player.x;
-        int y = iSystem::player.y;
-
-        bool can_jump = false;
-
+        int x = iSystem::player.x; int y = iSystem::player.y; bool can_jump = false;
         if (d == 1)  { if (tTool::IsColliding(x+1, y) && !tTool::IsColliding(x+1, y-1)) { can_jump = true; } }
         if (d == -1) { if (tTool::IsColliding(x-2, y) && !tTool::IsColliding(x-2, y-1)) { can_jump = true; } }
         return can_jump;
@@ -296,16 +281,10 @@ public:
     //
 
     void DrawTileName(float x, float y, int tile)
-    {
-        std::string text = tTile::NAME[tile];
-        DrawStringDecal({ x,y }, text, text_color, {0.25, 0.25});
-    }
+    { std::string text = tTile::NAME[tile]; DrawStringDecal({ x,y }, text, text_color, {0.25, 0.25}); }
 
     void DrawPanel(int x, int y, int w, int h)
-    {
-        FillRect({x+1, y+1}, {w-1, h-1}, panel_color);
-        DrawRect({x, y}, {w, h}, border_color);
-    }
+    { FillRect({x+1, y+1}, {w-1, h-1}, panel_color); DrawRect({x, y}, {w, h}, border_color); }
 
     void DrawButton(Button b)
     {
@@ -317,27 +296,17 @@ public:
 
     void ProgressBar(int x, int y, int minv, int maxv, int W, int R=255, int G=255, int B=255, int r=64, int g=64, int b=64)
     {
-        float completed = float(minv)/float(maxv);
-        int x2 = W*completed;
-        DrawLine(x, y, x+W, y, olc::Pixel(r, g, b));
-        DrawLine(x, y, x+x2, y, olc::Pixel(R, G, B));
+        float completed = float(minv)/float(maxv); int x2 = W*completed;
+        DrawLine(x, y, x+W, y, olc::Pixel(r, g, b)); DrawLine(x, y, x+x2, y, olc::Pixel(R, G, B));
     }
     
     void DrawChunkGrid()
     {
         if (!core::show_grid) return;
-        int size = iSystem::world.chunk_size;
-        int sub = size/core::grid_subdivision;
-        int _x = iSystem::player.x % (sub);
-        int _y = iSystem::player.y % (sub);
-        for (int y = 0; y < core::height+size; y += sub)
-        {
-            DrawLine({0-_x, y-_y}, {core::width-_x+size, y-_y}, olc::Pixel(grid_color));
-        }
-        for (int x = 0; x < core::width+size; x += sub)
-        {
-            DrawLine({x-_x, 0-_y}, {x-_x, core::height-_y+size}, olc::Pixel(grid_color));
-        }
+        int size = iSystem::world.chunk_size; int sub = size/core::grid_subdivision;
+        int _x = iSystem::player.x % (sub); int _y = iSystem::player.y % (sub);
+        for (int y = 0; y < core::height+size; y += sub) { DrawLine({0-_x, y-_y}, {core::width-_x+size, y-_y}, olc::Pixel(grid_color)); }
+        for (int x = 0; x < core::width+size; x += sub) { DrawLine({x-_x, 0-_y}, {x-_x, core::height-_y+size}, olc::Pixel(grid_color)); }
     }
 
     void DrawIcon(int x, int y, int tile_type, int tile_value)
@@ -457,7 +426,6 @@ public:
             }
         }
         SetPixelMode(olc::Pixel::NORMAL);
-
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < cols; x++)
@@ -552,10 +520,7 @@ public:
                     hovered_value = y*cols+x+(tile_y*16);
                     DrawRect(b.x, b.y, b.width, b.height, select_color);
                     if (GetMouse(0).bReleased)
-                    {
-                        iSystem::player.hotbar[core::selected_hotbar][0] = itemID::TILE;
-                        iSystem::player.hotbar[core::selected_hotbar][1] = std::stoi(b.text);
-                    }
+                    { iSystem::player.hotbar[core::selected_hotbar][0] = itemID::TILE; iSystem::player.hotbar[core::selected_hotbar][1] = std::stoi(b.text); }
                 }
             }
         }
@@ -573,7 +538,6 @@ public:
     void DrawSky()
     {
         if (iSystem::player.status != iSystem::player.TRIP) Clear(olc::Pixel(iSystem::sky.R, iSystem::sky.G, iSystem::sky.B));
-        
         if (iSystem::sky.starlight >= 0)
         {
             SetPixelMode(olc::Pixel::ALPHA);
@@ -602,7 +566,7 @@ public:
             FillCircle(iSystem::sky.moonx, iSystem::sky.moony, iSystem::sky.moon*1.3, olc::Pixel(255, 255, 255, 20));
             FillCircle(iSystem::sky.moonx, iSystem::sky.moony, iSystem::sky.moon*1.4, olc::Pixel(255, 255, 255, 16));
             FillCircle(iSystem::sky.moonx, iSystem::sky.moony, iSystem::sky.moon*1.5, olc::Pixel(255, 255, 255, 12));
-
+            //
             FillCircle(iSystem::sky.moonx, iSystem::sky.moony, iSystem::sky.moon*0.95, olc::Pixel(220, 220, 220));
             FillCircle(iSystem::sky.moonx-2, iSystem::sky.moony+1, iSystem::sky.moon/2, olc::Pixel(195, 195, 195));
             FillCircle(iSystem::sky.moonx+3, iSystem::sky.moony+3, iSystem::sky.moon/2, olc::Pixel(195, 195, 195));
@@ -647,12 +611,10 @@ public:
                     int v2 = tCell::matrix[(y+Y)*tCell::width+(x+X+1)];
                     int v3 = tCell::matrix[(y+Y)*tCell::width+(x+X)+2];
                     int v4 = tCell::matrix[(y+Y)*tCell::width+(x+X)+3];
-
                     float s1 = 1.0f-std::min(std::max(tTool::Neighbors(x+X, y+Y), 0.0f), 1.0f);
                     float s2 = 1.0f-std::min(std::max(tTool::Neighbors(x+X+1, y+Y), 0.0f), 1.0f);
                     float s3 = 1.0f-std::min(std::max(tTool::Neighbors(x+X+2, y+Y), 0.0f), 1.0f);
                     float s4 = 1.0f-std::min(std::max(tTool::Neighbors(x+X+3, y+Y), 0.0f), 1.0f);
-
                     Draw(x, y,   olc::Pixel(uint8_t(tTile::R[v1]*s1), uint8_t(tTile::G[v1]*s1), uint8_t(tTile::B[v1]*s1), tTile::A[v1]));
                     Draw(x+1, y, olc::Pixel(uint8_t(tTile::R[v2]*s2), uint8_t(tTile::G[v2]*s2), uint8_t(tTile::B[v2]*s2), tTile::A[v2]));
                     Draw(x+2, y, olc::Pixel(uint8_t(tTile::R[v3]*s3), uint8_t(tTile::G[v3]*s3), uint8_t(tTile::B[v3]*s3), tTile::A[v3]));
@@ -724,18 +686,15 @@ public:
     void DrawHUD()
     {
         float font = 0.25;
-
         int offset_x = GetOffsetX();
         int offset_y = GetOffsetY();
         int lookindex = offset_y*tCell::width+offset_x;
-
         std::string health = std::to_string(iSystem::player.hp)+"/"+std::to_string(iSystem::player.HP);
         std::string lookingat = "Air";
         std::string selectedtile = tTile::NAME[core::selected_tile];
         std::string selectedcount = "";
         std::string collision_at = std::to_string(tTool::Collision(offset_x, offset_y));
         std::string chunk_pos = std::to_string(iSystem::PlayerChunkX())+", "+std::to_string(iSystem::PlayerChunkY());
-
         if ( ( (lookindex < tCell::width*tCell::height) && lookindex > 0) && (tCell::matrix[lookindex] < tTile::total_tiles) )
         {
             lookingat = tTile::NAME[tCell::matrix[lookindex]];
@@ -744,7 +703,6 @@ public:
         {
             selectedcount = std::to_string(iSystem::player.inventory.data[core::selected_tile]);
         }
-
         ProgressBar(4, 2, iSystem::player.hp, iSystem::player.HP, 32, 255, 0, 0, 64, 0, 0);
         ProgressBar(4, 4, iSystem::player.jp, iSystem::player.JP, 32, 0, 255, 0, 0, 64, 0);
         ProgressBar(4, 6, iSystem::player.bp, iSystem::player.BP, 32, 0, 0, 255, 0, 0, 64);
@@ -767,7 +725,6 @@ public:
         {
             int x = i*hb_size+hb_offset;
             DrawRect(x, 2, hb_size, hb_size, hud_color);
-            
             if (iSystem::player.hotbar[i][0] == itemID::WAND)
             {
                 int tile_value = iSystem::player.hotbar[i][1];
@@ -802,46 +759,31 @@ public:
     void StateTitle()
     {
         Clear(olc::BLACK);
-
         float Tx = (core::width/2)-((sAppName.size()*16)/2);
         float Ty = (core::height*0.25);
-
         float Nx = (core::width/2)-50;
         float Lx = (core::width/2)+4;
         float By = (core::height*0.75);
-
         DrawStringDecal({ Tx,Ty }, sAppName, text_color, { 2.0, 2.0 });
-        
         Button bNew = Button();
         bNew.Setup(Nx, By, 48, 16, 1.0, "New");
         Button bLoad = Button();
         bLoad.Setup(Lx, By, 48, 16, 1.0, "Load");
-
         DrawStringDecal({ bNew.TextX(),bNew.TextY() }, bNew.text, text_color, { 1.0, 1.0 });
         DrawRect(bNew.x, bNew.y, bNew.width, bNew.height, button_color);
         DrawStringDecal({ bLoad.TextX(),bLoad.TextY() }, bLoad.text, text_color, { 1.0, 1.0 });
         DrawRect(bLoad.x, bLoad.y, bLoad.width, bLoad.height, button_color);
-
         if (bNew.IsColliding(core::mouse_x, core::mouse_y))
         {
             DrawRect(bNew.x, bNew.y, bNew.width, bNew.height, select_color);
             if (GetMouse(0).bReleased)
-            {
-                Clear(olc::BLACK);
-                core::game_state = core::CUSTOM;
-                iSystem::player.Setup();
-            }
+            { Clear(olc::BLACK); core::game_state = core::CUSTOM; iSystem::player.Setup(); }
         }
         if (bLoad.IsColliding(core::mouse_x, core::mouse_y))
         {
             DrawRect(bLoad.x, bLoad.y, bLoad.width, bLoad.height, select_color);
             if (GetMouse(0).bReleased)
-            {
-                Clear(olc::BLACK);
-                iSystem::player.LoadData();
-                iSystem::world.LoadData();
-                core::game_state = core::PLAYING;
-            }
+            { Clear(olc::BLACK); iSystem::player.LoadData(); iSystem::world.LoadData(); core::game_state = core::PLAYING; }
         }
     }
 
@@ -854,54 +796,41 @@ public:
         bool can_draw = false;
         std::string info_text = "Hover Over A Button To See Details";
         std::string dtls_text = "";
-
         // Buttons
-        Button bsave     = Button(); bsave.Setup(105, 37, 32, 8, 0.25, "Save");
-        Button bload     = Button(); bload.Setup(105, 45, 32, 8, 0.25, "Load");
-        Button bclear    = Button(); bclear.Setup(105, 57, 32, 8, 0.25, "Clear");
-        Button bconfig   = Button(); bconfig.Setup(105, 65, 32, 8, 0.25, "Preset");
-        Button brandom   = Button(); brandom.Setup(105, 73, 32, 8, 0.25, "Random");
-        Button bpreview  = Button(); bpreview.Setup(105, 86, 32, 8, 0.25, "Preview");
-        Button bgenerate = Button(); bgenerate.Setup(105, 94, 32, 8, 0.25, "Generate");
-        Button bminusgs  = Button(); bminusgs.Setup(183, 2, 70, 4, 0.25, "-");
-        Button bplusgs   = Button(); bplusgs.Setup(183, 88, 70, 4, 0.25, "+");
-        Button bcopy     = Button(); bcopy.Setup(183, 94, 35, 8, 0.25, "Copy");
-        Button bpaste    = Button(); bpaste.Setup(218, 94, 35, 8, 0.25, "Paste");
-        Button bsave0    = Button(); bsave0.Setup(141, 7, 38, 8, 0.25, "Save 0");
-        Button bsave1    = Button(); bsave1.Setup(141, 15, 38, 8, 0.25, "Save 1");
-        Button bsave2    = Button(); bsave2.Setup(141, 23, 38, 8, 0.25, "Save 2");
-        Button bsave3    = Button(); bsave3.Setup(141, 31, 38, 8, 0.25, "Save 3");
-        Button bsave4    = Button(); bsave4.Setup(141, 39, 38, 8, 0.25, "Save 4");
-        Button bsave5    = Button(); bsave5.Setup(141, 47, 38, 8, 0.25, "Save 5");
-        Button bsave6    = Button(); bsave6.Setup(141, 55, 38, 8, 0.25, "Save 6");
-        Button btile     = Button(); btile.Setup(141, 70, 18, 8, 0.25, "Tile");
-        Button bmode     = Button(); bmode.Setup(141, 78, 18, 8, 0.25, "Mode");
-        Button bdense    = Button(); bdense.Setup(141, 86, 18, 8, 0.25, "Density");
-        Button biter     = Button(); biter.Setup(141, 94, 18, 8, 0.25, "Repeat");
-        Button bminx     = Button(); bminx.Setup(162, 70, 18, 8, 0.25, "Min X");
-        Button bmaxx     = Button(); bmaxx.Setup(162, 78, 18, 8, 0.25, "Max X");
-        Button bminy     = Button(); bminy.Setup(162, 86, 18, 8, 0.25, "Min Y");
-        Button bmaxy     = Button(); bmaxy.Setup(162, 94, 18, 8, 0.25, "Max Y");
-        Button bprobn    = Button(); bprobn.Setup(117, 6, 8, 8, 0.25, "N");
-        Button bprobs    = Button(); bprobs.Setup(117, 22, 8, 8, 0.25, "S");
-        Button bprobe    = Button(); bprobe.Setup(125, 14, 8, 8, 0.25, "E");
-        Button bprobw    = Button(); bprobw.Setup(109, 14, 8, 8, 0.25, "W");
-
+        Button bsave     = Button();     bsave.Setup(105, 37, 32, 8, 0.25,     "Save"); DrawButton(bsave);
+        Button bload     = Button();     bload.Setup(105, 45, 32, 8, 0.25,     "Load"); DrawButton(bload);
+        Button bclear    = Button();    bclear.Setup(105, 57, 32, 8, 0.25,    "Clear"); DrawButton(bclear);
+        Button bconfig   = Button();   bconfig.Setup(105, 65, 32, 8, 0.25,   "Preset"); DrawButton(bconfig);
+        Button brandom   = Button();   brandom.Setup(105, 73, 32, 8, 0.25,   "Random"); DrawButton(brandom);
+        Button bpreview  = Button();  bpreview.Setup(105, 86, 32, 8, 0.25,  "Preview"); DrawButton(bpreview);
+        Button bgenerate = Button(); bgenerate.Setup(105, 94, 32, 8, 0.25, "Generate"); DrawButton(bgenerate);
+        Button bminusgs  = Button();  bminusgs.Setup(183,  2, 70, 4, 0.25,        "-"); DrawButton(bminusgs);
+        Button bplusgs   = Button();   bplusgs.Setup(183, 88, 70, 4, 0.25,        "+"); DrawButton(bplusgs);
+        Button bcopy     = Button();     bcopy.Setup(183, 94, 35, 8, 0.25,     "Copy"); DrawButton(bcopy);
+        Button bpaste    = Button();    bpaste.Setup(218, 94, 35, 8, 0.25,    "Paste"); DrawButton(bpaste);
+        Button bsave0    = Button();    bsave0.Setup(141,  7, 38, 8, 0.25,   "Save 0"); DrawButton(bsave0);
+        Button bsave1    = Button();    bsave1.Setup(141, 15, 38, 8, 0.25,   "Save 1"); DrawButton(bsave1);
+        Button bsave2    = Button();    bsave2.Setup(141, 23, 38, 8, 0.25,   "Save 2"); DrawButton(bsave2);
+        Button bsave3    = Button();    bsave3.Setup(141, 31, 38, 8, 0.25,   "Save 3"); DrawButton(bsave3);
+        Button bsave4    = Button();    bsave4.Setup(141, 39, 38, 8, 0.25,   "Save 4"); DrawButton(bsave4);
+        Button bsave5    = Button();    bsave5.Setup(141, 47, 38, 8, 0.25,   "Save 5"); DrawButton(bsave5);
+        Button bsave6    = Button();    bsave6.Setup(141, 55, 38, 8, 0.25,   "Save 6"); DrawButton(bsave6);
+        Button btile     = Button();     btile.Setup(141, 70, 18, 8, 0.25,     "Tile"); DrawButton(btile);
+        Button bmode     = Button();     bmode.Setup(141, 78, 18, 8, 0.25,     "Mode"); DrawButton(bmode);
+        Button bdense    = Button();    bdense.Setup(141, 86, 18, 8, 0.25,  "Density"); DrawButton(bdense);
+        Button biter     = Button();     biter.Setup(141, 94, 18, 8, 0.25,   "Repeat"); DrawButton(biter);
+        Button bminx     = Button();     bminx.Setup(162, 70, 18, 8, 0.25,    "Min X"); DrawButton(bminx);
+        Button bmaxx     = Button();     bmaxx.Setup(162, 78, 18, 8, 0.25,    "Max X"); DrawButton(bmaxx);
+        Button bminy     = Button();     bminy.Setup(162, 86, 18, 8, 0.25,    "Min Y"); DrawButton(bminy);
+        Button bmaxy     = Button();     bmaxy.Setup(162, 94, 18, 8, 0.25,    "Max Y"); DrawButton(bmaxy);
+        Button bprobn    = Button();    bprobn.Setup(117,  6,  8, 8, 0.25,        "N"); DrawButton(bprobn);
+        Button bprobs    = Button();    bprobs.Setup(117, 22,  8, 8, 0.25,        "S"); DrawButton(bprobs);
+        Button bprobe    = Button();    bprobe.Setup(125, 14,  8, 8, 0.25,        "E"); DrawButton(bprobe);
+        Button bprobw    = Button();    bprobw.Setup(109, 14,  8, 8, 0.25,        "W"); DrawButton(bprobw);
         DrawRect(2, 2, 100, 100, border_color);  // Preview Box
         DrawRect(183, 2, 70, 90, border_color);  // Generation Steps Box
         DrawRect(2, 105, 251, 36, border_color);  // Information Box
         DrawRect(105, 2, 32, 32, border_color);  // Neighbors Box
-
-        DrawButton(bsave); DrawButton(bload);
-        DrawButton(bclear); DrawButton(bconfig); DrawButton(brandom);
-        DrawButton(bpreview); DrawButton(bgenerate);
-        DrawButton(bminusgs); DrawButton(bplusgs);
-        DrawButton(bcopy); DrawButton(bpaste);
-        DrawButton(bsave0); DrawButton(bsave1); DrawButton(bsave2); DrawButton(bsave3); DrawButton(bsave4); DrawButton(bsave5); DrawButton(bsave6);
-        DrawButton(btile); DrawButton(bmode); DrawButton(bdense); DrawButton(biter);
-        DrawButton(bminx); DrawButton(bmaxx); DrawButton(bminy); DrawButton(bmaxy);
-        DrawButton(bprobn); DrawButton(bprobs); DrawButton(bprobe); DrawButton(bprobw);
-
         // Numeric Input
         if (GetKey(olc::Key::K0).bPressed)
         { std::string new_value = std::to_string(input_value)+"0"; input_value = std::stoi(new_value); }
@@ -923,7 +852,6 @@ public:
         { std::string new_value = std::to_string(input_value)+"8"; input_value = std::stoi(new_value); }
         if (GetKey(olc::Key::K9).bPressed)
         { std::string new_value = std::to_string(input_value)+"9"; input_value = std::stoi(new_value); }
-
         if (GetKey(ui_select).bPressed)
         {
             switch (new_world::selected_param)
@@ -937,9 +865,8 @@ public:
             input_value = 0;
         }
         // Update Parameters
-        if (GetKey(ui_down).bPressed) { if (new_world::selected_step < new_world::generation_steps-2) new_world::selected_step++; }
-        if (GetKey(ui_up).bPressed) { if (new_world::selected_step > 0) new_world::selected_step--; }
-
+        if (GetKey(ui_down).bPressed || GetMouseWheel() < 0) { if (new_world::selected_step < new_world::generation_steps-2) new_world::selected_step++; }
+        if (GetKey(ui_up).bPressed || GetMouseWheel() > 0) { if (new_world::selected_step > 0) new_world::selected_step--; }
         if (GetKey(ui_left).bPressed) { new_world::DecrementParameter(); }
         if (GetKey(ui_right).bPressed) { new_world::IncrementParameter(); }
         // Step Value
@@ -1055,7 +982,6 @@ public:
             catch (std::bad_alloc & ba) { tile_text = "Error"; }
             try { vlue_text = std::to_string(new_world::generation_param[i][new_world::selected_param]); }
             catch (std::bad_alloc & ba) { vlue_text = "Error"; }
-
             if (i == new_world::selected_step)
             {
                 tile_text = ">" + tile_text;
@@ -1087,16 +1013,17 @@ public:
     {
     }
 
-    void StateLoading()
+    void StateLoadWorld()
+    {
+    }
+
+    void StateMakeWorld()
     {
         Clear(olc::BLACK);
-        
         std::string message = "Generating World, Please Wait.";
-        
         if (core::loading)
         {
             message = new_world::GenerateWorld();
-            
             if (new_world::generation_step > new_world::generation_steps)
             {
                 iSystem::sky.GenerateSky(core::width, core::height, core::seed);
@@ -1108,16 +1035,12 @@ public:
             }
         }
         if (!core::loading) core::loading = true;
-
         int prog_x = (core::width/2)-(core::width/4);
         int prog_y = (core::height/2)+4;
-
         float msg_x = core::width/2-((message.size()/2)*4);
         float msg_y = (core::height/2)-4;
-
         DrawStringDecal({ msg_x, msg_y }, message, text_color, { 0.5, 0.5 });
         ProgressBar(prog_x, prog_y, new_world::generation_step-1, new_world::generation_steps, core::width/2);
-
     }
 
     void StatePaused()//float fElapsedTime)
@@ -1126,33 +1049,24 @@ public:
         if (GetKey(menu_pause).bPressed) core::game_state = core::PLAYING;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::INVENTORY;
         if (GetKey(menu_blueprint).bPressed) core::game_state = core::BLUEPRINT;
-        
         if (GetKey(ui_left).bPressed || GetKey(player_left).bPressed) { if (core::grid_subdivision > 1) core::grid_subdivision /= 2; needs_update = true; }
         if (GetKey(ui_right).bPressed || GetKey(player_right).bPressed) { if (core::grid_subdivision < 8) core::grid_subdivision *= 2; needs_update = true; }
         if (GetKey(toggle_grid).bPressed) { core::show_grid = !core::show_grid; needs_update = true; }
-
         if (iSystem::player.state == iSystem::player.DEAD) return;
-
         if (CtrlKey() && GetKey(olc::Key::V).bPressed) { iSystem::PasteBlueprints(GetOffsetX(), GetOffsetY()); needs_update = true; }
         if (GetKey(ui_select).bPressed)
-        {
-            iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2); needs_update = true;
-        }
+        { iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2); needs_update = true; }
+        olc::Pixel test0 = GetDrawTarget()->GetPixel(0, 0); olc::Pixel test1 = GetDrawTarget()->GetPixel(core::width/2, core::height/2);
+        if (test0 == blueprint_color || test1 == panel_color) { needs_update = true; }
         if (needs_update) { DrawSky(); DrawTerrain(); }
-        DrawPlayer();
-        HotbarInput();
-        UseHotbar();
-        DrawHUD();
+        DrawPlayer(); HotbarInput(); HotbarScroll(); UseHotbar(); DrawHUD();
     }
 
     void StateBlueprint()
     {
-        int cols = 11;
-        int rows = 11;
-        int x_margin = 6;
-        int y_margin = 26;
+        int cols = 11; int rows = 11;
+        int x_margin = 6; int y_margin = 26;
         int tile_value = tile_y*11;
-
         // Background
         Clear(blueprint_color);
         DrawPanel(x_margin-2, y_margin-6, 114, 120);
@@ -1288,9 +1202,7 @@ public:
         {
             DrawButton(buttons[i]);
             if (buttons[i].IsColliding(core::mouse_x, core::mouse_y))
-            {
-                if (GetMouse(0).bPressed) { iSystem::blueprints.selected = buttons[i].text; iSystem::blueprints.LoadData(); core::game_state = core::BLUEPRINT; }
-            }
+            { if (GetMouse(0).bPressed) { iSystem::blueprints.selected = buttons[i].text; iSystem::blueprints.LoadData(); core::game_state = core::BLUEPRINT; } }
         }
         if (GetKey(player_up).bReleased) { if (blueprint_y > 0) blueprint_y--; }
         if (GetKey(player_down).bReleased) { if (blueprint_y < std::max(name_size-8, 0)) blueprint_y++; }
@@ -1303,11 +1215,7 @@ public:
         DrawPanel(core::width/2-36, core::height/2-10, 72, 20);
         Button label = Button(); label.Setup(core::width/2-32, core::height/2-8, 64, 16, 0.5, input_string); DrawButton(label);
         if (GetKey(ui_select).bPressed)
-        {
-            iSystem::blueprints.selected = input_string;
-            input_string = "";
-            core::game_state = core::BLUEPRINT;
-        }
+        { iSystem::blueprints.selected = input_string; input_string = ""; core::game_state = core::BLUEPRINT; }
         if (GetKey(menu_pause).bReleased) { core::game_state = core::BLUEPRINT; }
     }
 
@@ -1315,8 +1223,7 @@ public:
     {
         if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::PLAYING;
-        HotbarInput();
-        DrawHUD();
+        HotbarInput(); DrawHUD();
     }
 
     void StateInventory()
@@ -1330,63 +1237,38 @@ public:
         if (core::pause_state == core::psCRAFT)   { DrawCrafting();   DrawLine(114, 34, 142, 34, button_color); }
         if (core::pause_state == core::psTOOLS)   { DrawTools();      DrawLine(147, 34, 175, 34, button_color); }
         if (core::pause_state == core::psEFFECTS) { DrawEffects();    DrawLine(180, 34, 208, 34, button_color); }
-
         if (GetKey(player_up).bReleased || GetMouseWheel() > 0)
-        {
-            if (core::pause_state == core::psTILES && tile_y > 0) tile_y--;
-        }
+        { if (core::pause_state == core::psTILES && tile_y > 0) tile_y--; }
         if (GetKey(player_down).bReleased || GetMouseWheel() < 0)
-        {
-            if (core::pause_state == core::psTILES && tile_y < tTile::total_tiles/16) tile_y++;
-        }
-
+        { if (core::pause_state == core::psTILES && tile_y < tTile::total_tiles/16) tile_y++; }
         Button btiles = Button();     btiles.Setup(48, 24, 28, 8, 0.25, "Tiles");
         Button bwalls = Button();     bwalls.Setup(81, 24, 28, 8, 0.25, "Walls");
         Button bcraft = Button();     bcraft.Setup(114, 24, 28, 8, 0.25, "Craft");
         Button bwands = Button();     bwands.Setup(147, 24, 28, 8, 0.25, "Tools");
         Button beffects = Button(); beffects.Setup(180, 24, 28, 8, 0.25, "Effects");
-
         DrawButton(btiles); DrawButton(bwalls); DrawButton(bwands); DrawButton(beffects); DrawButton(bcraft);
-
-        if (bwands.IsColliding(core::mouse_x, core::mouse_y)){
-            if (GetMouse(0).bReleased) core::pause_state = core::psTOOLS;}
-        if (beffects.IsColliding(core::mouse_x, core::mouse_y)){
-            if (GetMouse(0).bReleased) core::pause_state = core::psEFFECTS;}
-        if (btiles.IsColliding(core::mouse_x, core::mouse_y)){
-            if (GetMouse(0).bReleased) core::pause_state = core::psTILES;}
-        if (bwalls.IsColliding(core::mouse_x, core::mouse_y)){
-            if (GetMouse(0).bReleased) core::pause_state = core::psWALLS;}
-        if (bcraft.IsColliding(core::mouse_x, core::mouse_y)){
-            if (GetMouse(0).bReleased) core::pause_state = core::psCRAFT;}
-
-        HotbarInput();
-        DrawHUD();
+        if (bwands.IsColliding(core::mouse_x, core::mouse_y)) { if (GetMouse(0).bReleased) core::pause_state = core::psTOOLS;}
+        if (beffects.IsColliding(core::mouse_x, core::mouse_y)) { if (GetMouse(0).bReleased) core::pause_state = core::psEFFECTS;}
+        if (btiles.IsColliding(core::mouse_x, core::mouse_y)) { if (GetMouse(0).bReleased) core::pause_state = core::psTILES;}
+        if (bwalls.IsColliding(core::mouse_x, core::mouse_y)) { if (GetMouse(0).bReleased) core::pause_state = core::psWALLS;}
+        if (bcraft.IsColliding(core::mouse_x, core::mouse_y)) { if (GetMouse(0).bReleased) core::pause_state = core::psCRAFT;}
+        HotbarInput(); DrawHUD();
     }
 
     void StateGameLoop(float fElapsedTime)
     {
-        if (iSystem::player.state == iSystem::player.DEAD)
-        {
-            if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
-            return; 
-        }
+        if (iSystem::player.state == iSystem::player.DEAD) { if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED; return; }
         if ((!tTool::IsColliding(iSystem::player.x, iSystem::player.y+1) &&
             !tTool::IsColliding(iSystem::player.x-1, iSystem::player.y+1)) &&
             iSystem::player.state != iSystem::player.JUMP)
-        {
-            iSystem::player.vy = 1;
-            iSystem::player.state = iSystem::player.FALL;
-        }
+        { iSystem::player.vy = 1; iSystem::player.state = iSystem::player.FALL; }
         if (tTool::IsColliding(iSystem::player.x, iSystem::player.y+1) || tTool::IsColliding(iSystem::player.x-1, iSystem::player.y+1))
-        {
-            iSystem::player.state = iSystem::player.IDLE;
-        }
+        { iSystem::player.state = iSystem::player.IDLE; }
         if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::INVENTORY;
         if (CtrlKey() && GetKey(olc::Key::V).bPressed) { iSystem::PasteBlueprints(GetOffsetX(), GetOffsetY()); }
         // Hotbar Stuff
-        HotbarInput();
-        UseHotbar();
+        HotbarInput(); HotbarScroll(); UseHotbar();
         // Vertical Movement
         if (GetKey(player_up).bHeld)
         {
@@ -1399,10 +1281,7 @@ public:
                 iSystem::player.vy = -1;
                 iSystem::player.state = iSystem::player.JUMP;
             }
-            else
-            {
-                iSystem::player.vy = 1;
-            }
+            else { iSystem::player.vy = 1; }
         }
         if (GetKey(player_up).bReleased) { iSystem::player.vy = 0; iSystem::player.state = iSystem::player.IDLE; }
         if (GetKey(player_down).bPressed)
@@ -1452,18 +1331,11 @@ public:
         // Update Player
         iSystem::player.Update(fElapsedTime);
         if (iSystem::player.hp < 1) iSystem::player.state = iSystem::player.DEAD;
-        
         if (!PlayerVsWorld())
-        {
-            iSystem::player.Move(iSystem::player.vx, iSystem::player.vy);
-        }
-        DrawPlayer();
-        DrawParticles(fElapsedTime);
-        DrawHUD();
+        { iSystem::player.Move(iSystem::player.vx, iSystem::player.vy); }
+        DrawPlayer(); DrawParticles(fElapsedTime); DrawHUD();
         // Update Camera
-        iSystem::camera.Update(
-                iSystem::player.x-(iSystem::player.height/2),
-                iSystem::player.y-(iSystem::player.height-1));
+        iSystem::camera.Update( iSystem::player.x-(iSystem::player.height/2), iSystem::player.y-(iSystem::player.height-1));
         // End Frame
         core::game_tick += fElapsedTime;
     }
@@ -1473,35 +1345,27 @@ public:
     //
 
 	bool OnUserCreate() override
-	{
-        InitializeGame();
-        return true;
-	}
+	{ InitializeGame(); return true; }
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
         UpdateMouse();
         switch (core::game_state)
         {
-            case core::PLAYING        : StateGameLoop(fElapsedTime); break;
-            case core::PAUSED         : StatePaused(); break;
-            case core::BLUEPRINT      : StateBlueprint(); break;
-            case core::NAME_BLUEPRINT : StateNameBlueprint(); break;
-            case core::LOAD_BLUEPRINT : StateLoadBlueprint(); break;
-            case core::CRAFTING       : StateCrafting(); break;
-            case core::INVENTORY      : StateInventory(); break;
-            case core::SAVING         : StateSaving(); break;
-            case core::LOADING        : StateLoading(); break;
-            case core::CUSTOM         : StateCustom(); break;
-            case core::SETTINGS       : StateSettings(); break;
-            case core::TITLE          : StateTitle(); break;
-            case core::EXIT :
-                {
-                    iSystem::player.SaveData();
-                    iSystem::world.SaveData();
-                    core::running = false;
-                }
-                break;
+            case core::PLAYING        : { StateGameLoop(fElapsedTime); } break;
+            case core::PAUSED         : {               StatePaused(); } break;
+            case core::BLUEPRINT      : {            StateBlueprint(); } break;
+            case core::NAME_BLUEPRINT : {        StateNameBlueprint(); } break;
+            case core::LOAD_BLUEPRINT : {        StateLoadBlueprint(); } break;
+            case core::CRAFTING       : {             StateCrafting(); } break;
+            case core::INVENTORY      : {            StateInventory(); } break;
+            case core::SAVING         : {               StateSaving(); } break;
+            case core::MAKE_WORLD     : {            StateMakeWorld(); } break;
+            case core::LOAD_WORLD     : {            StateLoadWorld(); } break;
+            case core::CUSTOM         : {               StateCustom(); } break;
+            case core::SETTINGS       : {             StateSettings(); } break;
+            case core::TITLE          : {                StateTitle(); } break;
+            case core::EXIT           : { iSystem::player.SaveData(); iSystem::world.SaveData(); core::running = false; } break;
         }
         return core::running;
 	}
