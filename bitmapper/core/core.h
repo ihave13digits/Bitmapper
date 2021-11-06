@@ -10,17 +10,17 @@ namespace core
     bool loading = false;
 
     // Selection
-    char selected_hotbar = 0;
-    char selected_tile = 0;
-    char selected_wand = 0;
+    uint8_t selected_hotbar = 0;
+    uint8_t selected_tile = 0;
+    uint8_t selected_wand = 0;
     
     //
     int mouse_x;
     int mouse_y;
 
     // State Flags
-    char game_state = 0;
-    char pause_state = 0;
+    uint8_t game_state = 0;
+    uint8_t sub_state = 0;
 
     // Tick Speed
     float game_tick = 0.0;
@@ -29,18 +29,19 @@ namespace core
     // Graphics Presets
     int width  = 256;
     int height = 144;
-    char resolution = 4;
-    char grid_subdivision = 1;
+    uint8_t resolution = 4;
+    uint8_t grid_subdivision = 1;
 
     // Identity
     std::string game_title = "Bitmapper";
-    std::string version = "0.0.0";
+    std::string version = "0.24.219.0";
 
     // Enums
 
     enum STATES
     {
         TITLE,
+        CREDITS,
         SETTINGS,
         CUSTOM,
         SAVING,
@@ -56,12 +57,13 @@ namespace core
         EXIT,
     };
 
-    enum PAUSE_STATES
+    enum SUB_STATES
     {
-        psTILES,
-        psWALLS,
-        psCRAFT,
-        psTOOLS,
-        psEFFECTS,
+        isTILES,
+        isWALLS,
+        isCRAFT,
+        isTOOLS,
+        isEFFECTS,
+        psCOMMAND,
     };
 }

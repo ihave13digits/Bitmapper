@@ -9,6 +9,7 @@ namespace iSystem
     //
     Blueprints blueprints = Blueprints();
     Label blueprint_label = Label();
+    Label command_label = Label();
     //
     std::vector<World> dimensions;
     std::vector<Particle> particles;
@@ -19,6 +20,10 @@ namespace iSystem
         blueprints.InitializeMatrix();
         blueprints.LoadData();
         // Labels
+        command_label.x = 0;
+        command_label.y = (core::height)-2;
+        command_label.font = 0.25;
+        command_label.max_chars = 128;
         blueprint_label.x = (core::width/2)-32;
         blueprint_label.y = (core::height/2)-8;
         blueprint_label.font = 0.5;
