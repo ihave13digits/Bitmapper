@@ -4,11 +4,12 @@ namespace textTool
     bool IsNumber(std::string c)
     {
         bool can_do = false;
-        if (
-            c=="-" || c=="." || c=="1" || c=="2" || c=="3" || c=="4" || c=="5" || c=="6" || c=="7" || c=="8" || c=="9" || c=="0"
-            ) { can_do = true; }
+        if ( c=="-" || c=="." || c=="1" || c=="2" || c=="3" || c=="4" || c=="5" || c=="6" || c=="7" || c=="8" || c=="9" || c=="0" ) { can_do = true; }
         return can_do;
     }
+
+    bool IsValidNumber(std::string s)
+    { bool can_do = true; for (int i = 0; i < s.length(); i++) { std::string c = s.substr(i, 1); if (!IsNumber(c)) { can_do = false; break; } } return can_do; }
 
     bool IsLetter(std::string c)
     {

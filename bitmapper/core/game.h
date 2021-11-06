@@ -41,16 +41,18 @@ public:
     olc::Key menu_inventory = olc::Key::TAB;
     olc::Key menu_blueprint = olc::Key::B;
     olc::Key menu_pause = olc::Key::ESCAPE;
+    olc::Key menu_command = olc::Key::C;
     // Color Presets
-    olc::Pixel hud_color = olc::Pixel(64, 64, 64);
-    olc::Pixel hud_select_color = olc::Pixel(255, 255, 255);
-    olc::Pixel grid_color = olc::Pixel(0, 0, 0, 64);
-    olc::Pixel text_color = olc::Pixel(255, 255, 255);
-    olc::Pixel panel_color = olc::Pixel(10, 10, 10);
-    olc::Pixel border_color = olc::Pixel(80, 80, 80);
-    olc::Pixel button_color = olc::Pixel(32, 32, 32);
-    olc::Pixel select_color = olc::Pixel(64, 64, 64);
-    olc::Pixel blueprint_color = olc::Pixel(6, 13, 29);
+    olc::Pixel hud_color        = olc::Pixel( 64,  64,  64, 255);
+    olc::Pixel hud_select_color = olc::Pixel(255, 255, 255, 255);
+    olc::Pixel grid_color       = olc::Pixel(  0,   0,   0,  64);
+    olc::Pixel text_color       = olc::Pixel(250, 250, 250, 255);
+    olc::Pixel cursor_color     = olc::Pixel(124, 124, 128, 255);
+    olc::Pixel panel_color      = olc::Pixel( 10,  10,  10, 255);
+    olc::Pixel border_color     = olc::Pixel( 80,  80,  80, 255);
+    olc::Pixel button_color     = olc::Pixel( 32,  32,  32, 255);
+    olc::Pixel select_color     = olc::Pixel( 64,  64,  64, 255);
+    olc::Pixel blueprint_color  = olc::Pixel(  6,  13,  29, 255);
 
     //
     ///
@@ -76,7 +78,6 @@ public:
 
 
     bool ShiftKey() { return GetKey(olc::Key::SHIFT).bHeld; }
-
     bool CtrlKey() { return GetKey(olc::Key::CTRL).bHeld; }
 
     std::string GetCharacter()
@@ -252,9 +253,7 @@ public:
                     int _x = x+int(core::width/2)-4;
                     int _y = y+int(core::height/2)-7;
                     if ( tTool::IsColliding((iSystem::player.x+iSystem::player.vx)+(x-4), (iSystem::player.y+iSystem::player.vy)+(y-7)) )
-                    {
-                        colliding = true;
-                    }
+                    { colliding = true; }
                 }
             }
         }
@@ -331,11 +330,16 @@ public:
         DrawRect(b.x, b.y, b.width, b.height, button_color);
     }
 
-    void ProgressBar(int x, int y, int minv, int maxv, int W, int R=255, int G=255, int B=255, int r=64, int g=64, int b=64)
+    void DrawLabel(Label l)
     {
-        float completed = float(minv)/float(maxv); int x2 = W*completed;
-        DrawLine(x, y, x+W, y, olc::Pixel(r, g, b)); DrawLine(x, y, x+x2, y, olc::Pixel(R, G, B));
+        float x = l.x+(float(l.cursor)*(8.0*l.font));
+        float y = l.y-(l.font*4.0);
+        DrawStringDecal({ l.x,l.y }, l.text, text_color, {l.font, l.font});
+        FillRect(x, y, l.font*8.0, l.font*16.0, cursor_color);
     }
+
+    void ProgressBar(int x, int y, int minv, int maxv, int W, int R=255, int G=255, int B=255, int r=64, int g=64, int b=64)
+    { float completed = float(minv)/float(maxv); int x2 = W*completed; DrawLine(x, y, x+W, y, olc::Pixel(r, g, b)); DrawLine(x, y, x+x2, y, olc::Pixel(R, G, B)); }
     
     void DrawChunkGrid()
     {
@@ -428,11 +432,9 @@ public:
 
     void DrawTools()
     {
-        int cols = 16;
-        int rows = 8+tool_y;
-        int x_margin = 48;
-        int y_margin = 40;
-        int wand_value = tool_y*16;
+        int cols = 16; int rows = 8+tool_y;
+        int x_margin = 48; int y_margin = 40;
+        int wand_value = tool_y*cols;
         Button buttons[cols*rows];
         SetPixelMode(olc::Pixel::ALPHA);
         for (int y = tool_y; y < rows; y++)
@@ -483,11 +485,9 @@ public:
 
     void DrawEffects()
     {
-        int cols = 16;
-        int rows = 8;
-        int x_margin = 48;
-        int y_margin = 40;
-        int tile_value = effect_y*16;
+        int cols = 16; int rows = 8;
+        int x_margin = 48; int y_margin = 40;
+        int tile_value = effect_y*cols;
         Button buttons[cols*rows];
         SetPixelMode(olc::Pixel::ALPHA);
         for (int y = 0; y < rows; y++)
@@ -523,11 +523,9 @@ public:
 
     void DrawTiles()
     {
-        int cols = 16;
-        int rows = 8;
-        int x_margin = 48;
-        int y_margin = 40;
-        int tile_value = tile_y*16;
+        int cols = 16; int rows = 8;
+        int x_margin = 48; int y_margin = 40;
+        int tile_value = tile_y*cols;
         Button buttons[cols*rows];
         SetPixelMode(olc::Pixel::ALPHA);
         for (int y = 0; y < rows; y++)
@@ -616,8 +614,7 @@ public:
         }
         for (int i = 0; i < iSystem::sky.humidity; i++)
         {
-            int x = iSystem::sky.clouds[i][0];
-            int y = iSystem::sky.clouds[i][1];
+            int x = iSystem::sky.clouds[i][0]; int y = iSystem::sky.clouds[i][1];
             FillCircle(x, y, iSystem::sky.clouds[i][2], olc::Pixel(iSystem::sky.r, iSystem::sky.g, iSystem::sky.b, 4+(8*iSystem::sky.time)));
         }
         if (iSystem::sky.humidity > iSystem::sky.cloudcount/4 && core::game_state == core::PLAYING)
@@ -665,9 +662,7 @@ public:
 
     void DrawPlayer()
     {
-        int r = 0;
-        int g = 0;
-        int b = 0;
+        int r; int g; int b;
         switch (iSystem::player.status)
         {
             case iSystem::player.FINE :     {r=255; g=255; b=255;} break;
@@ -703,20 +698,15 @@ public:
     {
         for (int p = 0; p < (iSystem::particles.size()); p++)
         {
-            float x = iSystem::particles[p].x;
-            float y = iSystem::particles[p].y;
+            float x = iSystem::particles[p].x; float y = iSystem::particles[p].y;
             iSystem::UpdateParticle(delta, p, x, y);
             if (iSystem::particles[p].duration > 0.0)
             {
                 iSystem::particles[p].duration -= delta;
-                Draw(x-(iSystem::camera.x-(core::width/2)),
-                    y-(iSystem::camera.y-(core::height/2)),
+                Draw(x-(iSystem::camera.x-(core::width/2)), y-(iSystem::camera.y-(core::height/2)),
                     olc::Pixel(iSystem::particles[p].r, iSystem::particles[p].g, iSystem::particles[p].b, iSystem::particles[p].a));
             }
-            else
-            {
-                iSystem::particles.erase(iSystem::particles.begin()+p);
-            }
+            else { iSystem::particles.erase(iSystem::particles.begin()+p); }
         }
     }
 
@@ -746,9 +736,7 @@ public:
         DrawStringDecal({ 4,24 }, "Season: " + seasonID::seasons[tCell::season], text_color, { font, font });
         DrawStringDecal({ 4,28 }, "Chunk: " + chunk_pos, text_color, { font, font });
         //
-        int hb_size = icon.size+1;
-        int hb_offset = (core::width/2) - hb_size*4.5;
-        std::string selected_item = "";
+        int hb_size = icon.size+1; int hb_offset = (core::width/2) - hb_size*4.5; std::string selected_item = "";
         if (iSystem::player.hotbar[core::selected_hotbar][0] == itemID::WAND) { selected_item = "Wand"; }
         if (iSystem::player.hotbar[core::selected_hotbar][0] == itemID::TILE) { selected_item = tTile::NAME[iSystem::player.hotbar[core::selected_hotbar][1]]; }
         float select_x = (core::width/2)-(selected_item.size());
@@ -761,15 +749,12 @@ public:
             if (iSystem::player.hotbar[i][0] == itemID::WAND)
             {
                 int tile_value = iSystem::player.hotbar[i][1];
-                float R = float(tTile::R[tile_value]);
-                float G = float(tTile::G[tile_value]);
-                float B = float(tTile::B[tile_value]);
+                float R = float(tTile::R[tile_value]); float G = float(tTile::G[tile_value]); float B = float(tTile::B[tile_value]);
                 for (int iy = 0; iy < icon.size; iy++)
                 {
                     for (int ix = 0; ix < icon.size; ix++)
                     {
-                        int index_value = icon.wand[iy*icon.size+ix];
-                        float v = (0.25*float(index_value));
+                        int index_value = icon.wand[iy*icon.size+ix]; float v = (0.25*float(index_value));
                         if (index_value > 0) Draw(ix+x+1, iy+3, olc::Pixel(int(R*v), int(G*v), int(B*v)));
                     }
                 }
@@ -781,8 +766,7 @@ public:
                 DrawIcon(x+1, 3, tile_type, tile_value);
             }
         }
-        SetPixelMode(olc::Pixel::NORMAL);
-        DrawRect(core::selected_hotbar*hb_size+hb_offset, 2, hb_size, hb_size, hud_select_color);
+        SetPixelMode(olc::Pixel::NORMAL); DrawRect(core::selected_hotbar*hb_size+hb_offset, 2, hb_size, hb_size, hud_select_color);
     }
 
     //
@@ -798,27 +782,22 @@ public:
         float Lx = (core::width/2)+4;
         float By = (core::height*0.75);
         DrawStringDecal({ Tx,Ty }, sAppName, text_color, { 2.0, 2.0 });
-        Button bNew = Button();
-        bNew.Setup(Nx, By, 48, 16, 1.0, "New");
-        Button bLoad = Button();
-        bLoad.Setup(Lx, By, 48, 16, 1.0, "Load");
-        DrawStringDecal({ bNew.TextX(),bNew.TextY() }, bNew.text, text_color, { 1.0, 1.0 });
-        DrawRect(bNew.x, bNew.y, bNew.width, bNew.height, button_color);
-        DrawStringDecal({ bLoad.TextX(),bLoad.TextY() }, bLoad.text, text_color, { 1.0, 1.0 });
-        DrawRect(bLoad.x, bLoad.y, bLoad.width, bLoad.height, button_color);
+        Button bNew = Button(); bNew.Setup(Nx, By, 48, 16, 1.0, "New"); DrawButton(bNew);
+        Button bLoad = Button(); bLoad.Setup(Lx, By, 48, 16, 1.0, "Load"); DrawButton(bLoad);
         if (bNew.IsColliding(core::mouse_x, core::mouse_y))
         {
             DrawRect(bNew.x, bNew.y, bNew.width, bNew.height, select_color);
-            if (GetMouse(0).bReleased)
-            { Clear(olc::BLACK); core::game_state = core::CUSTOM; iSystem::player.Setup(); }
+            if (GetMouse(0).bReleased) { Clear(olc::BLACK); core::game_state = core::CUSTOM; iSystem::player.Setup(); }
         }
         if (bLoad.IsColliding(core::mouse_x, core::mouse_y))
         {
             DrawRect(bLoad.x, bLoad.y, bLoad.width, bLoad.height, select_color);
-            if (GetMouse(0).bReleased)
-            { Clear(olc::BLACK); iSystem::player.LoadData(); iSystem::world.LoadData(); core::game_state = core::PLAYING; }
+            if (GetMouse(0).bReleased) { Clear(olc::BLACK); iSystem::player.LoadData(); iSystem::world.LoadData(); core::game_state = core::PLAYING; }
         }
     }
+
+    void StateCredits()
+    {}
 
     void StateSettings()
     {}
@@ -1079,20 +1058,36 @@ public:
     void StatePaused()//float fElapsedTime)
     {
         bool needs_update = false;
-        if (GetKey(menu_pause).bPressed) core::game_state = core::PLAYING;
-        if (GetKey(menu_inventory).bPressed) core::game_state = core::INVENTORY;
-        if (GetKey(menu_blueprint).bPressed) core::game_state = core::BLUEPRINT;
-        if (GetKey(ui_left).bPressed || GetKey(player_left).bPressed) { if (core::grid_subdivision > 1) core::grid_subdivision /= 2; needs_update = true; }
-        if (GetKey(ui_right).bPressed || GetKey(player_right).bPressed) { if (core::grid_subdivision < 8) core::grid_subdivision *= 2; needs_update = true; }
-        if (GetKey(toggle_grid).bPressed) { core::show_grid = !core::show_grid; needs_update = true; }
-        if (iSystem::player.state == iSystem::player.DEAD) return;
-        if (CtrlKey() && GetKey(olc::Key::V).bPressed) { iSystem::PasteBlueprints(GetOffsetX(), GetOffsetY()); needs_update = true; }
-        if (GetKey(ui_select).bPressed)
-        { iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2); needs_update = true; }
-        olc::Pixel test0 = GetDrawTarget()->GetPixel(0, 0); olc::Pixel test1 = GetDrawTarget()->GetPixel(core::width/2, core::height/2);
-        if (test0 == blueprint_color || test1 == panel_color) { needs_update = true; }
+        if (core::sub_state != core::psCOMMAND)
+        {
+            if (GetKey(menu_pause).bPressed) core::game_state = core::PLAYING;
+            if (GetKey(menu_inventory).bPressed) core::game_state = core::INVENTORY;
+            if (GetKey(menu_blueprint).bPressed) core::game_state = core::BLUEPRINT;
+            if (GetKey(ui_left).bPressed || GetKey(player_left).bPressed) { if (core::grid_subdivision > 1) core::grid_subdivision /= 2; needs_update = true; }
+            if (GetKey(ui_right).bPressed || GetKey(player_right).bPressed) { if (core::grid_subdivision < 8) core::grid_subdivision *= 2; needs_update = true; }
+            if (GetKey(toggle_grid).bPressed) { core::show_grid = !core::show_grid; needs_update = true; }
+            if (iSystem::player.state == iSystem::player.DEAD) return;
+            if (CtrlKey() && GetKey(olc::Key::V).bPressed) { iSystem::PasteBlueprints(GetOffsetX(), GetOffsetY()); needs_update = true; }
+            if (GetKey(ui_select).bPressed)
+            { iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2); needs_update = true; }
+            if (GetKey(menu_command).bPressed)
+            { core::sub_state = core::psCOMMAND; iSystem::command_label.text = ""; iSystem::command_label.cursor = 0; }
+            olc::Pixel test0 = GetDrawTarget()->GetPixel(0, 0); olc::Pixel test1 = GetDrawTarget()->GetPixel(core::width/2, core::height/2);
+            if (test0 == blueprint_color || test1 == panel_color) { needs_update = true; }
+            DrawPlayer(); HotbarInput(); HotbarScroll(); UseHotbar(); DrawHUD();
+        }
+        if (core::sub_state == core::psCOMMAND)
+        {
+            std::string c = GetCharacter();
+            if (c != "") { iSystem::command_label.Update(c); needs_update = true; }
+            if (GetKey(ui_select).bPressed)
+            { script::EvaluateCommand(iSystem::command_label.text); iSystem::command_label.text = ""; iSystem::command_label.cursor = 0; needs_update = true; }
+            if (GetKey(menu_pause).bPressed)
+            { core::sub_state = core::isTILES; iSystem::command_label.text = ""; iSystem::command_label.cursor = 0; needs_update = true; }
+            DrawPlayer(); HotbarInput(); HotbarScroll(); UseHotbar(); DrawHUD();
+            FillRect(0, core::height-4, core::width, 4, panel_color); DrawLabel(iSystem::command_label);
+        }
         if (needs_update) { DrawSky(); DrawTerrain(); }
-        DrawPlayer(); HotbarInput(); HotbarScroll(); UseHotbar(); DrawHUD();
     }
 
     void StateBlueprint()
@@ -1257,26 +1252,26 @@ public:
         DrawLine(45, 36, 211, 36, button_color);
         if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::PLAYING;
-        if (core::pause_state == core::psTILES)   { DrawTiles();      DrawLine(48,  34, 76,  34, button_color); }
-        if (core::pause_state == core::psWALLS)   { DrawWalls();      DrawLine(81,  34, 109, 34, button_color); }
-        if (core::pause_state == core::psCRAFT)   { DrawCrafting();   DrawLine(114, 34, 142, 34, button_color); }
-        if (core::pause_state == core::psTOOLS)   { DrawTools();      DrawLine(147, 34, 175, 34, button_color); }
-        if (core::pause_state == core::psEFFECTS) { DrawEffects();    DrawLine(180, 34, 208, 34, button_color); }
+        if      (core::sub_state == core::isTILES)   { DrawTiles();      DrawLine(48,  34, 76,  34, button_color); }
+        else if (core::sub_state == core::isWALLS)   { DrawWalls();      DrawLine(81,  34, 109, 34, button_color); }
+        else if (core::sub_state == core::isCRAFT)   { DrawCrafting();   DrawLine(114, 34, 142, 34, button_color); }
+        else if (core::sub_state == core::isTOOLS)   { DrawTools();      DrawLine(147, 34, 175, 34, button_color); }
+        else if (core::sub_state == core::isEFFECTS) { DrawEffects();    DrawLine(180, 34, 208, 34, button_color); }
         if (GetKey(player_up).bReleased || GetMouseWheel() > 0)
-        { if (core::pause_state == core::psTILES && tile_y > 0) tile_y--; }
+        { if (core::sub_state == core::isTILES && tile_y > 0) tile_y--; }
         if (GetKey(player_down).bReleased || GetMouseWheel() < 0)
-        { if (core::pause_state == core::psTILES && tile_y < tTile::total_tiles/16) tile_y++; }
+        { if (core::sub_state == core::isTILES && tile_y < tTile::total_tiles/16) tile_y++; }
         Button btiles = Button();     btiles.Setup(48, 24, 28, 8, 0.25, "Tiles");
         Button bwalls = Button();     bwalls.Setup(81, 24, 28, 8, 0.25, "Walls");
         Button bcraft = Button();     bcraft.Setup(114, 24, 28, 8, 0.25, "Craft");
         Button bwands = Button();     bwands.Setup(147, 24, 28, 8, 0.25, "Tools");
         Button beffects = Button(); beffects.Setup(180, 24, 28, 8, 0.25, "Effects");
         DrawButton(btiles); DrawButton(bwalls); DrawButton(bwands); DrawButton(beffects); DrawButton(bcraft);
-        if (bwands.IsColliding(core::mouse_x, core::mouse_y)) { if (GetMouse(0).bReleased) core::pause_state = core::psTOOLS;}
-        if (beffects.IsColliding(core::mouse_x, core::mouse_y)) { if (GetMouse(0).bReleased) core::pause_state = core::psEFFECTS;}
-        if (btiles.IsColliding(core::mouse_x, core::mouse_y)) { if (GetMouse(0).bReleased) core::pause_state = core::psTILES;}
-        if (bwalls.IsColliding(core::mouse_x, core::mouse_y)) { if (GetMouse(0).bReleased) core::pause_state = core::psWALLS;}
-        if (bcraft.IsColliding(core::mouse_x, core::mouse_y)) { if (GetMouse(0).bReleased) core::pause_state = core::psCRAFT;}
+        if (bwands.IsColliding(core::mouse_x, core::mouse_y))   { if (GetMouse(0).bReleased) core::sub_state = core::isTOOLS;   }
+        if (beffects.IsColliding(core::mouse_x, core::mouse_y)) { if (GetMouse(0).bReleased) core::sub_state = core::isEFFECTS; }
+        if (btiles.IsColliding(core::mouse_x, core::mouse_y))   { if (GetMouse(0).bReleased) core::sub_state = core::isTILES;   }
+        if (bwalls.IsColliding(core::mouse_x, core::mouse_y))   { if (GetMouse(0).bReleased) core::sub_state = core::isWALLS;   }
+        if (bcraft.IsColliding(core::mouse_x, core::mouse_y))   { if (GetMouse(0).bReleased) core::sub_state = core::isCRAFT;   }
         HotbarInput(); DrawHUD();
     }
 
@@ -1390,6 +1385,7 @@ public:
             case core::CUSTOM         : {               StateCustom(); } break;
             case core::SETTINGS       : {             StateSettings(); } break;
             case core::TITLE          : {                StateTitle(); } break;
+            case core::CREDITS        : {              StateCredits(); } break;
             case core::EXIT           : { iSystem::player.SaveData(); iSystem::world.SaveData(); core::running = false; } break;
         }
         return core::running;
