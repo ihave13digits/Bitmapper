@@ -5,7 +5,7 @@ namespace tCritter
     // Movement
     //
 
-    void Burrow(int _x, int _y, int index, char season, uint8_t target, uint8_t ground, uint8_t background, uint8_t drop, int activity)
+    void Burrow(int _x, int _y, int index, uint8_t target, uint8_t ground, uint8_t background, uint8_t drop, int activity)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
@@ -67,7 +67,7 @@ namespace tCritter
         }
     }
 
-    void Crawl(int _x, int _y, int index, char season, uint8_t target, uint8_t ground, uint8_t background, int activity)
+    void Crawl(int _x, int _y, int index, uint8_t target, uint8_t ground, uint8_t background, int activity)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
@@ -110,7 +110,7 @@ namespace tCritter
         }
     }
 
-    void Hop(int _x, int _y, int index, char season, uint8_t target, uint8_t legs, uint8_t ground, uint8_t background, int activity)
+    void Hop(int _x, int _y, int index, uint8_t target, uint8_t legs, uint8_t ground, uint8_t background, int activity)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
@@ -145,7 +145,7 @@ namespace tCritter
         }
     }
 
-    void Jump(int _x, int _y, int index, char season, uint8_t target, uint8_t legs, uint8_t ground, uint8_t background, int activity)
+    void Jump(int _x, int _y, int index, uint8_t target, uint8_t legs, uint8_t ground, uint8_t background, int activity)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
@@ -182,7 +182,7 @@ namespace tCritter
         }
     }
 
-    void Swim(int _x, int _y, int index, char season, uint8_t target, uint8_t tail, uint8_t egg, uint8_t background, int activity)
+    void Swim(int _x, int _y, int index, uint8_t target, uint8_t tail, uint8_t egg, uint8_t background, int activity)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
@@ -258,7 +258,7 @@ namespace tCritter
         }
     }
 
-    void Fly(int _x, int _y, int index, char season, uint8_t target, uint8_t wing, uint8_t background, int activity)
+    void Fly(int _x, int _y, int index, uint8_t target, uint8_t wing, uint8_t background, int activity)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
@@ -326,20 +326,20 @@ namespace tCritter
     // Special
     //
 
-    void Frog(int _x, int _y, int index, char season)
+    void Frog(int _x, int _y, int index)
     {
         uint8_t tile = tCell::matrix[(_y+1)*tCell::width+(_x)]; if (tile == tTile::AIR) tile = tTile::GRASS;
-        if (rand()%100 < 75) Jump(_x, _y, index, season, tTile::FROG, tTile::FROG_LEGS, tile, tTile::AIR, 25);
-        else Hop(_x, _y, index, season, tTile::FROG, tTile::FROG_LEGS, tile, tTile::AIR, 50);
+        if (rand()%100 < 75) Jump(_x, _y, index, tTile::FROG, tTile::FROG_LEGS, tile, tTile::AIR, 25);
+        else Hop(_x, _y, index, tTile::FROG, tTile::FROG_LEGS, tile, tTile::AIR, 50);
     }
 
-    void Toad(int _x, int _y, int index, char season)
+    void Toad(int _x, int _y, int index)
     {
         uint8_t tile = tCell::matrix[(_y+1)*tCell::width+(_x)]; if (tile == tTile::AIR) tile = tTile::GRASS;
-        if (rand()%100 < 25) Jump(_x, _y, index, season, tTile::TOAD, tTile::TOAD_LEGS, tile, tTile::AIR, 25);
-        else Hop(_x, _y, index, season, tTile::TOAD, tTile::TOAD_LEGS, tile, tTile::AIR, 50); }
+        if (rand()%100 < 25) Jump(_x, _y, index, tTile::TOAD, tTile::TOAD_LEGS, tile, tTile::AIR, 25);
+        else Hop(_x, _y, index, tTile::TOAD, tTile::TOAD_LEGS, tile, tTile::AIR, 50); }
 
-    void Mole(int _x, int _y, int index, char season)
+    void Mole(int _x, int _y, int index)
     {
         int DROP = tTile::DIRT;
         int drops = rand()%13;
@@ -352,62 +352,62 @@ namespace tCritter
             case 11 : { DROP = tTile::LOOSE_DIRT; } break;
             case 12 : { DROP = tTile::LOOSE_DIRT; } break;
         }
-        Burrow(_x, _y, index, season, tTile::MOLE, tTile::GRASS, tTile::AIR, DROP, 25);
+        Burrow(_x, _y, index, tTile::MOLE, tTile::GRASS, tTile::AIR, DROP, 25);
     }
 
-    void Squirrel(int _x, int _y, int index, char season)
+    void Squirrel(int _x, int _y, int index)
     {
         int dSE = int( (_y+1) * tCell::width + (_x+1) );
         int dSW = int( (_y+1) * tCell::width + (_x-1) );
         uint8_t tile = tCell::matrix[(_y+1)*tCell::width+(_x)];  if (tile == tTile::AIR) tile = tTile::GRASS;
-        if (tCell::matrix[dSE] != tile) { Hop(_x, _y, index, season, tTile::SQUIRREL, tTile::SQUIRREL_TAIL, tile, tTile::AIR, 500); }
-        else if (tCell::matrix[dSW] != tile) { Hop(_x, _y, index, season, tTile::SQUIRREL, tTile::SQUIRREL_TAIL, tile, tTile::AIR, 500); }
-        else { Crawl(_x, _y, index, season, tTile::SQUIRREL, tile, tTile::AIR, 50); }
+        if (tCell::matrix[dSE] != tile) { Hop(_x, _y, index, tTile::SQUIRREL, tTile::SQUIRREL_TAIL, tile, tTile::AIR, 500); }
+        else if (tCell::matrix[dSW] != tile) { Hop(_x, _y, index, tTile::SQUIRREL, tTile::SQUIRREL_TAIL, tile, tTile::AIR, 500); }
+        else { Crawl(_x, _y, index, tTile::SQUIRREL, tile, tTile::AIR, 50); }
     }
 
-    void Rabbit(int _x, int _y, int index, char season)
+    void Rabbit(int _x, int _y, int index)
     {
         int dSE = int( (_y+1) * tCell::width + (_x+1) );
         int dSW = int( (_y+1) * tCell::width + (_x-1) );
         uint8_t tile = tCell::matrix[(_y+1)*tCell::width+(_x)];  if (tile == tTile::AIR) tile = tTile::GRASS;
-        if (tCell::matrix[dSE] != tile) { Hop(_x, _y, index, season, tTile::RABBIT, tTile::RABBIT_LEGS, tile, tTile::AIR, 500); }
-        else if (tCell::matrix[dSW] != tile) { Hop(_x, _y, index, season, tTile::RABBIT, tTile::RABBIT_LEGS, tile, tTile::AIR, 500); }
-        else { Crawl(_x, _y, index, season, tTile::RABBIT, tile, tTile::AIR, 50); }
+        if (tCell::matrix[dSE] != tile) { Hop(_x, _y, index, tTile::RABBIT, tTile::RABBIT_LEGS, tile, tTile::AIR, 500); }
+        else if (tCell::matrix[dSW] != tile) { Hop(_x, _y, index, tTile::RABBIT, tTile::RABBIT_LEGS, tile, tTile::AIR, 500); }
+        else { Crawl(_x, _y, index, tTile::RABBIT, tile, tTile::AIR, 50); }
     }
 
-    void Hedgehog(int _x, int _y, int index, char season)
-    { Crawl(_x, _y, index, season, tTile::HEDGEHOG, tTile::GRASS, tTile::AIR, 25); }
+    void Hedgehog(int _x, int _y, int index)
+    { Crawl(_x, _y, index, tTile::HEDGEHOG, tTile::GRASS, tTile::AIR, 25); }
 
-    void Mouse(int _x, int _y, int index, char season)
+    void Mouse(int _x, int _y, int index)
     {
         int dSE = int( (_y+1) * tCell::width + (_x+1) );
         int dSW = int( (_y+1) * tCell::width + (_x-1) );
         uint8_t tile = tCell::matrix[(_y+1)*tCell::width+(_x)];  if (tile == tTile::AIR) tile = tTile::GRASS;
-        if (tCell::matrix[dSE] != tile) { Hop(_x, _y, index, season, tTile::MOUSE, tTile::MOUSE_TAIL, tile, tTile::AIR, 500); }
-        else if (tCell::matrix[dSW] != tile) { Hop(_x, _y, index, season, tTile::MOUSE, tTile::MOUSE_TAIL, tile, tTile::AIR, 500); }
-        else { Crawl(_x, _y, index, season, tTile::MOUSE, tile, tTile::AIR, 50); }
+        if (tCell::matrix[dSE] != tile) { Hop(_x, _y, index, tTile::MOUSE, tTile::MOUSE_TAIL, tile, tTile::AIR, 500); }
+        else if (tCell::matrix[dSW] != tile) { Hop(_x, _y, index, tTile::MOUSE, tTile::MOUSE_TAIL, tile, tTile::AIR, 500); }
+        else { Crawl(_x, _y, index, tTile::MOUSE, tile, tTile::AIR, 50); }
     }
 
-    void Rat(int _x, int _y, int index, char season)
+    void Rat(int _x, int _y, int index)
     {
         int dSE = int( (_y+1) * tCell::width + (_x+1) );
         int dSW = int( (_y+1) * tCell::width + (_x-1) );
         uint8_t tile = tCell::matrix[(_y+1)*tCell::width+(_x)]; if (tile == tTile::AIR) tile = tTile::GRASS;
-        if (tCell::matrix[dSE] != tile) { Hop(_x, _y, index, season, tTile::RAT, tTile::RAT_TAIL, tile, tTile::AIR, 500); }
-        else if (tCell::matrix[dSW] != tile) { Hop(_x, _y, index, season, tTile::RAT, tTile::RAT_TAIL, tile, tTile::AIR, 500); }
-        else { Crawl(_x, _y, index, season, tTile::RAT, tile, tTile::AIR, 50); }
+        if (tCell::matrix[dSE] != tile) { Hop(_x, _y, index, tTile::RAT, tTile::RAT_TAIL, tile, tTile::AIR, 500); }
+        else if (tCell::matrix[dSW] != tile) { Hop(_x, _y, index, tTile::RAT, tTile::RAT_TAIL, tile, tTile::AIR, 500); }
+        else { Crawl(_x, _y, index, tTile::RAT, tile, tTile::AIR, 50); }
     }
 
-    void Crab(int _x, int _y, int index, char season)
-    { Crawl(_x, _y, index, season, tTile::CRAB, tTile::SAND, tTile::WATER, 25); }
+    void Crab(int _x, int _y, int index)
+    { Crawl(_x, _y, index, tTile::CRAB, tTile::SAND, tTile::WATER, 25); }
 
-    void Bird(int _x, int _y, int index, char season)
-    { Fly(_x, _y, index, season, tTile::BIRD, tTile::BIRD_WING, tTile::AIR, 750); }
+    void Bird(int _x, int _y, int index)
+    { Fly(_x, _y, index, tTile::BIRD, tTile::BIRD_WING, tTile::AIR, 750); }
 
-    void Bat(int _x, int _y, int index, char season)
-    { Fly(_x, _y, index, season, tTile::BAT, tTile::BAT_WING, tTile::AIR, 850); }
+    void Bat(int _x, int _y, int index)
+    { Fly(_x, _y, index, tTile::BAT, tTile::BAT_WING, tTile::AIR, 850); }
 
-    void Fish(int _x, int _y, int index, char season)
+    void Fish(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
@@ -418,7 +418,7 @@ namespace tCritter
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
         int dW  = int( (_y  ) * tCell::width + (_x-1) );
         int dSS = int( (_y+2) * tCell::width + (_x  ) );
-        Swim(_x, _y, index, season, tTile::FISH, tTile::FISH_TAIL, tTile::FISH_EGG, tTile::WATER, 750);
+        Swim(_x, _y, index, tTile::FISH, tTile::FISH_TAIL, tTile::FISH_EGG, tTile::WATER, 750);
         if (tCell::matrix[dN] == tTile::WATER && tCell::matrix[dS] == tTile::WATER &&
             tCell::matrix[dE] == tTile::WATER && tCell::matrix[dW] == tTile::WATER &&
             tCell::matrix[dNE] == tTile::WATER && tCell::matrix[dNW] == tTile::WATER &&
@@ -426,7 +426,7 @@ namespace tCritter
         { tTool::Set(index, tTile::GUTS); }
     }
 
-    void FishTail(int _x, int _y, int index, char season)
+    void FishTail(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
@@ -445,7 +445,7 @@ namespace tCritter
     }
 
     /*
-    void Snake(int _x, int _y, int index, char season)
+    void Snake(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
@@ -469,23 +469,23 @@ namespace tCritter
     // Generic
     //
     
-    void Update(int _x, int _y, int index, int current_cell, char season=0)
+    void Update(int _x, int _y, int index, int current_cell)
     {
         switch (current_cell)
         {
-            case tTile::CRAB      : {     Crab(_x, _y, index, season); } break;
-            case tTile::TOAD      : {     Toad(_x, _y, index, season); } break;
-            case tTile::FROG      : {     Frog(_x, _y, index, season); } break;
-            case tTile::FISH      : {     Fish(_x, _y, index, season); } break;
-            case tTile::FISH_TAIL : { FishTail(_x, _y, index, season); } break;
-            case tTile::BIRD      : {     Bird(_x, _y, index, season); } break;
-            case tTile::BAT       : {      Bat(_x, _y, index, season); } break;
-            case tTile::RAT       : {      Rat(_x, _y, index, season); } break;
-            case tTile::MOLE      : {     Mole(_x, _y, index, season); } break;
-            case tTile::MOUSE     : {    Mouse(_x, _y, index, season); } break;
-            case tTile::HEDGEHOG  : { Hedgehog(_x, _y, index, season); } break;
-            case tTile::SQUIRREL  : { Squirrel(_x, _y, index, season); } break;
-            case tTile::RABBIT    : {   Rabbit(_x, _y, index, season); } break;
+            case tTile::CRAB      : {     Crab(_x, _y, index); } break;
+            case tTile::TOAD      : {     Toad(_x, _y, index); } break;
+            case tTile::FROG      : {     Frog(_x, _y, index); } break;
+            case tTile::FISH      : {     Fish(_x, _y, index); } break;
+            case tTile::FISH_TAIL : { FishTail(_x, _y, index); } break;
+            case tTile::BIRD      : {     Bird(_x, _y, index); } break;
+            case tTile::BAT       : {      Bat(_x, _y, index); } break;
+            case tTile::RAT       : {      Rat(_x, _y, index); } break;
+            case tTile::MOLE      : {     Mole(_x, _y, index); } break;
+            case tTile::MOUSE     : {    Mouse(_x, _y, index); } break;
+            case tTile::HEDGEHOG  : { Hedgehog(_x, _y, index); } break;
+            case tTile::SQUIRREL  : { Squirrel(_x, _y, index); } break;
+            case tTile::RABBIT    : {   Rabbit(_x, _y, index); } break;
         }
     }
 

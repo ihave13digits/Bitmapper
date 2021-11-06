@@ -5,7 +5,7 @@ namespace tGizmo
     // Special
     //
 
-    void AxleLeft(int _x, int _y, int index, char season)
+    void AxleLeft(int _x, int _y, int index)
     {
         int dNW = int( (_y-1) * tCell::width + (_x-1) );
         int dN =  int( (_y-1) * tCell::width + (_x) );
@@ -46,7 +46,7 @@ namespace tGizmo
         }
     }
 
-    void AxleRight(int _x, int _y, int index, char season)
+    void AxleRight(int _x, int _y, int index)
     {
         int dNW = int( (_y-1) * tCell::width + (_x-1) );
         int dN =  int( (_y-1) * tCell::width + (_x) );
@@ -87,7 +87,7 @@ namespace tGizmo
         }
     }
 
-    void ConveyorLeft(int _x, int _y, int index, char season)
+    void ConveyorLeft(int _x, int _y, int index)
     {
         int dNW = int( (_y-1) * tCell::width + (_x-1) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
@@ -106,7 +106,7 @@ namespace tGizmo
         }
     }
 
-    void ConveyorRight(int _x, int _y, int index, char season)
+    void ConveyorRight(int _x, int _y, int index)
     {
         int dNW = int( (_y-1) * tCell::width + (_x-1) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
@@ -125,7 +125,7 @@ namespace tGizmo
         }
     }
 
-    void Piston(int _x, int _y, int index, char season)
+    void Piston(int _x, int _y, int index)
     {
         int dN1 = int( (_y-1) * tCell::width + (_x) );
         int dN2 = int( (_y-2) * tCell::width + (_x) );
@@ -195,13 +195,13 @@ namespace tGizmo
     // Generic
     //
 
-    void Update(int _x, int _y, int index, int current_cell, char season=0)
+    void Update(int _x, int _y, int index, int current_cell)
     {
-        if (current_cell == tTile::AXLE_LEFT) { AxleLeft(_x, _y, index, season); }
-        if (current_cell == tTile::AXLE_RIGHT) { AxleRight(_x, _y, index, season); }
-        if (current_cell == tTile::CONVEYOR_LEFT) { ConveyorLeft(_x, _y, index, season); }
-        if (current_cell == tTile::CONVEYOR_RIGHT) { ConveyorRight(_x, _y, index, season); }
-        if (current_cell == tTile::PISTON) { Piston(_x, _y, index, season); }
+        if (current_cell == tTile::AXLE_LEFT) { AxleLeft(_x, _y, index); }
+        if (current_cell == tTile::AXLE_RIGHT) { AxleRight(_x, _y, index); }
+        if (current_cell == tTile::CONVEYOR_LEFT) { ConveyorLeft(_x, _y, index); }
+        if (current_cell == tTile::CONVEYOR_RIGHT) { ConveyorRight(_x, _y, index); }
+        if (current_cell == tTile::PISTON) { Piston(_x, _y, index); }
     }
 
 }

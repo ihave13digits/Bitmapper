@@ -5,7 +5,7 @@ namespace tGrain
     // Special
     //
 
-    void Snow(int _x, int _y, int index, char season)
+    void Snow(int _x, int _y, int index)
     {
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
         switch (tCell::matrix[dS])
@@ -15,7 +15,7 @@ namespace tGrain
         }
     }
 
-    void Ember(int _x, int _y, int index, char season)
+    void Ember(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
@@ -74,7 +74,7 @@ namespace tGrain
         if (chance < 50) tCell::replace[index] = tTile::FIRE;
     }
 
-    void Acorn(int _x, int _y, int index, char season)
+    void Acorn(int _x, int _y, int index)
     {
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
         int dNW = int( (_y-1) * tCell::width + (_x-1) );
@@ -110,7 +110,7 @@ namespace tGrain
     // Generic
     //
     
-    void Update(int _x, int _y, int index, int current_cell, char season=0)
+    void Update(int _x, int _y, int index, int current_cell)
     {
 
         int direction = rand() % 100;
@@ -135,9 +135,9 @@ namespace tGrain
 
         switch (current_cell)
         {
-            case tTile::ACORN : { Acorn(_x, _y, index, season); } break;
-            case tTile::EMBER : { Ember(_x, _y, index, season); } break;
-            case tTile::SNOW : { Snow(_x, _y, index, season); } break;
+            case tTile::ACORN : { Acorn(_x, _y, index); } break;
+            case tTile::EMBER : { Ember(_x, _y, index); } break;
+            case tTile::SNOW : { Snow(_x, _y, index); } break;
         }
 
     }

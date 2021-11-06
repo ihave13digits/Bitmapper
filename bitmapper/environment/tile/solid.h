@@ -5,7 +5,7 @@ namespace tSolid
     // Special
     //
 
-    void Ice(int _x, int _y, int index, char season)
+    void Ice(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
@@ -34,7 +34,7 @@ namespace tSolid
             tCell::matrix[dW] != tTile::ICE)
         {
             int melt = 0;
-            switch (season)
+            switch (tCell::season)
             {
                 case seasonID::EARLY_SPRING : { melt = 10; } break;
                 case seasonID::SPRING       : { melt = 20; } break;
@@ -50,7 +50,7 @@ namespace tSolid
         }
     }
 
-    void LavaRock(int _x, int _y, int index, char season)
+    void LavaRock(int _x, int _y, int index)
     {
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
@@ -70,12 +70,12 @@ namespace tSolid
     // Generic
     //
 
-    void Update(int _x, int _y, int index, int current_cell, char season=tCell::season)
+    void Update(int _x, int _y, int index, int current_cell)
     {
         switch (current_cell)
         {
-            case tTile::ICE       : {      Ice(_x, _y, index, season); } break;
-            case tTile::LAVA_ROCK : { LavaRock(_x, _y, index, season); } break;
+            case tTile::ICE       : {      Ice(_x, _y, index); } break;
+            case tTile::LAVA_ROCK : { LavaRock(_x, _y, index); } break;
         }
     }
 

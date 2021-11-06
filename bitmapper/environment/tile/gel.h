@@ -5,20 +5,20 @@ namespace tGel
     // Special
     //
 
-    void Mud(int _x, int _y, int index, char season)
+    void Mud(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         if (tCell::matrix[dN] == tTile::AIR)  { if (rand()%10000 < 5) tCell::replace[index] = tTile::DIRT; }
         if (tCell::matrix[dN] == tTile::ROOT) { if (rand()%10000 < 5) tCell::replace[index] = tTile::SOIL; }
     }
 
-    void Muck(int _x, int _y, int index, char season)
+    void Muck(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         if (tCell::matrix[dN] == tTile::AIR) { if (rand()%10000 < 5) tCell::replace[index] = tTile::SOIL; }
     }
 
-    void Lava(int _x, int _y, int index, char season)
+    void Lava(int _x, int _y, int index)
     {
         int dNN = int( (_y-2) * tCell::width + (_x  ) );
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
@@ -107,7 +107,7 @@ namespace tGel
     // Generic
     //
     
-    void Update(int _x, int _y, int index, int current_cell, char season=0)
+    void Update(int _x, int _y, int index, int current_cell)
     {
 
         int direction = rand() % 100;
@@ -140,9 +140,9 @@ namespace tGel
 
         switch(current_cell)
         {
-            case tTile::MUD : { Mud(_x, _y, index, season); } break;
-            case tTile::MUCK : { Muck(_x, _y, index, season); } break;
-            case tTile::LAVA : { Lava(_x, _y, index, season); } break;
+            case tTile::MUD : { Mud(_x, _y, index); } break;
+            case tTile::MUCK : { Muck(_x, _y, index); } break;
+            case tTile::LAVA : { Lava(_x, _y, index); } break;
         }
     }
 

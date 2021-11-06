@@ -6,7 +6,7 @@ namespace tGas
     // Special
     //
 
-    void Steam(int _x, int _y, int index, char season)
+    void Steam(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
@@ -15,7 +15,7 @@ namespace tGas
         { if (rand()%1000 < 10) tCell::replace[index] = tTile::WATER; }
     }
 
-    void ThinSmoke(int _x, int _y, int index, char season)
+    void ThinSmoke(int _x, int _y, int index)
     {
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
         int dW  = int( (_y  ) * tCell::width + (_x-1) );
@@ -26,7 +26,7 @@ namespace tGas
         else if (chance > 80) { tCell::replace[index] = tTile::AIR; }
     }
 
-    void Smoke(int _x, int _y, int index, char season)
+    void Smoke(int _x, int _y, int index)
     {
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
         int dW  = int( (_y  ) * tCell::width + (_x-1) );
@@ -37,7 +37,7 @@ namespace tGas
         else if (chance > 80) { tCell::replace[index] = tTile::THIN_SMOKE; }
     }
 
-    void ThickSmoke(int _x, int _y, int index, char season)
+    void ThickSmoke(int _x, int _y, int index)
     {
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
         int dW  = int( (_y  ) * tCell::width + (_x-1) );
@@ -54,7 +54,7 @@ namespace tGas
     // Generic
     //
     
-    void Update(int _x, int _y, int index, int current_cell, char season=0)
+    void Update(int _x, int _y, int index, int current_cell)
     {
         int direction = rand() % 100;
         if (direction < 50)
@@ -86,10 +86,10 @@ namespace tGas
 
         switch (current_cell)
             {
-                case tTile::STEAM : { Steam(_x, _y, index, season); } break;
-                case tTile::THIN_SMOKE : { ThinSmoke(_x, _y, index, season); } break;
-                case tTile::SMOKE : { Smoke(_x, _y, index, season); } break;
-                case tTile::THICK_SMOKE : { ThickSmoke(_x, _y, index, season); } break;
+                case tTile::STEAM : { Steam(_x, _y, index); } break;
+                case tTile::THIN_SMOKE : { ThinSmoke(_x, _y, index); } break;
+                case tTile::SMOKE : { Smoke(_x, _y, index); } break;
+                case tTile::THICK_SMOKE : { ThickSmoke(_x, _y, index); } break;
             }
     }
 

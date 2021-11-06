@@ -5,7 +5,7 @@ namespace tPlumbing
     // Special
     //
     
-    void Pipe(int _x, int _y, int index, char season)
+    void Pipe(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
@@ -50,7 +50,7 @@ namespace tPlumbing
         }
     }
 
-    void Pump(int _x, int _y, int index, char season)
+    void Pump(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
@@ -80,7 +80,7 @@ namespace tPlumbing
         }
     }
 
-    void Gutter(int _x, int _y, int index, char season)
+    void Gutter(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
@@ -125,7 +125,7 @@ namespace tPlumbing
         }
     }
 
-    void Drain(int _x, int _y, int index, char season)
+    void Drain(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
@@ -155,7 +155,7 @@ namespace tPlumbing
         }
     }
 
-    void ValveOpen(int _x, int _y, int index, char season)
+    void ValveOpen(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
@@ -183,15 +183,15 @@ namespace tPlumbing
     // Generic
     //
 
-    void Update(int _x, int _y, int index, int current_cell, char season=0)
+    void Update(int _x, int _y, int index, int current_cell)
     {
         switch (current_cell)
         {
-            case tTile::PIPE : { Pipe(_x, _y, index, season); } break;
-            case tTile::PUMP : { Pump(_x, _y, index, season); } break;
-            case tTile::GUTTER : { Gutter(_x, _y, index, season); } break;
-            case tTile::DRAIN : { Drain(_x, _y, index, season); } break;
-            case tTile::VALVE_OPEN : { ValveOpen(_x, _y, index, season); } break;
+            case tTile::PIPE : { Pipe(_x, _y, index); } break;
+            case tTile::PUMP : { Pump(_x, _y, index); } break;
+            case tTile::GUTTER : { Gutter(_x, _y, index); } break;
+            case tTile::DRAIN : { Drain(_x, _y, index); } break;
+            case tTile::VALVE_OPEN : { ValveOpen(_x, _y, index); } break;
         }
     }
 

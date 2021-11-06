@@ -5,7 +5,7 @@ namespace tGeo
     // Special
     //
 
-    void Caldera(int _x, int _y, int index, char season)
+    void Caldera(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dNN = int( (_y-2) * tCell::width + (_x  ) );
@@ -57,7 +57,7 @@ namespace tGeo
         }
     }
 
-    void VolcanicRock(int _x, int _y, int index, char season)
+    void VolcanicRock(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
@@ -79,12 +79,12 @@ namespace tGeo
     // Generic
     //
 
-    void Update(int _x, int _y, int index, int current_cell, char season=tCell::season)
+    void Update(int _x, int _y, int index, int current_cell)
     {
         switch (current_cell)
         {
-            case tTile::CALDERA       : {       Caldera(_x, _y, index, season); } break;
-            case tTile::VOLCANIC_ROCK : {  VolcanicRock(_x, _y, index, season); } break;
+            case tTile::CALDERA       : {       Caldera(_x, _y, index); } break;
+            case tTile::VOLCANIC_ROCK : {  VolcanicRock(_x, _y, index); } break;
         }
     }
 

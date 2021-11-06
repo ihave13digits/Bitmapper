@@ -1,13 +1,28 @@
 namespace iSystem
 {
-
+    //
     Sky sky = Sky();
     World world = World();
+    //
     Player player = Player();
     Camera camera = Camera();
+    //
     Blueprints blueprints = Blueprints();
+    Label blueprint_label = Label();
+    //
     std::vector<World> dimensions;
     std::vector<Particle> particles;
+
+    // Setup
+    void InitializeSystem()
+    {
+        blueprints.InitializeMatrix();
+        blueprints.LoadData();
+        // Labels
+        blueprint_label.x = (core::width/2)-32;
+        blueprint_label.y = (core::height/2)-8;
+        blueprint_label.font = 0.5;
+    }
 
     // Player
     int PlayerChunkX() { return (player.x%tCell::width)/world.chunk_size; }

@@ -5,7 +5,7 @@ namespace tPlasma
     // Special
     //
 
-    void Fire(int _x, int _y, int index, char season)
+    void Fire(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
@@ -83,7 +83,7 @@ namespace tPlasma
         }
     }
 
-    void Flame(int _x, int _y, int index, char season)
+    void Flame(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
@@ -162,7 +162,7 @@ namespace tPlasma
         }
     }
 
-    void Flare(int _x, int _y, int index, char season)
+    void Flare(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
@@ -224,7 +224,7 @@ namespace tPlasma
         }
     }
 
-    void Spark(int _x, int _y, int index, char season)
+    void Spark(int _x, int _y, int index)
     {
         if (!tTool::FluidCollision(_x, _y+2) && !tTool::FluidCollision(_x, _y+1))
         {
@@ -242,7 +242,7 @@ namespace tPlasma
         else { if (rand() % 100 < 25) tCell::replace[index] = tTile::AIR; }
     }
 
-    void Arc(int _x, int _y, int index, char season)
+    void Arc(int _x, int _y, int index)
     {
         int dN   = int( (_y-1) * tCell::width + (_x  ) );
         int dS   = int( (_y+1) * tCell::width + (_x  ) );
@@ -278,15 +278,15 @@ namespace tPlasma
     // Generic
     //
 
-    void Update(int _x, int _y, int index, int current_cell, char season=0)
+    void Update(int _x, int _y, int index, int current_cell)
     {
         switch (current_cell)
             {
-                case tTile::FIRE : { Fire(_x, _y, index, season); } break;
-                case tTile::FLAME : { Flame(_x, _y, index, season); } break;
-                case tTile::FLARE : { Flare(_x, _y, index, season); } break;
-                case tTile::SPARK : { Spark(_x, _y, index, season); } break;
-                case tTile::ARC : { Arc(_x, _y, index, season); } break;
+                case tTile::FIRE : { Fire(_x, _y, index); } break;
+                case tTile::FLAME : { Flame(_x, _y, index); } break;
+                case tTile::FLARE : { Flare(_x, _y, index); } break;
+                case tTile::SPARK : { Spark(_x, _y, index); } break;
+                case tTile::ARC : { Arc(_x, _y, index); } break;
             }
     }
 

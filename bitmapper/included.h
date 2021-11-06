@@ -23,6 +23,7 @@
 #include "utility/platform.h"
 #include "utility/utility.h"
 #include "utility/data.h"
+
 #include "utility/rng.h"
 
 
@@ -121,10 +122,12 @@
 ///  User Interface
 //
 
-#include "ui/blueprints.h"
+#include "ui/label.h"
 #include "ui/button.h"
-#include "ui/camera.h"
 #include "ui/icon.h"
+
+#include "ui/blueprints.h"
+#include "ui/camera.h"
 
 
 
@@ -133,3 +136,9 @@
 //
 
 #include "core/instance.h"
+
+//
+/// Game Script
+//
+
+#include "core/script.h"
