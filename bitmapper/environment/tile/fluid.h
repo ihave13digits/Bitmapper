@@ -5,7 +5,7 @@ namespace tFluid
     // Special
     //
 
-    void Water(int _x, int _y, int index, char season)
+    void Water(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
@@ -45,7 +45,7 @@ namespace tFluid
         }
     }
 
-    void Magma(int _x, int _y, int index, char season)
+    void Magma(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dE  = int( (_y  ) * tCell::width + (_x+1) );
@@ -125,7 +125,7 @@ namespace tFluid
         }
     }
 
-    void Brine(int _x, int _y, int index, char season)
+    void Brine(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dNW = int( (_y-1) * tCell::width + (_x-1) );
@@ -137,7 +137,7 @@ namespace tFluid
         }
     }
 
-    void Oil(int _x, int _y, int index, char season)
+    void Oil(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
@@ -157,7 +157,7 @@ namespace tFluid
     // Generic
     //
     
-    void Update(int _x, int _y, int index, int current_cell, char season=0)
+    void Update(int _x, int _y, int index, int current_cell)
     {
         int cell_type = tTool::GetType(current_cell);
         int direction = rand() % 100;
@@ -203,10 +203,10 @@ namespace tFluid
 
         switch(current_cell)
         {
-            case tTile::WATER : { Water(_x, _y, index, season); } break;
-            case tTile::MAGMA : { Magma(_x, _y, index, season); } break;
-            case tTile::BRINE : { Brine(_x, _y, index, season); } break;
-            case tTile::OIL   : {   Oil(_x, _y, index, season); } break;
+            case tTile::WATER : { Water(_x, _y, index); } break;
+            case tTile::MAGMA : { Magma(_x, _y, index); } break;
+            case tTile::BRINE : { Brine(_x, _y, index); } break;
+            case tTile::OIL   : {   Oil(_x, _y, index); } break;
         }
     }
 

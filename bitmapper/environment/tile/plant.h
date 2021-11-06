@@ -5,7 +5,7 @@ namespace tPlant
     // Special
     //
 
-    void Grass(int _x, int _y, int index, char season)
+    void Grass(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dNN = int( (_y-2) * tCell::width + (_x  ) );
@@ -16,7 +16,7 @@ namespace tPlant
         int dSE = int( (_y+1) * tCell::width + (_x+1) );
         int dSW = int( (_y+1) * tCell::width + (_x-1) );
         int dW  = int( (_y  ) * tCell::width + (_x-1) );
-        if (rand()%1000 < 5 && season < seasonID::LATE_SUMMER)
+        if (rand()%1000 < 5)
         {
             if (tCell::matrix[dN] == tTile::DEAD_LEAVES)
             {
@@ -35,7 +35,7 @@ namespace tPlant
         else if (tCell::matrix[dN] == tTile::DIRT || tCell::matrix[dN] == tTile::LAVA) { tCell::replace[index] = tTile::DIRT; }
     }
 
-    void Moss(int _x, int _y, int index, char season)
+    void Moss(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
@@ -58,7 +58,7 @@ namespace tPlant
         else if (tCell::matrix[dN] == tTile::DIRT || tCell::matrix[dN] == tTile::LAVA) { tCell::replace[index] = tTile::DIRT; }
     }
    
-    void Leaves(int _x, int _y, int index, char season)
+    void Leaves(int _x, int _y, int index)
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
@@ -84,10 +84,10 @@ namespace tPlant
         int chance = rand()%1000;
         int16_t LEAVES = tTile::LEAVES;
         
-        if (season > seasonID::LATE_SUMMER)
+        if (tCell::season > seasonID::LATE_SUMMER)
         {
             int despawn;
-            switch (season)
+            switch (tCell::season)
             {
                 case seasonID::EARLY_AUTUMN : { LEAVES = tTile::OLD_LEAVES; despawn = 5; } break;
                 case seasonID::AUTUMN :       { LEAVES = tTile::DRY_LEAVES; despawn = 10; } break;
@@ -97,11 +97,11 @@ namespace tPlant
                 case seasonID::LATE_WINTER :  { LEAVES = tTile::AIR; despawn = 30; } break;
             }
             if (rand()%1000 < 5) { tCell::replace[index] = LEAVES; }
-            if (season > seasonID::AUTUMN) { if (rand()%1000 < despawn) tCell::replace[index] = tTile::AIR; }
+            if (tCell::season > seasonID::AUTUMN) { if (rand()%1000 < despawn) tCell::replace[index] = tTile::AIR; }
 
         }
         int proceed = 0;
-        switch (season)
+        switch (tCell::season)
         {
             case seasonID::EARLY_SPRING : { proceed =  5; } break;
             case seasonID::SPRING       : { proceed = 15; } break;
@@ -113,7 +113,7 @@ namespace tPlant
             case seasonID::AUTUMN       : { proceed = 10; } break;
             case seasonID::LATE_AUTUMN  : { proceed =  5; } break;
         }
-        if (rand()%1000 < proceed && season < seasonID::EARLY_AUTUMN)
+        if (rand()%1000 < proceed && tCell::season < seasonID::EARLY_AUTUMN)
         {
             n = 0;
             if (mN == tTile::BRANCH || mN == tTile::STICK) n++;
@@ -149,7 +149,7 @@ namespace tPlant
         }
     }
 
-    void DeadLeaves(int _x, int _y, int index, char season)
+    void DeadLeaves(int _x, int _y, int index)
     {
         if (!tTool::DualCollision(_x, _y+1)) { int rplc = (_y+1)*tCell::width+(_x); tTool::Swap(index, rplc); }
         else if (!tTool::DualCollision(_x-1, _y+1)) { int rplc = (_y+1)*tCell::width+(_x-1); tTool::Swap(index, rplc); }
@@ -157,7 +157,7 @@ namespace tPlant
         else if (tCell::matrix[(_y+1)*tCell::width+(_x)] == tTile::SOIL) { if (rand()%1000 < 25) tCell::replace[index] = tTile::SOIL; }
     }
 
-    void Stick(int _x, int _y, int index, char season)
+    void Stick(int _x, int _y, int index)
     {
         int dNN = int( (_y-2) * tCell::width + (_x  ) );
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
@@ -170,7 +170,7 @@ namespace tPlant
         int n;
         int chance = 100;
         int proceed = 0;
-        switch (season)
+        switch (tCell::season)
         {
             case seasonID::EARLY_SPRING : { proceed =  5; } break;
             case seasonID::SPRING       : { proceed = 15; } break;
@@ -214,7 +214,7 @@ namespace tPlant
         }
     }
 
-    void Branch(int _x, int _y, int index, char season)
+    void Branch(int _x, int _y, int index)
     {
         int dM = int( (_y+32) * tCell::width + (_x  ) );
         int dT = int( (_y+64) * tCell::width + (_x  ) );
@@ -232,7 +232,7 @@ namespace tPlant
         int shortright = tCell::matrix[dE+4];
         int direction = rand()%100;
         int proceed = 0;
-        switch (season)
+        switch (tCell::season)
         {
             case seasonID::EARLY_SPRING : { proceed =  5; } break;
             case seasonID::SPRING       : { proceed = 15; } break;
@@ -349,7 +349,7 @@ namespace tPlant
         }
     }
 
-    void Trunk(int _x, int _y, int index, char season)
+    void Trunk(int _x, int _y, int index)
     {
         int dB = int( (_y+12) * tCell::width + (_x  ) );
         int dT = int( (_y+64) * tCell::width + (_x  ) );
@@ -363,7 +363,7 @@ namespace tPlant
         int bottom = tCell::matrix[dB];
         int direction = rand()%1000;
         int proceed = 0;
-        switch (season)
+        switch (tCell::season)
         {
             case seasonID::EARLY_SPRING : { proceed =  5; } break;
             case seasonID::SPRING       : { proceed = 15; } break;
@@ -441,13 +441,13 @@ namespace tPlant
         }
     }
 
-    void Taproot(int _x, int _y, int index, char season)
+    void Taproot(int _x, int _y, int index)
     {
         int dT =  int( (_y-24) * tCell::width + (_x  ) );
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         //if (rand()%1000 < 25 && tCell::matrix[dT] != tTile::TRUNK) { tCell::replace[index] = tTile::MUD; }
         int proceed = 0;
-        switch (season)
+        switch (tCell::season)
         {
             case seasonID::EARLY_SPRING : { proceed =  5; } break;
             case seasonID::SPRING       : { proceed = 15; } break;
@@ -485,12 +485,12 @@ namespace tPlant
         }
     }
 
-    void Root(int _x, int _y, int index, char season)
+    void Root(int _x, int _y, int index)
     {
         int dT =  int( (_y-12) * tCell::width + (_x  ) );
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int proceed = 0;
-        switch (season)
+        switch (tCell::season)
         {
             case seasonID::EARLY_SPRING : { proceed =  5; } break;
             case seasonID::SPRING       : { proceed = 15; } break;
@@ -536,21 +536,21 @@ namespace tPlant
     // Generic
     //
 
-    void Update(int _x, int _y, int index, int current_cell, char season=tCell::season)
+    void Update(int _x, int _y, int index, int current_cell)
     {
         switch (current_cell)
         {
-            case tTile::GRASS : { Grass(_x, _y, index, season); } break;
-            case tTile::MOSS : { Moss(_x, _y, index, season); } break;
-            case tTile::ROOT : { Root(_x, _y, index, season); } break;
-            case tTile::TAPROOT : { Taproot(_x, _y, index, season); } break;
-            case tTile::TRUNK : { Trunk(_x, _y, index, season); } break;
-            case tTile::BRANCH : { Branch(_x, _y, index, season); } break;
-            case tTile::STICK : { Stick(_x, _y, index, season); } break;
-            case tTile::LEAVES : { Leaves(_x, _y, index, season); } break;
-            case tTile::OLD_LEAVES : { Leaves(_x, _y, index, season); } break;
-            case tTile::DRY_LEAVES : { Leaves(_x, _y, index, season); } break;
-            case tTile::DEAD_LEAVES : { DeadLeaves(_x, _y, index, season); } break;
+            case tTile::GRASS : { Grass(_x, _y, index); } break;
+            case tTile::MOSS : { Moss(_x, _y, index); } break;
+            case tTile::ROOT : { Root(_x, _y, index); } break;
+            case tTile::TAPROOT : { Taproot(_x, _y, index); } break;
+            case tTile::TRUNK : { Trunk(_x, _y, index); } break;
+            case tTile::BRANCH : { Branch(_x, _y, index); } break;
+            case tTile::STICK : { Stick(_x, _y, index); } break;
+            case tTile::LEAVES : { Leaves(_x, _y, index); } break;
+            case tTile::OLD_LEAVES : { Leaves(_x, _y, index); } break;
+            case tTile::DRY_LEAVES : { Leaves(_x, _y, index); } break;
+            case tTile::DEAD_LEAVES : { DeadLeaves(_x, _y, index); } break;
         }
     }
 

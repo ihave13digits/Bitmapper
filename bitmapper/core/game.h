@@ -64,9 +64,8 @@ public:
         tTile::LoadTileData();
         // Init World Gen
         new_world::InitializeGenerationSteps();
-        // Init Blueprints
-        iSystem::blueprints.InitializeMatrix();
-        iSystem::blueprints.LoadData();
+        // Init Instances
+        iSystem::InitializeSystem();
     }
 
 
@@ -121,7 +120,20 @@ public:
             else if (GetKey(olc::Key::K7).bPressed) { c = "7"; }
             else if (GetKey(olc::Key::K8).bPressed) { c = "8"; }
             else if (GetKey(olc::Key::K9).bPressed) { c = "9"; }
+            else if (GetKey(olc::Key::EQUALS).bPressed) { c = "="; }
+            else if (GetKey(olc::Key::COMMA).bPressed) { c = ","; }
+            else if (GetKey(olc::Key::MINUS).bPressed) { c = "-"; }
+            else if (GetKey(olc::Key::PERIOD).bPressed) { c = "."; }
+            else if (GetKey(olc::Key::OEM_1).bPressed) { c = ";"; }
+            else if (GetKey(olc::Key::OEM_2).bPressed) { c = "/"; }
+            else if (GetKey(olc::Key::OEM_4).bPressed) { c = "["; }
+            else if (GetKey(olc::Key::OEM_5).bPressed) { c = "\\"; }
+            else if (GetKey(olc::Key::OEM_7).bPressed) { c = "'"; }
             else if (GetKey(olc::Key::SPACE).bPressed) { c = " "; }
+            else if (GetKey(olc::Key::DEL).bPressed) { c = "DEL"; }
+            else if (GetKey(olc::Key::BACK).bPressed) { c = "BACK"; }
+            else if (GetKey(olc::Key::LEFT).bPressed) { c = "LEFT"; }
+            else if (GetKey(olc::Key::RIGHT).bPressed) { c = "RIGHT"; }
         }
         else if (ShiftKey())
         {
@@ -151,8 +163,33 @@ public:
             else if (GetKey(olc::Key::X).bPressed) { c = "X"; }
             else if (GetKey(olc::Key::Y).bPressed) { c = "Y"; }
             else if (GetKey(olc::Key::Z).bPressed) { c = "Z"; }
+            else if (GetKey(olc::Key::K0).bPressed) { c = ")"; }
+            else if (GetKey(olc::Key::K1).bPressed) { c = "!"; }
+            else if (GetKey(olc::Key::K2).bPressed) { c = "@"; }
+            else if (GetKey(olc::Key::K3).bPressed) { c = "#"; }
+            else if (GetKey(olc::Key::K4).bPressed) { c = "$"; }
+            else if (GetKey(olc::Key::K5).bPressed) { c = "%"; }
+            else if (GetKey(olc::Key::K6).bPressed) { c = "^"; }
+            else if (GetKey(olc::Key::K7).bPressed) { c = "&"; }
+            else if (GetKey(olc::Key::K8).bPressed) { c = "*"; }
+            else if (GetKey(olc::Key::K9).bPressed) { c = "("; }
+            else if (GetKey(olc::Key::OEM_1).bPressed) { c = ":"; }
+            else if (GetKey(olc::Key::OEM_2).bPressed) { c = "?"; }
+            else if (GetKey(olc::Key::OEM_4).bPressed) { c = "{"; }
+            else if (GetKey(olc::Key::OEM_5).bPressed) { c = "|"; }
+            else if (GetKey(olc::Key::OEM_7).bPressed) { c = '"'; }
+            else if (GetKey(olc::Key::EQUALS).bPressed) { c = "+"; }
+            else if (GetKey(olc::Key::COMMA).bPressed) { c = "<"; }
+            else if (GetKey(olc::Key::MINUS).bPressed) { c = "_"; }
+            else if (GetKey(olc::Key::PERIOD).bPressed) { c = ">"; }
         }
-        if (GetKey(olc::Key::BACK).bPressed) { input_string = input_string.substr(0, input_string.length()-1); }
+        else
+        {
+            if (GetKey(olc::Key::BACK).bPressed) { c = "BACK"; }
+            if (GetKey(olc::Key::LEFT).bPressed) { c = "LEFT"; }
+            if (GetKey(olc::Key::RIGHT).bPressed) { c = "RIGHT"; }
+        }
+        //if (GetKey(olc::Key::BACK).bPressed) { input_string = input_string.substr(0, input_string.length()-1); }
         return c;
     }
 
@@ -696,13 +733,9 @@ public:
         std::string collision_at = std::to_string(tTool::Collision(offset_x, offset_y));
         std::string chunk_pos = std::to_string(iSystem::PlayerChunkX())+", "+std::to_string(iSystem::PlayerChunkY());
         if ( ( (lookindex < tCell::width*tCell::height) && lookindex > 0) && (tCell::matrix[lookindex] < tTile::total_tiles) )
-        {
-            lookingat = tTile::NAME[tCell::matrix[lookindex]];
-        }
+        { lookingat = tTile::NAME[tCell::matrix[lookindex]]; }
         if (iSystem::player.inventory.HasItem(core::selected_tile))
-        {
-            selectedcount = std::to_string(iSystem::player.inventory.data[core::selected_tile]);
-        }
+        { selectedcount = std::to_string(iSystem::player.inventory.data[core::selected_tile]); }
         ProgressBar(4, 2, iSystem::player.hp, iSystem::player.HP, 32, 255, 0, 0, 64, 0, 0);
         ProgressBar(4, 4, iSystem::player.jp, iSystem::player.JP, 32, 0, 255, 0, 0, 64, 0);
         ProgressBar(4, 6, iSystem::player.bp, iSystem::player.BP, 32, 0, 0, 255, 0, 0, 64);
@@ -1121,11 +1154,7 @@ public:
             int x = i*(icon_size+3)+4;
             DrawRect(x, 4, icon_size, icon_size, hud_color);
             if (iSystem::player.hotbar[i][0] == itemID::TILE)
-            {
-                int tile_value = iSystem::player.hotbar[i][1];
-                int tile_type = tTool::GetType(tile_value);
-                DrawIcon(x+1, 5, tile_type, tile_value);
-            }
+            { int tile_value = iSystem::player.hotbar[i][1]; int tile_type = tTool::GetType(tile_value); DrawIcon(x+1, 5, tile_type, tile_value); }
             if (i == core::selected_hotbar) { DrawRect(x, 4, icon_size, icon_size, hud_select_color); }
         }
         SetPixelMode(olc::Pixel::NORMAL);
@@ -1140,22 +1169,15 @@ public:
         // Flood Fill
         if (ShiftKey() && GetMouse(0).bPressed)
         {
-            int _x = GetMouseX() - 125;
-            int _y = GetMouseY() - 4;
-            if (GetMouseX() > 124 && GetMouseX() < 253 &&
-                GetMouseY() > 3 && GetMouseY() < 131)
+            int _x = GetMouseX() - 125; int _y = GetMouseY() - 4;
+            if (GetMouseX() > 124 && GetMouseX() < 253 && GetMouseY() > 3 && GetMouseY() < 132)
             { iSystem::blueprints.FloodFill(_x, _y, iSystem::player.hotbar[core::selected_hotbar][1]);}
         }
         // Place Tiles
         else if (GetMouse(0).bHeld && !ShiftKey())
         {
-            if (GetMouseX() > 124 && GetMouseX() < 253 &&
-                GetMouseY() > 3 && GetMouseY() < 132)
-            {
-                int _x = core::mouse_x - 125;
-                int _y = core::mouse_y - 4;
-                iSystem::blueprints.matrix[_y*128+_x] = iSystem::player.hotbar[core::selected_hotbar][1];
-            }
+            if (GetMouseX() > 124 && GetMouseX() < 253 && GetMouseY() > 3 && GetMouseY() < 132)
+            { int _x = core::mouse_x - 125; int _y = core::mouse_y - 4; iSystem::blueprints.matrix[_y*128+_x] = iSystem::player.hotbar[core::selected_hotbar][1]; }
             if (clear_print.IsColliding(core::mouse_x, core::mouse_y)) { iSystem::blueprints.ClearMatrix(); }
             if (name_print.IsColliding(core::mouse_x, core::mouse_y)) { core::game_state = core::NAME_BLUEPRINT; }
             if (save_print.IsColliding(core::mouse_x, core::mouse_y)) { iSystem::blueprints.SaveData(); }
@@ -1180,13 +1202,11 @@ public:
         // Grid
         if (core::show_grid)
         {
-            int size = iSystem::world.chunk_size;
-            int sub = size/core::grid_subdivision;
+            int size = iSystem::world.chunk_size; int sub = size/core::grid_subdivision;
             for (int y = 0; y < 128; y += sub) { DrawLine({125, y+4}, {252, y+4}, olc::Pixel(grid_color)); }
             for (int x = 0; x < 128; x += sub) { DrawLine({x+125, 4}, {x+125, 131}, olc::Pixel(grid_color)); }
-            SetPixelMode(olc::Pixel::NORMAL);
         }
-        HotbarInput();
+        SetPixelMode(olc::Pixel::NORMAL); HotbarInput();
     }
 
     void StateLoadBlueprint()
@@ -1211,11 +1231,16 @@ public:
 
     void StateNameBlueprint()
     {
-        input_string = input_string + GetCharacter();
+        int lx = iSystem::blueprint_label.x;
+        int ly = iSystem::blueprint_label.y;
+        int text_size = iSystem::blueprint_label.Size();
+        Button label = Button(); label.Setup(lx, ly, 64, 16, 0.5, iSystem::blueprint_label.text); DrawButton(label);
+        int cx = ((lx + ((label.width/2.0))-(float(text_size)*(4.0*iSystem::blueprint_label.font)))) + (4.0*iSystem::blueprint_label.cursor);
+        iSystem::blueprint_label.Update(GetCharacter());
         DrawPanel(core::width/2-36, core::height/2-10, 72, 20);
-        Button label = Button(); label.Setup(core::width/2-32, core::height/2-8, 64, 16, 0.5, input_string); DrawButton(label);
+        DrawLine(cx, ly+10, cx+4, ly+10);
         if (GetKey(ui_select).bPressed)
-        { iSystem::blueprints.selected = input_string; input_string = ""; core::game_state = core::BLUEPRINT; }
+        { iSystem::blueprints.selected = iSystem::blueprint_label.text; iSystem::blueprint_label.text = ""; core::game_state = core::BLUEPRINT; }
         if (GetKey(menu_pause).bReleased) { core::game_state = core::BLUEPRINT; }
     }
 

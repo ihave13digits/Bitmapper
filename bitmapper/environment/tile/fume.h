@@ -5,13 +5,13 @@ namespace tFume
     // Special
     //
     
-    void Fog(int _x, int _y, int index, int current_cell, char season=0)
+    void Fog(int _x, int _y, int index)
     {
         int dS = int( (_y+1) * tCell::width + (_x  ) );
         if (tCell::matrix[dS] == tTile::GRASS && rand()%1000 < 25) { tCell::replace[index] = tTile::AIR; }
     }
 
-    void OilFumes(int _x, int _y, int index, char season)
+    void OilFumes(int _x, int _y, int index)
     {
         int dO  = int( (_y+3) * tCell::width + (_x  ) );
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
@@ -28,7 +28,7 @@ namespace tFume
     // Generic
     //
 
-    void Update(int _x, int _y, int index, int current_cell, char season=0)
+    void Update(int _x, int _y, int index, int current_cell)
     {
         int cell_type = tTool::GetType(current_cell);
         int direction = rand() % 100;
@@ -72,8 +72,8 @@ namespace tFume
 
         switch (current_cell)
             {
-                case tTile::FOG       : {      Fog(_x, _y, index, season); } break;
-                case tTile::OIL_FUMES : { OilFumes(_x, _y, index, season); } break;
+                case tTile::FOG       : {      Fog(_x, _y, index); } break;
+                case tTile::OIL_FUMES : { OilFumes(_x, _y, index); } break;
             }
 
     }

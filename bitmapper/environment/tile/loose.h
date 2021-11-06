@@ -5,7 +5,7 @@ namespace tLoose
     // Special
     //
     
-    void LooseDirt(int _x, int _y, int index, char season)
+    void LooseDirt(int _x, int _y, int index)
     {
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
         if (tCell::matrix[dS] == tTile::DIRT && rand()%100 < 25)
@@ -26,7 +26,7 @@ namespace tLoose
     // Generic
     //
 
-    void Update(int _x, int _y, int index, int current_cell, char season=0)
+    void Update(int _x, int _y, int index, int current_cell)
     {
         if (!tTool::FluidCollision(_x, _y+1))
         {
@@ -37,7 +37,7 @@ namespace tLoose
 
         switch (current_cell)
         {
-            case tTile::LOOSE_DIRT : { LooseDirt(_x, _y, index, season); } break;
+            case tTile::LOOSE_DIRT : { LooseDirt(_x, _y, index); } break;
         }
     }
 
