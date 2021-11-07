@@ -1,56 +1,36 @@
+// Possibly look into 'cstdarg'
+struct Command
+{
+    std::string cmd; std::map<std::string, int> args;
+    Command(std::string c, int s, int i, int f) { cmd = c; args["string"] = s; args["int"] = i; args["float"] = f; }
+};
+
 namespace script
 {
 
-    enum OPS {
-        oPLUS,
-        oMINUS,
-        oGREATER,
-        oEQUAL,
-        oLESSER,
-        oBRACKET_L,
-        oBRACKET_R,
-    };
-
-    enum FUNC {
-        //
-        /// Tile Tool
-        //
-        
-        //
-        fGET_TYPE,
-        fGET_DURABILITY,
-        //
-        fGET_LIGHT_VALUE,
-        fNEIGHBORS,
-        //
-        fGAS_COLLISION,
-        fFUME_COLLISION,
-        fFLUID_COLLISION,
-        fGEL_COLLISION,
-        fGRAIN_COLLISION,
-        fDUAL_COLLISION,
-        fIS_COLLIDING,
-        fCOLLISION,
-        //
-        fSET,
-        fSWAP,
-        fSOFT_SWAP,
-    };
-
-    std::vector<std::string> single = {
-        "toggle_creative",
-        "exit",
-        "quit",
+    std::vector<Command> commands = {
+        Command("exit",            0, 0, 0),
+        Command("quit",            0, 0, 0),
+        Command("toggle_creative", 0, 0, 0),
+        Command("get",             1, 0, 0),
+        Command("set",             1, 0, 0),
+        Command("int",             0, 2, 0),
+        Command("float",           0, 1, 1),
+        Command("neighbors",       0, 2, 0),
+        Command("gas_collision",   0, 2, 0),
+        Command("fume_collision",  0, 2, 0),
+        Command("fluid_collision", 0, 0, 0),
+        Command("gel_collision",   0, 0, 0),
+        Command("grain_collision", 0, 0, 0),
+        Command("dual_collision",  0, 0, 0),
+        Command("is_colliding",    0, 0, 0),
+        Command("collision",       0, 0, 0),
+        Command("teleport",        0, 0, 0),
+        Command("swap",            0, 3, 0),
+        Command("soft_swap",       0, 3, 0),
     };
 
     std::vector<std::string> prefix = {
-        "int",
-        "float",
-        "set",
-        "get",
-        //"set_time",
-        "teleport",
-        //
         "neighbors",
         "gas_collision",
         "fume_collision",
@@ -92,7 +72,7 @@ namespace script
     };
 
     //
-    ///
+    /// Variables
     //
     
     std::vector<std::string> args;
@@ -102,7 +82,7 @@ namespace script
     float float_pool[8];
 
     //
-    ///
+    /// Commands
     //
     
     // User Variables
@@ -112,12 +92,16 @@ namespace script
     void SetInt(int i, int n) { if (i < max_vars) int_pool[i] = n; }
     void SetFloat(int i, float n) { if (i < max_vars) float_pool[i] = n; }
 
-    //
-
-    bool IsSingle(std::string c) { bool _is = false; for (int i = 0; i < single.size(); i++) { if ( single[i] == c) { _is = true; break; } } return _is; }
-    bool IsPrefix(std::string c) { bool _is = false; for (int i = 0; i < prefix.size(); i++) { if ( prefix[i] == c) { _is = true; break; } } return _is; }
-    bool IsMath(std::string c)     { bool _is = false; for (int i = 0; i < math.size(); i++) { if (   math[i] == c) { _is = true; break; } } return _is; }
-
+    // World
+    float GetWeather()
+    { return float(iSystem::sky.humidity)/float(iSystem::sky.cloudcount); }
+    void SetWeather(std::string s)
+    {
+        iSystem::sky.humidity = int(std::stof(s)*iSystem::sky.cloudcount);
+        if (iSystem::sky.humidity > iSystem::sky.cloudcount) { iSystem::sky.humidity = iSystem::sky.cloudcount; }
+    }
+    void SetTick(std::string s)
+    { core::tick_delay = 1.0/std::stof(s); if (core::tick_delay < 1.0/60.0) { core::tick_delay = 1.0/60.0; } }
     void SetTime(std::string s) { iSystem::sky.time = std::stof(s); iSystem::sky.UpdateTime(0.0); }
     void SetDay(std::string s) { iSystem::sky.day = std::stoi(s); tCell::season = iSystem::sky.day/(iSystem::sky.year_length/12); }
     void SetYear(std::string s) { iSystem::sky.year = std::stoi(s);}
@@ -150,8 +134,9 @@ namespace script
     {
         std::string e = "";
         if      (cmd == "toggle_creative") { e = "TOGGLE_CREATIVE"; core::creative_mode = !core::creative_mode; }
-        else if (cmd == "quit") { e = "QUIT"; core::game_state = core::EXIT; }
-        else if (cmd == "exit") { e = "EXIT"; core::game_state = core::EXIT; }
+        else if (cmd == "index")           { e = "INDEX = " + std::to_string((iSystem::MouseY()*tCell::width)+iSystem::MouseX()); }
+        else if (cmd == "quit")            { e = "QUIT"; core::game_state = core::EXIT; }
+        else if (cmd == "exit")            { e = "EXIT"; core::game_state = core::EXIT; }
         if (e != "") std::cout << e << std::endl;
     }
 
@@ -160,14 +145,17 @@ namespace script
         std::string e = "";
         if (c1 == "get")
         {
-            if      (c2 == "hp")   { e = "HEALTH = "     + std::to_string(iSystem::player.hp); }
-            else if (c2 == "HP")   { e = "HEALTH_MAX = " + std::to_string(iSystem::player.HP); }
-            else if (c2 == "mp")   { e = "MANA = "       + std::to_string(iSystem::player.mp); }
-            else if (c2 == "MP")   { e = "MANA_MAX = "   + std::to_string(iSystem::player.MP); }
-            else if (c2 == "jp")   { e = "JUMP = "       + std::to_string(iSystem::player.jp); }
-            else if (c2 == "JP")   { e = "JUMP_MAX = "   + std::to_string(iSystem::player.JP); }
-            else if (c2 == "bp")   { e = "BREATH = "     + std::to_string(iSystem::player.bp); }
-            else if (c2 == "BP")   { e = "BREATH_MAX = " + std::to_string(iSystem::player.BP); }
+            if      (c2 == "hp")      { e = "HEALTH = "     +    std::to_string(iSystem::player.hp); }
+            else if (c2 == "HP")      { e = "HEALTH_MAX = " +    std::to_string(iSystem::player.HP); }
+            else if (c2 == "mp")      { e = "MANA = "       +    std::to_string(iSystem::player.mp); }
+            else if (c2 == "MP")      { e = "MANA_MAX = "   +    std::to_string(iSystem::player.MP); }
+            else if (c2 == "jp")      { e = "JUMP = "       +    std::to_string(iSystem::player.jp); }
+            else if (c2 == "JP")      { e = "JUMP_MAX = "   +    std::to_string(iSystem::player.JP); }
+            else if (c2 == "bp")      { e = "BREATH = "     +    std::to_string(iSystem::player.bp); }
+            else if (c2 == "BP")      { e = "BREATH_MAX = " +    std::to_string(iSystem::player.BP); }
+            else if (c2 == "tick")    { e = "TICK = "       +      std::to_string(core::tick_delay); }
+            else if (c2 == "time")    { e = "TIME = "       +     std::to_string(iSystem::sky.time); }
+            else if (c2 == "weather") { e = "WEATHER = "    +          std::to_string(GetWeather()); }
         }
         if (e != "") std::cout << e << std::endl;
     }
@@ -177,27 +165,26 @@ namespace script
         std::string e = "";
         if (c1 == "get")
         {
-            if      (c2 == "type")
-            { e = "TYPE = " + std::to_string(tTool::GetType(std::stoi(c3))); }
-            else if (c2 == "int" && textTool::IsNumber(c3))
-            { e = "INT = "          + std::to_string(GetInt(std::stoi(c3))); }
-            else if (c2 == "float" && textTool::IsNumber(c3))
-            { e = "FLOAT = "      + std::to_string(GetFloat(std::stoi(c3))); }
+            if      (c2 == "type")                            { e = "TYPE = " + std::to_string(tTool::GetType(std::stoi(c3))); }
+            else if (c2 == "int" && textTool::IsNumber(c3))   { e = "INT = "          + std::to_string(GetInt(std::stoi(c3))); }
+            else if (c2 == "float" && textTool::IsNumber(c3)) { e = "FLOAT = "      + std::to_string(GetFloat(std::stoi(c3))); }
         }
         else if (c1 == "set")
         {
-            if      (c2 == "hp" && textTool::IsValidNumber(c3))     { e = "HEALTH";     iSystem::player.hp = std::stoi(c3); }
-            else if (c2 == "HP" && textTool::IsValidNumber(c3))     { e = "HEALTH_MAX"; iSystem::player.HP = std::stoi(c3); }
-            else if (c2 == "mp" && textTool::IsValidNumber(c3))     { e = "MANA";       iSystem::player.mp = std::stoi(c3); }
-            else if (c2 == "MP" && textTool::IsValidNumber(c3))     { e = "MANA_MAX";   iSystem::player.MP = std::stoi(c3); }
-            else if (c2 == "jp" && textTool::IsValidNumber(c3))     { e = "JUMP";       iSystem::player.jp = std::stoi(c3); }
-            else if (c2 == "JP" && textTool::IsValidNumber(c3))     { e = "JUMP_MAX";   iSystem::player.JP = std::stoi(c3); }
-            else if (c2 == "bp" && textTool::IsValidNumber(c3))     { e = "BREATH";     iSystem::player.bp = std::stoi(c3); }
-            else if (c2 == "BP" && textTool::IsValidNumber(c3))     { e = "BREATH_MAX"; iSystem::player.BP = std::stoi(c3); }
-            else if (c2 == "season" && textTool::IsValidNumber(c3)) { e = "SET_SEASON";                      SetSeason(c3); }
-            else if (c2 == "year" && textTool::IsValidNumber(c3))   { e = "SET_YEAR";                          SetYear(c3); }
-            else if (c2 == "day" && textTool::IsValidNumber(c3))    { e = "SET_DAY";                            SetDay(c3); }
-            else if (c2 == "time" && textTool::IsValidNumber(c3))   { e = "SET_TIME";                          SetTime(c3); }
+            if      (c2 == "hp" && textTool::IsValidNumber(c3))      { e = "HEALTH";      iSystem::player.hp = std::stoi(c3); }
+            else if (c2 == "HP" && textTool::IsValidNumber(c3))      { e = "HEALTH_MAX";  iSystem::player.HP = std::stoi(c3); }
+            else if (c2 == "mp" && textTool::IsValidNumber(c3))      { e = "MANA";        iSystem::player.mp = std::stoi(c3); }
+            else if (c2 == "MP" && textTool::IsValidNumber(c3))      { e = "MANA_MAX";    iSystem::player.MP = std::stoi(c3); }
+            else if (c2 == "jp" && textTool::IsValidNumber(c3))      { e = "JUMP";        iSystem::player.jp = std::stoi(c3); }
+            else if (c2 == "JP" && textTool::IsValidNumber(c3))      { e = "JUMP_MAX";    iSystem::player.JP = std::stoi(c3); }
+            else if (c2 == "bp" && textTool::IsValidNumber(c3))      { e = "BREATH";      iSystem::player.bp = std::stoi(c3); }
+            else if (c2 == "BP" && textTool::IsValidNumber(c3))      { e = "BREATH_MAX";  iSystem::player.BP = std::stoi(c3); }
+            else if (c2 == "season")                                 { e = "SET_SEASON";                       SetSeason(c3); }
+            else if (c2 == "year" && textTool::IsValidNumber(c3))    { e = "SET_YEAR";                           SetYear(c3); }
+            else if (c2 == "day" && textTool::IsValidNumber(c3))     { e = "SET_DAY";                             SetDay(c3); }
+            else if (c2 == "time" && textTool::IsValidNumber(c3))    { e = "SET_TIME";                           SetTime(c3); }
+            else if (c2 == "weather" && textTool::IsValidNumber(c3)) { e = "SET_WEATHER";                     SetWeather(c3); }
+            else if (c2 == "tick" && textTool::IsValidNumber(c3))    { e = "SET_TICK";                           SetTick(c3); }
         }
         else if (c1 == "int"             && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
         { e = "INT";                     SetInt(std::stoi(c2), std::stoi(c3)); }
@@ -205,6 +192,8 @@ namespace script
         { e = "FLOAT";                   SetFloat(std::stoi(c2), std::stof(c3)); }
         else if (c1 == "teleport"        && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
         { e = "TELEPORT";                iSystem::player.x += std::stoi(c2); iSystem::player.y += std::stoi(c3); }
+        else if (c1 == "swap"            && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
+        { e = "SWAP";                                                  tTool::Swap(std::stoi(c2), std::stoi(c3)); }
         else if (c1 == "gas_collision"   && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
         { e = "GAS_COLLISION = "         + std::to_string(int(tTool::GasCollision(std::stoi(c2), std::stoi(c3)))); }
         else if (c1 == "fume_collision"  && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))

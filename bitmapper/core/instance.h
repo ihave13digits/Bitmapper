@@ -29,6 +29,10 @@ namespace iSystem
         blueprint_label.font = 0.5;
     }
 
+    // Mouse
+    int MouseX() { return (core::mouse_x+((iSystem::player.x-(iSystem::player.height/2))-(core::width/2))); }
+    int MouseY() { return (core::mouse_y+((iSystem::player.y-(iSystem::player.height-1))-(core::height/2))); }
+
     // Player
     int PlayerChunkX() { return (player.x%tCell::width)/world.chunk_size; }
     int PlayerChunkY() { return (player.y%tCell::height/world.chunk_size); }
