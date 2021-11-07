@@ -579,7 +579,7 @@ public:
             for (int i = 0; i < iSystem::sky.starcount; i += 4)
             {
                 uint8_t value = rand()%220+35;
-                Draw(iSystem::sky.stars[i][0], iSystem::sky.stars[i][1], olc::Pixel(value, value, value, 255-iSystem::sky.starlight));
+                Draw(iSystem::sky.stars[i][0],   iSystem::sky.stars[i][1], olc::Pixel(value, value, value, 255-iSystem::sky.starlight));
                 Draw(iSystem::sky.stars[i+1][0], iSystem::sky.stars[i][1], olc::Pixel(value, value, value, 255-iSystem::sky.starlight));
                 Draw(iSystem::sky.stars[i+2][0], iSystem::sky.stars[i][1], olc::Pixel(value, value, value, 255-iSystem::sky.starlight));
                 Draw(iSystem::sky.stars[i+3][0], iSystem::sky.stars[i][1], olc::Pixel(value, value, value, 255-iSystem::sky.starlight));
@@ -1060,6 +1060,7 @@ public:
         bool needs_update = false;
         if (core::sub_state != core::psCOMMAND)
         {
+            if (GetMouse(0).bHeld) { needs_update = true; }
             if (GetKey(menu_pause).bPressed) core::game_state = core::PLAYING;
             if (GetKey(menu_inventory).bPressed) core::game_state = core::INVENTORY;
             if (GetKey(menu_blueprint).bPressed) core::game_state = core::BLUEPRINT;
@@ -1074,7 +1075,7 @@ public:
             { core::sub_state = core::psCOMMAND; iSystem::command_label.text = ""; iSystem::command_label.cursor = 0; }
             olc::Pixel test0 = GetDrawTarget()->GetPixel(0, 0); olc::Pixel test1 = GetDrawTarget()->GetPixel(core::width/2, core::height/2);
             if (test0 == blueprint_color || test1 == panel_color) { needs_update = true; }
-            DrawPlayer(); HotbarInput(); HotbarScroll(); UseHotbar(); DrawHUD();
+            HotbarInput(); HotbarScroll(); UseHotbar();
         }
         if (core::sub_state == core::psCOMMAND)
         {
@@ -1084,10 +1085,11 @@ public:
             { script::EvaluateCommand(iSystem::command_label.text); iSystem::command_label.text = ""; iSystem::command_label.cursor = 0; needs_update = true; }
             if (GetKey(menu_pause).bPressed)
             { core::sub_state = core::isTILES; iSystem::command_label.text = ""; iSystem::command_label.cursor = 0; needs_update = true; }
-            DrawPlayer(); HotbarInput(); HotbarScroll(); UseHotbar(); DrawHUD();
+            HotbarScroll(); UseHotbar();
             FillRect(0, core::height-4, core::width, 4, panel_color); DrawLabel(iSystem::command_label);
         }
-        if (needs_update) { DrawSky(); DrawTerrain(); }
+        if (needs_update) { DrawSky(); DrawTerrain(); DrawPlayer(); }
+        DrawHUD();
     }
 
     void StateBlueprint()
