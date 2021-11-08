@@ -1,13 +1,15 @@
 // Possibly look into 'cstdarg'
+/*
 struct Command
 {
     std::string cmd; std::map<std::string, int> args;
     Command(std::string c, int s, int i, int f) { cmd = c; args["string"] = s; args["int"] = i; args["float"] = f; }
 };
-
+*/
 namespace script
 {
 
+    /*
     std::vector<Command> commands = {
         Command("exit",            0, 0, 0),
         Command("quit",            0, 0, 0),
@@ -29,70 +31,33 @@ namespace script
         Command("swap",            0, 3, 0),
         Command("soft_swap",       0, 3, 0),
     };
-
-    std::vector<std::string> prefix = {
-        "neighbors",
-        "gas_collision",
-        "fume_collision",
-        "fluid_collision",
-        "gel_collision",
-        "grain_collision",
-        "dual_collision",
-        "is_colliding",
-        "collision",
-        "swap",
-        "soft_swap",
-    };
-
-    std::vector<std::string> suffix = {
-        // Set
-        "int",
-        "float",
-        "hp",
-        "HP",
-        "mp",
-        "MP",
-        "jp",
-        "JP",
-        "bp",
-        "BP",
-        "season",
-        "year",
-        "day",
-        //"set_time",
-        
-        // Get
-        "type",
-        "durability",
-        "light_value",
-    };
-
-    std::vector<std::string> math = {
-        "*","/","%","+","-"
-    };
+    */
 
     //
     /// Variables
     //
     
     std::vector<std::string> args;
-
+    std::vector<std::string> cmds = {"","","","","","","",""};
     int max_vars = 8;
+    int max_cmds = 8;
+    int cmd_index = 0;
     int int_pool[8];
     float float_pool[8];
+
+    void StoreCommand(std::string cmd) { cmds.push_back(cmd); if (cmds.size() > max_cmds) { cmds.erase(cmds.begin()); } }
 
     //
     /// Commands
     //
     
     // User Variables
-
     int GetInt(int i) { if (i < max_vars) return int_pool[i]; else return int_pool[0]; }
     float GetFloat(int i) { if (i < max_vars) return float_pool[i]; else return float_pool[0]; }
     void SetInt(int i, int n) { if (i < max_vars) int_pool[i] = n; }
     void SetFloat(int i, float n) { if (i < max_vars) float_pool[i] = n; }
-
     // World
+    std::string GetMouse() { std::string mouse = "(" + std::to_string(iSystem::MouseX()) + "," + std::to_string(iSystem::MouseY()) + ")"; return mouse; }
     float GetWeather()
     { return float(iSystem::sky.humidity)/float(iSystem::sky.cloudcount); }
     void SetWeather(std::string s)
@@ -105,7 +70,6 @@ namespace script
     void SetTime(std::string s) { iSystem::sky.time = std::stof(s); iSystem::sky.UpdateTime(0.0); }
     void SetDay(std::string s) { iSystem::sky.day = std::stoi(s); tCell::season = iSystem::sky.day/(iSystem::sky.year_length/12); }
     void SetYear(std::string s) { iSystem::sky.year = std::stoi(s);}
-
     void SetSeason(std::string s)
     {
         if      (s == "early_spring") { tCell::season = seasonID::EARLY_SPRING; iSystem::sky.day =   0; }
@@ -125,10 +89,6 @@ namespace script
     //
     /// Evaluation
     //
-
-    void EvaluateMath(std::string cmd)
-    {
-    }
 
     void A(std::string cmd)
     {
@@ -155,7 +115,12 @@ namespace script
             else if (c2 == "BP")      { e = "BREATH_MAX = " +    std::to_string(iSystem::player.BP); }
             else if (c2 == "tick")    { e = "TICK = "       +      std::to_string(core::tick_delay); }
             else if (c2 == "time")    { e = "TIME = "       +     std::to_string(iSystem::sky.time); }
+            else if (c2 == "mouse")   { e = "MOUSE = "      +                            GetMouse(); }
             else if (c2 == "weather") { e = "WEATHER = "    +          std::to_string(GetWeather()); }
+        }
+        else if (c1 == "toggle")
+        {
+            if      (c2 == "creative")      { e = "TOGGLE_CREATIVE"; core::creative_mode = !core::creative_mode; }
         }
         if (e != "") std::cout << e << std::endl;
     }
@@ -213,12 +178,9 @@ namespace script
         if (e != "") std::cout << e << std::endl;
     }
 
-    void ABCD(std::string c1="", std::string c2="", std::string c3="", std::string c4="")
-    {
-    }
-
     void EvaluateCommand(std::string cmd)
     {
+        bool success = false;
         args.clear();
         std::string e = "";
         std::string arg = "";
@@ -234,10 +196,11 @@ namespace script
             }
             if (arg != "") { arg_count++; args.push_back(arg); arg = "";}
             //
-            if      (arg_count == 1) { A(cmd); }
-            else if (arg_count == 2) { AB(args[0], args[1]); }
-            else if (arg_count == 3) { ABC(args[0], args[1], args[2]); }
+            if      (arg_count == 1) { A(cmd); success = true; }
+            else if (arg_count == 2) { AB(args[0], args[1]); success = true; }
+            else if (arg_count == 3) { ABC(args[0], args[1], args[2]); success = true; }
         }
+        if (success) { StoreCommand(cmd); }
         if (e != "") std::cout << e << std::endl;
     }
 
