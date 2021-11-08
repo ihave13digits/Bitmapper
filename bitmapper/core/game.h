@@ -844,26 +844,16 @@ public:
         DrawRect(2, 105, 251, 36, border_color);  // Information Box
         DrawRect(105, 2, 32, 32, border_color);  // Neighbors Box
         // Numeric Input
-        if (GetKey(olc::Key::K0).bPressed)
-        { std::string new_value = std::to_string(input_value)+"0"; input_value = std::stoi(new_value); }
-        if (GetKey(olc::Key::K1).bPressed)
-        { std::string new_value = std::to_string(input_value)+"1"; input_value = std::stoi(new_value); }
-        if (GetKey(olc::Key::K2).bPressed)
-        { std::string new_value = std::to_string(input_value)+"2"; input_value = std::stoi(new_value); }
-        if (GetKey(olc::Key::K3).bPressed)
-        { std::string new_value = std::to_string(input_value)+"3"; input_value = std::stoi(new_value); }
-        if (GetKey(olc::Key::K4).bPressed)
-        { std::string new_value = std::to_string(input_value)+"4"; input_value = std::stoi(new_value); }
-        if (GetKey(olc::Key::K5).bPressed)
-        { std::string new_value = std::to_string(input_value)+"5"; input_value = std::stoi(new_value); }
-        if (GetKey(olc::Key::K6).bPressed)
-        { std::string new_value = std::to_string(input_value)+"6"; input_value = std::stoi(new_value); }
-        if (GetKey(olc::Key::K7).bPressed)
-        { std::string new_value = std::to_string(input_value)+"7"; input_value = std::stoi(new_value); }
-        if (GetKey(olc::Key::K8).bPressed)
-        { std::string new_value = std::to_string(input_value)+"8"; input_value = std::stoi(new_value); }
-        if (GetKey(olc::Key::K9).bPressed)
-        { std::string new_value = std::to_string(input_value)+"9"; input_value = std::stoi(new_value); }
+        if (GetKey(olc::Key::K0).bPressed) { std::string new_value = std::to_string(input_value)+"0"; input_value = std::stoi(new_value); }
+        if (GetKey(olc::Key::K1).bPressed) { std::string new_value = std::to_string(input_value)+"1"; input_value = std::stoi(new_value); }
+        if (GetKey(olc::Key::K2).bPressed) { std::string new_value = std::to_string(input_value)+"2"; input_value = std::stoi(new_value); }
+        if (GetKey(olc::Key::K3).bPressed) { std::string new_value = std::to_string(input_value)+"3"; input_value = std::stoi(new_value); }
+        if (GetKey(olc::Key::K4).bPressed) { std::string new_value = std::to_string(input_value)+"4"; input_value = std::stoi(new_value); }
+        if (GetKey(olc::Key::K5).bPressed) { std::string new_value = std::to_string(input_value)+"5"; input_value = std::stoi(new_value); }
+        if (GetKey(olc::Key::K6).bPressed) { std::string new_value = std::to_string(input_value)+"6"; input_value = std::stoi(new_value); }
+        if (GetKey(olc::Key::K7).bPressed) { std::string new_value = std::to_string(input_value)+"7"; input_value = std::stoi(new_value); }
+        if (GetKey(olc::Key::K8).bPressed) { std::string new_value = std::to_string(input_value)+"8"; input_value = std::stoi(new_value); }
+        if (GetKey(olc::Key::K9).bPressed) { std::string new_value = std::to_string(input_value)+"9"; input_value = std::stoi(new_value); }
         if (GetKey(ui_select).bPressed)
         {
             switch (new_world::selected_param)
@@ -1071,7 +1061,7 @@ public:
             if (CtrlKey() && GetKey(olc::Key::V).bPressed) { iSystem::PasteBlueprints(GetOffsetX(), GetOffsetY()); needs_update = true; }
             if (GetKey(ui_select).bPressed)
             { iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2); needs_update = true; }
-            if (GetKey(menu_command).bPressed)
+            if (GetKey(menu_command).bReleased)
             { core::sub_state = core::psCOMMAND; iSystem::command_label.text = ""; iSystem::command_label.cursor = 0; }
             olc::Pixel test0 = GetDrawTarget()->GetPixel(0, 0); olc::Pixel test1 = GetDrawTarget()->GetPixel(core::width/2, core::height/2);
             if (test0 == blueprint_color || test1 == panel_color) { needs_update = true; }
@@ -1080,13 +1070,22 @@ public:
         if (core::sub_state == core::psCOMMAND)
         {
             std::string c = GetCharacter();
+            if (GetKey(ui_up).bPressed)
+            { if (script::cmd_index > 0) { script::cmd_index--; iSystem::command_label.text = script::cmds[script::cmd_index]; } }
+            if (GetKey(ui_down).bPressed)
+            { if (script::cmd_index < script::max_cmds-1) { script::cmd_index++; iSystem::command_label.text = script::cmds[script::cmd_index]; } }
+            
             if (c != "") { iSystem::command_label.Update(c); needs_update = true; }
             if (GetKey(ui_select).bPressed)
-            { script::EvaluateCommand(iSystem::command_label.text); iSystem::command_label.text = ""; iSystem::command_label.cursor = 0; needs_update = true; }
+            {
+                script::EvaluateCommand(iSystem::command_label.text);
+                script::cmd_index=8; iSystem::command_label.text=""; iSystem::command_label.cursor=0; needs_update=true;
+            }
             if (GetKey(menu_pause).bPressed)
             { core::sub_state = core::isTILES; iSystem::command_label.text = ""; iSystem::command_label.cursor = 0; needs_update = true; }
             HotbarScroll(); UseHotbar();
-            FillRect(0, core::height-4, core::width, 4, panel_color); DrawLabel(iSystem::command_label);
+            DrawLine(0, core::height-4, core::width, core::height-4, border_color);
+            FillRect(0, core::height-3, core::width, 3, panel_color); DrawLabel(iSystem::command_label);
         }
         if (needs_update) { DrawSky(); DrawTerrain(); DrawPlayer(); }
         DrawHUD();
@@ -1362,6 +1361,9 @@ public:
         core::game_tick += fElapsedTime;
     }
 
+    void StateExit()
+    { iSystem::player.SaveData(); iSystem::world.SaveData(); core::running = false; }
+
     //
     /// PGE Hooks
     //
@@ -1388,7 +1390,7 @@ public:
             case core::SETTINGS       : {             StateSettings(); } break;
             case core::TITLE          : {                StateTitle(); } break;
             case core::CREDITS        : {              StateCredits(); } break;
-            case core::EXIT           : { iSystem::player.SaveData(); iSystem::world.SaveData(); core::running = false; } break;
+            case core::EXIT           : {                 StateExit(); } break;
         }
         return core::running;
 	}

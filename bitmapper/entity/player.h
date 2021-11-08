@@ -51,16 +51,13 @@ public:
 
     float tick = 0.0;
     float tick_delay = 0.0125;
-
     int damage_tick = 0;
     int damage_delay = 10;
-
     int burn_tick = 0;
     int toxic_tick = 0;
 
     int x = 0;
     int y = 0;
-
     int vx = 0;
     int vy = 0;
 
@@ -68,13 +65,10 @@ public:
 
     int HP = 100;
     int hp = 100;
-
     int MP = 100;
     int mp = 100;
-
     int JP = 100;
     int jp = 100;
-
     int bp = 100;
     int BP = 100;
 
@@ -85,18 +79,8 @@ public:
     float anim_tick = 0.0;
     float anim_delay = 0.125;
 
-    int hotbar[9][2] =
-    {
-        { 0,   0 },
-        { 0,   0 },
-        { 0,   0 },
-        { 0,   0 },
-        { 0,   0 },
-        { 0,   0 },
-        { 0,   0 },
-        { 0,   0 },
-        { 0,   0 },
-    };
+    //bool status[9] = { true, false, false, false, false, false, false, false, false };
+    int hotbar[9][2] = { {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0} };
 
     char animations[14][4] = {
         {  0,  2,  0,  2 }, // Idle Right
@@ -312,21 +296,8 @@ public:
         wands.push_back(w);
     }
 
-    void Move(int X, int Y)
-    {
-        if (can_move)
-        {
-            x += X;
-            y += Y;
-        }
-        can_move = false;
-    }
-
-    void TakeDamage(int damage)
-    {
-        hp -= int(damage-(damage*defense));
-        state = HURT;
-    }
+    void Move(int X, int Y) { if (can_move) { x += X; y += Y; } can_move = false; }
+    void TakeDamage(int damage) { hp -= int(damage-(damage*defense)); state = HURT; }
 
     void UpdateState()
     {
@@ -343,21 +314,12 @@ public:
 
     void Update(float delta)
     {
-        UpdateWands(delta);
-        UpdateState();
-        anim_tick += delta;
-        if (anim_tick > 0.25)
-        {
-            anim_tick -= anim_delay;
-            frame++;
-            if (frame > 3) frame = 0;
-        }
-        tick += delta;
-        if (tick > tick_delay) { tick -= tick_delay; can_move = true; }
+        UpdateWands(delta); UpdateState();
+        anim_tick += delta; if (anim_tick > 0.25) { anim_tick -= anim_delay; frame++; if (frame > 3) frame = 0; }
+        tick += delta; if (tick > tick_delay) { tick -= tick_delay; can_move = true; }
         // Update Counters
         if (jp < JP && state != JUMP) jp++;
         if (bp < BP && state != DROWN) bp++;
-        
         // Update Tick Damage
         if (status != FINE) damage_tick++;
         if (damage_tick > damage_delay)
@@ -391,10 +353,8 @@ public:
 
     void SaveData(std::string data_dir = "0")
     {
-        std::fstream data_file;
-        std::string _dir = os::GetCWD() + dataTool::path_player + data_dir + "/player_data";
+        std::fstream data_file; std::string _dir = os::GetCWD() + dataTool::path_player + "/player_data";
         data_file.open(_dir);
-
         if (data_file.is_open())
         {
             data_file << "#tiles" << std::endl;
@@ -407,11 +367,8 @@ public:
 
     void LoadData(std::string data_dir = "0")
     {
-        std::string line;
-        std::fstream data_file;
-        std::string _dir = os::GetCWD() + dataTool::path_player + data_dir + "/player_data";
+        std::string line; std::fstream data_file; std::string _dir = os::GetCWD() + dataTool::path_player + "/player_data";
         data_file.open(_dir);
-
         if (data_file.is_open())
         {
             std::string read_state = "";
@@ -421,25 +378,14 @@ public:
                 if (line == "#tiles") { read_state = "#tiles"; }
                 if (read_state == "#tiles")
                 {
-                    bool next = false;
-                    std::string itm = "";
-                    std::string amnt = "";
+                    bool next = false; std::string itm = ""; std::string amnt = "";
                     for (int i = 0; i < line.length(); i++)
                     {
                         std::string c = line.substr(i, 1);
                         if (c == "=") { next = true; }
-                        if (textTool::IsNumber(c))
-                        {
-                            if (!next) {  itm = itm + c; }
-                            else       { amnt = amnt + c; }
-                        }
+                        if (textTool::IsNumber(c)) { if (!next) {  itm = itm + c; } else { amnt = amnt + c; } }
                     }
-                    if (line.substr(0, 1) != "#")
-                    {
-                        int item = std::stoi(itm);
-                        int amount = std::stoi(amnt);
-                        inventory.AddItem(item, amount);
-                    }
+                    if (line.substr(0, 1) != "#") { int item = std::stoi(itm); int amount = std::stoi(amnt); inventory.AddItem(item, amount); }
                 }
             }
         data_file.close();
