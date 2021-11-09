@@ -290,6 +290,33 @@ namespace tTile
     std::vector<int> TYPE;
     // Name Values
     std::vector<std::string> NAME;
+    // Type Names
+    std::vector<std::string> TYPE_NAME = {
+        "Gas",
+        "Plasma",
+        "Fume",
+        "Fluid",
+        "Grain",
+        "Gem",
+        "Gel",
+        "Geo",
+        "Ore",
+        "Metal",
+        "Solid",
+        "Loose",
+        "Boom",
+        "Logic",
+        "Gizmo",
+        "Platform",
+        "Plumbing",
+        "Pipes",
+        "Gutters",
+        "Plant",
+        "Plant Product",
+        "Critter",
+        "Egg",
+        "Wall",
+    };
 
 
 

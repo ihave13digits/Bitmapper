@@ -44,12 +44,11 @@ public:
     int cloudcount = 1024;
     int humidity = 128;
     int stars[256][2];
-    float clouds[1024][3];// x, y, size
+    float clouds[1024][3];
 
     void GenerateSky(int W, int H, int seed=0)
     {
         width = W; height = H; srand(seed); int missed_stars = 0;
-        // Distribute Stars
         for (int y = 0; y < 16; y++)
         {
             for (int x = 0; x < 16; x++)
