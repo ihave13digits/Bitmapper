@@ -45,7 +45,7 @@ namespace script
     int int_pool[8];
     float float_pool[8];
 
-    void StoreCommand(std::string cmd) { cmds.push_back(cmd); if (cmds.size() > max_cmds) { cmds.erase(cmds.begin()); } }
+    void StoreCommand(std::string cmd) { if (cmds[cmds.size()-1] != cmd) cmds.push_back(cmd); if (cmds.size() > max_cmds) { cmds.erase(cmds.begin()); } }
 
     //
     /// Commands
@@ -58,8 +58,13 @@ namespace script
     void SetFloat(int i, float n) { if (i < max_vars) float_pool[i] = n; }
     // World
     std::string GetMouse() { std::string mouse = "(" + std::to_string(iSystem::MouseX()) + "," + std::to_string(iSystem::MouseY()) + ")"; return mouse; }
-    float GetWeather()
-    { return float(iSystem::sky.humidity)/float(iSystem::sky.cloudcount); }
+    std::string GetType(std::string tile)
+    {
+        int index = -1; std::string t = "None";
+        for (int i = 0; i < tTile::total_tiles; i++) { if (tTile::NAME[i] == tile) { index = i; break; } }
+        if (index != -1) { t = tTile::TYPE_NAME[tTool::GetType(index)]; } return t;
+    }
+    float GetWeather() { return float(iSystem::sky.humidity)/float(iSystem::sky.cloudcount); }
     void SetWeather(std::string s)
     {
         iSystem::sky.humidity = int(std::stof(s)*iSystem::sky.cloudcount);
@@ -93,9 +98,7 @@ namespace script
     void A(std::string cmd)
     {
         std::string e = "";
-        if      (cmd == "toggle_creative") { e = "TOGGLE_CREATIVE"; core::creative_mode = !core::creative_mode; }
-        else if (cmd == "index")           { e = "INDEX = " + std::to_string((iSystem::MouseY()*tCell::width)+iSystem::MouseX()); }
-        else if (cmd == "quit")            { e = "QUIT"; core::game_state = core::EXIT; }
+        if      (cmd == "quit")            { e = "QUIT"; core::game_state = core::EXIT; }
         else if (cmd == "exit")            { e = "EXIT"; core::game_state = core::EXIT; }
         if (e != "") std::cout << e << std::endl;
     }
@@ -118,6 +121,17 @@ namespace script
             else if (c2 == "mouse")   { e = "MOUSE = "      +                            GetMouse(); }
             else if (c2 == "weather") { e = "WEATHER = "    +          std::to_string(GetWeather()); }
         }
+        else if (c1 == "collision")
+        {
+            if      (c2 == "gas")       { e = "GAS_COLLISION = "   +   std::to_string(int(tTool::GasCollision(iSystem::MouseX(), iSystem::MouseY()))); }
+            else if (c2 == "fume")      { e = "FUME_COLLISION = "  +  std::to_string(int(tTool::FumeCollision(iSystem::MouseX(), iSystem::MouseY()))); }
+            else if (c2 == "fluid")     { e = "FLUID_COLLISION = " + std::to_string(int(tTool::FluidCollision(iSystem::MouseX(), iSystem::MouseY()))); }
+            else if (c2 == "gel")       { e = "GEL_COLLISION = "   +   std::to_string(int(tTool::GelCollision(iSystem::MouseX(), iSystem::MouseY()))); }
+            else if (c2 == "grain")     { e = "GRAIN_COLLISION = " + std::to_string(int(tTool::GrainCollision(iSystem::MouseX(), iSystem::MouseY()))); }
+            else if (c2 == "dual")      { e = "DUAL_COLLISION = "  +  std::to_string(int(tTool::DualCollision(iSystem::MouseX(), iSystem::MouseY()))); }
+            else if (c2 == "colliding") { e = "IS_COLLIDING = "    +    std::to_string(int(tTool::IsColliding(iSystem::MouseX(), iSystem::MouseY()))); }
+            else if (c2 == "any")       { e = "COLLISION = "       +      std::to_string(int(tTool::Collision(iSystem::MouseX(), iSystem::MouseY()))); }
+        }
         else if (c1 == "toggle")
         {
             if      (c2 == "creative")      { e = "TOGGLE_CREATIVE"; core::creative_mode = !core::creative_mode; }
@@ -130,9 +144,10 @@ namespace script
         std::string e = "";
         if (c1 == "get")
         {
-            if      (c2 == "type")                            { e = "TYPE = " + std::to_string(tTool::GetType(std::stoi(c3))); }
+            if      (c2 == "type")                            { e = "TYPE = " +                                   GetType(c3); }
             else if (c2 == "int" && textTool::IsNumber(c3))   { e = "INT = "          + std::to_string(GetInt(std::stoi(c3))); }
             else if (c2 == "float" && textTool::IsNumber(c3)) { e = "FLOAT = "      + std::to_string(GetFloat(std::stoi(c3))); }
+            else if (c2 == "index")     { e = "INDEX = " + std::to_string((iSystem::MouseY()*tCell::width)+iSystem::MouseX()); }
         }
         else if (c1 == "set")
         {
@@ -151,30 +166,16 @@ namespace script
             else if (c2 == "weather" && textTool::IsValidNumber(c3)) { e = "SET_WEATHER";                     SetWeather(c3); }
             else if (c2 == "tick" && textTool::IsValidNumber(c3))    { e = "SET_TICK";                           SetTick(c3); }
         }
-        else if (c1 == "int"             && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
-        { e = "INT";                     SetInt(std::stoi(c2), std::stoi(c3)); }
-        else if (c1 == "float"           && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
-        { e = "FLOAT";                   SetFloat(std::stoi(c2), std::stof(c3)); }
-        else if (c1 == "teleport"        && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
-        { e = "TELEPORT";                iSystem::player.x += std::stoi(c2); iSystem::player.y += std::stoi(c3); }
-        else if (c1 == "swap"            && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
-        { e = "SWAP";                                                  tTool::Swap(std::stoi(c2), std::stoi(c3)); }
-        else if (c1 == "gas_collision"   && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
-        { e = "GAS_COLLISION = "         + std::to_string(int(tTool::GasCollision(std::stoi(c2), std::stoi(c3)))); }
-        else if (c1 == "fume_collision"  && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
-        { e = "FUME_COLLISION = "        + std::to_string(int(tTool::FumeCollision(std::stoi(c2), std::stoi(c3)))); }
-        else if (c1 == "fluid_collision" && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
-        { e = "FLUID_COLLISION = "       + std::to_string(int(tTool::FluidCollision(std::stoi(c2), std::stoi(c3)))); }
-        else if (c1 == "gel_collision"   && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
-        { e = "GEL_COLLISION = "         + std::to_string(int(tTool::GelCollision(std::stoi(c2), std::stoi(c3)))); }
-        else if (c1 == "grain_collision" && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
-        { e = "GRAIN_COLLISION = "       + std::to_string(int(tTool::GrainCollision(std::stoi(c2), std::stoi(c3)))); }
-        else if (c1 == "dual_collision"  && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
-        { e = "DUAL_COLLISION = "        + std::to_string(int(tTool::DualCollision(std::stoi(c2), std::stoi(c3)))); }
-        else if (c1 == "is_colliding"    && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
-        { e = "IS_COLLIDING = "          + std::to_string(int(tTool::IsColliding(std::stoi(c2), std::stoi(c3)))); }
-        else if (c1 == "collision"       && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
-        { e = "COLLISION = "             + std::to_string(int(tTool::Collision(std::stoi(c2), std::stoi(c3)))); }
+        else if (c1 == "int"      && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
+        { e = "INT";              SetInt(std::stoi(c2), std::stoi(c3)); }
+        else if (c1 == "float"    && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
+        { e = "FLOAT";            SetFloat(std::stoi(c2), std::stof(c3)); }
+        else if (c1 == "teleport" && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
+        { e = "TELEPORT";         iSystem::player.x = std::stoi(c2); iSystem::player.y = std::stoi(c3); }
+        else if (c1 == "warp"     && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
+        { e = "WARP";             iSystem::player.x += std::stoi(c2); iSystem::player.y += std::stoi(c3); }
+        else if (c1 == "swap"     && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
+        { e = "SWAP";             tTool::Swap(std::stoi(c2), std::stoi(c3)); }
         if (e != "") std::cout << e << std::endl;
     }
 
