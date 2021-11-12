@@ -60,6 +60,7 @@ public:
     
     void InitializeGame()
     {
+        tCell::width = world_width; tCell::height = world_height;
         // Filesystem
         dataTool::GenerateDirectoryTree();
         // Load Tiles
@@ -275,7 +276,7 @@ public:
                 }
             }
             // Handle Range
-            int limit = 72;
+            int limit = iSystem::player.reach;
             if (GetMouseX() < core::width/2-limit || GetMouseX() > core::width/2+limit ||
                 GetMouseY() < core::height/2-limit || GetMouseY() > core::height/2+limit)
             { return; }
@@ -296,17 +297,13 @@ public:
                         if (iSystem::player.inventory.HasItem(_tile) || core::creative_mode)
                         {
                             int amnt = 1;
-                            if (tile == tTile::AIR) amnt = 0;
-                            iSystem::player.inventory.UseItem(_tile, 1);
-                            iSystem::player.inventory.AddItem(tile, amnt);
+                            if (tile == tTile::AIR) { amnt = 0; }
+                            iSystem::player.inventory.UseItem(_tile, 1); iSystem::player.inventory.AddItem(tile, amnt);
                             tCell::matrix[index] = _tile;
                         }
                     }
                     else if (_tile == tTile::AIR)
-                    {
-                        if (tile != tTile::AIR) iSystem::player.inventory.AddItem(tile, 1);
-                        tCell::matrix[index] = _tile;
-                    }
+                    { if (tile != tTile::AIR) { iSystem::player.inventory.AddItem(tile, 1); } tCell::matrix[index] = _tile; }
                 }
             }
         }
@@ -318,6 +315,9 @@ public:
 
     void DrawTileName(float x, float y, int tile)
     { std::string text = tTile::NAME[tile]; DrawStringDecal({ x,y }, text, text_color, {0.25, 0.25}); }
+
+    void DrawEffectName(float x, float y, int efct)
+    { std::string text = effectID::NAME[efct]; DrawStringDecal({ x,y }, text, text_color, {0.25, 0.25}); }
 
     void DrawPanel(int x, int y, int w, int h)
     { FillRect({x+1, y+1}, {w-1, h-1}, panel_color); DrawRect({x, y}, {w, h}, border_color); }
@@ -505,6 +505,7 @@ public:
             }
         }
         SetPixelMode(olc::Pixel::NORMAL);
+        int hovered_value = -1;
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < cols; x++)
@@ -512,6 +513,7 @@ public:
                 Button b = buttons[y*cols+x];
                 if (b.IsColliding(core::mouse_x, core::mouse_y))
                 {
+                    hovered_value = y*cols+x+(tile_y*cols);
                     DrawRect(b.x, b.y, b.width, b.height, select_color);
                     if (GetMouse(0).bReleased)
                     {
@@ -519,6 +521,7 @@ public:
                 }
             }
         }
+        if (hovered_value >= 0) DrawEffectName(GetMouseX()+4, GetMouseY(), hovered_value);
     }
 
     void DrawTiles()
@@ -552,7 +555,7 @@ public:
                 Button b = buttons[y*cols+x];
                 if (b.IsColliding(core::mouse_x, core::mouse_y))
                 {
-                    hovered_value = y*cols+x+(tile_y*16);
+                    hovered_value = y*cols+x+(tile_y*cols);
                     DrawRect(b.x, b.y, b.width, b.height, select_color);
                     if (GetMouse(0).bReleased)
                     { iSystem::player.hotbar[core::selected_hotbar][0] = itemID::TILE; iSystem::player.hotbar[core::selected_hotbar][1] = std::stoi(b.text); }
@@ -792,7 +795,8 @@ public:
         if (bLoad.IsColliding(core::mouse_x, core::mouse_y))
         {
             DrawRect(bLoad.x, bLoad.y, bLoad.width, bLoad.height, select_color);
-            if (GetMouse(0).bReleased) { Clear(olc::BLACK); iSystem::player.LoadData(); iSystem::world.LoadData(); core::game_state = core::PLAYING; }
+            if (GetMouse(0).bReleased)
+            { Clear(olc::BLACK); tCell::width = world_width; tCell::height = world_height; iSystem::LoadData(); core::game_state = core::PLAYING; }
         }
     }
 
@@ -962,8 +966,8 @@ public:
         {
             FillRect(3, 3, 99, 99, olc::Pixel(128, 128, 255));
             SetPixelMode(olc::Pixel::ALPHA);
-            for (int y = 0; y < 100; y++){
-                for (int x = 0; x < 100; x++){
+            for (int y = 0; y < 100; y++) {
+                for (int x = 0; x < 100; x++) {
                     int v = tCell::matrix[y*tCell::width+x];
                     Draw(x+3, y+3, olc::Pixel(tTile::R[v], tTile::G[v], tTile::B[v], tTile::A[v])); } }
             SetPixelMode(olc::Pixel::NORMAL);

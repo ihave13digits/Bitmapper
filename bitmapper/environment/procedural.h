@@ -78,20 +78,11 @@ namespace new_world
         switch (selected_param)
         {
             case pTILE :
-            {
-                if (generation_param[selected_step][selected_param] < tTile::total_tiles-1)
-                { generation_param[selected_step][selected_param]++; }
-            } break;
+            { if (generation_param[selected_step][selected_param] < tTile::total_tiles-1) { generation_param[selected_step][selected_param]++; } } break;
             case  pMODE :
-            {
-                if (generation_param[selected_step][selected_param] < total_modes-1)
-                { generation_param[selected_step][selected_param]++; }
-            } break;
+            { if (generation_param[selected_step][selected_param] < total_modes-1) { generation_param[selected_step][selected_param]++; } } break;
             default :
-            {
-                if (generation_param[selected_step][selected_param] < 100)
-                { generation_param[selected_step][selected_param]++; }
-            } break;
+            { if (generation_param[selected_step][selected_param] < 100) { generation_param[selected_step][selected_param]++; } } break;
         }
     }
 
@@ -102,8 +93,7 @@ namespace new_world
     {
         generation_steps++;
         for (int i = generation_steps-1; i > selected_step; i--)
-        { for (int p = 0; p < total_parameters; p++)
-            { generation_param[i-1][p] = generation_param[i-2][p]; } }
+        { for (int p = 0; p < total_parameters; p++) { generation_param[i-1][p] = generation_param[i-2][p]; } }
         for (int p = 0; p < total_parameters; p++) { generation_param[selected_step][p] = clipboard_param[p]; }
         if (selected_step > 0) selected_step--;
     }
@@ -114,10 +104,7 @@ namespace new_world
         {
             generation_steps--;
             for (int i = selected_step; i < generation_steps; i++)
-            {
-                for (int p = 0; p < total_parameters; p++)
-                { generation_param[i][p] = generation_param[i+1][p]; }
-            }
+            { for (int p = 0; p < total_parameters; p++) { generation_param[i][p] = generation_param[i+1][p]; } }
             if (selected_step > 0) selected_step--;
         }
     }
@@ -128,10 +115,8 @@ namespace new_world
         {
             generation_steps++;
             for (int i = generation_steps-1; i > selected_step+1; i--)
-            { for (int p = 0; p < total_parameters; p++)
-                { generation_param[i-1][p] = generation_param[i-2][p]; } }
-            for (int p = 0; p < total_parameters; p++)
-            { generation_param[selected_step][p] = 0; }
+            { for (int p = 0; p < total_parameters; p++) { generation_param[i-1][p] = generation_param[i-2][p]; } }
+            for (int p = 0; p < total_parameters; p++) { generation_param[selected_step][p] = 0; }
             if (selected_step > 0) selected_step--;
         }
     }
@@ -142,10 +127,7 @@ namespace new_world
     { for (int i = 0; i < new_world::generation_steps; i++) { new_world::generation_param[i][new_world::pITER] = 1; } }
 
     // Matrix
-    void ClearMatrix()
-    {
-        tCell::matrix.clear();
-    }
+    void ClearMatrix() { tCell::matrix.clear(); }
 
     void InitializeMatrix(int w, int h)
     {
@@ -157,11 +139,7 @@ namespace new_world
     }
 
     void ClearData()
-    {
-        for (int i = 0; i < maximum_generation_steps; i++)
-        { for (int p = 0; p < total_parameters; p++)
-            { generation_param[i][p] = 0; } }
-    }
+    { for (int i = 0; i < maximum_generation_steps; i++) { for (int p = 0; p < total_parameters; p++) { generation_param[i][p] = 0; } } }
 
     // Presets
 
@@ -243,24 +221,14 @@ namespace new_world
         };
 
         for (int i = 0; i < generation_steps; i++)
-        {
-            for (int p = 0; p < total_parameters; p++)
-            {
-                generation_param[i][p] = preset_data[i][p];
-            }
-        }
+        { for (int p = 0; p < total_parameters; p++) { generation_param[i][p] = preset_data[i][p]; } }
     }
 
     // Seed Methods
     void AddLayer(int t, int density, int xmin, int xmax, int ymin, int ymax)
     {
         for (int y = ymin; y < ymax; y++)
-        {
-            for (int x = xmin; x < xmax; x++)
-            {
-                if (rand()%1000 < density) tCell::matrix[y*tCell::width+x] = t;
-            }
-        }
+        { for (int x = xmin; x < xmax; x++) { if (rand()%1000 < density) tCell::matrix[y*tCell::width+x] = t; } }
     }
 
     void SeedLayer(int t, int density, int xmin, int xmax, int ymin, int ymax)
@@ -268,10 +236,7 @@ namespace new_world
         for (int y = ymin; y < ymax; y++)
         {
             for (int x = xmin; x < xmax; x++)
-            {
-                int index = y*tCell::width+x;
-                if (tCell::matrix[index] != tTile::AIR && rand()%10000 < density) tCell::matrix[index] = t;
-            }
+            { int index = y*tCell::width+x; if (tCell::matrix[index] != tTile::AIR && rand()%10000 < density) tCell::matrix[index] = t; }
         }
     }
 
@@ -279,12 +244,10 @@ namespace new_world
     void Expand(int t, int minx, int maxx, int miny, int maxy, int dn=5, int ds=5, int de=25, int dw=25)
     {
         tCell::replace = tCell::matrix;
-
         minx = std::max(minx, 1);
         maxx = std::min(maxx, tCell::width-2);
         miny = std::max(miny, 1);
         maxy = std::min(maxy, tCell::height-2);
-
         for (int y = miny; y < maxy; y++)
         {
             for (int x = minx; x < maxx; x++)
@@ -295,7 +258,6 @@ namespace new_world
                     int s = (y+1)*tCell::width+x;
                     int e = y*tCell::width+(x+1);
                     int w = y*tCell::width+(x-1);
-
                     if (tCell::matrix[n] == tTile::AIR && rand()%100 < dn) tCell::replace[n] = t;
                     if (tCell::matrix[s] == tTile::AIR && rand()%100 < ds) tCell::replace[s] = t;
                     if (tCell::matrix[e] == tTile::AIR && rand()%100 < de) tCell::replace[e] = t;
@@ -309,12 +271,10 @@ namespace new_world
     void Deposit(int t, int minx, int maxx, int miny, int maxy, int dn=5, int ds=5, int de=25, int dw=25)
     {
         tCell::replace = tCell::matrix;
-
         minx = std::max(minx, 1);
         maxx = std::min(maxx, tCell::width-2);
         miny = std::max(miny, 1);
         maxy = std::min(maxy, tCell::height-2);
-
         for (int y = miny; y < maxy; y++)
         {
             for (int x = minx; x < maxx; x++)
@@ -325,7 +285,6 @@ namespace new_world
                     int s = (y+1)*tCell::width+x;
                     int e = y*tCell::width+(x+1);
                     int w = y*tCell::width+(x-1);
-
                     if (rand()%100 < dn) tCell::replace[n] = t;
                     if (rand()%100 < ds) tCell::replace[s] = t;
                     if (rand()%100 < de) tCell::replace[e] = t;
@@ -405,10 +364,8 @@ namespace new_world
     {
         std::string message = "";
         int index = generation_step-1;
-
         float W = float(float(tCell::width)/100.0);
         float H = float(float(tCell::height)/100.0);
-
         switch (generation_param[index][pMODE])
         {
             case mADD :
@@ -491,6 +448,7 @@ namespace new_world
         { if (generation_param[i][0] != tTile::AIR) is_data_valid = true; }
         if (!is_data_valid) PresetData();
         chaotic::GenerateNoise(core::seed);
+        ClearMatrix();
         InitializeMatrix(w, h);
         srand(core::seed);
         core::game_state = core::MAKE_WORLD;
@@ -517,19 +475,10 @@ namespace new_world
         if (data_file.is_open())
         {
             for (int i = 0; i < generation_steps; i++)
-            {
-                for (int j = 0; j < total_parameters; j++)
-                {
-                    data_file << generation_param[i][j] << std::endl;
-                }
-            }
+            { for (int j = 0; j < total_parameters; j++) { data_file << generation_param[i][j] << std::endl; } }
             data_file.close();
         }
-        else
-        {
-            std::ofstream new_file (_dir);
-            SaveData(data_dir);
-        }
+        else { std::ofstream new_file (_dir); SaveData(data_dir); }
     }
 
     void LoadData(std::string data_dir="0")
@@ -538,23 +487,13 @@ namespace new_world
         std::fstream data_file;
         std::string _dir = os::GetCWD() + dataTool::path_preset + data_dir;
         data_file.open(_dir);
-
         if (data_file.is_open())
         {
-            int i = 0;
-            int j = 0;
+            int i = 0; int j = 0;
             while (getline(data_file, line))
             {
                 if (i <= maximum_generation_steps && line != "")
-                {
-                    generation_param[i][j] = std::stoi(line);
-                    j++;
-                    if (j % total_parameters == 0)
-                    {
-                        i++;
-                        j = 0;
-                    }
-                }
+                { generation_param[i][j] = std::stoi(line); j++; if (j % total_parameters == 0) { i++; j = 0; } }
             }
             generation_steps = i;
             data_file.close();

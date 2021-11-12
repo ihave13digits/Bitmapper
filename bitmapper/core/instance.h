@@ -17,6 +17,7 @@ namespace iSystem
     // Setup
     void InitializeSystem()
     {
+        // Blueprints
         blueprints.InitializeMatrix();
         blueprints.LoadData();
         // Labels
@@ -55,6 +56,9 @@ namespace iSystem
             }
         }
     }
+
+    // Data
+    void LoadData() { sky.GenerateSky(core::width, core::height, core::seed); new_world::ReadyWorld(tCell::width, tCell::height); world.LoadData(); player.LoadData(); }
 
     // Dimensions
     void SpawnDimension()
