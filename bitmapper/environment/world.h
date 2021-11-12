@@ -61,19 +61,23 @@ public:
         tCell::matrix = tCell::replace;
     }
 
-    void SaveData()
+    void SaveData(std::string data_dir = "")
     {
+        int X = tCell::width/chunk_size; int Y = tCell::height/chunk_size;
+        for (int x = 0; x < X; x++) { for (int y = 0; y < Y; y++) { SaveChunkData(x, y, data_dir); } }
     }
 
-    void LoadData()
+    void LoadData(std::string data_dir = "")
     {
+        int X = tCell::width/chunk_size; int Y = tCell::height/chunk_size;
+        for (int x = 0; x < X; x++) { for (int y = 0; y < Y; y++) { std::cout << "Loading Chunk " << x << "," << y << std::endl; LoadChunkData(x, y, data_dir); } }
     }
 
     void SaveChunkData(int X, int Y, std::string data_dir = "")
     {
         std::fstream data_file;
         data_dir = std::to_string(X) + "-" + std::to_string(Y);
-        std::string _dir = os::GetCWD() + "/data/" + data_dir;
+        std::string _dir = os::GetCWD() + dataTool::path_world + data_dir;
         data_file.open(_dir);
 
         int x_ = X*chunk_size;
@@ -105,7 +109,7 @@ public:
         std::string line;
         data_dir = std::to_string(X) + "-" + std::to_string(Y);
         std::fstream data_file;
-        std::string _dir = os::GetCWD() + "/data/" + data_dir;
+        std::string _dir = os::GetCWD() + dataTool::path_world + data_dir;
         data_file.open(_dir);
 
         int x = 0;
@@ -121,20 +125,17 @@ public:
                 for (int i = 0; i < line.length(); i++)
                 {
                     std::string c = line.substr(i, 1);
-                    if (c == ",") {x++;}
-                    if (
-                            c == "1" || c == "2" || c == "3" || c == "4" || c == "5" ||
-                            c == "6" || c == "7" || c == "8" || c == "9" || c == "0"
-                            )
+                    if ( c == "1" || c == "2" || c == "3" || c == "4" || c == "5" || c == "6" || c == "7" || c == "8" || c == "9" || c == "0" ) { v = v + c; }
+                    if (c == ",")
                     {
-                        v = v + c;
+                        int value = std::stoi(v);
+                        int index = (y_+y)*tCell::width+(x_+x);
+                        tCell::matrix[index] = value;
+                        x++;
+                        v = "";
                     }
                 }
-                int value = std::stoi(v);
-                int index = (y_+y)*tCell::width+(x_+x);
-                tCell::matrix[index] = value;
-                v = "";
-                y++;
+                y++; if (y >= chunk_size) { break; }
                 x = 0;
             }
             data_file.close();

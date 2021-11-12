@@ -45,7 +45,18 @@ namespace script
     int int_pool[8];
     float float_pool[8];
 
-    void StoreCommand(std::string cmd) { if (cmds[cmds.size()-1] != cmd) cmds.push_back(cmd); if (cmds.size() > max_cmds) { cmds.erase(cmds.begin()); } }
+
+
+    void SetHistory(std::string n)
+    {
+        max_cmds = std::stoi(n);
+        while (cmds.size() < max_cmds) { cmds.insert(cmds.begin(), ""); }
+        while (cmds.size() > max_cmds) { cmds.erase(cmds.end()-1); }
+        
+        for (int i = 0; i < cmds.size(); i++) { std::cout << cmds[i] << std::endl; }
+    }
+    void StoreCommand(std::string cmd)
+    { if (cmds[cmds.size()-1] != cmd && cmd != cmds[cmds.size()-1]) cmds.push_back(cmd); if (cmds.size() > max_cmds) { cmds.erase(cmds.begin()); } }
 
     //
     /// Commands
@@ -58,12 +69,9 @@ namespace script
     void SetFloat(int i, float n) { if (i < max_vars) float_pool[i] = n; }
     // World
     std::string GetMouse() { std::string mouse = "(" + std::to_string(iSystem::MouseX()) + "," + std::to_string(iSystem::MouseY()) + ")"; return mouse; }
+    int GetTile(std::string tile) { int index = -1; for (int i = 0; i < tTile::total_tiles; i++) { if (tTile::NAME[i] == tile) { index = i; break; } } return index; }
     std::string GetType(std::string tile)
-    {
-        int index = -1; std::string t = "None";
-        for (int i = 0; i < tTile::total_tiles; i++) { if (tTile::NAME[i] == tile) { index = i; break; } }
-        if (index != -1) { t = tTile::TYPE_NAME[tTool::GetType(index)]; } return t;
-    }
+    { int index = GetTile(tile); std::string t = "None"; if (index != -1) { t = tTile::TYPE_NAME[tTool::GetType(index)]; } return t; }
     float GetWeather() { return float(iSystem::sky.humidity)/float(iSystem::sky.cloudcount); }
     void SetWeather(std::string s)
     {
@@ -116,9 +124,11 @@ namespace script
             else if (c2 == "JP")      { e = "JUMP_MAX = "   +    std::to_string(iSystem::player.JP); }
             else if (c2 == "bp")      { e = "BREATH = "     +    std::to_string(iSystem::player.bp); }
             else if (c2 == "BP")      { e = "BREATH_MAX = " +    std::to_string(iSystem::player.BP); }
+            else if (c2 == "reach")   { e = "REACH = "      + std::to_string(iSystem::player.reach); }
             else if (c2 == "tick")    { e = "TICK = "       +      std::to_string(core::tick_delay); }
             else if (c2 == "time")    { e = "TIME = "       +     std::to_string(iSystem::sky.time); }
             else if (c2 == "mouse")   { e = "MOUSE = "      +                            GetMouse(); }
+            else if (c2 == "history") { e = "HISTORY = "    +              std::to_string(max_cmds); }
             else if (c2 == "weather") { e = "WEATHER = "    +          std::to_string(GetWeather()); }
         }
         else if (c1 == "collision")
@@ -159,10 +169,12 @@ namespace script
             else if (c2 == "JP" && textTool::IsValidNumber(c3))      { e = "JUMP_MAX";    iSystem::player.JP = std::stoi(c3); }
             else if (c2 == "bp" && textTool::IsValidNumber(c3))      { e = "BREATH";      iSystem::player.bp = std::stoi(c3); }
             else if (c2 == "BP" && textTool::IsValidNumber(c3))      { e = "BREATH_MAX";  iSystem::player.BP = std::stoi(c3); }
+            else if (c2 == "reach" && textTool::IsValidNumber(c3))   { e = "REACH";    iSystem::player.reach = std::stoi(c3); }
             else if (c2 == "season")                                 { e = "SET_SEASON";                       SetSeason(c3); }
             else if (c2 == "year" && textTool::IsValidNumber(c3))    { e = "SET_YEAR";                           SetYear(c3); }
             else if (c2 == "day" && textTool::IsValidNumber(c3))     { e = "SET_DAY";                             SetDay(c3); }
             else if (c2 == "time" && textTool::IsValidNumber(c3))    { e = "SET_TIME";                           SetTime(c3); }
+            else if (c2 == "history" && textTool::IsValidNumber(c3)) { e = "SET_HISTORY";                     SetHistory(c3); }
             else if (c2 == "weather" && textTool::IsValidNumber(c3)) { e = "SET_WEATHER";                     SetWeather(c3); }
             else if (c2 == "tick" && textTool::IsValidNumber(c3))    { e = "SET_TICK";                           SetTick(c3); }
         }
@@ -202,6 +214,7 @@ namespace script
             else if (arg_count == 3) { ABC(args[0], args[1], args[2]); success = true; }
         }
         if (success) { StoreCommand(cmd); }
+        else { e = cmd; }
         if (e != "") std::cout << e << std::endl;
     }
 

@@ -61,6 +61,7 @@ public:
     int vx = 0;
     int vy = 0;
 
+    int reach = 72;
     int height = 8;
 
     int HP = 100;
@@ -357,6 +358,9 @@ public:
         data_file.open(_dir);
         if (data_file.is_open())
         {
+            data_file << "#stats" << std::endl;
+            data_file << "x=" << std::to_string(x) << std::endl;
+            data_file << "y=" << std::to_string(y) << std::endl;
             data_file << "#tiles" << std::endl;
             for (int i = 0; i < inventory.data.size(); i++) { data_file << i << "=" << inventory.data[i] << std::endl; }
             data_file.close();
@@ -375,9 +379,26 @@ public:
 
             while (getline(data_file, line))
             {
-                if (line == "#tiles") { read_state = "#tiles"; }
-                if (read_state == "#tiles")
+                if (line.substr(0, 1) == "#") { read_state = line; }
+                if (read_state == "#stats")
                 {
+                    std::cout << "Loading Stats" << std::endl;
+                    bool next = false; std::string var = ""; std::string val = "";
+                    for (int i = 0; i < line.length(); i++)
+                    {
+                        std::string c = line.substr(i, 1);
+                        if (textTool::IsLetter(c)) {  var = var + c; }
+                        if (textTool::IsNumber(c)) { val = val + c; }
+                    }
+                    if (line.substr(0, 1) != "#")
+                    {
+                        if (var == "x") x = std::stoi(val);
+                        if (var == "y") y = std::stoi(val);
+                    }
+                }
+                else if (read_state == "#tiles")
+                {
+                    std::cout << "Loading Tiles" << std::endl;
                     bool next = false; std::string itm = ""; std::string amnt = "";
                     for (int i = 0; i < line.length(); i++)
                     {
