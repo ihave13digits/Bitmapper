@@ -22,9 +22,7 @@ namespace os
 
     void MakeDirectory(std::string path_data)
     {
-        std::string _dir = os::GetCWD() + path_data;
-        std::string _cmd = "mkdir " + _dir;
-        const char* mkdir_cmd = _cmd.c_str();
-        system(mkdir_cmd);
+        std::string _dir = GetCWD() + path_data;
+        _gfs::create_directory(_dir);
     }
 }
