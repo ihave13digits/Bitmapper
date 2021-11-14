@@ -341,7 +341,7 @@ public:
     void DrawChunkGrid()
     {
         if (!core::show_grid) return;
-        int size = iSystem::world.chunk_size; int sub = size/core::grid_subdivision;
+        const int size = iSystem::world.chunk_size; int sub = size/core::grid_subdivision;
         int _x = iSystem::player.x % (sub); int _y = iSystem::player.y % (sub);
         for (int y = 0; y < core::height+size; y += sub) { DrawLine({0-_x, y-_y}, {core::width-_x+size, y-_y}, olc::Pixel(grid_color)); }
         for (int x = 0; x < core::width+size; x += sub) { DrawLine({x-_x, 0-_y}, {x-_x, core::height-_y+size}, olc::Pixel(grid_color)); }
@@ -429,7 +429,7 @@ public:
 
     void DrawTools()
     {
-        int cols = 16; int rows = 8+tool_y;
+        const int cols = 16; const int rows = 8;
         int x_margin = 48; int y_margin = 40;
         int wand_value = tool_y*cols;
         Button buttons[cols*rows];
@@ -457,8 +457,8 @@ public:
                             if (index_value > 0) Draw(ix+(x*10)+x_margin, iy+(y*10)+y_margin, olc::Pixel(int(R*v), int(G*v), int(B*v), A));
                         }
                     }
+                    wand_value++;
                 }
-                wand_value++;
             }
         }
         SetPixelMode(olc::Pixel::NORMAL);
@@ -482,8 +482,8 @@ public:
 
     void DrawEffects()
     {
-        int cols = 16; int rows = 8;
-        int x_margin = 48; int y_margin = 40;
+        const int cols = 16; const int rows = 8;
+        const int x_margin = 48; const int y_margin = 40;
         int tile_value = effect_y*cols;
         Button buttons[cols*rows];
         SetPixelMode(olc::Pixel::ALPHA);
@@ -523,8 +523,8 @@ public:
 
     void DrawTiles()
     {
-        int cols = 16; int rows = 8;
-        int x_margin = 48; int y_margin = 40;
+        const int cols = 16; const int rows = 8;
+        const int x_margin = 48; const int y_margin = 40;
         int tile_value = tile_y*cols;
         Button buttons[cols*rows];
         SetPixelMode(olc::Pixel::ALPHA);
@@ -559,7 +559,7 @@ public:
                 }
             }
         }
-        if (hovered_value >= 0) DrawTileName(GetMouseX()+4, GetMouseY(), hovered_value);
+        if (hovered_value >= 0 && hovered_value < tTile::total_tiles) DrawTileName(GetMouseX()+4, GetMouseY(), hovered_value);
     }
 
     void DrawWalls()
@@ -1094,8 +1094,8 @@ public:
 
     void StateBlueprint()
     {
-        int cols = 11; int rows = 11;
-        int x_margin = 6; int y_margin = 26;
+        const int cols = 11; const int rows = 11;
+        const int x_margin = 6; const int y_margin = 26;
         int tile_value = tile_y*11;
         // Background
         Clear(blueprint_color);
@@ -1156,7 +1156,7 @@ public:
         }
         SetPixelMode(olc::Pixel::NORMAL);
         //
-        if (hovered_value >= 0) DrawTileName(GetMouseX()+4, GetMouseY(), hovered_value);
+        if (hovered_value >= 0 && hovered_value < tTile::total_tiles) DrawTileName(GetMouseX()+4, GetMouseY(), hovered_value);
         if (GetKey(menu_pause).bReleased) { core::game_state = core::PAUSED; }
         if (GetKey(player_up).bReleased || GetMouseWheel() > 0) { if (tile_y > 0) tile_y--; }
         if (GetKey(player_down).bReleased || GetMouseWheel() < 0) { if (tile_y < tTile::total_tiles/cols) tile_y++; }
