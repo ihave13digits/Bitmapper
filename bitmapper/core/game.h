@@ -5,11 +5,13 @@
 
 class Game : public olc::PixelGameEngine
 {
+
 public:
-	Game()
-	{
-		sAppName = core::game_title;
-	}
+
+    Game()
+    {
+        sAppName = core::game_title;
+    }
 
 public:
 
@@ -235,8 +237,8 @@ public:
     bool AutoJump(int d)
     {
         int x = iSystem::player.x; int y = iSystem::player.y; bool can_jump = false;
-        if (d == 1)  { if (tTool::IsColliding(x+1, y) && !tTool::IsColliding(x+1, y-1)) { can_jump = true; } }
-        if (d == -1) { if (tTool::IsColliding(x-2, y) && !tTool::IsColliding(x-2, y-1)) { can_jump = true; } }
+        if      (d == 1)  { if (tTool::BodyCollision(x+1, y) && !tTool::BodyCollision(x+1, y-1)) { can_jump = true; } }
+        else if (d == -1) { if (tTool::BodyCollision(x-2, y) && !tTool::BodyCollision(x-2, y-1)) { can_jump = true; } }
         return can_jump;
     }
 
@@ -250,12 +252,7 @@ public:
             {
                 int index = y*8+x;
                 if (iSystem::player.image[f][index] > 0)
-                {
-                    int _x = x+int(core::width/2)-4;
-                    int _y = y+int(core::height/2)-7;
-                    if ( tTool::IsColliding((iSystem::player.x+iSystem::player.vx)+(x-4), (iSystem::player.y+iSystem::player.vy)+(y-7)) )
-                    { colliding = true; }
-                }
+                { if ( tTool::BodyCollision((iSystem::player.x+iSystem::player.vx)+(x-4), (iSystem::player.y+iSystem::player.vy)+(y-7)) ) { colliding = true; break; } }
             }
         }
         return colliding;
@@ -618,7 +615,7 @@ public:
         for (int i = 0; i < iSystem::sky.humidity; i++)
         {
             int x = iSystem::sky.clouds[i][0]; int y = iSystem::sky.clouds[i][1];
-            FillCircle(x, y, iSystem::sky.clouds[i][2], olc::Pixel(iSystem::sky.r, iSystem::sky.g, iSystem::sky.b, 4+(8*iSystem::sky.time)));
+            FillCircle(x, y, iSystem::sky.clouds[i][2], olc::Pixel(iSystem::sky.r, iSystem::sky.g, iSystem::sky.b, int(8.0+(24.0*iSystem::sky.time))));
         }
         if (iSystem::sky.humidity > iSystem::sky.cloudcount/4 && core::game_state == core::PLAYING)
         {
@@ -1035,7 +1032,7 @@ public:
                 iSystem::sky.GenerateSky(core::width, core::height, core::seed);
                 iSystem::player.x = int(tCell::width/2);
                 iSystem::player.y = iSystem::player.height+2;
-                while (!tTool::IsColliding(iSystem::player.x, iSystem::player.y+1)) { iSystem::player.Move(0, 1); iSystem::player.can_move = true;}
+                while (!tTool::BodyCollision(iSystem::player.x, iSystem::player.y+1)) { iSystem::player.Move(0, 1); iSystem::player.can_move = true;}
                 core::loading = false;
                 core::game_state = core::PLAYING;
             }
@@ -1282,24 +1279,15 @@ public:
 
     void StateGameLoop(float fElapsedTime)
     {
-        if (iSystem::player.state == iSystem::player.DEAD) { if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED; return; }
-        if ((!tTool::IsColliding(iSystem::player.x, iSystem::player.y+1) &&
-            !tTool::IsColliding(iSystem::player.x-1, iSystem::player.y+1)) &&
-            iSystem::player.state != iSystem::player.JUMP)
-        { iSystem::player.vy = 1; iSystem::player.state = iSystem::player.FALL; }
-        if (tTool::IsColliding(iSystem::player.x, iSystem::player.y+1) || tTool::IsColliding(iSystem::player.x-1, iSystem::player.y+1))
-        { iSystem::player.state = iSystem::player.IDLE; }
+
         if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED;
         if (GetKey(menu_inventory).bPressed) core::game_state = core::INVENTORY;
         if (CtrlKey() && GetKey(olc::Key::V).bPressed) { iSystem::PasteBlueprints(GetOffsetX(), GetOffsetY()); }
-        // Hotbar Stuff
-        HotbarInput(); HotbarScroll(); UseHotbar();
         // Vertical Movement
         if (GetKey(player_up).bHeld)
         {
-            int x = iSystem::player.x;
-            int y = iSystem::player.y;
-            if ((!tTool::IsColliding(x, y-iSystem::player.height) && !tTool::IsColliding(x-1, y-iSystem::player.height)) &&
+            int x = iSystem::player.x; int y = iSystem::player.y;
+            if ((!tTool::BodyCollision(x, y-iSystem::player.height) && !tTool::BodyCollision(x-1, y-iSystem::player.height)) &&
                 (iSystem::player.jp > 0) && (iSystem::player.y > iSystem::player.height) )
             {
                 iSystem::player.jp--;
@@ -1309,34 +1297,28 @@ public:
             else { iSystem::player.vy = 1; }
         }
         if (GetKey(player_up).bReleased) { iSystem::player.vy = 0; iSystem::player.state = iSystem::player.IDLE; }
-        if (GetKey(player_down).bPressed)
+        if (GetKey(player_down).bHeld)
         {
-            int tile = tCell::matrix[(iSystem::player.y+(iSystem::player.height-1))*tCell::width+iSystem::player.x];
-            if (tile == tTile::PLANKS) { iSystem::player.Move(0, 1); }
+            int x = iSystem::player.x; int y = iSystem::player.y; int lfoot = tCell::matrix[(y+1)*tCell::width+(x-1)]; int rfoot = tCell::matrix[(y+1)*tCell::width+x];
+            if (tTool::GetType(lfoot) == tTile::PLATFORM || tTool::GetType(rfoot) == tTile::PLATFORM) { iSystem::player.can_move = true; iSystem::player.Move(0, 1); }
         }
-        if (!tTool::IsColliding(iSystem::player.x, iSystem::player.y+1) && iSystem::player.state != iSystem::player.JUMP)
-        { iSystem::player.vy = 1; iSystem::player.state = iSystem::player.FALL; }
         // Horizontal Movement
         if (GetKey(player_left).bHeld && iSystem::player.x > core::width/2)
         {
-            int _x = core::width/2+4;
-            int _y = core::height/2+8;
-            int x = iSystem::player.x;
-            int y = iSystem::player.y;
+            int _x = core::width/2+4;  int _y = core::height/2+8;
+            int x = iSystem::player.x; int y = iSystem::player.y;
             if (iSystem::player.state != iSystem::player.FALL && iSystem::player.state != iSystem::player.JUMP) iSystem::player.vy = 0;
-            if (!tTool::IsColliding(x-3, y) ) { iSystem::player.vx = -1; }
+            if (!tTool::FootCollision(x-3, y) ) { iSystem::player.vx = -1; }
             if (AutoJump(-1)) { iSystem::player.vx = -1; iSystem::player.Move(0, -1); }
             if (!GetKey(player_up).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
             iSystem::player.direction = -1;
         }
         if (GetKey(player_right).bHeld && iSystem::player.x < tCell::width-(core::width/2))
         {
-            int _x = core::width/2+4;
-            int _y = core::height/2+8;
-            int x = iSystem::player.x;
-            int y = iSystem::player.y;
+            int _x = core::width/2+4;  int _y = core::height/2+8;
+            int x = iSystem::player.x; int y = iSystem::player.y;
             if (iSystem::player.state != iSystem::player.FALL && iSystem::player.state != iSystem::player.JUMP) iSystem::player.vy = 0;
-            if (!tTool::IsColliding(x+1, y) ) { iSystem::player.vx = 1; }
+            if (!tTool::FootCollision(x+1, y) ) { iSystem::player.vx = 1; }
             if (AutoJump(1)) { iSystem::player.vx = 1; iSystem::player.Move(0, -1); }
             if (!GetKey(player_up).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
             iSystem::player.direction = 1;
@@ -1344,20 +1326,20 @@ public:
         if (GetKey(player_left).bReleased) { iSystem::player.vx = 0; }
         if (GetKey(player_right).bReleased) { iSystem::player.vx = 0; }
         if (GetKey(toggle_grid).bPressed) { core::show_grid = !core::show_grid; }
+        // Hotbar Stuff
+        HotbarInput(); HotbarScroll(); UseHotbar();
         // Update World
-        iSystem::sky.Update(fElapsedTime);
         if (core::game_tick > core::tick_delay)
         {
             core::game_tick -= core::tick_delay;
-            DrawSky();
-            iSystem::world.SettleTiles(iSystem::player.x-(core::width), iSystem::player.y-(core::height), core::width*2, core::height*2);
-            DrawTerrain();
+            iSystem::UpdateDimension();
+            DrawSky(); DrawTerrain();
         }
+        iSystem::Update(fElapsedTime);
         // Update Player
-        iSystem::player.Update(fElapsedTime);
-        if (iSystem::player.hp < 1) iSystem::player.state = iSystem::player.DEAD;
-        if (!PlayerVsWorld())
-        { iSystem::player.Move(iSystem::player.vx, iSystem::player.vy); }
+        if (iSystem::player.state == iSystem::player.DEAD) { if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED; return; }
+        if (!PlayerVsWorld()) { iSystem::player.Move(iSystem::player.vx, iSystem::player.vy); }
+
         DrawPlayer(); DrawParticles(fElapsedTime); DrawHUD();
         // Update Camera
         iSystem::camera.Update( iSystem::player.x-(iSystem::player.height/2), iSystem::player.y-(iSystem::player.height-1));
@@ -1372,11 +1354,11 @@ public:
     /// PGE Hooks
     //
 
-	bool OnUserCreate() override
-	{ InitializeGame(); return true; }
+    bool OnUserCreate() override
+    { InitializeGame(); return true; }
 
-	bool OnUserUpdate(float fElapsedTime) override
-	{
+    bool OnUserUpdate(float fElapsedTime) override
+    {
         UpdateMouse();
         switch (core::game_state)
         {
@@ -1397,5 +1379,5 @@ public:
             case core::EXIT           : {                 StateExit(); } break;
         }
         return core::running;
-	}
+    }
 };

@@ -11,8 +11,9 @@ namespace iSystem
     Label blueprint_label = Label();
     Label command_label = Label();
     //
-    std::vector<World> dimensions;
     std::vector<Particle> particles;
+
+
 
     // Setup
     void InitializeSystem()
@@ -61,11 +62,8 @@ namespace iSystem
     void LoadData() { sky.GenerateSky(core::width, core::height, core::seed); new_world::ReadyWorld(tCell::width, tCell::height); world.LoadData(); player.LoadData(); }
 
     // Dimensions
-    void SpawnDimension()
-    {}
-
-    void UpdateDimension()
-    {}
+    void SpawnDimension() {}
+    void UpdateDimension() { world.SettleTiles(player.x-(core::width), player.y-(core::height), core::width*2, core::height*2); }
 
     // Particles
     void SpawnParticle(float X, float Y, Effect e)
@@ -88,8 +86,8 @@ namespace iSystem
         int collision_x = int(x+vx);
         int collision_y = int(y+vy);
 
-        particles[p].Move(vx, vy, delta, tTool::IsColliding(int(x+vx), int(y+vy)));
-        if ( tTool::IsColliding(collision_x, collision_y) )
+        particles[p].Move(vx, vy, delta, tTool::BodyCollision(int(x+vx), int(y+vy)));
+        if ( tTool::BodyCollision(collision_x, collision_y) )
         {
             int collision_index = collision_y*tCell::width+collision_x;
             if ( particles[p].effect.destroys )
@@ -115,5 +113,11 @@ namespace iSystem
         {
             tCell::matrix[collision_y*tCell::width+collision_x] = particles[p].effect.tile_trail;
         }
+    }
+
+    void Update(float delta)
+    {
+        player.Update(delta);
+        sky.Update(delta);
     }
 }

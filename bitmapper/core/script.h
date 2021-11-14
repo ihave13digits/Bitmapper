@@ -139,7 +139,7 @@ namespace script
             else if (c2 == "gel")       { e = "GEL_COLLISION = "   +   std::to_string(int(tTool::GelCollision(iSystem::MouseX(), iSystem::MouseY()))); }
             else if (c2 == "grain")     { e = "GRAIN_COLLISION = " + std::to_string(int(tTool::GrainCollision(iSystem::MouseX(), iSystem::MouseY()))); }
             else if (c2 == "dual")      { e = "DUAL_COLLISION = "  +  std::to_string(int(tTool::DualCollision(iSystem::MouseX(), iSystem::MouseY()))); }
-            else if (c2 == "colliding") { e = "IS_COLLIDING = "    +    std::to_string(int(tTool::IsColliding(iSystem::MouseX(), iSystem::MouseY()))); }
+            else if (c2 == "body")      { e = "BODY_COLLISION = "  +  std::to_string(int(tTool::BodyCollision(iSystem::MouseX(), iSystem::MouseY()))); }
             else if (c2 == "any")       { e = "COLLISION = "       +      std::to_string(int(tTool::Collision(iSystem::MouseX(), iSystem::MouseY()))); }
         }
         else if (c1 == "toggle")
