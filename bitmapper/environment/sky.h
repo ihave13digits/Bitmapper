@@ -41,10 +41,10 @@ public:
 
     int starlight = 255;
     int starcount = 256;
-    int cloudcount = 1024;
+    int cloudcount = 512;
     int humidity = 128;
     int stars[256][2];
-    float clouds[1024][3];
+    float clouds[512][3];
 
     void GenerateSky(int W, int H, int seed=0)
     {

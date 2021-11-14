@@ -329,16 +329,12 @@ public:
             switch (status)
             {
                 case DROWN : { TakeDamage(1); } break;
-                case BURN : {
-                    TakeDamage(1); burn_tick++;
-                    if (burn_tick > 25) { burn_tick = 0; status = FINE; } } break;
-                case POISON : {
-                    TakeDamage(1); toxic_tick++;
-                    if (toxic_tick > 25) { toxic_tick = 0; status = FINE; } } break;
+                case BURN : { TakeDamage(1); burn_tick++; if (burn_tick > 25) { burn_tick = 0; status = FINE; } } break;
+                case POISON : { TakeDamage(1); toxic_tick++; if (toxic_tick > 25) { toxic_tick = 0; status = FINE; } } break;
             }
         }
         // Tile Effects
-        switch (tCell::matrix[(y+1)*tCell::width+x])
+        switch (tCell::matrix[(y-height)*tCell::width+x])
         {
             case tTile::LAVA :  { status = BURN; } break;
             case tTile::MAGMA : { status = BURN; } break;
@@ -348,6 +344,11 @@ public:
             case tTile::AIR  : { if (status == DROWN) status = FINE; } break;
             case tTile::LAVA : { status = BURN; } break;
         }
+        if (hp < 1) state = DEAD;
+        
+        if      ((!tTool::FootCollision(x, y+1) && !tTool::FootCollision(x-1, y+1)) && state != JUMP) { vy = 1; state = FALL; }
+        else if ((!tTool::FootCollision(x, y+1) && !tTool::FootCollision(x-1, y+1)) && state != JUMP && state != WALK) { vy = 1; state = FALL; }
+        else if ((tTool::FootCollision(x, y+1) || tTool::FootCollision(x-1, y+1)) && state != JUMP) { vy = 0; state = IDLE; }
     }
 
     void UpdateWands(float delta) { for (int i = 0; i < wands.size(); i++) { wands[i].Update(delta); } }

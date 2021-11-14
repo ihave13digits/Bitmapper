@@ -53,8 +53,9 @@ namespace tTool
     bool GrainCollision(int x, int y) { int index = y*tCell::width+x; return (tCell::matrix[index] > tTile::MOLTEN_SLAG || tCell::replace[index] > tTile::MOLTEN_SLAG); }
     //
     bool DualCollision(int x, int y)  { int index = y*tCell::width+x; return bool(tCell::matrix[index]) || bool(tCell::replace[index]); }
+    bool BodyCollision(int x, int y)    { return (tCell::matrix[y*tCell::width+x] > tTile::MOLTEN_SLAG && tCell::matrix[y*tCell::width+x] != tTile::PLANKS); }
+    bool FootCollision(int x, int y)    { return tCell::matrix[y*tCell::width+x] > tTile::MOLTEN_SLAG; }
     bool Collision(int x, int y)      { return bool(tCell::matrix[y*tCell::width+x]); }
-    bool IsColliding(int x, int y)    { return tCell::matrix[y*tCell::width+x] > tTile::MOLTEN_SLAG; }
 
 
 
