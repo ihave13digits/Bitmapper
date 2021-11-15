@@ -62,7 +62,7 @@ public:
     int vy = 0;
 
     int reach = 72;
-    int height = 8;
+    const int height = 8;
 
     int HP = 100;
     int hp = 100;
