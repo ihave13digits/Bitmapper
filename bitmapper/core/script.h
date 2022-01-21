@@ -67,6 +67,14 @@ namespace script
     float GetFloat(int i) { if (i < max_vars) return float_pool[i]; else return float_pool[0]; }
     void SetInt(int i, int n) { if (i < max_vars) int_pool[i] = n; }
     void SetFloat(int i, float n) { if (i < max_vars) float_pool[i] = n; }
+    // Misc
+    void Teleport(int x, int y)
+    { if (x > 0 && x < tCell::width && y > 0 && y < tCell::height) { iSystem::player.x = x; iSystem::player.y = y; } }
+    void Warp(int x, int y)
+    {
+        int _x = x+iSystem::player.x; int _y = y+iSystem::player.y;
+        if (_x > 0 && _x < tCell::width && _y > 0 && _y < tCell::height) { iSystem::player.x += x; iSystem::player.y += y; }
+    }
     // World
     std::string GetMouse() { std::string mouse = "(" + std::to_string(iSystem::MouseX()) + "," + std::to_string(iSystem::MouseY()) + ")"; return mouse; }
     int GetTile(std::string tile) { int index = -1; for (int i = 0; i < tTile::total_tiles; i++) { if (tTile::NAME[i] == tile) { index = i; break; } } return index; }
@@ -145,6 +153,8 @@ namespace script
         else if (c1 == "toggle")
         {
             if      (c2 == "creative")      { e = "TOGGLE_CREATIVE"; core::creative_mode = !core::creative_mode; }
+            else if (c2 == "mouse")         { e = "TOGGLE_MOUSE";       core::show_mouse = !core::show_mouse; }
+            else if (c2 == "grid")          { e = "TOGGLE_GRID";         core::show_grid = !core::show_grid; }
         }
         if (e != "") std::cout << e << std::endl;
     }
@@ -183,9 +193,9 @@ namespace script
         else if (c1 == "float"    && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
         { e = "FLOAT";            SetFloat(std::stoi(c2), std::stof(c3)); }
         else if (c1 == "teleport" && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
-        { e = "TELEPORT";         iSystem::player.x = std::stoi(c2); iSystem::player.y = std::stoi(c3); }
+        { e = "TELEPORT";         Teleport(std::stoi(c2), std::stoi(c3)); }
         else if (c1 == "warp"     && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
-        { e = "WARP";             iSystem::player.x += std::stoi(c2); iSystem::player.y += std::stoi(c3); }
+        { e = "WARP";             Warp(std::stoi(c2), std::stoi(c3)); }
         else if (c1 == "swap"     && textTool::IsValidNumber(c2) && textTool::IsValidNumber(c3))
         { e = "SWAP";             tTool::Swap(std::stoi(c2), std::stoi(c3)); }
         if (e != "") std::cout << e << std::endl;

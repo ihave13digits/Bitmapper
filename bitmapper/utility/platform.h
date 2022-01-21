@@ -2,7 +2,7 @@
 // Handle Platform Functions
 //
 
-#ifdef WINDOWS
+#ifdef _WIN32
 #include <direct.h>
 #define GetCurrentDir _getcwd
 #else

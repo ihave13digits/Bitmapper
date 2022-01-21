@@ -92,16 +92,20 @@ namespace tGizmo
         int dNW = int( (_y-1) * tCell::width + (_x-1) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
         int dN = int( (_y-1) * tCell::width + (_x) );
-        int v1 = tCell::matrix[dNW];
-        int v2 = tCell::matrix[dN];
-        int v3 = tCell::matrix[dNE];
-        if ( v1<tTile::VALVE_CLOSED && v2<tTile::VALVE_CLOSED && v3<tTile::VALVE_CLOSED)
+        int vW = tCell::matrix[dNW];
+        int vN = tCell::matrix[dN];
+        int vE = tCell::matrix[dNE];
+        if (tTool::GetType(vN) == tTile::GRAIN || tTool::GetType(vN) == tTile::SOLID || tTool::GetType(vN) == tTile::GIZMO)
         {
-            if (v2 > tTile::MUD && v1 == tTile::AIR)
+
+            if (vN > tTile::MUD && vW == tTile::AIR)
             {
-                tCell::replace[dNW] = v2; v1 = tTile::AIR;
-                if (tTool::GetType(v3) != tTile::SOLID) tCell::replace[dN] = v3; tCell::matrix[dN] = v1;
-                if (tTool::GetType(v3) == tTile::SOLID) tCell::replace[dN] = tTile::AIR; tCell::matrix[dN] = tTile::AIR;
+                if (tTool::GetType(vE) != tTile::SOLID) tTool::Swap(dN, dNW); //tTool::Swap(dN, dNE);
+                /*
+                tCell::replace[dNW] = vN; tCell::matrix[dNE] = tTile::AIR;
+                if (tTool::GetType(vE) != tTile::SOLID) tCell::replace[dN] = vE; tCell::matrix[dN] = vW;
+                if (tTool::GetType(vE) == tTile::SOLID) tCell::replace[dN] = tTile::AIR; tCell::matrix[dN] = tTile::AIR;
+                */
             }
         }
     }
@@ -111,16 +115,16 @@ namespace tGizmo
         int dNW = int( (_y-1) * tCell::width + (_x-1) );
         int dNE = int( (_y-1) * tCell::width + (_x+1) );
         int dN = int( (_y-1) * tCell::width + (_x) );
-        int v1 = tCell::matrix[dNE];
-        int v2 = tCell::matrix[dN];
-        int v3 = tCell::matrix[dNW];
-        if ( v1<tTile::VALVE_CLOSED && v2<tTile::VALVE_CLOSED && v3<tTile::VALVE_CLOSED)
+        int vE = tCell::matrix[dNE];
+        int vN = tCell::matrix[dN];
+        int vW = tCell::matrix[dNW];
+        if (tTool::GetType(vN) == tTile::GRAIN || tTool::GetType(vN) == tTile::SOLID || tTool::GetType(vN) == tTile::GIZMO)
         {
-            if (v2 > tTile::MUD && v1 == tTile::AIR)
+            if (vN > tTile::MUD && vE == tTile::AIR)
             {
-                tCell::replace[dNE] = v2; tCell::matrix[dNW] = tTile::AIR;
-                if (tTool::GetType(v3) != tTile::SOLID) tCell::replace[dN] = v1; tCell::matrix[dN] = v3;
-                if (tTool::GetType(v3) == tTile::SOLID) tCell::replace[dN] = tTile::AIR; tCell::matrix[dN] = tTile::AIR;
+                tCell::replace[dNE] = vN; tCell::matrix[dNW] = tTile::AIR;
+                if (tTool::GetType(vW) != tTile::SOLID) tCell::replace[dN] = vE; tCell::matrix[dN] = vW;
+                //if (tTool::GetType(vW) == tTile::SOLID) tCell::replace[dN] = tTile::AIR; tCell::matrix[dN] = tTile::AIR;
             }
         }
     }
@@ -144,46 +148,46 @@ namespace tGizmo
         int dW3 = int( (_y) * tCell::width + (_x-3) );
         int dW4 = int( (_y) * tCell::width + (_x-4) );
         // North
-        if (tCell::matrix[dN2] == tTile::AIR && (tCell::matrix[dS1] == tTile::WIRE_I || tCell::matrix[dS1] == tTile::GOLD_WIRE_I))
+        if (tCell::matrix[dN2] == tTile::AIR && tTool::IsPowered(dS1))
         { int v = tCell::matrix[dN1]; tCell::replace[dN2] = v; tCell::replace[dN1] = tTile::AIR; }//tCell::matrix[dN2]  = v; tCell::matrix[dN1]  = tTile::AIR; }
-        else if (tCell::matrix[dN3] == tTile::AIR && (tCell::matrix[dS2] == tTile::WIRE_I || tCell::matrix[dS2] == tTile::GOLD_WIRE_I))
+        else if (tCell::matrix[dN3] == tTile::AIR && tTool::IsPowered(dS2))
         {
             if (tCell::matrix[dN2] != tTile::AIR && tCell::matrix[dN1] != tTile::AIR)
             {int v = tCell::matrix[dN2]; tCell::replace[dN3] = v; tCell::replace[dN2] = tTile::AIR; }}//tCell::matrix[dN3]  = v; tCell::matrix[dN2]  = tTile::AIR; }}
-        else if (tCell::matrix[dN4] == tTile::AIR && (tCell::matrix[dS3] == tTile::WIRE_I || tCell::matrix[dS3] == tTile::GOLD_WIRE_I))
+        else if (tCell::matrix[dN4] == tTile::AIR && tTool::IsPowered(dS3))
         {
             if (tCell::matrix[dN3] != tTile::AIR && tCell::matrix[dN2] != tTile::AIR && tCell::matrix[dN1] != tTile::AIR)
             {int v = tCell::matrix[dN3]; tCell::replace[dN4] = v; tCell::replace[dN3] = tTile::AIR; }}//tCell::matrix[dN4]  = v; tCell::matrix[dN3]  = tTile::AIR; }}
         // South
-        if (tCell::matrix[dS2] == tTile::AIR && (tCell::matrix[dN1] == tTile::WIRE_I || tCell::matrix[dN1] == tTile::GOLD_WIRE_I))
+        if (tCell::matrix[dS2] == tTile::AIR && tTool::IsPowered(dN1))
         { int v = tCell::matrix[dS1]; tCell::replace[dS2] = v; tCell::replace[dS1] = tTile::AIR; }//tCell::matrix[dS2]  = v; tCell::matrix[dS1]  = tTile::AIR; }
-        else if (tCell::matrix[dS3] == tTile::AIR && (tCell::matrix[dN2] == tTile::WIRE_I || tCell::matrix[dN2] == tTile::GOLD_WIRE_I))
+        else if (tCell::matrix[dS3] == tTile::AIR && tTool::IsPowered(dN2))
         {
             if (tCell::matrix[dS2] != tTile::AIR && tCell::matrix[dS1] != tTile::AIR)
             { int v = tCell::matrix[dS2]; tCell::replace[dS3] = v; tCell::replace[dS2] = tTile::AIR; }}//tCell::matrix[dS3]  = v; tCell::matrix[dS2]  = tTile::AIR; }}
-        else if (tCell::matrix[dS4] == tTile::AIR && (tCell::matrix[dN3] == tTile::WIRE_I || tCell::matrix[dN3] == tTile::GOLD_WIRE_I))
+        else if (tCell::matrix[dS4] == tTile::AIR && tTool::IsPowered(dN3))
         {
             if (tCell::matrix[dS3] != tTile::AIR && tCell::matrix[dS2] != tTile::AIR && tCell::matrix[dS1] != tTile::AIR)
             { int v = tCell::matrix[dS3]; tCell::replace[dS4] = v; tCell::replace[dS3] = tTile::AIR; }}//tCell::matrix[dS4]  = v; tCell::matrix[dS3]  = tTile::AIR; }}
         // East
-        if (tCell::matrix[dE2] == tTile::AIR && (tCell::matrix[dW1] == tTile::WIRE_I || tCell::matrix[dW1] == tTile::GOLD_WIRE_I))
+        if (tCell::matrix[dE2] == tTile::AIR && tTool::IsPowered(dW1))
         { int v = tCell::matrix[dE1]; tCell::replace[dE2] = v; tCell::replace[dE1] = tTile::AIR; }//tCell::matrix[dE2]  = v; tCell::matrix[dE1]  = tTile::AIR; }
-        else if (tCell::matrix[dE3] == tTile::AIR && (tCell::matrix[dW2] == tTile::WIRE_I || tCell::matrix[dW2] == tTile::GOLD_WIRE_I))
+        else if (tCell::matrix[dE3] == tTile::AIR && tTool::IsPowered(dW2))
         {
             if (tCell::matrix[dE2] != tTile::AIR && tCell::matrix[dE1] != tTile::AIR)
             { int v = tCell::matrix[dE2]; tCell::replace[dE3] = v; tCell::replace[dE2] = tTile::AIR; }}//tCell::matrix[dE3]  = v; tCell::matrix[dE2]  = tTile::AIR; }}
-        else if (tCell::matrix[dE4] == tTile::AIR && (tCell::matrix[dW3] == tTile::WIRE_I || tCell::matrix[dW3] == tTile::GOLD_WIRE_I))
+        else if (tCell::matrix[dE4] == tTile::AIR && tTool::IsPowered(dW3))
         {
             if (tCell::matrix[dE3] != tTile::AIR && tCell::matrix[dE2] != tTile::AIR && tCell::matrix[dE1] != tTile::AIR)
             { int v = tCell::matrix[dE3]; tCell::replace[dE4] = v; tCell::replace[dE3] = tTile::AIR; }}//tCell::matrix[dE4]  = v; tCell::matrix[dE3]  = tTile::AIR; }}
         // West
-        if (tCell::matrix[dW2] == tTile::AIR && (tCell::matrix[dE1] == tTile::WIRE_I || tCell::matrix[dE1] == tTile::GOLD_WIRE_I))
+        if (tCell::matrix[dW2] == tTile::AIR && tTool::IsPowered(dE1))
         { int v = tCell::matrix[dW1]; tCell::replace[dW2] = v; tCell::replace[dW1] = tTile::AIR; }//tCell::matrix[dW2]  = v; tCell::matrix[dW1]  = tTile::AIR; }
-        else if (tCell::matrix[dW3] == tTile::AIR && (tCell::matrix[dE2] == tTile::WIRE_I || tCell::matrix[dE2] == tTile::GOLD_WIRE_I))
+        else if (tCell::matrix[dW3] == tTile::AIR && tTool::IsPowered(dE2))
         {
             if (tCell::matrix[dW2] != tTile::AIR && tCell::matrix[dW1] != tTile::AIR)
             {int v = tCell::matrix[dW2]; tCell::replace[dW3] = v; tCell::replace[dW2] = tTile::AIR; }}//tCell::matrix[dW3]  = v; tCell::matrix[dW2]  = tTile::AIR; }}
-        else if (tCell::matrix[dW4] == tTile::AIR && (tCell::matrix[dE3] == tTile::WIRE_I || tCell::matrix[dE3] == tTile::GOLD_WIRE_I))
+        else if (tCell::matrix[dW4] == tTile::AIR && tTool::IsPowered(dE3))
         {
             if (tCell::matrix[dW3] != tTile::AIR && tCell::matrix[dW2] != tTile::AIR && tCell::matrix[dW1] != tTile::AIR)
             { int v = tCell::matrix[dW3]; tCell::replace[dW4] = v; tCell::replace[dW3] = tTile::AIR; }}//tCell::matrix[dW4]  = v; tCell::matrix[dW3]  = tTile::AIR; }}

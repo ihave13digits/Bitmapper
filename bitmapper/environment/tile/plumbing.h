@@ -14,13 +14,13 @@ namespace tPlumbing
 
         if (tTool::GetType(tCell::matrix[dE]) == tTile::PIPES)
         {
-            if (tCell::matrix[dW] == tTile::PIPE) { tTool::Set(dW, tCell::matrix[dE]); tTool::Set(dE, tTile::PIPE); }
-            if (tCell::matrix[dN] == tTile::PIPE) { tTool::Set(dW, tCell::matrix[dN]); tTool::Set(dN, tTile::PIPE); }
+            if      (tCell::matrix[dW] == tTile::PIPE) { tTool::Set(dW, tCell::matrix[dE]); tTool::Set(dE, tTile::PIPE); }
+            else if (tCell::matrix[dN] == tTile::PIPE) { tTool::Set(dW, tCell::matrix[dN]); tTool::Set(dN, tTile::PIPE); }
         }
         else if (tTool::GetType(tCell::matrix[dW]) == tTile::PIPES)
         {
-            if (tCell::matrix[dE] == tTile::PIPE) { tTool::Set(dE, tCell::matrix[dW]); tTool::Set(dW, tTile::PIPE); }
-            if (tCell::matrix[dN] == tTile::PIPE) { tTool::Set(dE, tCell::matrix[dN]); tTool::Set(dN, tTile::PIPE); }
+            if      (tCell::matrix[dE] == tTile::PIPE) { tTool::Set(dE, tCell::matrix[dW]); tTool::Set(dW, tTile::PIPE); }
+            else if (tCell::matrix[dN] == tTile::PIPE) { tTool::Set(dE, tCell::matrix[dN]); tTool::Set(dN, tTile::PIPE); }
         }
         else if (tTool::GetType(tCell::matrix[dS]) == tTile::PIPES)
         { if (tCell::matrix[dN] == tTile::PIPE) { tTool::Set(dN, tCell::matrix[dS]); tTool::Set(dS, tTile::PIPE); } }
@@ -58,6 +58,7 @@ namespace tPlumbing
         {
             switch (tCell::matrix[dS])
             {
+                case tTile::PIPE :             {tCell::replace[dN] = tTile::HIGHLY_COMPRESSED_AIR;} break;
                 case tTile::PIPE_MILK        : {tCell::replace[dS] = tTile::PIPE; tCell::replace[dN] = tTile::MILK;} break;
                 case tTile::PIPE_MERCURY     : {tCell::replace[dS] = tTile::PIPE; tCell::replace[dN] = tTile::MERCURY;} break;
                 case tTile::PIPE_OIL         : {tCell::replace[dS] = tTile::PIPE; tCell::replace[dN] = tTile::OIL;} break;
@@ -78,6 +79,44 @@ namespace tPlumbing
                 case tTile::PIPE_MOLTEN_SLAG : {tCell::replace[dS] = tTile::PIPE; tCell::replace[dN] = tTile::MOLTEN_SLAG;} break;
             }
         }
+        else
+        {
+            if (tCell::matrix[dS] == tTile::PIPE)
+            {
+                switch (tCell::matrix[dN])
+                {
+                    case tTile::MILDLY_COMPRESSED_AIR :
+                    {
+                        tCell::replace[dN] = tTile::COMPRESSED_AIR;
+                        if      (tCell::matrix[dN-1] == tTile::AIR) {tCell::replace[dN-1] = tTile::MILDLY_COMPRESSED_AIR;}
+                        else if (tCell::matrix[dN-1] == tTile::MILDLY_COMPRESSED_AIR) {tCell::replace[dN-1] = tTile::COMPRESSED_AIR;}
+                        else if (tCell::matrix[dN-1] == tTile::COMPRESSED_AIR) {tCell::replace[dN-1] = tTile::HIGHLY_COMPRESSED_AIR;}
+                        if      (tCell::matrix[dN+1] == tTile::AIR) {tCell::replace[dN+1] = tTile::MILDLY_COMPRESSED_AIR;}
+                        else if (tCell::matrix[dN+1] == tTile::MILDLY_COMPRESSED_AIR) {tCell::replace[dN+1] = tTile::COMPRESSED_AIR;}
+                        else if (tCell::matrix[dN+1] == tTile::COMPRESSED_AIR) {tCell::replace[dN+1] = tTile::HIGHLY_COMPRESSED_AIR;}
+                    } break;
+                    case tTile::COMPRESSED_AIR :
+                    {
+                        tCell::replace[dN] = tTile::HIGHLY_COMPRESSED_AIR;
+                        if      (tCell::matrix[dN-1] == tTile::AIR) {tCell::replace[dN-1] = tTile::MILDLY_COMPRESSED_AIR;}
+                        else if (tCell::matrix[dN-1] == tTile::MILDLY_COMPRESSED_AIR) {tCell::replace[dN-1] = tTile::COMPRESSED_AIR;}
+                        else if (tCell::matrix[dN-1] == tTile::COMPRESSED_AIR) {tCell::replace[dN-1] = tTile::HIGHLY_COMPRESSED_AIR;}
+                        if      (tCell::matrix[dN+1] == tTile::AIR) {tCell::replace[dN+1] = tTile::MILDLY_COMPRESSED_AIR;}
+                        else if (tCell::matrix[dN+1] == tTile::MILDLY_COMPRESSED_AIR) {tCell::replace[dN+1] = tTile::COMPRESSED_AIR;}
+                        else if (tCell::matrix[dN+1] == tTile::COMPRESSED_AIR) {tCell::replace[dN+1] = tTile::HIGHLY_COMPRESSED_AIR;}
+                    } break;
+                    case tTile::HIGHLY_COMPRESSED_AIR :
+                    {
+                        if      (tCell::matrix[dN-1] == tTile::AIR) {tCell::replace[dN-1] = tTile::MILDLY_COMPRESSED_AIR;}
+                        else if (tCell::matrix[dN-1] == tTile::MILDLY_COMPRESSED_AIR) {tCell::replace[dN-1] = tTile::COMPRESSED_AIR;}
+                        else if (tCell::matrix[dN-1] == tTile::COMPRESSED_AIR) {tCell::replace[dN-1] = tTile::HIGHLY_COMPRESSED_AIR;}
+                        if      (tCell::matrix[dN+1] == tTile::AIR) {tCell::replace[dN+1] = tTile::MILDLY_COMPRESSED_AIR;}
+                        else if (tCell::matrix[dN+1] == tTile::MILDLY_COMPRESSED_AIR) {tCell::replace[dN+1] = tTile::COMPRESSED_AIR;}
+                        else if (tCell::matrix[dN+1] == tTile::COMPRESSED_AIR) {tCell::replace[dN+1] = tTile::HIGHLY_COMPRESSED_AIR;}
+                    } break;
+                }
+            }
+        }
     }
 
     void Gutter(int _x, int _y, int index)
@@ -89,13 +128,13 @@ namespace tPlumbing
 
         if (tTool::GetType(tCell::matrix[dE]) == tTile::GUTTERS)
         {
-            if (tCell::matrix[dW] == tTile::GUTTER) { tTool::Set(dW, tCell::matrix[dE]); tTool::Set(dE, tTile::GUTTER); }
-            if (tCell::matrix[dS] == tTile::GUTTER) { tTool::Set(dS, tCell::matrix[dE]); tTool::Set(dE, tTile::GUTTER); }
+            if      (tCell::matrix[dW] == tTile::GUTTER) { tTool::Set(dW, tCell::matrix[dE]); tTool::Set(dE, tTile::GUTTER); }
+            else if (tCell::matrix[dS] == tTile::GUTTER) { tTool::Set(dS, tCell::matrix[dE]); tTool::Set(dE, tTile::GUTTER); }
         }
         else if (tTool::GetType(tCell::matrix[dW]) == tTile::GUTTERS)
         {
-            if (tCell::matrix[dE] == tTile::GUTTER) { tTool::Set(dE, tCell::matrix[dW]); tTool::Set(dW, tTile::GUTTER); }
-            if (tCell::matrix[dS] == tTile::GUTTER) { tTool::Set(dS, tCell::matrix[dW]); tTool::Set(dW, tTile::GUTTER); }
+            if      (tCell::matrix[dE] == tTile::GUTTER) { tTool::Set(dE, tCell::matrix[dW]); tTool::Set(dW, tTile::GUTTER); }
+            else if (tCell::matrix[dS] == tTile::GUTTER) { tTool::Set(dS, tCell::matrix[dW]); tTool::Set(dW, tTile::GUTTER); }
         }
         else if (tTool::GetType(tCell::matrix[dN]) == tTile::GUTTERS)
         { if (tCell::matrix[dS] == tTile::GUTTER) { tTool::Set(dS, tCell::matrix[dN]); tTool::Set(dN, tTile::GUTTER); } }
