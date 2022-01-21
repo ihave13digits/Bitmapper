@@ -6,6 +6,7 @@ namespace core
     // Flags
     bool running = true;
     bool creative_mode = true;
+    bool show_mouse = false;
     bool show_grid = false;
     bool loading = false;
 
@@ -29,12 +30,13 @@ namespace core
     // Graphics Presets
     int width  = 256;
     int height = 144;
+    uint8_t xray = 16;
     uint8_t resolution = 4;
     uint8_t grid_subdivision = 1;
 
     // Identity
     std::string game_title = "Bitmapper";
-    std::string version = "0.24.219.0";
+    std::string version = "0.24.232.1";
 
     // Enums
 

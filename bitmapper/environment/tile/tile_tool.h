@@ -3,7 +3,9 @@ namespace tTool
 
     int GetType(int tile_index) { return tTile::TYPE[tile_index]; }
     std::string GetName(int tile_index) { return tTile::NAME[tile_index]; }
-    int GetDurability(int x, int y) { int index = tCell::matrix[y*tCell::width+x]; return tTile::POWER[index]; }
+    float GetDurability(int tile_index) { return tTile::POWER[tile_index]; }
+    float GetDensity(int tile_index) { return tTile::DENSE[tile_index]; }
+
 
 
 
@@ -18,11 +20,14 @@ namespace tTool
         if (t == tTile::FIRE ||
             t == tTile::FLAME ||
             t == tTile::FLARE ||
+            t == tTile::EMBER ||
             t == tTile::MAGMA ||
             t == tTile::LAVA ||
             t == tTile::SPARK ||
-            t == tTile::ARC)
-        { value = (((rand()%100) * tTile::LIGHT[t]) * 0.01); }
+            t == tTile::ARC ||
+            t == tTile::URANIUM ||
+            t == tTile::RADON)
+        { value = tTile::LIGHT[t]+(((rand()%100) * tTile::GLOW[t]) * 0.001); }
         else { value = tTile::LIGHT[t]; }
         return value;
     }
@@ -40,6 +45,8 @@ namespace tTool
     }
 
 
+
+    bool IsPowered(int i) { return bool(tCell::matrix[i] == tTile::WIRE_I || tCell::matrix[i] == tTile::GOLD_WIRE_I);}
 
     //
     // Collisions

@@ -44,6 +44,14 @@ public:
     };
 
     bool can_move;
+    bool is_hurt;
+    bool is_burn;
+    bool is_cold;
+    bool is_stun;
+    bool is_trip;
+    bool is_drown;
+    bool is_poison;
+    bool is_confused;
 
     int direction = 1;
     int state = 0;

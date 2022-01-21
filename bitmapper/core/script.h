@@ -153,6 +153,8 @@ namespace script
         else if (c1 == "toggle")
         {
             if      (c2 == "creative")      { e = "TOGGLE_CREATIVE"; core::creative_mode = !core::creative_mode; }
+            else if (c2 == "mouse")         { e = "TOGGLE_MOUSE";       core::show_mouse = !core::show_mouse; }
+            else if (c2 == "grid")          { e = "TOGGLE_GRID";         core::show_grid = !core::show_grid; }
         }
         if (e != "") std::cout << e << std::endl;
     }

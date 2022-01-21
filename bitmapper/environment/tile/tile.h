@@ -31,6 +31,9 @@ namespace tTile
     {
         // Gas
         AIR,
+        MILDLY_COMPRESSED_AIR,
+        COMPRESSED_AIR,
+        HIGHLY_COMPRESSED_AIR,
         STEAM,
         THIN_SMOKE,
         SMOKE,
@@ -42,7 +45,9 @@ namespace tTile
         ARC,
         SPARK,
         // Fume
+        RADON,
         FOG,
+        ACID_FUMES,
         OIL_FUMES,
         // Fluid
         MILK,
@@ -50,6 +55,8 @@ namespace tTile
         OIL,
         MAGMA,
         ACID,
+        DILUTE_ACID,
+        IRRADIATED_WATER,
         WATER,
         BRINE,
         WINE,
@@ -121,6 +128,7 @@ namespace tTile
         NICKEL_ORE,
         TITANIUM_ORE,
         TUNGSTEN_ORE,
+        URANIUM_ORE,
         // Metal
         PLATINUM,
         GOLD,
@@ -133,6 +141,7 @@ namespace tTile
         NICKEL,
         TITANIUM,
         TUNGSTEN,
+        URANIUM,
         // Geological
         VOLCANIC_ROCK,
         CALDERA,
@@ -154,6 +163,8 @@ namespace tTile
         PIPE_MERCURY,
         PIPE_OIL,
         PIPE_ACID,
+        PIPE_DILUTE_ACID,
+        PIPE_IRRADIATED_WATER,
         PIPE_WATER,
         PIPE_BRINE,
         PIPE_WINE,
@@ -173,6 +184,8 @@ namespace tTile
         GUTTER_MERCURY,
         GUTTER_OIL,
         GUTTER_ACID,
+        GUTTER_DILUTE_ACID,
+        GUTTER_IRRADIATED_WATER,
         GUTTER_WATER,
         GUTTER_BRINE,
         GUTTER_WINE,
@@ -284,6 +297,7 @@ namespace tTile
     std::vector<float> POWER;
     // Light Values
     std::vector<float> LIGHT;
+    std::vector<float> GLOW;
     // Density Values
     std::vector<float> DENSE;
     // Type Values
@@ -353,9 +367,10 @@ namespace tTile
                             case 3 : {             int value = std::stoi(string_data);     B.push_back(value); } break;
                             case 4 : {             int value = std::stoi(string_data);     A.push_back(value); } break;
                             case 5 : {           float value = std::stof(string_data); LIGHT.push_back(value); } break;
-                            case 6 : {           float value = std::stof(string_data); POWER.push_back(value); } break;
-                            case 7 : {           float value = std::stof(string_data); DENSE.push_back(value); } break;
-                            case 8 :
+                            case 6 : {           float value = std::stof(string_data);  GLOW.push_back(value); } break;
+                            case 7 : {           float value = std::stof(string_data); POWER.push_back(value); } break;
+                            case 8 : {           float value = std::stof(string_data); DENSE.push_back(value); } break;
+                            case 9 :
                             {
                                 int value;
                                 if (string_data == "gas")          { value = GAS;           }
@@ -385,8 +400,8 @@ namespace tTile
                                 TYPE.push_back(value);
                             }
                             break;
-                            case  9 : { NAME.push_back(string_data); } break;
-                            case 10 : { state = 0; tile_count++;     } break;
+                            case 10 : { NAME.push_back(string_data); } break;
+                            case 11 : { state = 0; tile_count++;     } break;
                         }
                         string_data = "";
                         state++;

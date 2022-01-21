@@ -3,6 +3,20 @@
 
 #include "../included.h"
 
+        // Key Reference
+        //NONE,
+		//A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+		//K0, K1, K2, K3, K4, K5, K6, K7, K8, K9,
+		//F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
+		//UP, DOWN, LEFT, RIGHT,
+		//SPACE, TAB, SHIFT, CTRL, INS, DEL, HOME, END, PGUP, PGDN,
+		//BACK, ESCAPE, RETURN, ENTER, PAUSE, SCROLL,
+		//NP0, NP1, NP2, NP3, NP4, NP5, NP6, NP7, NP8, NP9,
+		//NP_MUL, NP_DIV, NP_ADD, NP_SUB, NP_DECIMAL, PERIOD,
+		//EQUALS, COMMA, MINUS,
+		//OEM_1, OEM_2, OEM_3, OEM_4, OEM_5, OEM_6, OEM_7, OEM_8,
+		//CAPS_LOCK, ENUM_END
+
 class Game : public olc::PixelGameEngine
 {
 
@@ -33,6 +47,7 @@ public:
     olc::Key player_right = olc::Key::D;
     olc::Key player_min = olc::Key::Q;
     olc::Key player_max = olc::Key::E;
+    olc::Key ui_xray = olc::Key::SHIFT;
     olc::Key ui_up = olc::Key::UP;
     olc::Key ui_down = olc::Key::DOWN;
     olc::Key ui_left = olc::Key::LEFT;
@@ -48,6 +63,7 @@ public:
     olc::Pixel hud_color        = olc::Pixel( 64,  64,  64, 255);
     olc::Pixel hud_select_color = olc::Pixel(255, 255, 255, 255);
     olc::Pixel grid_color       = olc::Pixel(  0,   0,   0,  64);
+    olc::Pixel mouse_color      = olc::Pixel(255, 255, 255,  64);
     olc::Pixel text_color       = olc::Pixel(250, 250, 250, 255);
     olc::Pixel cursor_color     = olc::Pixel(124, 124, 128, 255);
     olc::Pixel panel_color      = olc::Pixel( 10,  10,  10, 255);
@@ -228,6 +244,7 @@ public:
             if (GetKey(olc::Key::X).bHeld) { core::mouse_x = old_x; }
             if (GetKey(olc::Key::Y).bHeld) { core::mouse_y = old_y; }
         }
+        if (core::show_mouse) { DrawMouse(); }
     }
 
     //
@@ -319,6 +336,9 @@ public:
     void DrawPanel(int x, int y, int w, int h)
     { FillRect({x+1, y+1}, {w-1, h-1}, panel_color); DrawRect({x, y}, {w, h}, border_color); }
 
+    void DrawMouse()
+    { SetPixelMode(olc::Pixel::ALPHA); Draw(core::mouse_x, core::mouse_y, mouse_color); SetPixelMode(olc::Pixel::NORMAL); }
+
     void DrawButton(Button b)
     {
         DrawStringDecal({ b.TextX(),b.TextY() }, b.text, text_color, {b.font, b.font});
@@ -349,7 +369,7 @@ public:
 
     void DrawIcon(int x, int y, int tile_type, int tile_value)
     {
-        int *img;
+        int *img = nullptr;
         switch (tile_type)
         {
             case tTile::GAS           : { img = icon.gas;      } break;
@@ -658,6 +678,33 @@ public:
             }
         }
         DrawChunkGrid();
+        SetPixelMode(olc::Pixel::NORMAL);
+    }
+
+    void DrawXRay()
+    {
+        int X = iSystem::camera.x - (core::width/2) + core::mouse_x;
+        int Y = iSystem::camera.y - (core::height/2) + core::mouse_y;
+        SetPixelMode(olc::Pixel::ALPHA);
+        for (int y = -core::xray; y < core::xray; y++)
+        {
+            for (int x = -core::xray; x < core::xray; x += 4)
+            {
+                if ( (x+X >= 0 && x+X < tCell::width-1) && (y+Y >= 0 && y+Y < tCell::height-1) )
+                {
+                    int v1 = tCell::matrix[(y+Y)*tCell::width+(x+X)];
+                    int v2 = tCell::matrix[(y+Y)*tCell::width+(x+X+1)];
+                    int v3 = tCell::matrix[(y+Y)*tCell::width+(x+X)+2];
+                    int v4 = tCell::matrix[(y+Y)*tCell::width+(x+X)+3];
+                    int dx = x+core::width-int(core::xray);
+                    int dy = y+core::height-int(core::xray);
+                    Draw(dx, dy, olc::Pixel(uint8_t(tTile::R[v1]), uint8_t(tTile::G[v1]), uint8_t(tTile::B[v1]), tTile::A[v1]));
+                    Draw(dx+1, dy, olc::Pixel(uint8_t(tTile::R[v2]), uint8_t(tTile::G[v2]), uint8_t(tTile::B[v2]), tTile::A[v2]));
+                    Draw(dx+2, dy, olc::Pixel(uint8_t(tTile::R[v3]), uint8_t(tTile::G[v3]), uint8_t(tTile::B[v3]), tTile::A[v3]));
+                    Draw(dx+3, dy, olc::Pixel(uint8_t(tTile::R[v4]), uint8_t(tTile::G[v4]), uint8_t(tTile::B[v4]), tTile::A[v4]));
+                }
+            }
+        }
         SetPixelMode(olc::Pixel::NORMAL);
     }
 
@@ -1049,7 +1096,7 @@ public:
 
     void StatePaused()//float fElapsedTime)
     {
-        bool needs_update = false;
+        bool xrays= false, needs_update = (core::show_mouse && (GetMouseX() != core::mouse_x || GetMouseY() != core::mouse_y));
         if (core::sub_state != core::psCOMMAND)
         {
             if (GetMouse(0).bHeld) { needs_update = true; }
@@ -1067,6 +1114,8 @@ public:
             { core::sub_state = core::psCOMMAND; iSystem::command_label.text = ""; iSystem::command_label.cursor = 0; }
             olc::Pixel test0 = GetDrawTarget()->GetPixel(0, 0); olc::Pixel test1 = GetDrawTarget()->GetPixel(core::width/2, core::height/2);
             if (test0 == blueprint_color || test1 == panel_color) { needs_update = true; }
+            if (GetKey(ui_xray).bHeld) { xrays = true; }
+            if (GetKey(ui_xray).bReleased) { needs_update = true; }
             HotbarInput(); HotbarScroll(); UseHotbar();
         }
         if (core::sub_state == core::psCOMMAND)
@@ -1086,10 +1135,14 @@ public:
             if (GetKey(menu_pause).bPressed)
             { core::sub_state = core::isTILES; iSystem::command_label.text = ""; iSystem::command_label.cursor = 0; needs_update = true; }
             HotbarScroll(); UseHotbar();
+        }
+        if (needs_update) { DrawSky(); DrawTerrain(); DrawPlayer(); }
+        if (core::sub_state == core::psCOMMAND)
+        {
             DrawLine(0, core::height-4, core::width, core::height-4, border_color);
             FillRect(0, core::height-3, core::width, 3, panel_color); DrawLabel(iSystem::command_label);
         }
-        if (needs_update) { DrawSky(); DrawTerrain(); DrawPlayer(); }
+        if (xrays) { DrawXRay(); }
         DrawHUD();
     }
 
@@ -1361,7 +1414,6 @@ public:
 
     bool OnUserUpdate(float fElapsedTime) override
     {
-        UpdateMouse();
         switch (core::game_state)
         {
             case core::PLAYING        : { StateGameLoop(fElapsedTime); } break;
@@ -1380,6 +1432,7 @@ public:
             case core::CREDITS        : {              StateCredits(); } break;
             case core::EXIT           : {                 StateExit(); } break;
         }
+        UpdateMouse();
         return core::running;
     }
 };

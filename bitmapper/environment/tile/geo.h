@@ -23,8 +23,8 @@ namespace tGeo
             {
                 case tTile::LAVA :
                 {
-                    if (tCell::matrix[dN] == tTile::AIR && rand()%1000 < 25) tCell::replace[dN] = tTile::LAVA;
-                    if (tCell::matrix[dNW] == tTile::AIR && rand()%1000 < 25) tCell::replace[dNW] = tTile::LAVA;
+                    if (tCell::matrix[dN] == tTile::AIR && rand()%1000 < 25) tCell::replace[dN] = tTile::MAGMA;
+                    if (tCell::matrix[dNW] == tTile::AIR && rand()%1000 < 25) tCell::replace[dNW] = tTile::MAGMA;
                 } break;
                 case tTile::MAGMA :
                 {
@@ -39,8 +39,8 @@ namespace tGeo
             {
                 case tTile::LAVA :
                 {
-                    if (tCell::matrix[dN] == tTile::AIR && rand()%1000 < 25) tCell::replace[dN] = tTile::LAVA;
-                    if (tCell::matrix[dNE] == tTile::AIR && rand()%1000 < 25) tCell::replace[dNE] = tTile::LAVA;
+                    if (tCell::matrix[dN] == tTile::AIR && rand()%1000 < 25) tCell::replace[dN] = tTile::MAGMA;
+                    if (tCell::matrix[dNE] == tTile::AIR && rand()%1000 < 25) tCell::replace[dNE] = tTile::MAGMA;
                 } break;
                 case tTile::MAGMA :
                 {

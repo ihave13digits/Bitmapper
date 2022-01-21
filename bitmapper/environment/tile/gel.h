@@ -30,6 +30,7 @@ namespace tGel
         switch (tCell::matrix[dS])
         {
             case tTile::WATER         : { tCell::replace[index] = tTile::OBSIDIAN; tCell::replace[dS] = tTile::STEAM; } break;
+            case tTile::CALDERA       : {               if (chance < 25)    tCell::replace[index] = tTile::LAVA_ROCK; } break;
             case tTile::ICE           : {                                   tCell::replace[dS] = tTile::WATER;        } break;
             case tTile::SNOW          : {                                   tCell::replace[dS] = tTile::WATER;        } break;
             case tTile::VOLCANIC_ROCK : {               if (chance < 25)    tCell::replace[dS] = tTile::LAVA;         } break;
