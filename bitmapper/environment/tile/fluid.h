@@ -14,8 +14,10 @@ namespace tFluid
         switch (tCell::matrix[dS])
         {
             case tTile::GRASS       : {                         tCell::replace[index] = tTile::AIR;                                                              } break;
-            case tTile::DIRT        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dS] = tTile::MUD;                } break;
-            case tTile::SOIL        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dS] = tTile::MUCK;               } break;
+            case tTile::DIRT        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dS] = tTile::DAMP_DIRT;          } break;
+            case tTile::DAMP_DIRT   : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dS] = tTile::MUD;                } break;
+            case tTile::SOIL        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dS] = tTile::DAMP_SOIL;          } break;
+            case tTile::DAMP_SOIL   : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dS] = tTile::MUCK;               } break;
             case tTile::SNOW        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dS] = tTile::ICE;                } break;
             case tTile::SALT        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dS] = tTile::BRINE;              } break;
             case tTile::LAVA        : {                         tCell::replace[index] = tTile::STEAM;            tCell::replace[dS] = tTile::OBSIDIAN;           } break;
@@ -29,8 +31,10 @@ namespace tFluid
         switch (tCell::matrix[dW])
         {
             case tTile::GRASS       : {                         tCell::replace[index] = tTile::AIR;                                                         } break;
-            case tTile::DIRT        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dW] = tTile::MUD;           } break;
-            case tTile::SOIL        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dW] = tTile::MUCK;          } break;
+            case tTile::DIRT        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dW] = tTile::DAMP_DIRT;     } break;
+            case tTile::DAMP_DIRT   : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dW] = tTile::MUD;           } break;
+            case tTile::SOIL        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dW] = tTile::DAMP_SOIL;     } break;
+            case tTile::DAMP_SOIL   : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dW] = tTile::MUCK;          } break;
             case tTile::SALT        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dW] = tTile::BRINE;         } break;
             case tTile::LAVA        : {                         tCell::replace[index] = tTile::STEAM;            tCell::replace[dW] = tTile::OBSIDIAN;      } break;
             case tTile::RADON       : {                         tCell::replace[index] = tTile::IRRADIATED_WATER; tCell::replace[dW] = tTile::AIR;           } break;
@@ -41,8 +45,10 @@ namespace tFluid
         switch (tCell::matrix[dE])
         {
             case tTile::GRASS       : {                         tCell::replace[index] = tTile::AIR;                                                         } break;
-            case tTile::DIRT        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dE] = tTile::MUD;           } break;
-            case tTile::SOIL        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dE] = tTile::MUCK;          } break;
+            case tTile::DIRT        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dE] = tTile::DAMP_DIRT;     } break;
+            case tTile::DAMP_DIRT   : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dE] = tTile::MUD;           } break;
+            case tTile::SOIL        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dE] = tTile::DAMP_SOIL;     } break;
+            case tTile::DAMP_SOIL   : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dE] = tTile::MUCK;          } break;
             case tTile::SALT        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dE] = tTile::BRINE;         } break;
             case tTile::LAVA        : {                         tCell::replace[index] = tTile::STEAM;            tCell::replace[dE] = tTile::OBSIDIAN;      } break;
             case tTile::RADON       : {                         tCell::replace[index] = tTile::IRRADIATED_WATER; tCell::replace[dE] = tTile::AIR;           } break;
@@ -53,8 +59,10 @@ namespace tFluid
         switch (tCell::matrix[dN])
         {
             case tTile::GRASS       : {                         tCell::replace[index] = tTile::AIR;                                                         } break;
-            case tTile::DIRT        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dN] = tTile::MUD;           } break;
-            case tTile::SOIL        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dN] = tTile::MUCK;          } break;
+            case tTile::DIRT        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dN] = tTile::DAMP_DIRT;     } break;
+            case tTile::DAMP_DIRT   : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dN] = tTile::MUD;           } break;
+            case tTile::SOIL        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dN] = tTile::DAMP_SOIL;     } break;
+            case tTile::DAMP_SOIL   : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dN] = tTile::MUCK;          } break;
             case tTile::SALT        : {                         tCell::replace[index] = tTile::AIR;              tCell::replace[dN] = tTile::BRINE;         } break;
             case tTile::LAVA        : {                         tCell::replace[index] = tTile::STEAM;            tCell::replace[dN] = tTile::OBSIDIAN;      } break;
             case tTile::RADON       : {                         tCell::replace[index] = tTile::IRRADIATED_WATER; tCell::replace[dN] = tTile::AIR;           } break;
@@ -62,6 +70,30 @@ namespace tFluid
             case tTile::DILUTE_ACID : { if (rand()%1000 < 10) { tCell::replace[index] = tTile::WATER;            tCell::replace[dN] = tTile::WATER;       } } break;
             case tTile::IRRADIATED_WATER : { if (rand()%1000 < 10) { tCell::replace[index]=tTile::IRRADIATED_WATER; tCell::replace[dN]=tTile::IRRADIATED_WATER; }} break;
         }
+    }
+
+    void AcidicWater(int _x, int _y, int index)
+    {
+        int dN  = int( (_y-1) * tCell::width + (_x  ) );
+        int dE  = int( (_y  ) * tCell::width + (_x+1) );
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
+        int dW  = int( (_y  ) * tCell::width + (_x-1) );
+        float durN = tTool::GetDurability(tCell::matrix[dN]);
+        float durS = tTool::GetDurability(tCell::matrix[dS]);
+        float durE = tTool::GetDurability(tCell::matrix[dE]);
+        float durW = tTool::GetDurability(tCell::matrix[dW]);
+        if ((tTool::GetType(tCell::matrix[dN]) != tTile::GAS && tTool::GetType(tCell::matrix[dN]) != tTile::FLUID &&
+            tTool::GetType(tCell::matrix[dN]) != tTile::GEM) && rand()%1000000 < (1+(10.0*durN)))
+        { tCell::replace[index] = tTile::WATER; tCell::replace[dN] = tTile::ACID_FUMES; }
+        if ((tTool::GetType(tCell::matrix[dS]) != tTile::GAS && tTool::GetType(tCell::matrix[dS]) != tTile::FLUID &&
+            tTool::GetType(tCell::matrix[dS]) != tTile::GEM) && rand()%1000000 < (1+(10.0*durS)))
+        { tCell::replace[index] = tTile::WATER; tCell::replace[dS] = tTile::ACID_FUMES; }
+        if ((tTool::GetType(tCell::matrix[dE]) != tTile::GAS && tTool::GetType(tCell::matrix[dE]) != tTile::FLUID &&
+            tTool::GetType(tCell::matrix[dE]) != tTile::GEM) && rand()%1000000 < (1+(10.0*durE)))
+        { tCell::replace[index] = tTile::WATER; tCell::replace[dE] = tTile::ACID_FUMES; }
+        if ((tTool::GetType(tCell::matrix[dW]) != tTile::GAS && tTool::GetType(tCell::matrix[dW]) != tTile::FLUID &&
+            tTool::GetType(tCell::matrix[dW]) != tTile::GEM) && rand()%1000000 < (1+(10.0*durW)))
+        { tCell::replace[index] = tTile::WATER; tCell::replace[dW] = tTile::ACID_FUMES; }
     }
 
     void DiluteAcid(int _x, int _y, int index)
@@ -76,16 +108,16 @@ namespace tFluid
         float durW = tTool::GetDurability(tCell::matrix[dW]);
         if ((tTool::GetType(tCell::matrix[dN]) != tTile::GAS && tTool::GetType(tCell::matrix[dN]) != tTile::FLUID &&
             tTool::GetType(tCell::matrix[dN]) != tTile::GEM) && rand()%10000 < (1+(10.0*durN)))
-        { tCell::replace[index] = tTile::WATER; tCell::replace[dN] = tTile::ACID_FUMES; }
+        { tCell::replace[index] = tTile::ACIDIC_WATER; tCell::replace[dN] = tTile::ACID_FUMES; }
         if ((tTool::GetType(tCell::matrix[dS]) != tTile::GAS && tTool::GetType(tCell::matrix[dS]) != tTile::FLUID &&
             tTool::GetType(tCell::matrix[dS]) != tTile::GEM) && rand()%10000 < (1+(10.0*durS)))
-        { tCell::replace[index] = tTile::WATER; tCell::replace[dS] = tTile::ACID_FUMES; }
+        { tCell::replace[index] = tTile::ACIDIC_WATER; tCell::replace[dS] = tTile::ACID_FUMES; }
         if ((tTool::GetType(tCell::matrix[dE]) != tTile::GAS && tTool::GetType(tCell::matrix[dE]) != tTile::FLUID &&
             tTool::GetType(tCell::matrix[dE]) != tTile::GEM) && rand()%10000 < (1+(10.0*durE)))
-        { tCell::replace[index] = tTile::WATER; tCell::replace[dE] = tTile::ACID_FUMES; }
+        { tCell::replace[index] = tTile::ACIDIC_WATER; tCell::replace[dE] = tTile::ACID_FUMES; }
         if ((tTool::GetType(tCell::matrix[dW]) != tTile::GAS && tTool::GetType(tCell::matrix[dW]) != tTile::FLUID &&
             tTool::GetType(tCell::matrix[dW]) != tTile::GEM) && rand()%10000 < (1+(10.0*durW)))
-        { tCell::replace[index] = tTile::WATER; tCell::replace[dW] = tTile::ACID_FUMES; }
+        { tCell::replace[index] = tTile::ACIDIC_WATER; tCell::replace[dW] = tTile::ACID_FUMES; }
     }
 
     void Acid(int _x, int _y, int index)
@@ -100,16 +132,16 @@ namespace tFluid
         float durW = tTool::GetDurability(tCell::matrix[dW]);
         if ((tTool::GetType(tCell::matrix[dN]) != tTile::GAS && tTool::GetType(tCell::matrix[dN]) != tTile::FLUID &&
             tTool::GetType(tCell::matrix[dN]) != tTile::GEM) && rand()%1000 < (1+(10.0*durN)))
-        { tCell::replace[index] = tTile::ACID_FUMES; tCell::replace[dN] = tTile::ACID_FUMES; }
+        { tCell::replace[index] = tTile::DILUTE_ACID; tCell::replace[dN] = tTile::ACID_FUMES; }
         if ((tTool::GetType(tCell::matrix[dS]) != tTile::GAS && tTool::GetType(tCell::matrix[dS]) != tTile::FLUID &&
             tTool::GetType(tCell::matrix[dS]) != tTile::GEM) && rand()%1000 < (1+(10.0*durS)))
-        { tCell::replace[index] = tTile::ACID_FUMES; tCell::replace[dS] = tTile::ACID_FUMES; }
+        { tCell::replace[index] = tTile::DILUTE_ACID; tCell::replace[dS] = tTile::ACID_FUMES; }
         if ((tTool::GetType(tCell::matrix[dE]) != tTile::GAS && tTool::GetType(tCell::matrix[dE]) != tTile::FLUID &&
             tTool::GetType(tCell::matrix[dE]) != tTile::GEM) && rand()%1000 < (1+(10.0*durE)))
-        { tCell::replace[index] = tTile::ACID_FUMES; tCell::replace[dE] = tTile::ACID_FUMES; }
+        { tCell::replace[index] = tTile::DILUTE_ACID; tCell::replace[dE] = tTile::ACID_FUMES; }
         if ((tTool::GetType(tCell::matrix[dW]) != tTile::GAS && tTool::GetType(tCell::matrix[dW]) != tTile::FLUID &&
             tTool::GetType(tCell::matrix[dW]) != tTile::GEM) && rand()%1000 < (1+(10.0*durW)))
-        { tCell::replace[index] = tTile::ACID_FUMES; tCell::replace[dW] = tTile::ACID_FUMES; }
+        { tCell::replace[index] = tTile::DILUTE_ACID; tCell::replace[dW] = tTile::ACID_FUMES; }
     }
 
     void Magma(int _x, int _y, int index)
@@ -278,6 +310,7 @@ namespace tFluid
             case tTile::WATER        : {       Water(_x, _y, index); } break;
             case tTile::ACID         : {        Acid(_x, _y, index); } break;
             case tTile::DILUTE_ACID  : {  DiluteAcid(_x, _y, index); } break;
+            case tTile::ACIDIC_WATER : { AcidicWater(_x, _y, index); } break;
             case tTile::MAGMA        : {       Magma(_x, _y, index); } break;
             case tTile::BRINE        : {       Brine(_x, _y, index); } break;
             case tTile::OIL          : {         Oil(_x, _y, index); } break;

@@ -62,6 +62,7 @@ namespace iSystem
     void LoadData() { sky.GenerateSky(core::width, core::height, core::seed); new_world::ReadyWorld(tCell::width, tCell::height); world.LoadData(); player.LoadData(); }
 
     // Dimensions
+    void LoadDimension() {}
     void SpawnDimension() {}
     void UpdateDimension() { world.SettleTiles(player.x-(core::width), player.y-(core::height), core::width*2, core::height*2); }
 

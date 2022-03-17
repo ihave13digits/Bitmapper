@@ -65,7 +65,7 @@ public:
         for (int i = C*3; i < C*4; i++) { clouds[i][0] = rand() % W; clouds[i][1] = rand() % 16; clouds[i][2] = rand() % 1+1; }
     }
 
-    void MoveStars(int x, int y)
+    inline void MoveStars(int x, int y)
     {
         for (int i = 0; i < starcount; i++)
         {
@@ -138,7 +138,7 @@ public:
         UpdateWind(); starlight = 255*(time*2);
     }
 
-    void UpdateColor()
+    inline void UpdateColor()
     {
         float H = 1.0 - hue;
         if (hue < 0.0) { H = 1.0 + hue; }

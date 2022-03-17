@@ -37,16 +37,31 @@ public:
 
     void SaveData(std::string data_dir="0")
     {
+        struct Packet { int tile; int count; };
+        std::vector<Packet> to_save;
         if (!UpdateNames(selected))
         {
             std::fstream data_file;
-            std::string _dir = os::GetCWD() + dataTool::path_player + "/blueprint.data";
+            std::string _dir = os::GetCWD() + dataTool::path_player + "/blueprints.data";
             data_file.open(_dir, std::ios_base::app);
             if (data_file.is_open())
             {
+                Packet packet = Packet();
+                int current_tile = matrix[0];
+                int tile_count = 0;
                 data_file << selected;
                 for (int i = 0; i < size*size; i++)
-                { data_file << "," << std::to_string(matrix[i]); }
+                {
+                    std::string packet_text = "[";
+                    if (current_tile != matrix[i])
+                    {
+                        packet_text = packet_text + std::to_string(current_tile) + "," + std::to_string(tile_count) + "]";
+                        data_file << packet_text;
+                        current_tile = matrix[i]; tile_count = 0;
+                    }
+                    tile_count++;
+                }
+                data_file << "[" + std::to_string(current_tile) + "," + std::to_string(tile_count) + "]";
                 data_file << "\n";
                 data_file.close();
             }
@@ -54,32 +69,41 @@ public:
             { std::ofstream new_file (_dir); SaveData(data_dir); }
         }
     }
-
     void LoadData(std::string data_dir="0")
     {
         std::string line;
         std::fstream data_file;
-        std::string _dir = os::GetCWD() + dataTool::path_player + "/blueprint.data";
+        std::string _dir = os::GetCWD() + dataTool::path_player + "/blueprints.data";
         data_file.open(_dir);
 
         if (data_file.is_open())
         {
+            uint8_t state = 0;
             bool can_do = false;
             std::string name = "";
             std::string tile = "";
+            std::string iter = "";
             while (getline(data_file, line))
             {
                 int index = 0;
                 for (int i = 0; i < line.length(); i++)
                 {
                     std::string c = line.substr(i, 1);
-                    if (textTool::IsLetter(c)) { name = name + c; }
-                    if (c == "," && tile == "")
+                    if (textTool::IsValidSave(c)) { name = name + c; }
+                    
+                    if (c == "[" && tile == "")
                     { if (name == selected) can_do = true;}
+                    
                     if (can_do)
                     {
-                        if (textTool::IsNumber(c)) { tile = tile + c; }
-                        if (c == "," && tile != "") { matrix[index] = uint8_t(std::stoi(tile)); tile = ""; index++;}
+                        if (textTool::IsNumber(c)) { if (state == 0) { tile = tile + c; } else if (state == 1) { iter = iter + c; } }
+                        if (c == ",") { state = 1; }
+                        if (c == "]")
+                        {
+                            uint8_t current_tile = std::stoi(tile);
+                            for (int i = 0; i < std::stoi(iter); i++) { matrix[index] = current_tile; index++; }
+                            tile = ""; iter = ""; state = 0;
+                        }
                     }
                 }
                 UpdateNames(name); name = ""; can_do = false;

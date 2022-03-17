@@ -30,15 +30,15 @@ public:
 public:
 
     int input_value = 0;
-    std::string input_string;
+    std::string input_string = "";
     char save_slot = 0;
     char tile_y = 0;
     char wall_y = 0;
     char tool_y = 0;
     char effect_y = 0;
-    char blueprint_y;
-    int world_width = 4096;
-    int world_height = 2048;
+    char blueprint_y = 0;
+    int world_width = 2048;
+    int world_height = 1024;
     Icon icon = Icon();
     // Control Presets
     olc::Key player_up = olc::Key::W;
@@ -251,15 +251,7 @@ public:
     /// Helper Functions
     //
 
-    bool AutoJump(int d)
-    {
-        int x = iSystem::player.x; int y = iSystem::player.y; bool can_jump = false;
-        if      (d == 1)  { if (tTool::BodyCollision(x+1, y) && !tTool::BodyCollision(x+1, y-1)) { can_jump = true; } }
-        else if (d == -1) { if (tTool::BodyCollision(x-2, y) && !tTool::BodyCollision(x-2, y-1)) { can_jump = true; } }
-        return can_jump;
-    }
-
-    bool PlayerVsWorld()
+    bool PlayerVsWorldRefactoredAway()
     {
         bool colliding = false;
         int f = iSystem::player.animations[iSystem::player.anim][iSystem::player.frame];
@@ -923,89 +915,89 @@ public:
         // Step Value
         if (bminusgs.IsColliding()){
             info_text = "Removes The Selected Generation Step From The List"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) { new_world::Remove(); }}
+            if (GetMouse(0).bReleased) { new_world::Remove(); } }
         if (bplusgs.IsColliding()){
             info_text = "Inserts A Generation Step Into The List"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) { new_world::Insert(); }}
+            if (GetMouse(0).bReleased) { new_world::Insert(); } }
         // Tile Value
         if (btile.IsColliding()){
             info_text = "Material To add To World"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pTILE;}
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pTILE; }
         // Density Value
         if (bdense.IsColliding()){
             info_text = "Probability A Material Will Spawn Per Cell"; dtls_text = "(Add Layer, Seed Material)";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pDENSE;}
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pDENSE; }
         if (biter.IsColliding()){
             info_text = "How Many Times to Repeat Current Step"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pITER;}
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pITER; }
         // X Values
         if (bminx.IsColliding()){
             info_text = "Minimum Width Range Of Effect"; dtls_text = "(0-100 %)";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMINX;}
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMINX; }
         if (bmaxx.IsColliding()){
             info_text = "Maximum Width Range Of Effect"; dtls_text = "(0-100 %)";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMAXX;}
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMAXX; }
         // Y values
         if (bminy.IsColliding()){
             info_text = "Minimum Height Range Of Effect"; dtls_text = "(0-100 %)";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMINY;}
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMINY; }
         if (bmaxy.IsColliding()){
             info_text = "Maximum Height Range Of Effect"; dtls_text = "(0-100 %)";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMAXY;}
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMAXY; }
         // Neighbor Values
         if (bprobn.IsColliding()){
             info_text = "Probability That A Northern Neighbor Will Spawn"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBN;}
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBN; }
         if (bprobs.IsColliding()){
             info_text = "Probability That A Southern Neighbor Will Spawn"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBS;}
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBS; }
         if (bprobe.IsColliding()){
             info_text = "Probability That An Eastern Neighbor Will Spawn"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBE;}
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBE; }
         if (bprobw.IsColliding()){
             info_text = "Probability That A Western Neighbor Will Spawn"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBW;}
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pPROBW; }
         // Mode Value
         if (bmode.IsColliding()){
             info_text = "Changes Generation Mode"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMODE;}
+            if (GetMouse(0).bReleased) new_world::selected_param = new_world::pMODE; }
         // Clear Values
         if (bclear.IsColliding()){
             info_text = "Clears All Generation Data";
-            if (GetMouse(0).bReleased) { new_world::ClearData(); }}
+            if (GetMouse(0).bReleased) { new_world::ClearData(); } }
         // Auto Configure
         if (bconfig.IsColliding()){
             info_text = "Standard World Generation"; //dtls_text = "()";
-            if (GetMouse(0).bReleased) { new_world::PresetData(); }}
+            if (GetMouse(0).bReleased) { new_world::PresetData(); } }
         // Randomize Seed
         if (brandom.IsColliding()){
             info_text = "Randomizes Game Seed";
-            if (GetMouse(0).bReleased) { new_world::RandomizeData(); can_draw = true; }}
+            if (GetMouse(0).bReleased) { new_world::RandomizeData(); can_draw = true; } }
         // Save
         if (bsave.IsColliding()){
             info_text = "Saves Generation Data";
             DrawRect(bsave.x, bsave.y, bsave.width, bsave.height, select_color);
-            if (GetMouse(0).bReleased) { new_world::SaveData(std::to_string(save_slot) + ".txt"); }}
+            if (GetMouse(0).bReleased) { new_world::SaveData(std::to_string(save_slot) + ".txt"); } }
         // Load
         if (bload.IsColliding()){
             info_text = "Loads Generation Data";
-            if (GetMouse(0).bReleased) { new_world::LoadData(std::to_string(save_slot) + ".txt"); }}
+            if (GetMouse(0).bReleased) { new_world::LoadData(std::to_string(save_slot) + ".txt"); } }
         // Copy
         if (bcopy.IsColliding()){
             info_text = "Copies Selected Generation Step";
-            if (GetMouse(0).bReleased) { new_world::Copy(); }}
+            if (GetMouse(0).bReleased) { new_world::Copy(); } }
         // Paste
         if (bpaste.IsColliding()){
             info_text = "Pastes Selected Generation Step";
-            if (GetMouse(0).bReleased) { new_world::Paste(); }}
+            if (GetMouse(0).bReleased) { new_world::Paste(); } }
         // Generate World
         if (bgenerate.IsColliding()){
             info_text = "Generates World And Starts Game";
-            if (GetMouse(0).bReleased) { new_world::ReadyWorld(world_width, world_height); }}
+            if (GetMouse(0).bReleased) { new_world::ReadyWorld(world_width, world_height); iSystem::camera.SetLimits(); } }
         // Generate Preview
         if (bpreview.IsColliding()){
             info_text = "Updates The Preview Box";
-            if (GetMouse(0).bReleased) { new_world::ReadyPreview(); can_draw = true; }}
+            if (GetMouse(0).bReleased) { new_world::ReadyPreview(); can_draw = true; } }
         // Draw Preview
         if (can_draw)
         {
@@ -1292,7 +1284,10 @@ public:
         DrawPanel(core::width/2-36, core::height/2-10, 72, 20);
         DrawLine(cx, ly+10, cx+4, ly+10);
         if (GetKey(ui_select).bPressed)
-        { iSystem::blueprints.selected = iSystem::blueprint_label.text; iSystem::blueprint_label.text = ""; core::game_state = core::BLUEPRINT; }
+        {
+            iSystem::blueprints.selected = iSystem::blueprint_label.text; iSystem::blueprint_label.text = "";
+            iSystem::blueprint_label.cursor = 0; core::game_state = core::BLUEPRINT;
+        }
         if (GetKey(menu_pause).bReleased) { core::game_state = core::BLUEPRINT; }
     }
 
@@ -1352,11 +1347,7 @@ public:
             else { iSystem::player.vy = 1; }
         }
         if (GetKey(player_up).bReleased) { iSystem::player.vy = 0; iSystem::player.state = iSystem::player.IDLE; }
-        if (GetKey(player_down).bHeld)
-        {
-            int x = iSystem::player.x; int y = iSystem::player.y; int lfoot = tCell::matrix[(y+1)*tCell::width+(x-1)]; int rfoot = tCell::matrix[(y+1)*tCell::width+x];
-            if (tTool::GetType(lfoot) == tTile::PLATFORM || tTool::GetType(rfoot) == tTile::PLATFORM) { iSystem::player.can_move = true; iSystem::player.Move(0, 1); }
-        }
+        if (GetKey(player_down).bHeld) { iSystem::player.AutoDrop(); }
         // Horizontal Movement
         if (GetKey(player_left).bHeld && iSystem::player.x > core::width/2)
         {
@@ -1364,7 +1355,7 @@ public:
             int x = iSystem::player.x; int y = iSystem::player.y;
             if (iSystem::player.state != iSystem::player.FALL && iSystem::player.state != iSystem::player.JUMP) iSystem::player.vy = 0;
             if (!tTool::FootCollision(x-3, y) ) { iSystem::player.vx = -1; }
-            if (AutoJump(-1)) { iSystem::player.vx = -1; iSystem::player.Move(0, -1); }
+            if (iSystem::player.AutoJump(-1)) { iSystem::player.Move(-1, -1); }//{ iSystem::player.vx = -1; iSystem::player.Move(0, -1); }
             if (!GetKey(player_up).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
             iSystem::player.direction = -1;
         }
@@ -1374,7 +1365,7 @@ public:
             int x = iSystem::player.x; int y = iSystem::player.y;
             if (iSystem::player.state != iSystem::player.FALL && iSystem::player.state != iSystem::player.JUMP) iSystem::player.vy = 0;
             if (!tTool::FootCollision(x+1, y) ) { iSystem::player.vx = 1; }
-            if (AutoJump(1)) { iSystem::player.vx = 1; iSystem::player.Move(0, -1); }
+            if (iSystem::player.AutoJump(1)) { iSystem::player.Move(1, -1); }//{ iSystem::player.vx = 1; iSystem::player.Move(0, -1); }
             if (!GetKey(player_up).bHeld && iSystem::player.state != iSystem::player.FALL) { iSystem::player.state = iSystem::player.WALK; }
             iSystem::player.direction = 1;
         }
@@ -1393,7 +1384,7 @@ public:
         iSystem::Update(fElapsedTime);
         // Update Player
         if (iSystem::player.state == iSystem::player.DEAD) { if (GetKey(menu_pause).bPressed) core::game_state = core::PAUSED; return; }
-        if (!PlayerVsWorld()) { iSystem::player.Move(iSystem::player.vx, iSystem::player.vy); }
+        if (!iSystem::player.IsColliding()) { iSystem::player.Move(iSystem::player.vx, iSystem::player.vy); }
 
         DrawPlayer(); DrawParticles(fElapsedTime); DrawHUD();
         // Update Camera

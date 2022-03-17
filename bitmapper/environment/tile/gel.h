@@ -7,15 +7,32 @@ namespace tGel
 
     void Mud(int _x, int _y, int index)
     {
+        uint8_t n = 0;
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
-        if (tCell::matrix[dN] == tTile::AIR)  { if (rand()%10000 < 5) tCell::replace[index] = tTile::DIRT; }
-        if (tCell::matrix[dN] == tTile::ROOT) { if (rand()%10000 < 5) tCell::replace[index] = tTile::SOIL; }
+        int dE  = int( (_y  ) * tCell::width + (_x+1) );
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
+        int dW  = int( (_y  ) * tCell::width + (_x-1) );
+        if (tCell::matrix[dN] == tTile::AIR || tCell::matrix[dN] == tTile::DIRT) { n++; }
+        if (tCell::matrix[dS] == tTile::AIR || tCell::matrix[dS] == tTile::DIRT) { n++; }
+        if (tCell::matrix[dE] == tTile::AIR || tCell::matrix[dE] == tTile::DIRT) { n++; }
+        if (tCell::matrix[dW] == tTile::AIR || tCell::matrix[dW] == tTile::DIRT) { n++; }
+
+        if (n > 0) { if (rand()%(2500*n) < 5) tCell::replace[index] = tTile::DAMP_DIRT; }
     }
 
     void Muck(int _x, int _y, int index)
     {
+        uint8_t n = 0;
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
-        if (tCell::matrix[dN] == tTile::AIR) { if (rand()%10000 < 5) tCell::replace[index] = tTile::SOIL; }
+        int dE  = int( (_y  ) * tCell::width + (_x+1) );
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
+        int dW  = int( (_y  ) * tCell::width + (_x-1) );
+        if (tCell::matrix[dN] == tTile::AIR || tCell::matrix[dN] == tTile::SOIL) { n++; }
+        if (tCell::matrix[dS] == tTile::AIR || tCell::matrix[dS] == tTile::SOIL) { n++; }
+        if (tCell::matrix[dE] == tTile::AIR || tCell::matrix[dE] == tTile::SOIL) { n++; }
+        if (tCell::matrix[dW] == tTile::AIR || tCell::matrix[dW] == tTile::SOIL) { n++; }
+
+        if (n > 0) { if (rand()%(2500*n) < 5) tCell::replace[index] = tTile::DAMP_SOIL; }
     }
 
     void Lava(int _x, int _y, int index)
