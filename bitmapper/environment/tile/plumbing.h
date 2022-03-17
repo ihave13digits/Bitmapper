@@ -54,11 +54,17 @@ namespace tPlumbing
     {
         int dN  = int( (_y-1) * tCell::width + (_x  ) );
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
-        if (tCell::matrix[dN] == tTile::AIR)
+        int dSS = int( (_y+2) * tCell::width + (_x  ) );
+        if (tTool::GetType(tCell::matrix[dN]) == tTile::GAS)
         {
             switch (tCell::matrix[dS])
             {
-                case tTile::PIPE :             {tCell::replace[dN] = tTile::HIGHLY_COMPRESSED_AIR;} break;
+                case tTile::PIPE :             {
+                                                   if (tCell::matrix[dSS] == tTile::PIPE || tCell::matrix[dSS] == tTile::AIR)
+                                                   { tCell::replace[dN] = tTile::HIGHLY_COMPRESSED_AIR; }
+                                                   else if (tTool::GetType(tCell::matrix[dSS]) == tTile::PIPES)
+                                                   { tTool::Swap(dS, dSS); }
+                                               } break;
                 case tTile::PIPE_MILK        : {tCell::replace[dS] = tTile::PIPE; tCell::replace[dN] = tTile::MILK;} break;
                 case tTile::PIPE_MERCURY     : {tCell::replace[dS] = tTile::PIPE; tCell::replace[dN] = tTile::MERCURY;} break;
                 case tTile::PIPE_OIL         : {tCell::replace[dS] = tTile::PIPE; tCell::replace[dN] = tTile::OIL;} break;

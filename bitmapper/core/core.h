@@ -1,7 +1,7 @@
 namespace core
 {
     // RNG Presets
-    int seed = 0;
+    uint32_t seed = 0;
 
     // Flags
     bool running = true;
@@ -16,8 +16,8 @@ namespace core
     uint8_t selected_wand = 0;
     
     //
-    int mouse_x;
-    int mouse_y;
+    int mouse_x = 0;
+    int mouse_y = 0;
 
     // State Flags
     uint8_t game_state = 0;

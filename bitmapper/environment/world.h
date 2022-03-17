@@ -12,14 +12,8 @@ public:
     {
         tCell::replace = tCell::matrix;
 
-        if (Y < 2)
-        {
-            Y = 1;
-        }
-        if (Y > tCell::height-H-2)
-        {
-            H = tCell::height-Y;
-        }
+        if (Y < 2) { Y = 1; }
+        if (Y > tCell::height-H-2) { H = tCell::height-Y; }
 
         for (int y = H; y > 0; y--)
         {

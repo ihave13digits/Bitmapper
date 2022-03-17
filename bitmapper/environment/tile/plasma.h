@@ -252,24 +252,37 @@ namespace tPlasma
         int dSS  = int( (_y+2) * tCell::width + (_x  ) );
         int dEE  = int( (_y  ) * tCell::width + (_x+2) );
         int dWW  = int( (_y  ) * tCell::width + (_x-2) );
-        switch (tCell::matrix[dN])
-        {
-            case tTile::AIR : { if (rand()%10 < 1) tCell::replace[dN] = tTile::ARC; } break;
-        }
-        switch (tCell::matrix[dS])
-        {
-            case tTile::AIR : { if (rand()%10 < 1) tCell::replace[dS] = tTile::ARC; } break;
-        }
-        switch (tCell::matrix[dE])
-        {
-            case tTile::AIR : { if (rand()%10 < 2) tCell::replace[dE] = tTile::ARC; } break;
-        }
-        switch (tCell::matrix[dW])
-        {
-            case tTile::AIR : { if (rand()%10 < 2) tCell::replace[dW] = tTile::ARC; } break;
-        }
-        if (rand()%1000 < 750) { tCell::replace[index] = tTile::AIR; }
-        if (tCell::matrix[dS] == tTile::AIR && rand()%1000 < 25) { tCell::replace[dS] = tTile::SPARK; }
+        uint8_t n = 0;
+        if      (tCell::matrix[dNN] == tTile::AIR && tCell::matrix[dN] == tTile::AIR && tCell::matrix[dS] == tTile::ARC)
+        { if (rand()%1000 < 300) { tCell::replace[dN] = tTile::ARC; if (rand()%100 < 80) tCell::replace[dNN] = tTile::ARC; } }
+        else if      (tCell::matrix[dN] == tTile::AIR && tCell::matrix[dS] == tTile::ARC)
+        { if (rand()%1000 < 400) tCell::replace[dN] = tTile::ARC; }
+
+        if (tCell::matrix[dSS] == tTile::AIR && tCell::matrix[dS] == tTile::AIR && tCell::matrix[dN] == tTile::ARC)
+        { if (rand()%1000 < 300) { tCell::replace[dS] = tTile::ARC; if (rand()%100 < 80) tCell::replace[dSS] = tTile::ARC; } }
+        else if      (tCell::matrix[dS] == tTile::AIR && tCell::matrix[dN] == tTile::ARC)
+        { if (rand()%1000 < 400) tCell::replace[dS] = tTile::ARC; }
+
+        if (tCell::matrix[dEE] == tTile::AIR && tCell::matrix[dE] == tTile::AIR && tCell::matrix[dW] == tTile::ARC)
+        { if (rand()%1000 < 300) { tCell::replace[dE] = tTile::ARC; if (rand()%100 < 80) tCell::replace[dEE] = tTile::ARC; } }
+        else if      (tCell::matrix[dE] == tTile::AIR && tCell::matrix[dW] == tTile::ARC)
+        { if (rand()%1000 < 400) tCell::replace[dE] = tTile::ARC; }
+
+        if (tCell::matrix[dWW] == tTile::AIR && tCell::matrix[dW] == tTile::AIR && tCell::matrix[dE] == tTile::ARC)
+        { if (rand()%1000 < 300) { tCell::replace[dW] = tTile::ARC; if (rand()%100 < 80) tCell::replace[dWW] = tTile::ARC; } }
+        else if      (tCell::matrix[dW] == tTile::AIR && tCell::matrix[dE] == tTile::ARC)
+        { if (rand()%1000 < 400) tCell::replace[dW] = tTile::ARC; }
+
+        if      (tTool::GetType(tCell::matrix[dN]) != tTile::GAS && tTool::GetType(tCell::matrix[dN]) != tTile::PLASMA)
+        { tCell::replace[index] = tTile::SPARK; }
+        else if (tTool::GetType(tCell::matrix[dS]) != tTile::GAS && tTool::GetType(tCell::matrix[dS]) != tTile::PLASMA)
+        { tCell::replace[index] = tTile::SPARK; }
+        else if (tTool::GetType(tCell::matrix[dE]) != tTile::GAS && tTool::GetType(tCell::matrix[dE]) != tTile::PLASMA)
+        { tCell::replace[index] = tTile::SPARK; }
+        else if (tTool::GetType(tCell::matrix[dW]) != tTile::GAS && tTool::GetType(tCell::matrix[dW]) != tTile::PLASMA)
+        { tCell::replace[index] = tTile::SPARK; }
+        
+        if (rand()%1000 < 500) { tCell::replace[index] = tTile::AIR; }
     }
 
 

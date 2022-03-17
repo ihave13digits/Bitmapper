@@ -95,18 +95,26 @@ namespace tGizmo
         int vW = tCell::matrix[dNW];
         int vN = tCell::matrix[dN];
         int vE = tCell::matrix[dNE];
-        if (tTool::GetType(vN) == tTile::GRAIN || tTool::GetType(vN) == tTile::SOLID || tTool::GetType(vN) == tTile::GIZMO)
+        if ((tTool::GetType(vN) == tTile::GRAIN || tTool::GetType(vN) == tTile::SOLID || tTool::GetType(vN) == tTile::GIZMO) &&
+            (tTool::GetType(vE) == tTile::GRAIN || tTool::GetType(vE) == tTile::GIZMO) &&
+            vW == tTile::AIR && tCell::matrix[index+1] == tTile::CONVEYOR_LEFT)
         {
-
-            if (vN > tTile::MUD && vW == tTile::AIR)
-            {
-                if (tTool::GetType(vE) != tTile::SOLID) tTool::Swap(dN, dNW); //tTool::Swap(dN, dNE);
-                /*
-                tCell::replace[dNW] = vN; tCell::matrix[dNE] = tTile::AIR;
-                if (tTool::GetType(vE) != tTile::SOLID) tCell::replace[dN] = vE; tCell::matrix[dN] = vW;
-                if (tTool::GetType(vE) == tTile::SOLID) tCell::replace[dN] = tTile::AIR; tCell::matrix[dN] = tTile::AIR;
-                */
-            }
+            //tCell::matrix[dNW] = vN;  tCell::matrix[dN] = vE;  tCell::matrix[dNE] = tTile::AIR;
+            tCell::replace[dNW] = vN; tCell::replace[dN] = vE; tCell::replace[dNE] = tTile::AIR;
+        }
+        else if ((tTool::GetType(vN) == tTile::GRAIN || tTool::GetType(vN) == tTile::SOLID || tTool::GetType(vN) == tTile::GIZMO) &&
+            (tTool::GetType(vE) != tTile::GRAIN && tTool::GetType(vE) != tTile::GIZMO) &&
+            vW == tTile::AIR && tCell::matrix[index+1] == tTile::CONVEYOR_LEFT)
+        {
+            tCell::matrix[dNW] = vN;  tCell::matrix[dN] = tTile::AIR;
+            tCell::replace[dNW] = vN; tCell::replace[dN] = tTile::AIR;
+        }
+        else if ((tTool::GetType(vN) == tTile::GRAIN || tTool::GetType(vN) == tTile::SOLID || tTool::GetType(vN) == tTile::GIZMO) &&
+            (tTool::GetType(vE) != tTile::GRAIN && tTool::GetType(vE) != tTile::GIZMO) &&
+            vW == tTile::AIR && tCell::matrix[index+1] == tTile::AIR)
+        {
+            tCell::matrix[dNW] = vN;  tCell::matrix[dN] = tTile::AIR;
+            tCell::replace[dNW] = vN; tCell::replace[dN] = tTile::AIR;
         }
     }
 
@@ -118,14 +126,26 @@ namespace tGizmo
         int vE = tCell::matrix[dNE];
         int vN = tCell::matrix[dN];
         int vW = tCell::matrix[dNW];
-        if (tTool::GetType(vN) == tTile::GRAIN || tTool::GetType(vN) == tTile::SOLID || tTool::GetType(vN) == tTile::GIZMO)
+        if ((tTool::GetType(vN) == tTile::GRAIN || tTool::GetType(vN) == tTile::SOLID || tTool::GetType(vN) == tTile::GIZMO) &&
+            (tTool::GetType(vW) == tTile::GRAIN || tTool::GetType(vW) == tTile::GIZMO) &&
+            vE == tTile::AIR && tCell::matrix[index-1] == tTile::CONVEYOR_RIGHT)
         {
-            if (vN > tTile::MUD && vE == tTile::AIR)
-            {
-                tCell::replace[dNE] = vN; tCell::matrix[dNW] = tTile::AIR;
-                if (tTool::GetType(vW) != tTile::SOLID) tCell::replace[dN] = vE; tCell::matrix[dN] = vW;
-                //if (tTool::GetType(vW) == tTile::SOLID) tCell::replace[dN] = tTile::AIR; tCell::matrix[dN] = tTile::AIR;
-            }
+            //tCell::matrix[dNE] = vN;  tCell::matrix[dN] = vW;  tCell::matrix[dNW] = tTile::AIR;
+            tCell::replace[dNE] = vN; tCell::replace[dN] = vW; tCell::replace[dNW] = tTile::AIR;
+        }
+        else if ((tTool::GetType(vN) == tTile::GRAIN || tTool::GetType(vN) == tTile::SOLID || tTool::GetType(vN) == tTile::GIZMO) &&
+            (tTool::GetType(vW) != tTile::GRAIN && tTool::GetType(vW) != tTile::GIZMO) &&
+            vE == tTile::AIR && tCell::matrix[index-1] == tTile::CONVEYOR_RIGHT)
+        {
+            //tCell::matrix[dNE] = vN;  tCell::matrix[dN] = tTile::AIR;
+            tCell::replace[dNE] = vN; tCell::replace[dN] = tTile::AIR;
+        }
+        else if ((tTool::GetType(vN) == tTile::GRAIN || tTool::GetType(vN) == tTile::SOLID || tTool::GetType(vN) == tTile::GIZMO) &&
+            (tTool::GetType(vW) != tTile::GRAIN && tTool::GetType(vW) != tTile::GIZMO) &&
+            vE == tTile::AIR && tCell::matrix[index-1] == tTile::AIR)
+        {
+            tCell::matrix[dNE] = vN;  tCell::matrix[dN] = tTile::AIR;
+            tCell::replace[dNE] = vN; tCell::replace[dN] = tTile::AIR;
         }
     }
 

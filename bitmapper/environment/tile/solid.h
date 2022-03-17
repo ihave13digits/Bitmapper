@@ -50,6 +50,36 @@ namespace tSolid
         }
     }
 
+    void DampDirt(int _x, int _y, int index)
+    {
+        uint8_t n = 0;
+        int dN  = int( (_y-1) * tCell::width + (_x  ) );
+        int dE  = int( (_y  ) * tCell::width + (_x+1) );
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
+        int dW  = int( (_y  ) * tCell::width + (_x-1) );
+        if (tCell::matrix[dN] == tTile::AIR) { n++; }
+        if (tCell::matrix[dS] == tTile::AIR) { n++; }
+        if (tCell::matrix[dE] == tTile::AIR) { n++; }
+        if (tCell::matrix[dW] == tTile::AIR) { n++; }
+
+        if (n > 0) { if (rand()%(2000*n) < 5) tCell::replace[index] = tTile::DIRT; }
+    }
+
+    void DampSoil(int _x, int _y, int index)
+    {
+        uint8_t n = 0;
+        int dN  = int( (_y-1) * tCell::width + (_x  ) );
+        int dE  = int( (_y  ) * tCell::width + (_x+1) );
+        int dS  = int( (_y+1) * tCell::width + (_x  ) );
+        int dW  = int( (_y  ) * tCell::width + (_x-1) );
+        if (tCell::matrix[dN] == tTile::AIR) { n++; }
+        if (tCell::matrix[dS] == tTile::AIR) { n++; }
+        if (tCell::matrix[dE] == tTile::AIR) { n++; }
+        if (tCell::matrix[dW] == tTile::AIR) { n++; }
+
+        if (n > 0) { if (rand()%(2000*n) < 5) tCell::replace[index] = tTile::SOIL; }
+    }
+
     void LavaRock(int _x, int _y, int index)
     {
         int dS  = int( (_y+1) * tCell::width + (_x  ) );
@@ -74,6 +104,8 @@ namespace tSolid
     {
         switch (current_cell)
         {
+            case tTile::DAMP_DIRT : { DampDirt(_x, _y, index); } break;
+            case tTile::DAMP_SOIL : { DampSoil(_x, _y, index); } break;
             case tTile::ICE       : {      Ice(_x, _y, index); } break;
             case tTile::LAVA_ROCK : { LavaRock(_x, _y, index); } break;
         }

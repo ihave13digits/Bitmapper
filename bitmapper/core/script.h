@@ -1,37 +1,5 @@
-// Possibly look into 'cstdarg'
-/*
-struct Command
-{
-    std::string cmd; std::map<std::string, int> args;
-    Command(std::string c, int s, int i, int f) { cmd = c; args["string"] = s; args["int"] = i; args["float"] = f; }
-};
-*/
 namespace script
 {
-
-    /*
-    std::vector<Command> commands = {
-        Command("exit",            0, 0, 0),
-        Command("quit",            0, 0, 0),
-        Command("toggle_creative", 0, 0, 0),
-        Command("get",             1, 0, 0),
-        Command("set",             1, 0, 0),
-        Command("int",             0, 2, 0),
-        Command("float",           0, 1, 1),
-        Command("neighbors",       0, 2, 0),
-        Command("gas_collision",   0, 2, 0),
-        Command("fume_collision",  0, 2, 0),
-        Command("fluid_collision", 0, 0, 0),
-        Command("gel_collision",   0, 0, 0),
-        Command("grain_collision", 0, 0, 0),
-        Command("dual_collision",  0, 0, 0),
-        Command("is_colliding",    0, 0, 0),
-        Command("collision",       0, 0, 0),
-        Command("teleport",        0, 0, 0),
-        Command("swap",            0, 3, 0),
-        Command("soft_swap",       0, 3, 0),
-    };
-    */
 
     //
     /// Variables
@@ -45,7 +13,9 @@ namespace script
     int int_pool[8];
     float float_pool[8];
 
-
+    //
+    /// History
+    //
 
     void SetHistory(std::string n)
     {
@@ -90,7 +60,7 @@ namespace script
     { core::tick_delay = 1.0/std::stof(s); if (core::tick_delay < 1.0/60.0) { core::tick_delay = 1.0/60.0; } }
     void SetTime(std::string s) { iSystem::sky.time = std::stof(s); iSystem::sky.UpdateTime(0.0); }
     void SetDay(std::string s) { iSystem::sky.day = std::stoi(s); tCell::season = iSystem::sky.day/(iSystem::sky.year_length/12); }
-    void SetYear(std::string s) { iSystem::sky.year = std::stoi(s);}
+    void SetYear(std::string s) { iSystem::sky.year = std::stoi(s); }
     void SetSeason(std::string s)
     {
         if      (s == "early_spring") { tCell::season = seasonID::EARLY_SPRING; iSystem::sky.day =   0; }
