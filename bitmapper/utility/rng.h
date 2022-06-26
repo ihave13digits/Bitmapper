@@ -43,9 +43,9 @@ namespace chaotic
     
     //
 
-    int Int(int i) { return rand()%i; }
-    bool Chance(float c) { return ((float(rand()%100000)*0.001) < c); }
-    float Range(float a, float b) { return ((float(rand()%100000)*0.00001)*b)+a; }
+    inline int Int(int i) { return rand()%i; }
+    inline bool Chance(float c) { return ((float(rand()%100000)*0.001) < c); }
+    inline float Range(float a, float b) { return ((float(rand()%100000)*0.00001)*b)+a; }
 
     void GenerateNoise(int s=0, uint16_t octaves=32, int space=4096, float lerp=0.5)
     {

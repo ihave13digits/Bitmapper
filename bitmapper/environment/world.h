@@ -4,6 +4,7 @@ public:
 
     // Class Attributes //
     std::string name;
+    std::string data;
     // World Dimensions
     int chunk_size = 32;
 
@@ -55,13 +56,13 @@ public:
         tCell::matrix = tCell::replace;
     }
 
-    void SaveData(std::string data_dir = "")
+    void SaveData1(std::string data_dir = "")
     {
         int X = tCell::width/chunk_size; int Y = tCell::height/chunk_size;
         for (int x = 0; x < X; x++) { for (int y = 0; y < Y; y++) { SaveChunkData(x, y, data_dir); } }
     }
 
-    void LoadData(std::string data_dir = "")
+    void LoadData1(std::string data_dir = "")
     {
         int X = tCell::width/chunk_size; int Y = tCell::height/chunk_size;
         for (int x = 0; x < X; x++) { for (int y = 0; y < Y; y++) { std::cout << "Loading Chunk " << x << "," << y << std::endl; LoadChunkData(x, y, data_dir); } }
@@ -133,6 +134,76 @@ public:
                 x = 0;
             }
             data_file.close();
+        }
+    }
+
+    void SaveWorldData(std::string data_dir="0")
+    {
+        std::fstream data_file;
+        std::string _dir = os::GetCWD() + dataTool::path_world + "/world.data";
+        data_file.open(_dir, std::ios_base::out);
+        if (data_file.is_open())
+        {
+            int packet_count = 0;
+            int packet_limit = 1024;
+            int current_tile = tCell::matrix[0];
+            int tile_count = 0;
+            for (int i = 0; i < tCell::width*tCell::height; i++)
+            {
+                if (current_tile != tCell::matrix[i])
+                {
+                    data_file << "[" + std::to_string(current_tile) + "," + std::to_string(tile_count) + "]";
+                    current_tile = tCell::matrix[i]; tile_count = 0; packet_count++;
+                }
+                if (packet_count >= packet_limit) { packet_count -= packet_limit; data_file << "\n"; }
+                tile_count++;
+            }
+            data_file << "[" + std::to_string(current_tile) + "," + std::to_string(tile_count) + "]";
+            data_file << "\n";
+            data_file.close();
+        }
+        else
+        { std::ofstream new_file (_dir); SaveWorldData(data_dir); }
+    }
+
+    void LoadWorldData(std::string data_dir="0")
+    {
+        if (core::loading)
+        {
+            std::string line;
+            std::fstream data_file;
+            std::string _dir = os::GetCWD() + dataTool::path_world + "/world.data";
+            data_file.open(_dir);
+            int row_count = 0;
+
+            if (data_file.is_open())
+            {
+                while (getline(data_file, line))
+                {
+                    if (row_count == core::map_row+1) { LoadLine(line); core::map_row++; std::cout << core::map_row << std::endl; break; }
+                    row_count++;
+                }
+                data_file.close();
+            }
+        }
+    }
+
+    void LoadLine(std::string line)
+    {
+        bool state = false;
+        std::string tile = "", iter = "";
+        for (int l = 0; l < line.length(); l++)
+        {
+            std::string c = line.substr(l, 1);
+            if (c == "[") { state = false; }
+            if (textTool::IsNumber(c)) { if (!state) { tile=tile+c; } else if (state) { iter=iter+c; } }
+            if (c == ",") { state = true; }
+            if (c == "]")
+            {
+                uint8_t current_tile = std::stoi(tile);
+                for (int i = 0; i < std::stoi(iter); i++) { tCell::matrix[core::map_index] = current_tile; core::map_index++; }
+                tile = ""; iter = "";
+            }
         }
     }
 

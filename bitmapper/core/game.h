@@ -37,8 +37,8 @@ public:
     char tool_y = 0;
     char effect_y = 0;
     char blueprint_y = 0;
-    int world_width = 2048;
-    int world_height = 1024;
+    int world_width = 4096;
+    int world_height = 2048;
     Icon icon = Icon();
     // Control Presets
     olc::Key player_up = olc::Key::W;
@@ -833,7 +833,7 @@ public:
         {
             DrawRect(bLoad.x, bLoad.y, bLoad.width, bLoad.height, select_color);
             if (GetMouse(0).bReleased)
-            { Clear(olc::BLACK); tCell::width = world_width; tCell::height = world_height; iSystem::LoadData(); core::game_state = core::PLAYING; }
+            { Clear(olc::BLACK); tCell::width = world_width; tCell::height = world_height; iSystem::PrepareGame(); core::game_state = core::LOAD_WORLD; }
         }
     }
 
@@ -1058,6 +1058,20 @@ public:
 
     void StateLoadWorld()
     {
+        Clear(olc::BLACK);
+        if (core::loading)
+        {
+            if (core::map_index >= (tCell::width*tCell::height)-1)
+            {
+                core::loading = false;
+                core::game_state = core::PLAYING;
+            }
+            else { iSystem::world.LoadWorldData(); }
+        }
+        if (!core::loading) core::loading = true;
+        int prog_x = (core::width/2)-(core::width/4);
+        int prog_y = (core::height/2)+4;
+        ProgressBar(prog_x, prog_y, core::map_index, tCell::width*tCell::height, core::width/2);
     }
 
     void StateMakeWorld()
@@ -1337,14 +1351,15 @@ public:
         if (GetKey(player_up).bHeld)
         {
             int x = iSystem::player.x; int y = iSystem::player.y;
-            if ((!tTool::BodyCollision(x, y-iSystem::player.height) && !tTool::BodyCollision(x-1, y-iSystem::player.height)) &&
+            if ((!tTool::BodyCollision(x, y-iSystem::player.height-1) && !tTool::BodyCollision(x-1, y-iSystem::player.height-1)) &&
                 (iSystem::player.jp > 0) && (iSystem::player.y > iSystem::player.height) )
             {
                 iSystem::player.jp--;
                 iSystem::player.vy = -1;
                 iSystem::player.state = iSystem::player.JUMP;
+                iSystem::player.can_move = true;
             }
-            else { iSystem::player.vy = 1; }
+            else { iSystem::player.vy = 0; }
         }
         if (GetKey(player_up).bReleased) { iSystem::player.vy = 0; iSystem::player.state = iSystem::player.IDLE; }
         if (GetKey(player_down).bHeld) { iSystem::player.AutoDrop(); }
@@ -1394,7 +1409,7 @@ public:
     }
 
     void StateExit()
-    { iSystem::player.SaveData(); iSystem::world.SaveData(); core::running = false; }
+    { iSystem::player.SaveData(); iSystem::world.SaveWorldData(); core::running = false; }
 
     //
     /// PGE Hooks
