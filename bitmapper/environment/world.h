@@ -180,7 +180,7 @@ public:
             {
                 while (getline(data_file, line))
                 {
-                    if (row_count == core::map_row+1) { LoadLine(line); core::map_row++; std::cout << core::map_row << std::endl; break; }
+                    if (row_count == core::map_row) { LoadLine(line); core::map_row++; std::cout << core::map_row << " - " << row_count << std::endl; break; }
                     row_count++;
                 }
                 data_file.close();
