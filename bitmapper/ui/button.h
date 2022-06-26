@@ -11,7 +11,7 @@ public:
     float font;
     std::string text = "";
 
-    void Setup(int X, int Y, int W, int H, float fnt, std::string txt) { x=X; y=Y; width=W; height=H; font=fnt; text=txt; }
+    Button(int X=0, int Y=0, int W=0, int H=0, float fnt=1.0, std::string txt="") { x=X; y=Y; width=W; height=H; font=fnt; text=txt; }
     void SetText(std::string txt) {text = txt;}
 
     float TextX() { return float( (x + ((width/2.0)) - (float(text.size())*(4.0*font))) ); }

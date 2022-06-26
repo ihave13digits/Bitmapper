@@ -461,8 +461,7 @@ public:
                     {
                         for (int ix = 0; ix < icon.size; ix++)
                         {
-                            Button b = Button();
-                            b.Setup((x*10)+x_margin, (y*10)+y_margin, 9, 9, 1.0, std::to_string(wand_value));
+                            Button b = Button((x*10)+x_margin, (y*10)+y_margin, 9, 9, 1.0, std::to_string(wand_value));
                             buttons[y*cols+x] = b;
                             int index_value = icon.wand[iy*icon.size+ix];
                             float v = (0.25*float(index_value));
@@ -505,8 +504,7 @@ public:
             {
                 if (tile_value < effectID::total_effects)
                 {
-                    Button b = Button();
-                    b.Setup((x*10)+x_margin, (y*10)+y_margin, 9, 9, 1.0, "");
+                    Button b = Button((x*10)+x_margin, (y*10)+y_margin, 9, 9, 1.0, "");
                     buttons[y*cols+x] = b;
                     DrawEffect((x*10)+x_margin+1, (y*10)+y_margin+1, tile_value);
                 }
@@ -548,8 +546,7 @@ public:
                 int tile_type = tTool::GetType(tile_value);
                 if (tile_value < tTile::total_tiles)
                 {
-                    Button b = Button();
-                    b.Setup((x*10)+x_margin, (y*10)+y_margin, 9, 9, 1.0, std::to_string(tile_value));
+                    Button b = Button((x*10)+x_margin, (y*10)+y_margin, 9, 9, 1.0, std::to_string(tile_value));
                     buttons[y*cols+x] = b;
                     DrawIcon((x*10)+x_margin+1, (y*10)+y_margin+1, tile_type, tile_value);
                 }
@@ -822,8 +819,8 @@ public:
         float Lx = (core::width/2)+4;
         float By = (core::height*0.75);
         DrawStringDecal({ Tx,Ty }, sAppName, text_color, { 2.0, 2.0 });
-        Button bNew = Button(); bNew.Setup(Nx, By, 48, 16, 1.0, "New"); DrawButton(bNew);
-        Button bLoad = Button(); bLoad.Setup(Lx, By, 48, 16, 1.0, "Load"); DrawButton(bLoad);
+        Button bNew = Button(Nx, By, 48, 16, 1.0, "New"); DrawButton(bNew);
+        Button bLoad = Button(Lx, By, 48, 16, 1.0, "Load"); DrawButton(bLoad);
         if (bNew.IsColliding())
         {
             DrawRect(bNew.x, bNew.y, bNew.width, bNew.height, select_color);
@@ -850,36 +847,36 @@ public:
         std::string info_text = "Hover Over A Button To See Details";
         std::string dtls_text = "";
         // Buttons
-        Button bsave     = Button();     bsave.Setup(105, 37, 32, 8, 0.25,     "Save"); DrawButton(bsave);
-        Button bload     = Button();     bload.Setup(105, 45, 32, 8, 0.25,     "Load"); DrawButton(bload);
-        Button bclear    = Button();    bclear.Setup(105, 57, 32, 8, 0.25,    "Clear"); DrawButton(bclear);
-        Button bconfig   = Button();   bconfig.Setup(105, 65, 32, 8, 0.25,   "Preset"); DrawButton(bconfig);
-        Button brandom   = Button();   brandom.Setup(105, 73, 32, 8, 0.25,   "Random"); DrawButton(brandom);
-        Button bpreview  = Button();  bpreview.Setup(105, 86, 32, 8, 0.25,  "Preview"); DrawButton(bpreview);
-        Button bgenerate = Button(); bgenerate.Setup(105, 94, 32, 8, 0.25, "Generate"); DrawButton(bgenerate);
-        Button bminusgs  = Button();  bminusgs.Setup(183,  2, 70, 4, 0.25,        "-"); DrawButton(bminusgs);
-        Button bplusgs   = Button();   bplusgs.Setup(183, 88, 70, 4, 0.25,        "+"); DrawButton(bplusgs);
-        Button bcopy     = Button();     bcopy.Setup(183, 94, 35, 8, 0.25,     "Copy"); DrawButton(bcopy);
-        Button bpaste    = Button();    bpaste.Setup(218, 94, 35, 8, 0.25,    "Paste"); DrawButton(bpaste);
-        Button bsave0    = Button();    bsave0.Setup(141,  7, 38, 8, 0.25,   "Save 0"); DrawButton(bsave0);
-        Button bsave1    = Button();    bsave1.Setup(141, 15, 38, 8, 0.25,   "Save 1"); DrawButton(bsave1);
-        Button bsave2    = Button();    bsave2.Setup(141, 23, 38, 8, 0.25,   "Save 2"); DrawButton(bsave2);
-        Button bsave3    = Button();    bsave3.Setup(141, 31, 38, 8, 0.25,   "Save 3"); DrawButton(bsave3);
-        Button bsave4    = Button();    bsave4.Setup(141, 39, 38, 8, 0.25,   "Save 4"); DrawButton(bsave4);
-        Button bsave5    = Button();    bsave5.Setup(141, 47, 38, 8, 0.25,   "Save 5"); DrawButton(bsave5);
-        Button bsave6    = Button();    bsave6.Setup(141, 55, 38, 8, 0.25,   "Save 6"); DrawButton(bsave6);
-        Button btile     = Button();     btile.Setup(141, 70, 18, 8, 0.25,     "Tile"); DrawButton(btile);
-        Button bmode     = Button();     bmode.Setup(141, 78, 18, 8, 0.25,     "Mode"); DrawButton(bmode);
-        Button bdense    = Button();    bdense.Setup(141, 86, 18, 8, 0.25,  "Density"); DrawButton(bdense);
-        Button biter     = Button();     biter.Setup(141, 94, 18, 8, 0.25,   "Repeat"); DrawButton(biter);
-        Button bminx     = Button();     bminx.Setup(162, 70, 18, 8, 0.25,    "Min X"); DrawButton(bminx);
-        Button bmaxx     = Button();     bmaxx.Setup(162, 78, 18, 8, 0.25,    "Max X"); DrawButton(bmaxx);
-        Button bminy     = Button();     bminy.Setup(162, 86, 18, 8, 0.25,    "Min Y"); DrawButton(bminy);
-        Button bmaxy     = Button();     bmaxy.Setup(162, 94, 18, 8, 0.25,    "Max Y"); DrawButton(bmaxy);
-        Button bprobn    = Button();    bprobn.Setup(117,  6,  8, 8, 0.25,        "N"); DrawButton(bprobn);
-        Button bprobs    = Button();    bprobs.Setup(117, 22,  8, 8, 0.25,        "S"); DrawButton(bprobs);
-        Button bprobe    = Button();    bprobe.Setup(125, 14,  8, 8, 0.25,        "E"); DrawButton(bprobe);
-        Button bprobw    = Button();    bprobw.Setup(109, 14,  8, 8, 0.25,        "W"); DrawButton(bprobw);
+        Button bsave     = Button(105, 37, 32, 8, 0.25,     "Save"); DrawButton(bsave);
+        Button bload     = Button(105, 45, 32, 8, 0.25,     "Load"); DrawButton(bload);
+        Button bclear    = Button(105, 57, 32, 8, 0.25,    "Clear"); DrawButton(bclear);
+        Button bconfig   = Button(105, 65, 32, 8, 0.25,   "Preset"); DrawButton(bconfig);
+        Button brandom   = Button(105, 73, 32, 8, 0.25,   "Random"); DrawButton(brandom);
+        Button bpreview  = Button(105, 86, 32, 8, 0.25,  "Preview"); DrawButton(bpreview);
+        Button bgenerate = Button(105, 94, 32, 8, 0.25, "Generate"); DrawButton(bgenerate);
+        Button bminusgs  = Button(183,  2, 70, 4, 0.25,        "-"); DrawButton(bminusgs);
+        Button bplusgs   = Button(183, 88, 70, 4, 0.25,        "+"); DrawButton(bplusgs);
+        Button bcopy     = Button(183, 94, 35, 8, 0.25,     "Copy"); DrawButton(bcopy);
+        Button bpaste    = Button(218, 94, 35, 8, 0.25,    "Paste"); DrawButton(bpaste);
+        Button bsave0    = Button(141,  7, 38, 8, 0.25,   "Save 0"); DrawButton(bsave0);
+        Button bsave1    = Button(141, 15, 38, 8, 0.25,   "Save 1"); DrawButton(bsave1);
+        Button bsave2    = Button(141, 23, 38, 8, 0.25,   "Save 2"); DrawButton(bsave2);
+        Button bsave3    = Button(141, 31, 38, 8, 0.25,   "Save 3"); DrawButton(bsave3);
+        Button bsave4    = Button(141, 39, 38, 8, 0.25,   "Save 4"); DrawButton(bsave4);
+        Button bsave5    = Button(141, 47, 38, 8, 0.25,   "Save 5"); DrawButton(bsave5);
+        Button bsave6    = Button(141, 55, 38, 8, 0.25,   "Save 6"); DrawButton(bsave6);
+        Button btile     = Button(141, 70, 18, 8, 0.25,     "Tile"); DrawButton(btile);
+        Button bmode     = Button(141, 78, 18, 8, 0.25,     "Mode"); DrawButton(bmode);
+        Button bdense    = Button(141, 86, 18, 8, 0.25,  "Density"); DrawButton(bdense);
+        Button biter     = Button(141, 94, 18, 8, 0.25,   "Repeat"); DrawButton(biter);
+        Button bminx     = Button(162, 70, 18, 8, 0.25,    "Min X"); DrawButton(bminx);
+        Button bmaxx     = Button(162, 78, 18, 8, 0.25,    "Max X"); DrawButton(bmaxx);
+        Button bminy     = Button(162, 86, 18, 8, 0.25,    "Min Y"); DrawButton(bminy);
+        Button bmaxy     = Button(162, 94, 18, 8, 0.25,    "Max Y"); DrawButton(bmaxy);
+        Button bprobn    = Button(117,  6,  8, 8, 0.25,        "N"); DrawButton(bprobn);
+        Button bprobs    = Button(117, 22,  8, 8, 0.25,        "S"); DrawButton(bprobs);
+        Button bprobe    = Button(125, 14,  8, 8, 0.25,        "E"); DrawButton(bprobe);
+        Button bprobw    = Button(109, 14,  8, 8, 0.25,        "W"); DrawButton(bprobw);
         DrawRect(2, 2, 100, 100, border_color);  // Preview Box
         DrawRect(183, 2, 70, 90, border_color);  // Generation Steps Box
         DrawRect(2, 105, 251, 36, border_color);  // Information Box
@@ -1162,10 +1159,10 @@ public:
         Clear(blueprint_color);
         DrawPanel(x_margin-2, y_margin-6, 114, 120);
         // Buttons
-        Button clear_print = Button(); clear_print.Setup(124, 134, 32, 6, 0.5, "Clear"); DrawButton(clear_print);
-        Button name_print = Button();   name_print.Setup(156, 134, 32, 6, 0.5, "Name"); DrawButton(name_print);
-        Button save_print = Button();   save_print.Setup(188, 134, 32, 6, 0.5, "Save"); DrawButton(save_print);
-        Button load_print = Button();   load_print.Setup(220, 134, 32, 6, 0.5, "Load"); DrawButton(load_print);
+        Button clear_print = Button(124, 134, 32, 6, 0.5, "Clear"); DrawButton(clear_print);
+        Button name_print = Button(156, 134, 32, 6, 0.5, "Name"); DrawButton(name_print);
+        Button save_print = Button(188, 134, 32, 6, 0.5, "Save"); DrawButton(save_print);
+        Button load_print = Button(220, 134, 32, 6, 0.5, "Load"); DrawButton(load_print);
         // Tiles
         Button buttons[cols*rows];
         SetPixelMode(olc::Pixel::ALPHA);
@@ -1176,8 +1173,7 @@ public:
                 int tile_type = tTool::GetType(tile_value);
                 if (tile_value < tTile::total_tiles)
                 {
-                    Button b = Button();
-                    b.Setup((x*10)+x_margin, (y*10)+y_margin, 9, 9, 1.0, std::to_string(tile_value));
+                    Button b = Button((x*10)+x_margin, (y*10)+y_margin, 9, 9, 1.0, std::to_string(tile_value));
                     buttons[y*cols+x] = b;
                     DrawIcon((x*10)+x_margin+1, (y*10)+y_margin+1, tile_type, tile_value);
                 }
@@ -1275,7 +1271,7 @@ public:
         int limit = std::min(name_size, 8);
         DrawPanel(core::width/2-34, _y-2, 68, 132);
         for (int i = 0; i < limit; i++)
-        { Button b = Button(); b.Setup(core::width/2-32, i*16+_y, 64, 16, 0.5, iSystem::blueprints.names[i+blueprint_y]); buttons.push_back(b); }
+        { Button b = Button(core::width/2-32, i*16+_y, 64, 16, 0.5, iSystem::blueprints.names[i+blueprint_y]); buttons.push_back(b); }
         for (int i = 0; i < limit; i++)
         {
             DrawButton(buttons[i]);
@@ -1292,7 +1288,7 @@ public:
         int lx = iSystem::blueprint_label.x;
         int ly = iSystem::blueprint_label.y;
         int text_size = iSystem::blueprint_label.Size();
-        Button label = Button(); label.Setup(lx, ly, 64, 16, 0.5, iSystem::blueprint_label.text); DrawButton(label);
+        Button label = Button(lx, ly, 64, 16, 0.5, iSystem::blueprint_label.text); DrawButton(label);
         int cx = ((lx + ((label.width/2.0))-(float(text_size)*(4.0*iSystem::blueprint_label.font)))) + (4.0*iSystem::blueprint_label.cursor);
         iSystem::blueprint_label.Update(GetCharacter());
         DrawPanel(core::width/2-36, core::height/2-10, 72, 20);
@@ -1327,11 +1323,11 @@ public:
         { if (core::sub_state == core::isTILES && tile_y > 0) tile_y--; }
         if (GetKey(player_down).bReleased || GetMouseWheel() < 0)
         { if (core::sub_state == core::isTILES && tile_y < tTile::total_tiles/16) tile_y++; }
-        Button btiles = Button();     btiles.Setup(48, 24, 28, 8, 0.25, "Tiles");
-        Button bwalls = Button();     bwalls.Setup(81, 24, 28, 8, 0.25, "Walls");
-        Button bcraft = Button();     bcraft.Setup(114, 24, 28, 8, 0.25, "Craft");
-        Button bwands = Button();     bwands.Setup(147, 24, 28, 8, 0.25, "Tools");
-        Button beffects = Button(); beffects.Setup(180, 24, 28, 8, 0.25, "Effects");
+        Button btiles = Button(48, 24, 28, 8, 0.25, "Tiles");
+        Button bwalls = Button(81, 24, 28, 8, 0.25, "Walls");
+        Button bcraft = Button(114, 24, 28, 8, 0.25, "Craft");
+        Button bwands = Button(147, 24, 28, 8, 0.25, "Tools");
+        Button beffects = Button(180, 24, 28, 8, 0.25, "Effects");
         DrawButton(btiles); DrawButton(bwalls); DrawButton(bwands); DrawButton(beffects); DrawButton(bcraft);
         if (bwands.IsColliding())   { if (GetMouse(0).bReleased) core::sub_state = core::isTOOLS;   }
         if (beffects.IsColliding()) { if (GetMouse(0).bReleased) core::sub_state = core::isEFFECTS; }
