@@ -59,7 +59,10 @@ namespace iSystem
     }
 
     // Data
-    void LoadData() { sky.GenerateSky(core::width, core::height, core::seed); new_world::ReadyWorld(tCell::width, tCell::height); world.LoadData(); player.LoadData(); }
+    void PrepareGame()
+    { sky.GenerateSky(core::width, core::height, core::seed); new_world::InitializeMatrix(tCell::width, tCell::height); world.LoadWorldData(); player.LoadData(); }
+    void LoadData()
+    { sky.GenerateSky(core::width, core::height, core::seed); new_world::ReadyWorld(tCell::width, tCell::height); world.LoadWorldData(); player.LoadData(); }
 
     // Dimensions
     void LoadDimension() {}
@@ -104,7 +107,7 @@ namespace iSystem
             {
                 if (tTool::GetType(particles[p].effect.tile_value) == tTile::BOOM)
                 {
-                    if (!particles[p].effect.pierces) particles.erase(particles.begin()+p);
+                    if (!particles[p].effect.pierces) { particles.erase(particles.begin()+p); }
                     tCell::matrix[collision_index-tCell::width] = tTile::FIRE;
                 }
                 tCell::matrix[collision_index] = particles[p].effect.tile_value;

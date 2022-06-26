@@ -2,11 +2,11 @@ class Particle
 {
 public:
 
-    float x = 0;
-    float y = 0;
+    float x = 0.0;
+    float y = 0.0;
 
-    float vx = 0;
-    float vy = 0;
+    float vx = 0.0;
+    float vy = 0.0;
 
     float speed = 25.0;
     float gravity = 0.3;
@@ -55,16 +55,8 @@ public:
         }
         else
         {
-            if (effect.bouncy)
-            {
-                vx = -X;
-                vy = -Y;
-            }
-            if (effect.sticky)
-            {
-                vx = 0.0;
-                vy = 0.0;
-            }
+            if (effect.bouncy) { vx=-X; vy=-Y; }
+            if (effect.sticky) { vx=0.0; vy=0.0; }
         }
     }
 
@@ -77,21 +69,8 @@ public:
         else if (vy < -max_speed) vy = -max_speed;
     }
 
-    void Duration(float D)
-    {
-        duration = D;
-    }
+    void Duration(float D) { duration = D; }
+    void SetEffect(Effect e) { effect = e; }
+    void Color(int R, int G, int B, int A) { r=R; g=G; b=B; a=A; }
 
-    void SetEffect(Effect e)
-    {
-        effect = e;
-    }
-
-    void Color(int R, int G, int B, int A)
-    {
-        r = R;
-        g = G;
-        b = B;
-        a = A;
-    }
 };

@@ -15,9 +15,11 @@ namespace core
     uint8_t selected_tile = 0;
     uint8_t selected_wand = 0;
     
-    //
+    // Position
     int mouse_x = 0;
     int mouse_y = 0;
+    int map_row = 0;
+    int map_index = 0;
 
     // State Flags
     uint8_t game_state = 0;
@@ -36,7 +38,7 @@ namespace core
 
     // Identity
     std::string game_title = "Bitmapper";
-    std::string version = "0.24.232.1";
+    std::string version = "0.24.235.1";
 
     // Enums
 
